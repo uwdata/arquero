@@ -1,0 +1,43 @@
+import { random } from '../../util/random';
+
+export default {
+  random,
+  isnan:    Number.isNaN,
+  isfinite: Number.isFinite,
+
+  abs:      Math.abs,
+  cbrt:     Math.cbrt,
+  ceil:     Math.ceil,
+  clz32:    Math.clz32,
+  exp:      Math.exp,
+  expm1:    Math.expm1,
+  floor:    Math.floor,
+  fround:   Math.fround,
+  log:      Math.log,
+  log10:    Math.log10,
+  log1p:    Math.log1p,
+  log2:     Math.log2,
+  max:      Math.max,
+  min:      Math.min,
+  pow:      Math.pow,
+  round:    Math.round,
+  sign:     Math.sign,
+  sqrt:     Math.sqrt,
+  trunc:    Math.trunc,
+
+  degrees:  (rad) => 180 * rad / Math.PI,
+  radians:  (deg) => Math.PI * deg / 180,
+  acos:     Math.acos,
+  acosh:    Math.acosh,
+  asin:     Math.asin,
+  asinh:    Math.asinh,
+  atan:     Math.atan,
+  atan2:    Math.atan2,
+  atanh:    Math.atanh,
+  cos:      Math.cos,
+  cosh:     Math.cosh,
+  sin:      Math.sin,
+  sinh:     Math.sinh,
+  tan:      Math.tan,
+  tanh:     Math.tanh
+};
