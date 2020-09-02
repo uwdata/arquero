@@ -82,21 +82,23 @@ tape('ColumnTable scan supports filtering and ordering', t => {
   t.end();
 });
 
-tape('ColumnTable scan supports tuple objects', t => {
-  const tuples = new ColumnTable({
-      u: ['a', 'a', 'a', 'b', 'b'],
-      v: [2, 1, 4, 5, 3]
-    })
-    .orderby('v')
-    .tuples();
-
-  t.deepEqual(tuples, [
+tape('ColumnTable supports object output', t => {
+  const output = [
     { u: 'a', v: 1 },
     { u: 'a', v: 2 },
     { u: 'b', v: 3 },
     { u: 'a', v: 4 },
     { u: 'b', v: 5 }
-  ], 'tuple data');
+  ];
+
+  const dt = new ColumnTable({
+      u: ['a', 'a', 'a', 'b', 'b'],
+      v: [2, 1, 4, 5, 3]
+    })
+    .orderby('v');
+
+  t.deepEqual(dt.toObjects(), output, 'object data');
+  t.deepEqual(dt.toObjects(3), output.slice(0, 3), 'object data with limit');
 
   t.end();
 });

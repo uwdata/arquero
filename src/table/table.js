@@ -209,6 +209,7 @@ export default class Table {
 
   /**
    * Returns an array of objects representing table rows.
+   * @param {number} [limit=Infinity] The maximum number of objects to create.
    * @return {Array} An array of row objects.
    */
   toObjects() {
@@ -292,23 +293,26 @@ export default class Table {
    */
   scan(fn, ordered) {
     const filter = this._filter;
+    const nrows = this._nrows;
     const data = this._data;
+    let i = 0;
 
     if (ordered && this.isOrdered() || filter && this._index) {
       const index = this._index = this.indices(true);
-      const nrows = index.length;
       const data = this._data;
-      for (let i = 0; i < nrows; ++i) {
-        fn(index[i], data);
+      const cancel = () => i = nrows;
+      for (; i < nrows; ++i) {
+        fn(index[i], data, cancel);
       }
     } else if (filter) {
-      for (let row = filter.next(0); row >= 0; row = filter.next(row + 1)) {
-        fn(row, data);
+      const cancel = () => i = -1;
+      for (i = filter.next(0); i >= 0; i = filter.next(i + 1)) {
+        fn(i, data, cancel);
       }
     } else {
-      const total = this._total;
-      for (let row = 0; row < total; ++row) {
-        fn(row, data);
+      const cancel = () => i = nrows;
+      for (; i < nrows; ++i) {
+        fn(i, data, cancel);
       }
     }
   }

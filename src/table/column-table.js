@@ -72,13 +72,30 @@ export default class ColumnTable extends Table {
     return this._data[this._names[index]];
   }
 
-  tuples() {
+  /**
+   * Get the value for the given column and row.
+   * @param {string} name The column name.
+   * @param {number} row The row index.
+   * @return {*} The table value at (column, row).
+   */
+  get(name, row) {
+    return this._data[name].get(row);
+  }
+
+  /**
+   * Returns an array of objects representing table rows.
+   * @param {number} [limit=Infinity] The maximum number of objects to create.
+   * @return {Array} An array of row objects.
+   */
+  toObjects(limit) {
+    limit = Math.min(limit || Infinity, this.numRows());
     const tuples = Array(this.numRows());
     const names = this.columnNames();
     const ncols = names.length;
     let r = 0;
 
-    this.scan((row, data) => {
+    this.scan((row, data, cancel) => {
+      if (r >= limit) return cancel();
       const tuple = tuples[r++] = {};
       for (let i = 0; i < ncols; ++i) {
         const name = names[i];
@@ -88,10 +105,14 @@ export default class ColumnTable extends Table {
     return tuples;
   }
 
-  get(name, row) {
-    return this._data[name].get(row);
-  }
-
+  /**
+   * Create a new fully-materialized instance of this table.
+   * All filter and orderby settings are removed from the new table.
+   * Instead, the backing data itself is filtered and ordered as needed.
+   * @param {number[]} [indices] Ordered row indices to materialize.
+   *  If unspecified, all rows passing the table filter are used.
+   * @return {Table} A reified table.
+   */
   reify(indices) {
     const nrows = indices ? indices.length : this.numRows();
     let data, groups;
