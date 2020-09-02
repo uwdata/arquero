@@ -3,28 +3,30 @@
   "version": "0.0.1",
   "description": "Query processing and transformation of array-backed data tables.",
   "keywords": [
-    "query",
-    "array",
-    "column",
-    "database",
     "data",
-    "frame",
+    "query",
+    "database",
     "table",
-    "transformation"
+    "dataframe",
+    "transform",
+    "arrays"
   ],
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/arquero.js",
-  "module": "build/arquero.mjs",
+  "main": "dist/arquero.js",
+  "module": "src/index.js",
+  "unpkg": "dist/arquero.min.js",
+  "jsdelivr": "dist/arquero.min.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uwdata/arquero.git"
+  },
   "scripts": {
-    "rollup": "rollup -c",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/arquero.js -c -m -o build/arquero.min.js",
+    "prebuild": "rimraf dist && mkdir dist",
+    "build": "rollup -c",
     "lint": "yarn eslint src test --ext .js",
-    "test": "tape 'test/**/*-test.js' --require esm",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "test": "tape 'test/**/*-test.js' --require esm && yarn lint",
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
     "acorn": "^8.0.1",
@@ -32,10 +34,11 @@
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^9.0.0",
-    "eslint": "^7.7.0",
+    "eslint": "^7.8.1",
     "esm": "^3.2.25",
     "rimraf": "^3.0.2",
-    "rollup": "^2.26.8",
+    "rollup": "^2.26.9",
+    "rollup-plugin-bundle-size": "1.0.3",
     "rollup-plugin-terser": "^7.0.1",
     "tape": "^5.0.1"
   }
