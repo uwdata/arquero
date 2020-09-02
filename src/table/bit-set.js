@@ -36,8 +36,8 @@ export default class BitSet {
   }
 
   scan(fn) {
-    for (let row = this.next(0); row >= 0; row = this.next(row + 1)) {
-      fn(row);
+    for (let i = this.next(0); i >= 0; i = this.next(i + 1)) {
+      fn(i);
     }
   }
 
