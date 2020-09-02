@@ -11,119 +11,121 @@ export default {
   count: () => Op('count'),
 
   /**
-   * Aggregate function
+   * Aggregate function returning an arbitrary observed value.
    * @param {*} field The data field.
    * @return {*} An arbitrary observed value.
    */
   any: (field) => Op('any', field),
 
   /**
-   * Aggregate function
+   * Aggregate function to collect an array of values.
    * @param {*} field The data field.
    * @return {number} The list of values.
    */
   values: (field) => Op('values', field),
 
   /**
-   * Aggregate function
+   * Aggregate function to count the number of valid values.
+   * Invalid values are null, undefined, or NaN.
    * @param {*} field The data field.
    * @return {number} The count of valid values.
    */
   valid: (field) => Op('valid', field),
 
   /**
-   * Aggregate function
+   * Aggregate function to count the number of invalid values.
+   * Invalid values are null, undefined, or NaN.
    * @param {*} field The data field.
    * @return {number} The count of invalid values.
    */
   invalid: (field) => Op('invalid', field),
 
   /**
-   * Aggregate function
+   * Aggregate function to count the number of distinct values.
    * @param {*} field The data field.
    * @return {number} The count of distinct values.
    */
   distinct: (field) => Op('distinct', field),
 
   /**
-   * Aggregate function
+   * Aggregate function to collect an array of unique values.
    * @param {*} field The data field.
    * @return {Array} The array of unique values.
    */
   unique: (field) => Op('unique', field),
 
   /**
-   * Aggregate function
+   * Aggregate function to determine the mode (most frequent) value.
    * @param {*} field The data field.
    * @return {number} The mode value.
    */
   mode: (field) => Op('mode', field),
 
   /**
-   * Aggregate function
+   * Aggregate function to sum values.
    * @param {*} field The data field.
    * @return {number} The sum of the values.
    */
   sum: (field) => Op('sum', field),
 
   /**
-   * Aggregate function
+   * Aggregate function to multiply values.
    * @param {*} field The data field.
    * @return {number} The product of the values.
    */
   product: (field) => Op('product', field),
 
   /**
-   * Aggregate function
+   * Aggregate function for the mean (average) value.
    * @param {*} field The data field.
    * @return {number} The mean (average) of the values.
    */
   mean: (field) => Op('mean', field),
 
   /**
-   * Aggregate function
+   * Aggregate function for the average (mean) value.
    * @param {*} field The data field.
    * @return {number} The average (mean) of the values.
    */
   average: (field) => Op('average', field),
 
   /**
-   * Aggregate function
+   * Aggregate function for the sample variance.
    * @param {*} field The data field.
    * @return {number} The sample variance of the values.
    */
   variance: (field) => Op('variance', field),
 
   /**
-   * Aggregate function
+   * Aggregate function for the population variance.
    * @param {*} field The data field.
    * @return {number} The population variance of the values.
    */
   variancep: (field) => Op('variancep', field),
 
   /**
-   * Aggregate function
+   * Aggregate function for the sample standard deviation.
    * @param {*} field The data field.
    * @return {number} The sample standard deviation of the values.
    */
   stdev: (field) => Op('stdev', field),
 
   /**
-   * Aggregate function
+   * Aggregate function for the population standard deviation.
    * @param {*} field The data field.
    * @return {number} The population standard deviation of the values.
    */
   stdevp: (field) => Op('stdevp', field),
 
   /**
-   * Aggregate function
+   * Aggregate function for the minimum value.
    * @param {*} field The data field.
    * @return {number} The minimum value.
    */
   min: (field) => Op('min', field),
 
   /**
-   * Aggregate function
+   * Aggregate function for the maximum values.
    * @param {*} field The data field.
    * @return {number} The maximum value.
    */
@@ -139,14 +141,15 @@ export default {
   quantile: (field, p) => Op('quantile', field, p),
 
   /**
-   * Aggregate function
+   * Aggregate function for the median value.
+   * This is a shorthand for the 0.5 quantile value.
    * @param {*} field The data field.
    * @return {number} The median value.
    */
   median: (field) => Op('median', field),
 
   /**
-   * Aggregate function
+   * Aggregate function for the sample covariance between two variables.
    * @param {*} field1 The first data field.
    * @param {*} field2 The second data field.
    * @return {number} The sample covariance of the values.
@@ -154,7 +157,7 @@ export default {
   covariance: (field1, field2) => Op('covariance', [field1, field2]),
 
   /**
-   * Aggregate function
+   * Aggregate function for the population covariance between two variables.
    * @param {*} field1 The first data field.
    * @param {*} field2 The second data field.
    * @return {number} The population covariance of the values.
@@ -162,7 +165,9 @@ export default {
   covariancep: (field1, field2) => Op('covariancep', [field1, field2]),
 
   /**
-   * Aggregate function
+   * Aggregate function for the product-moment correlation between two variables.
+   * To instead compute a rank correlation, compute the average ranks for each
+   * variable and then apply this function to the result.
    * @param {*} field1 The first data field.
    * @param {*} field2 The second data field.
    * @return {number} The correlation between the field values.
@@ -170,9 +175,10 @@ export default {
   corr: (field1, field2) => Op('corr', [field1, field2]),
 
   /**
-   * Aggregate function
+   * Aggregate function for calculating a binning scheme in terms of
+   * the minimum bin boundary, maximum bin boundary, and step size.
    * @param {*} field The data field.
-   * @param {number} [maxbins=20] The maximum number of allowed bins.
+   * @param {number} [maxbins=15] The maximum number of allowed bins.
    * @param {boolean} [nice=true] Flag indicating if the bin min and max
    *  should snap to "nice" human-friendly values.
    * @param {number} [minstep] The minimum allowed step size between bins.
