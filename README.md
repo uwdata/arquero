@@ -10,7 +10,9 @@
 
 Arquero is Spanish for "archer": if datasets are [arrows](https://arrow.apache.org/), Arquero helps their aim stay true.
 
-## Examples
+## Example
+
+The main pieces of Arquero are *data tables*, which model each column as an array of values, and *verbs* that transform data and return a new table as output. Verbs are table methods, allowing method chaining for multi-step transformations. Though each table is unique, many verbs reuse the underlying columns to limit duplication.
 
 ```js
 import { all, desc, op, table } from 'arquero';
