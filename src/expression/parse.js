@@ -11,6 +11,7 @@ import { getAggregate, getFunction, getWindow, isAggregate, isWindow } from '../
 import has from '../util/has';
 import error from '../util/error';
 
+const PARSER_OPT = { ecmaVersion: 11 };
 const DEFAULT_TUPLE_ID = 'd';
 const DEFAULT_TUPLE_ID1 = 'd1';
 const DEFAULT_TUPLE_ID2 = 'd2';
@@ -221,7 +222,7 @@ const opVisitors = {
 function parser(expr) {
   try {
     const code = expr.field ? fieldRef(expr) : expr;
-    return parse(`expr=(${code})`).body[0].expression.right;
+    return parse(`expr=(${code})`, PARSER_OPT).body[0].expression.right;
   } catch (err) {
     error(`Expression parse error: ${expr+''}`, err);
   }
