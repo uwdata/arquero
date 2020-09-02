@@ -16,6 +16,56 @@ function joinTables() {
   ];
 }
 
+tape('cross computes Cartesian product', t => {
+  const [tl, tr] = joinTables();
+
+  const tj = tl.cross(tr);
+
+  t.equal(tj.numRows(), tl.numRows() * tr.numRows());
+  tableEqual(t, tj,  {
+    k: [ 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'c', 'c', 'c', 'c' ],
+    x: [ 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4 ],
+    y: [ 9, 9, 9, 9, 8, 8, 8, 8, 7, 7, 7, 7, 6, 6, 6, 6 ],
+    u: [ 'b', 'a', 'b', 'd', 'b', 'a', 'b', 'd', 'b', 'a', 'b', 'd', 'b', 'a', 'b', 'd' ],
+    v: [ 5, 4, 6, 0, 5, 4, 6, 0, 5, 4, 6, 0, 5, 4, 6, 0 ]
+  }, 'cross data');
+
+  t.end();
+});
+
+tape('cross computes Cartesian product with column selection', t => {
+  const [tl, tr] = joinTables();
+
+  const tj = tl.cross(tr, [not('y'), not('u')]);
+
+  t.equal(tj.numRows(), tl.numRows() * tr.numRows());
+  tableEqual(t, tj,  {
+    k: [ 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'c', 'c', 'c', 'c' ],
+    x: [ 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4 ],
+    v: [ 5, 4, 6, 0, 5, 4, 6, 0, 5, 4, 6, 0, 5, 4, 6, 0 ]
+  }, 'selected cross data');
+
+  t.end();
+});
+
+tape('cross computes Cartesian product with column renaming', t => {
+  const [tl, tr] = joinTables();
+
+  const tj = tl.cross(tr, [
+    {j: d => d.k, z: d => d.x},
+    {w: d => d.v}
+  ]);
+
+  t.equal(tj.numRows(), tl.numRows() * tr.numRows());
+  tableEqual(t, tj,  {
+    j: [ 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'c', 'c', 'c', 'c' ],
+    z: [ 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4 ],
+    w: [ 5, 4, 6, 0, 5, 4, 6, 0, 5, 4, 6, 0, 5, 4, 6, 0 ]
+  }, 'selected cross data');
+
+  t.end();
+});
+
 tape('join performs natural join', t => {
   const tl = table({ k: [1, 2], a: [3, 4]});
   const tr = table({ k: [1, 2], b: [5, 6]});

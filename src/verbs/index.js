@@ -50,13 +50,7 @@ Object.assign(ColumnTable.prototype, {
   __reduce
 });
 
-export {
-  default as op,
-  addFunction,
-  addAggregateFunction,
-  addWindowFunction
-} from './op';
-
+export { default as op } from '../op/op-api';
 export { default as bin } from './expr/bin';
 export { default as desc } from './expr/desc';
 export { default as rolling } from './expr/rolling';

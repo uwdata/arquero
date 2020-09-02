@@ -108,7 +108,7 @@ tape('select does not conflict with groupby', t => {
     'renamed columns'
   );
 
-  tableEqual(t, st.count('n'), {
+  tableEqual(t, st.count({ as: 'n' }), {
     c: ['a', 'b'], n: [1, 3]
   }, 'groupby not conflicted');
 

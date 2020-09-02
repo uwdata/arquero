@@ -125,7 +125,7 @@ tape('rollup supports entropy', t => {
   const data = { x: [1, 1, 1, 2, 2, 3] };
   const dt = table(data)
     .groupby('x')
-    .count('num')
+    .count({ as: 'num' })
     .derive({ p: d => d.num / sum(d.num) })
     .rollup({ h: d => -sum(d.p ? d.p * log2(d.p) : 0) });
   tableEqual(t, dt, { h: [ 1.4591479170272448 ] }, 'entropy');
