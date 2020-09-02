@@ -4,8 +4,8 @@ export default function walk(node, ctx, visitors, parent) {
   const visit = visitors[node.type];
   if (visit && visit(node, ctx, parent) === false) return;
 
-  const walk = walkers[node.type];
-  if (walk) walk(node, ctx, visitors);
+  const walker = walkers[node.type];
+  if (walker) walker(node, ctx, visitors);
 }
 
 const unary = (node, ctx, visitors) => {
@@ -43,8 +43,8 @@ const walkers = {
     list(node.quasis, ctx, visitors, node);
   },
   MemberExpression: (node, ctx, visitors) => {
-    walk(node.object, ctx, visitors, node);
-    walk(node.property, ctx, visitors, node);
+    walk(node.object, ctx, visitors, node, 'object');
+    walk(node.property, ctx, visitors, node, 'property');
   },
   CallExpression: call,
   NewExpression: call,
