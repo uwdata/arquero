@@ -2,25 +2,98 @@
 
 **Arquero** is a JavaScript library for query processing and transformation of array-backed data tables. Following the [relational algebra](https://en.wikipedia.org/wiki/Relational_algebra) and inspired by the design of [dplyr](https://dplyr.tidyverse.org/), Arquero provides a fluent API for manipulating column-oriented data frames. Arquero supports a range of data transformation tasks, including filter, sample, aggregation, window, join, and reshaping operations.
 
+* Fast: process data tables with million+ rows.
+* Flexible: query over arrays, typed arrays, array-like objects, or [Apache Arrow](https://arrow.apache.org/) columns.
+* Full-Featured: perform a variety of wrangling and analysis tasks.
+* Extensible: add new column types or functions, including aggregate &amp; window operations.
+* Lightweight: small size, minimal dependencies.
+
 Arquero is Spanish for "archer": if datasets are [arrows](https://arrow.apache.org/), Arquero helps their aim stay true.
 
-```js
-import { table, op } from 'arquero';
+## Examples
 
+```js
+import { all, desc, op, table } from 'arquero';
+
+// Average hours of sunshine per month, from https://usclimatedata.com/
 const dt = table({
-  k: ['a', 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b', 'b'],
-  x: [1, 2, 3, 4, 5, 5, 4, 3, 2, 1],
-  y: [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+  'Seattle': [69,108,178,207,253,268,312,281,221,142,72,52],
+  'Chicago': [135,136,187,215,281,311,318,283,226,193,113,106],
+  'San Francisco': [165,182,251,281,314,330,300,272,267,243,189,156]
 });
 
-dt.filter(d => d.x > 2)
-  .groupby('k')
-  .derive({
-    xy: d => d.x * d.y
+// Sorted differences between Seattle and Chicago
+// (Table expressions use arrow function syntax.)
+dt.derive({
+    month: d => op.row_number(),
+    diff:  d => d.Seattle - d.Chicago
   })
+  .select('month', 'diff')
+  .orderby(desc('diff'));
+
+// Is Seattle more correlated with San Francisco or Chicago?
+// (Operations accept column name strings outside a function context.)
+dt.rollup({
+    corr_sf:  op.corr('Seattle', 'San Francisco'),
+    corr_chi: op.corr('Seattle', 'Chicago')
+  });
+
+// Descriptive statistics per city, as output objects
+// (Reshape (fold) the data to a two column layout: city, sun.)
+dt.fold(all(), { as: ['city', 'sun'] })
+  .groupby('city')
   .rollup({
-    mu_xy: d => op.mean(d.xy),
-    sd_xy: d => op.stdev(d.xy),
-    corr: d => op.corr(d.x, d.y)
+    min:  d => op.min(d.sun), // equivalent to op.min('sun')
+    max:  d => op.max(d.sun),
+    avg:  d => op.average(d.sun),
+    med:  d => op.median(d.sun),
+    skew: ({sun: s}) => (op.mean(s) - op.median(s)) / op.stdev(s) || 0
   })
+  .toObjects()
 ```
+
+## Usage
+
+### In Browser
+
+To use in the browser, you can load Arquero from a content delivery network:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/arquero@latest"></script>
+```
+
+Arquero will be imported into the `aq` global object.
+
+Alternatively, you can build and import `arquero.min.js` from the `build` directory, or build your own application package.
+
+Arquero uses a number of modern JavaScript features, and so may not work on older browsers. To use Arquero with older browsers including Internet Explorer, set up your project with a transpiler such as [Babel](https://babeljs.io/).
+
+### In Node.js
+
+First install `arquero` as a dependency, via `npm install arquero --save` or `yarn add arquero`.
+
+Import using CommonJS module syntax:
+
+```js
+const aq = require('arquero');
+```
+
+Import using ES module syntax, import all exports into a single object:
+
+```js
+import * as aq from 'arquero';
+```
+
+Import using ES module syntax, with targeted imports:
+
+```js
+import { op, table } from 'arquero';
+```
+
+## Build Instructions
+
+To build and develop Arquero locally:
+
+- Clone https://github.com/uwdata/arquero.
+- Run `yarn` to install dependencies for all packages. If you don't have yarn installed, see [https://yarnpkg.com/en/docs/install](https://yarnpkg.com/en/docs/install).
+- Run `yarn test` to run test cases, and `yarn build` to build output files.
