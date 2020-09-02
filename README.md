@@ -67,11 +67,11 @@ Arquero will be imported into the `aq` global object.
 
 Alternatively, you can build and import `arquero.min.js` from the `build` directory, or build your own application package.
 
-Arquero uses a number of modern JavaScript features, and so may not work on older browsers. To use Arquero with older browsers including Internet Explorer, set up your project with a transpiler such as [Babel](https://babeljs.io/).
+Arquero uses modern JavaScript features, and so will not work with some outdated browsers. To use Arquero with older browsers including Internet Explorer, set up your project with a transpiler such as [Babel](https://babeljs.io/).
 
 ### In Node.js
 
-First install `arquero` as a dependency, via `npm install arquero --save` or `yarn add arquero`.
+First install `arquero` as a dependency, via `npm install arquero --save` or `yarn add arquero`. Arquero assumes Node version 12 or higher.
 
 Import using CommonJS module syntax:
 
