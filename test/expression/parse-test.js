@@ -198,11 +198,11 @@ tape('parse parses expressions with block statements', t => {
 tape('parse parses expressions with if statements', t => {
   const exprs = {
     val1: () => {
-      let d = 3 - 2;
+      const d = 3 - 2;
       if (d < 1) { return 1; } else { return 0; }
     },
     val2: () => {
-      let d = 3 - 2;
+      const d = 3 - 2;
       if (d < 1) { return 1; }
       return 0;
     }
@@ -211,8 +211,8 @@ tape('parse parses expressions with if statements', t => {
   t.deepEqual(
     parse(exprs, { compiler }).values,
     {
-      val1: '{let d=(3-2);if ((d<1)){return 1;} else {return 0;};}',
-      val2: '{let d=(3-2);if ((d<1)){return 1;};return 0;}'
+      val1: '{const d=(3-2);if ((d<1)){return 1;} else {return 0;};}',
+      val2: '{const d=(3-2);if ((d<1)){return 1;};return 0;}'
     },
     'parsed if'
   );

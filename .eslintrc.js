@@ -18,6 +18,7 @@ module.exports = {
     'no-fallthrough': ['error', { commentPattern: 'break omitted' }],
     'semi': 'error',
     'quotes': ['error', 'single', { avoidEscape: true }],
+    'prefer-const': 'error',
     'sort-imports': ['error', {
       ignoreCase: false,
       ignoreDeclarationSort: true

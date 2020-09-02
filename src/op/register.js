@@ -18,7 +18,7 @@ function addOp(name, def, object, numFields, numParams) {
     def.param = [numFields || 0, numParams || 0];
   }
   object[name] = def;
-  let [nf, np] = def.param;
+  const [nf, np] = def.param;
   ops[name] = (...params) => {
     return op(name, params.slice(0, nf), params.slice(nf, nf + np));
   };

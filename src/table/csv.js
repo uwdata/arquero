@@ -4,8 +4,8 @@ import { autoType, dsvFormat } from 'd3-dsv';
 export function csvParse(text, options = {}) {
   const delim = options.delim || ',';
   const dsv = dsvFormat(delim);
+  const values = [];
   let names = [];
-  let values = [];
 
   dsv.parseRows(text, (row, index) => {
     if (index === 0) {

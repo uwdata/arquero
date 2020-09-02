@@ -56,7 +56,8 @@ const cume_dist = {
     return {
       init: () => cume = 0,
       value: w => {
-        let { index: i, peer, size } = w;
+        const { index, peer, size } = w;
+        let i = index;
         if (cume < i) {
           while (i + 1 < size && peer(i + 1)) ++i;
           cume = i;
@@ -171,7 +172,7 @@ export default {
       return {
         init: noop,
         value: (w, f) => {
-          let i = w.index + offset;
+          const i = w.index + offset;
           return i < w.size ? w.value(i, f) : defaultValue;
         }
       };
@@ -209,7 +210,7 @@ export default {
       return {
         init: noop,
         value: (w, f) => {
-          let i = w.i0 + (nth - 1);
+          const i = w.i0 + (nth - 1);
           return i < w.i1 ? w.value(i, f) : undefined;
         }
       };

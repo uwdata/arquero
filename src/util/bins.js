@@ -18,7 +18,7 @@ export default function(min, max, maxbins = 10, nice = true, minstep = 0) {
   // decrease step size if it stays within maxbins
   const n = div.length;
   for (let i = 0; i < n; ++i) {
-    let v = step / div[i];
+    const v = step / div[i];
     if (v >= minstep && span / v <= maxbins) {
       step = v;
     }
