@@ -5,4 +5,4 @@ export default function(t, table, data, message) {
     tableData[name] = table.column(name).data;
   }
   t.deepEqual(tableData, data, message);
-};
+}

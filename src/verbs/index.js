@@ -23,7 +23,7 @@ import __ungroup from '../engine/ungroup';
 import __unorder from '../engine/unorder';
 
 import ColumnTable from '../table/column-table';
-import mapObject from '../util/map-object'
+import mapObject from '../util/map-object';
 
 Object.assign(ColumnTable.prototype, {
   __concat,
