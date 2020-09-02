@@ -230,24 +230,27 @@ const ops = {
 
   /**
    * Aggregate function
-   * @param {*} field The data field.
+   * @param {*} field1 The first data field.
+   * @param {*} field2 The second data field.
    * @return {number} The sample covariance of the values.
    */
-  covariance: (field) => op('covariance', field),
+  covariance: (field1, field2) => op('covariance', [field1, field2]),
 
   /**
    * Aggregate function
-   * @param {*} field The data field.
+   * @param {*} field1 The first data field.
+   * @param {*} field2 The second data field.
    * @return {number} The population covariance of the values.
    */
-  covariancep: (field) => op('covariancep', field),
+  covariancep: (field1, field2) => op('covariancep', [field1, field2]),
 
   /**
    * Aggregate function
-   * @param {*} field The data field.
+   * @param {*} field1 The first data field.
+   * @param {*} field2 The second data field.
    * @return {number} The correlation between the field values.
    */
-  corr: (field) => op('corr', field),
+  corr: (field1, field2) => op('corr', [field1, field2]),
 
   /**
    * Aggregate function
