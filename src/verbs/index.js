@@ -71,18 +71,22 @@ export function table(columns) {
 }
 
 /**
- * Create a new table from key-value pairs or iterable objects.
+ * Create a new table from an existing object, such as an array of
+ * objects or a set of key-value pairs.
  * @param {Object|Array|Map} values Data values to populate the table.
- *  If object- or Map-valued, create columns for keys and values.
- *  If array-valued or iterable, create rows for each non-null value,
- *  using the provided column names as keys for each row object. If no names
- *  are provided, the first non-null object's own keys will be used.
+ *  If the input matches the properties of an Apache Arrow table (it
+ *  has a schema property with named fields and has a getColumn method),
+ *  creates a table that directly accesses the provided columns.
+ *  If array-valued or iterable, imports rows for each non-null value,
+ *  using the provided column names as keys for each row object. If no
+ *  names are provided, the first non-null object's own keys are used.
+ *  If object- or Map-valued, create columns for the keys and values.
  * @param {string[]} [names] Column names to include.
  *  For object or Map values, specifies the key and value column names.
  *  Otherwise, specifies the keys to look up on each row object.
  * @return {Table} the instantiated table.
- * @example tableFrom([ { colA: 1, colB: 2 }, { colA: 3, colB: 4 } ])
+ * @example from([ { colA: 1, colB: 2 }, { colA: 3, colB: 4 } ])
  */
-export function tableFrom(values, names) {
+export function from(values, names) {
   return ColumnTable.from(values, names);
 }
