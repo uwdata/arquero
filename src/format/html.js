@@ -44,7 +44,7 @@ export default function(table, options = {}) {
   let text = tag('table')
     + tag('thead')
     + tag('tr')
-    + names.map(name => `${tag('th', name)}${name}</th>`).join('')
+    + names.map(name => `${tag('th')}${name}</th>`).join('')
     + '</tr></thead>'
     + tag('tbody');
 

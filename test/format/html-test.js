@@ -7,7 +7,7 @@ tape('toHTML formats html table text', t => {
   const r = 'style="text-align: right;"';
   const html = (u, v) => [
     '<table><thead>',
-    `<tr><th ${u}>u</th><th ${v}>v</th></tr>`,
+    '<tr><th>u</th><th>v</th></tr>',
     '</thead><tbody>',
     `<tr><td ${u}>a</td><td ${v}>1</td></tr>`,
     `<tr><td ${u}>a</td><td ${v}>2</td></tr>`,
