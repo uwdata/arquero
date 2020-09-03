@@ -2,8 +2,10 @@ import Column from './column';
 import columnsFrom from './columns-from';
 import Table from './table';
 import { regroup, reindex } from './regroup';
+import { numRows } from '../format/util';
 import arrayType from '../util/array-type';
 import mapObject from '../util/map-object';
+import unroll from '../util/unroll';
 
 /**
  * Class representing a table backed by a named set of columns.
@@ -84,24 +86,27 @@ export default class ColumnTable extends Table {
 
   /**
    * Returns an array of objects representing table rows.
-   * @param {number} [limit=Infinity] The maximum number of objects to create.
+   * @param {ObjectsOptions} [options] The options for row object generation.
    * @return {Array} An array of row objects.
    */
-  toObjects(limit) {
-    limit = Math.min(limit || Infinity, this.numRows());
-    const tuples = Array(this.numRows());
-    const names = this.columnNames();
-    const ncols = names.length;
-    let r = 0;
+  objects(options = {}) {
+    const limit = numRows(this, options.limit);
+    if (limit <= 0) return [];
 
-    this.scan((row, data, cancel) => {
-      if (r >= limit) return cancel();
-      const tuple = tuples[r++] = {};
-      for (let i = 0; i < ncols; ++i) {
-        const name = names[i];
-        tuple[name] = data[name].get(row);
-      }
+    const tuples = Array(limit);
+    const names = this.columnNames();
+    const create = unroll(
+      names.map(name => this.column(name)),
+      'row',
+      '({' + names.map((_, i) => `${JSON.stringify(_)}:_${i}.get(row)`) + '})'
+    );
+
+    let r = 0;
+    this.scan((row, data, stop) => {
+      tuples[r] = create(row);
+      if (++r >= limit) stop();
     }, true);
+
     return tuples;
   }
 

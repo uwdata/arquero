@@ -1,4 +1,5 @@
 import error from '../util/error';
+import isArray from '../util/is-array';
 import isDate from '../util/is-date';
 import isFunction from '../util/is-function';
 import isObject from '../util/is-object';
@@ -19,7 +20,9 @@ export default function(values, names) {
 }
 
 function isArrow(value) {
-  return value && value.schema && isFunction(value.getColumn);
+  return value
+    & value.schema && isArray(value.schema.fields)
+    && isFunction(value.getColumn);
 }
 
 function fromArrow(table, names) {

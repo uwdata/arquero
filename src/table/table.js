@@ -208,12 +208,28 @@ export default class Table {
   }
 
   /**
+   * Options for generating row objects.
+   * @typedef {Object} ObjectsOptions
+   * @property {number} [limit=Infinity] The maximum number of objects to create.
+   */
+
+  /**
    * Returns an array of objects representing table rows.
-   * @param {number} [limit=Infinity] The maximum number of objects to create.
+   * @param {ObjectsOptions} [options] The options for row object generation.
    * @return {Array} An array of row objects.
    */
-  toObjects() {
+  objects(options) { // eslint-disable-line no-unused-vars
     error('Not implemented');
+  }
+
+  /**
+   * Print the contents of this table using the console.table() method.
+   * @param {ObjectsOptions} options The options for row object generation,
+   *  determining which rows and columns are printed.
+   */
+  print(options) {
+    // eslint-disable-next-line no-console
+    console.table(this.objects(options));
   }
 
   /**
@@ -280,7 +296,9 @@ export default class Table {
    * Callback function invoked for each row of a table scan.
    * @callback scanVisitor
    * @param {number} row The table row index.
-   * @param {Object|Array} data The backing table data.
+   * @param {Object|Array} data The backing table data store.
+   * @param {Function} stop Function to stop the scan early.
+   *  Callees can invoke this function to prevent future calls.
    */
 
   /**
@@ -300,19 +318,19 @@ export default class Table {
     if (ordered && this.isOrdered() || filter && this._index) {
       const index = this._index = this.indices(true);
       const data = this._data;
-      const cancel = () => i = nrows;
+      const stop = () => i = nrows;
       for (; i < nrows; ++i) {
-        fn(index[i], data, cancel);
+        fn(index[i], data, stop);
       }
     } else if (filter) {
-      const cancel = () => i = -1;
+      const stop = () => i = -1;
       for (i = filter.next(0); i >= 0; i = filter.next(i + 1)) {
-        fn(i, data, cancel);
+        fn(i, data, stop);
       }
     } else {
-      const cancel = () => i = nrows;
+      const stop = () => i = nrows;
       for (; i < nrows; ++i) {
-        fn(i, data, cancel);
+        fn(i, data, stop);
       }
     }
   }

@@ -97,8 +97,12 @@ tape('ColumnTable supports object output', t => {
     })
     .orderby('v');
 
-  t.deepEqual(dt.toObjects(), output, 'object data');
-  t.deepEqual(dt.toObjects(3), output.slice(0, 3), 'object data with limit');
+  t.deepEqual(dt.objects(), output, 'object data');
+  t.deepEqual(
+    dt.objects({ limit: 3 }),
+    output.slice(0, 3),
+    'object data with limit'
+  );
 
   t.end();
 });
