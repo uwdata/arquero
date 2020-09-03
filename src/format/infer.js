@@ -48,6 +48,6 @@ export default function(scan, options = {}) {
   return {
     align:  (nulls + nums + dates) / count > 0.5 ? 'r' : 'l',
     date:   dates === dutcs ? 'utc' : dates === dlocs ? 'loc' : null,
-    digits: Math.min(digits, options.maxdigits || 4)
+    digits: Math.min(digits, options.maxdigits || 6)
   };
 }

@@ -37,8 +37,9 @@ export default function(table, options = {}) {
 
   const tag = (tag, name) => {
     const a = name ? align(format[name].align) : '';
-    const s = (a ? `text-align: ${a};` : '') + (styles[tag] || '');
-    return `<${tag}${s ? ` style="${s}"`: ''}>`;
+    const s = styles[tag] || '';
+    const css = (a ? (`text-align: ${a};` + (s ? ' ' : '')) : '') + s;
+    return `<${tag}${css ? ` style="${css}"` : ''}>`;
   };
 
   let text = tag('table')

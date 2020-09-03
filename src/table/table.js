@@ -5,6 +5,7 @@ import repeat from '../util/repeat';
  * Abstract class representing a data table.
  */
 export default class Table {
+
   /**
    * Construct a new Table instance.
    * @param {string[]} names - An array of column names.

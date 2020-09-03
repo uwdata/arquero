@@ -1,6 +1,6 @@
 import tape from 'tape';
 import ColumnTable from '../../src/table/column-table';
-import toHTML from '../../src/format/html';
+import toHTML from '../../src/format/to-html';
 
 tape('toHTML formats html table text', t => {
   const l = 'style="text-align: left;"';

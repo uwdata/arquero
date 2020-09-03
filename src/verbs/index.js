@@ -63,7 +63,7 @@ export { all, not, range } from './expr/selection';
  *  Object keys are the column names.
  *  The enumeration order of the keys determines the column indices.
  *  Object values must be arrays (or array-like values) of identical length.
- * @return {Table} the instantiated table
+ * @return {ColumnTable} the instantiated table
  * @example table({ colA: ['a', 'b', 'c'], colB: [3, 4, 5] })
  */
 export function table(columns) {
@@ -84,7 +84,7 @@ export function table(columns) {
  * @param {string[]} [names] Column names to include.
  *  For object or Map values, specifies the key and value column names.
  *  Otherwise, specifies the keys to look up on each row object.
- * @return {Table} the instantiated table.
+ * @return {ColumnTable} the instantiated table.
  * @example from([ { colA: 1, colB: 2 }, { colA: 3, colB: 4 } ])
  */
 export function from(values, names) {

@@ -16,10 +16,10 @@ import { columns, formats, scan } from './util';
  */
 
 /**
- * Format a table as a Github-Flavored Markdown table string.
+ * Format a table as a GitHub-Flavored Markdown table string.
  * @param {ColumnTable} table The table to format.
  * @param {MarkdownOptions} options The formatting options.
- * @return {string} A Github-Flavored Markdown table string.
+ * @return {string} A GitHub-Flavored Markdown table string.
  */
 export default function(table, options = {}) {
   const names = columns(table, options.columns);

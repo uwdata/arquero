@@ -2,8 +2,11 @@ import isArray from '../util/is-array';
 import isDate from '../util/is-date';
 import isTypedArray from '../util/is-typed-array';
 
-const dateString = (y, m, d) =>
-  `${y}-${(m < 10 ? '0' : '') + m}-${(d < 10 ? '0' : '') + d}`;
+const pad = v => (v < 10 ? '0' : '') + v;
+
+const dateString = (y, m, d) => `${y}-${pad(m)}-${pad(d)}`;
+
+const timeString = (H, M, S) => `${pad(H)}:${pad(M)}:${pad(S)}`;
 
 const formatDateUTC = d =>
   dateString(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
@@ -11,14 +14,17 @@ const formatDateUTC = d =>
 const formatDate = d =>
   dateString(d.getFullYear(), d.getMonth() + 1, d.getDate());
 
-const formatDateTime = d => d.toISOString();
+const formatTime = d =>
+  timeString(d.getHours(), d.getMinutes(), d.getSeconds());
+
+const formatDateTime = d => formatDate(d) + ' ' + formatTime(d);
 
 export default function(v, options = {}) {
   const type = typeof v;
 
   if (type === 'object') {
     if (isDate(v)) {
-      return options.date === 'utc' ? formatDateUTC(v)
+      return options.date === 'utc' ? formatDateUTC(v) + ' UTC'
         : options.date === 'loc' ? formatDate(v)
         : formatDateTime(v);
     } else {
@@ -30,7 +36,10 @@ export default function(v, options = {}) {
       return o;
     }
   } else if (type === 'number') {
-    return v.toFixed(options.digits);
+    const digits = options.digits || 0;
+    return v < Math.pow(10, -digits)
+      ? v.toExponential(digits)
+      : v.toFixed(digits);
   } else {
     return v + '';
   }

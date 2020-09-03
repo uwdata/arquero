@@ -3,6 +3,10 @@ import columnsFrom from './columns-from';
 import Table from './table';
 import { regroup, reindex } from './regroup';
 import { numRows } from '../format/util';
+import toCSV from '../format/to-csv';
+import toHTML from '../format/to-html';
+import toJSON from '../format/to-json';
+import toMarkdown from '../format/to-markdown';
 import arrayType from '../util/array-type';
 import mapObject from '../util/map-object';
 import unroll from '../util/unroll';
@@ -11,6 +15,7 @@ import unroll from '../util/unroll';
  * Class representing a table backed by a named set of columns.
  */
 export default class ColumnTable extends Table {
+
   /**
    * Create a new ColumnTable from existing input data.
    * @param {*} values The backing table data values.
@@ -150,5 +155,43 @@ export default class ColumnTable extends Table {
     }
 
     return this.create({ data, groups, filter: null, order: null });
+  }
+
+  /**
+   * Format this table as a comma-separated values (CSV) string. Other
+   * delimiters, such as tabs or pipes ('|'), can be specified using
+   * the options argument.
+   * @param {CSVFormatOptions} options The formatting options.
+   * @return {string} A delimited-value format string.
+   */
+  toCSV(options) {
+    return toCSV(this, options);
+  }
+
+  /**
+   * Format this table as an HTML table string.
+   * @param {HTMLOptions} options The formatting options.
+   * @return {string} An HTML table string.
+   */
+  toHTML(options) {
+    return toHTML(this, options);
+  }
+
+  /**
+   * Format this table as a JavaScript Object Notation (JSON) string.
+   * @param {JSONFormatOptions} options The formatting options.
+   * @return {string} A JSON string.
+   */
+  toJSON(options) {
+    return toJSON(this, options);
+  }
+
+  /**
+   * Format this table as a GitHub-Flavored Markdown table string.
+   * @param {MarkdownOptions} options The formatting options.
+   * @return {string} A GitHub-Flavored Markdown table string.
+   */
+  toMarkdown(options) {
+    return toMarkdown(this, options);
   }
 }

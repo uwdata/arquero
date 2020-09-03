@@ -1,7 +1,8 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
 import ColumnTable from '../../src/table/column-table';
-import { fromCSV, toCSV } from '../../src/format/csv';
+import fromCSV from '../../src/format/from-csv';
+import toCSV from '../../src/format/to-csv';
 
 function data() {
   return {

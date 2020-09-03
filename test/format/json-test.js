@@ -1,7 +1,8 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
 import ColumnTable from '../../src/table/column-table';
-import { fromJSON, toJSON } from '../../src/format/json';
+import fromJSON from '../../src/format/from-json';
+import toJSON from '../../src/format/to-json';
 
 function data() {
   return {

@@ -1,6 +1,6 @@
 import tape from 'tape';
 import ColumnTable from '../../src/table/column-table';
-import toMarkdown from '../../src/format/markdown';
+import toMarkdown from '../../src/format/to-markdown';
 
 tape('toMarkdown formats markdown table text', t => {
   const md = [
