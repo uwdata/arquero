@@ -40,7 +40,11 @@ export default function(scan, options = {}) {
       if (value === value &&  (value | 0) !== value) {
         const s = value + '';
         const p = s.indexOf('.');
-        digits = Math.max(digits, p >= 0 ? s.length - p - 1 : 0);
+        if (p >= 0) {
+          const e = s.indexOf('e');
+          const l = e > 0 ? e : s.length;
+          digits = Math.max(digits, l - p - 1);
+        }
       }
     }
   });

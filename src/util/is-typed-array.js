@@ -1,4 +1,4 @@
 export default function(value) {
-  // all typed arrays should share the same prototype
-  return value && Object.getPrototypeOf(value) === Int8Array.prototype;
+  // all typed arrays should share the same method prototype
+  return value && value.map === Int8Array.prototype.map;
 }
