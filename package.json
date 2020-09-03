@@ -25,7 +25,7 @@
     "prebuild": "rimraf dist && mkdir dist",
     "build": "rollup -c",
     "lint": "yarn eslint src test --ext .js",
-    "test": "tape 'test/**/*-test.js' --require esm",
+    "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' --require esm",
     "prepublishOnly": "yarn test && yarn lint && yarn build"
   },
   "dependencies": {
