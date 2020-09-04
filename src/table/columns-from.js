@@ -21,7 +21,7 @@ export default function(values, names) {
 
 function isArrow(value) {
   return value
-    & value.schema && isArray(value.schema.fields)
+    && value.schema && isArray(value.schema.fields)
     && isFunction(value.getColumn);
 }
 
