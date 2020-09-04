@@ -314,22 +314,21 @@ export default class Table {
     const filter = this._filter;
     const nrows = this._nrows;
     const data = this._data;
+
     let i = 0;
+    const stop = () => i = this._total;
 
     if (ordered && this.isOrdered() || filter && this._index) {
       const index = this._index = this.indices(true);
       const data = this._data;
-      const stop = () => i = nrows;
       for (; i < nrows; ++i) {
         fn(index[i], data, stop);
       }
     } else if (filter) {
-      const stop = () => i = -1;
       for (i = filter.next(0); i >= 0; i = filter.next(i + 1)) {
         fn(i, data, stop);
       }
     } else {
-      const stop = () => i = nrows;
       for (; i < nrows; ++i) {
         fn(i, data, stop);
       }
