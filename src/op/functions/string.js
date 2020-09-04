@@ -1,13 +1,13 @@
 export default {
   parsefloat:  (str) => Number.parseFloat(str),
   parseint:    (str, radix) => Number.parseInt(str, radix),
-  endswith:    (str, search, length) => str.endsWith(search, length),
+  endswith:    (str, search, length) => String(str).endsWith(search, length),
   match:       (regexp, str) => regexp.test(str),
-  upper:       (str) => str.toUpperCase(),
-  lower:       (str) => str.toLowerCase(),
-  replace:     (str, pattern, replacement) => str.replace(pattern, replacement),
-  substring:   (str, start, end) => str.substring(start, end),
-  split:       (str, separator, limit) => str.split(separator, limit),
-  startswith:  (str, search, length) => str.startsWith(search, length),
-  trim:        (str) => str.trim()
+  upper:       (str) => String(str).toUpperCase(),
+  lower:       (str) => String(str).toLowerCase(),
+  replace:     (str, pattern, replacement) => String(str).replace(pattern, replacement),
+  substring:   (str, start, end) => String(str).substring(start, end),
+  split:       (str, separator, limit) => String(str).split(separator, limit),
+  startswith:  (str, search, length) => String(str).startsWith(search, length),
+  trim:        (str) => String(str).trim()
 };
