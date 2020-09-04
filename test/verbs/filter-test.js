@@ -33,16 +33,23 @@ tape('filter filters a filtered table', t => {
   t.end();
 });
 
+tape('filter supports value functions', t => {
+  const cols = { a: ['aa', 'ab', 'ba', 'bb'], b: [2, 4, 6, 8] };
+  const ft = table(cols).filter(d => op.startswith(d.a, 'a'));
+  tableEqual(t, ft, { a: ['aa', 'ab'], b: [2, 4] }, 'filter data');
+  t.end();
+});
+
 tape('filter supports aggregate functions', t => {
   const cols = { a: [1, 3, 5, 7], b: [2, 4, 6, 8] };
-  const ft = table(cols).filter(({ a }) => a < op.median(a)).reify();
+  const ft = table(cols).filter(({ a }) => a < op.median(a));
   tableEqual(t, ft, { a: [1, 3], b: [2, 4] }, 'filter data');
   t.end();
 });
 
 tape('filter supports window functions', t => {
   const cols = { a: [1, 3, 5, 7], b: [2, 4, 6, 8]};
-  const ft = table(cols).filter(({ a }) => op.lag(a) > 2).reify();
+  const ft = table(cols).filter(({ a }) => op.lag(a) > 2);
   tableEqual(t, ft, { a: [5, 7], b: [6, 8] }, 'filter data');
   t.end();
 });

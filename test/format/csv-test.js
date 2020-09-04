@@ -1,5 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
+import BitSet from '../../src/table/bit-set';
 import ColumnTable from '../../src/table/column-table';
 import fromCSV from '../../src/format/from-csv';
 import toCSV from '../../src/format/to-csv';
@@ -29,6 +30,17 @@ tape('toCSV formats delimited text', t => {
     text.slice(0, 3)
       .map(s => s.split(',').slice(0, 2).join(','))
       .join('\n'),
+    'csv text with limit'
+  );
+  t.end();
+});
+
+tape('toCSV formats delimited text for filtered table', t => {
+  const bs = new BitSet(3).not(); bs.clear(1);
+  const dt = new ColumnTable(data(), bs);
+  t.equal(
+    toCSV(dt),
+    [ ...text.slice(0, 2), ...text.slice(3) ].join('\n'),
     'csv text with limit'
   );
   t.end();
