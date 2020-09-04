@@ -1,5 +1,4 @@
 import error from '../util/error';
-import isArray from '../util/is-array';
 import isDate from '../util/is-date';
 import isFunction from '../util/is-function';
 import isObject from '../util/is-object';
@@ -13,23 +12,9 @@ export default function(values, names) {
     : isDate(values) ? raise('Date')
     : isRegExp(values) ? raise('RegExp')
     : isString(values) ? raise()
-    : isArrow(values) ? fromArrow(values, names)
     : isFunction(values[iter]) ? fromValues(values[iter](), names)
     : isObject(values) ? fromKeyValuePairs(Object.entries(values), names)
     : raise();
-}
-
-function isArrow(value) {
-  return value
-    && value.schema && isArray(value.schema.fields)
-    && isFunction(value.getColumn);
-}
-
-function fromArrow(table, names) {
-  const columns = {};
-  names = names || table.schema.fields.map(f => f.name);
-  names.forEach(name => columns[name] = table.getColumn(name));
-  return columns;
 }
 
 function fromKeyValuePairs(entries, names = ['key', 'value']) {
