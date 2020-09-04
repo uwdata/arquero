@@ -1,10 +1,15 @@
-import { nodeResolve } from '@rollup/plugin-node-resolve';
+import json from '@rollup/plugin-json';
 import bundleSize from 'rollup-plugin-bundle-size';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 
 export default {
   input: 'src/index.js',
-  plugins: [ nodeResolve({ modulesOnly: true }), bundleSize() ],
+  plugins: [
+    json(),
+    bundleSize(),
+    nodeResolve({ modulesOnly: true })
+  ],
   output: [
     {
       file: 'dist/arquero.js',
