@@ -1,5 +1,6 @@
 import error from '../util/error';
 import repeat from '../util/repeat';
+import { numRows } from '../format/util';
 
 /**
  * Abstract class representing a data table.
@@ -234,8 +235,13 @@ export default class Table {
     } else if (options.limit == null) {
       options.limit = 10;
     }
-    console.log(this[Symbol.toStringTag]); // eslint-disable-line no-console
-    console.table(this.objects(options));  // eslint-disable-line no-console
+
+    const show = numRows(this, options.limit);
+    const msg = `${this[Symbol.toStringTag]}. Showing ${show} rows.`;
+    const obj = this.objects(options);
+
+    console.log(msg);   // eslint-disable-line no-console
+    console.table(obj); // eslint-disable-line no-console
   }
 
   /**
