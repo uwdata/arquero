@@ -228,9 +228,14 @@ export default class Table {
    * @param {ObjectsOptions} options The options for row object generation,
    *  determining which rows and columns are printed.
    */
-  print(options) {
-    // eslint-disable-next-line no-console
-    console.table(this.objects(options));
+  print(options = {}) {
+    if (typeof options === 'number') {
+      options = { limit: 10 };
+    } else if (options.limit == null) {
+      options.limit = 10;
+    }
+    console.log(this[Symbol.toStringTag]); // eslint-disable-line no-console
+    console.table(this.objects(options));  // eslint-disable-line no-console
   }
 
   /**
