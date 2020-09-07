@@ -3,17 +3,12 @@ import isString from '../util/is-string';
 
 export default function(table, columns) {
   const data = {};
-  const used = new Set();
 
-  for (const key in columns) {
-    const value = columns[key];
-    const name = isString(value) ? value : (value ? key : null);
-    if (name != null && !used.has(name)) {
-      const col = table.column(name);
-      col
-        ? data[key] = col
-        : error(`Unrecognized column: ${name}`);
-      used.add(name);
+  for (const curr in columns) {
+    const value = columns[curr];
+    const next = isString(value) ? value : curr;
+    if (next) {
+      data[next] = table.column(curr) || error(`Unrecognized column: ${curr}`);
     }
   }
 

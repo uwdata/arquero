@@ -25,19 +25,19 @@ export default function resolve(table, sel, map = {}) {
 
 /**
  * Select all columns in a table.
- * Returns a function-valued selection compatible with {@link Table.select}.
- * @return {Function} Selection function compatible with {@link Table.select}.
+ * Returns a function-valued selection compatible with {@link Table#select}.
+ * @return {Function} Selection function compatible with {@link Table#select}.
  */
 export function all() {
   return table => table.columnNames();
 }
 
 /**
- * Negate a column selection, to select all other columns in a table.
- * Returns a function-valued selection compatible with {@link Table.select}.
+ * Negate a column selection, selecting all other columns in a table.
+ * Returns a function-valued selection compatible with {@link Table#select}.
  * @param {...any} selection The selection to negate. May be a column name,
  *  column index, array of either, or a selection function (e.g., from range).
- * @return {Function} Selection function compatible with {@link Table.select}.
+ * @return {Function} Selection function compatible with {@link Table#select}.
  */
 export function not(...selection) {
   selection = selection.flat();
@@ -51,12 +51,13 @@ export function not(...selection) {
  * Select a contiguous range of columns.
  * @param {string|number} start The name/index of the first selected column.
  * @param {string|number} end The name/index of the last selected column.
- * @return {Function} Selection function compatible with {@link Table.select}.
+ * @return {Function} Selection function compatible with {@link Table#select}.
  */
 export function range(start, end) {
   return table => {
-    const i = isNumber(start) ? start : table.columnIndex(start);
-    const j = isNumber(end) ? end : table.columnIndex(end);
+    let i = isNumber(start) ? start : table.columnIndex(start);
+    let j = isNumber(end) ? end : table.columnIndex(end);
+    if (j < i) { const t = j; j = i; i = t; }
     return table.columnNames().slice(i, j + 1);
   };
 }

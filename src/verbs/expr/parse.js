@@ -13,7 +13,7 @@ export default function(name, table, params, options = { window: false }) {
   const marshal = param => {
     param = isNumber(param) ? table.columnName(param) : param;
     isString(param) ? (exprs[param] = field(param))
-      : isFunction(param) ? Object.values(resolve(table, param)).forEach(marshal)
+      : isFunction(param) ? Object.keys(resolve(table, param)).forEach(marshal)
       : isObject(param) ? Object.assign(exprs, param)
       : error(`Invalid ${name} value: ${param+''}`);
   };

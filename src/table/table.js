@@ -507,14 +507,19 @@ export default class Table {
 
   /**
    * Select a subset of columns into a new table, potentially renaming them.
-   * @param  {...any} columns The columns to select. The input can consist
-   *  of column name strings, objects with new column names as keys and
-   *  current column names as values (for renaming), or the output of the
-   *  selection helper functions {@link all}, {@link not}, or {@link range}.
+   * @param {string|string[]|Object|Function} columns The columns to select.
+   *  The input may consist of:
+   *  - column name strings,
+   *  - column integer indices,
+   *  - objects with current column names as keys and new column names as
+   *    values (for renaming), or
+   *  - functions that take a table as input and returns a valid selection
+   *    parameter (typically the output of the selection helper functions
+   *    {@link all}, {@link not}, or {@link range}).
    * @return {Table} A new table of selected columns.
    * @example table.select('colA', 'colB')
    * @example table.select(not('colB', 'colC'))
-   * @example table.select({ a: 'colA', b: 'colB' })
+   * @example table.select({ colA: 'newA', colB: 'newB' })
    */
   select(...columns) {
     return this.__select(this, columns.flat());
