@@ -1,4 +1,4 @@
-export default function(min, max, maxbins = 10, nice = true, minstep = 0) {
+export default function(min, max, maxbins = 15, nice = true, minstep = 0) {
   const div = [5, 2];
   const base = 10;
   const logb = Math.LN10;

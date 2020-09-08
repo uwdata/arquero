@@ -129,7 +129,7 @@ export default {
   min: (field) => Op('min', field),
 
   /**
-   * Aggregate function for the maximum values.
+   * Aggregate function for the maximum value.
    * @param {*} field The data field.
    * @return {number} The maximum value.
    */
