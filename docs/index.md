@@ -12,13 +12,12 @@ To get up and running, start with the [Introducing Arquero](https://observablehq
 
 Arquero is Spanish for "archer": if datasets are [arrows](https://arrow.apache.org/), Arquero helps their aim stay true.
 
-
 ## API Documentation
 
 * [Top-Level API](api) - All methods in the top-level Arquero namespace.
 * [Table](api/table) - Table access and output methods.
 * [Verbs](api/verbs) - Table transformation verbs.
-* [Operations](api/op) - All functions, including aggregate and window functions.
+* [Op Functions](api/op) - All functions, including aggregate and window functions.
 
 ## Example
 

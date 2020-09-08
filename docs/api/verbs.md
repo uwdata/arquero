@@ -1,10 +1,13 @@
-# Arquero Verb Reference <a href="https://uwdata.github.io/arquero"><img align="right" src="../assets/logo.svg" height="38"/></a>
+---
+title: Verbs \| Arquero API Reference
+---
+# Arquero API Reference <a href="https://uwdata.github.io/arquero"><img align="right" src="../assets/logo.svg" height="38"/></a>
 
-[Top-Level API](/arquero/api) | [Table](table) | [**Verbs**](verbs) | [Operations](op)
+[Top-Level](/arquero/api) | [Table](table) | [**Verbs**](verbs) | [Op Functions](op)
 
 * [Core Verbs](#verbs)
   * [derive](#derive)
-  * [filter](#filter),
+  * [filter](#filter)
   * [groupby](#groupby), [ungroup](#ungroup)
   * [orderby](#orderby), [unorder](#unorder)
   * [rollup](#rollup), [count](#count)
@@ -12,22 +15,15 @@
   * [select](#select)
   * [reify](#reify)
 * [Join Verbs](#joins)
-  * [join](#join), [join_left](#join_left), [join_right](#join_right), [join_full](#join_full)
-  * [cross](#cross)
-  * [lookup](#lookup)
-  * [semijoin](#semijoin)
-  * [antijoin](#antijoin)
+  * [join](#join), [join_left](#join_left), [join_right](#join_right), [join_full](#join_full), [cross](#cross), [lookup](#lookup)
+  * [semijoin](#semijoin), [antijoin](#antijoin)
 * [Reshape Verbs](#reshape)
-  * [fold](#fold)
-  * [pivot](#pivot)
-  * [spread](#spread)
-  * [unroll](#unroll)
+  * [fold](#fold), [pivot](#pivot)
+  * [spread](#spread), [unroll](#unroll)
 * [Set Verbs](#sets):
-  * [dedupe](#dedupe),
-  * [concat](#concat),
-  * [union](#union)
-  * [intersect](#intersect)
-  * [except](#except)
+  * [dedupe](#dedupe)
+  * [concat](#concat), [union](#union)
+  * [intersect](#intersect), [except](#except)
 
 <br/>
 

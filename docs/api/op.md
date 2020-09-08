@@ -1,10 +1,26 @@
-# Arquero Operations Reference <a href="https://uwdata.github.io/arquero"><img align="right" src="../assets/logo.svg" height="38"/></a>
+---
+title: Operations \| Arquero API Reference
+---
+# Arquero API Reference <a href="https://uwdata.github.io/arquero"><img align="right" src="../assets/logo.svg" height="38"/></a>
 
-[Top-Level API](/arquero/api) | [Table](table) | [Verbs](verbs) | [**Operations**](op)
+[Top-Level](/arquero/api) | [Table](table) | [Verbs](verbs) | [**Op Functions**](op)
 
 * [Standard Functions](#functions)
 * [Aggregate Functions](#aggregate)
+  * [any](#any)
+  * [bins](#bins)
+  * [count](#count), [distinct](#distinct), [valid](#valid), [invalid](#invalid)
+  * [max](#max), [min](#min),  [sum](#sum), [product](#product)
+  * [mean](#mean), [average](#average), [mode](#mode), [median](#median), [quantile](#quantile)
+  * [stdev](#stdev), [stdevp](#stdevp), [variance](#variance), [variancep](#variance)
+  * [corr](#corr), [covariance](#covariance), [covariancep](#covariancep)
+  * [values](#values), [unique](#unique)
 * [Window Functions](#window)
+  * [row_number](#row_number)
+  * [rank](#rank), [avg_rank](#avg_rank), [dense_rank](#dense_rank), [percent_rank](#percent_rank)
+  * [cume_dist](#cume_dist), [ntile](#ntile)
+  * [lag](#lag), [lead](#lead)
+  * [first_value](#first_value), [last_value](#last_value), [nth_value](#nth_value)
 
 <br/>
 
@@ -25,13 +41,6 @@ Aggregate function returning an arbitrary observed value (typically the first en
 
 * *field*: The data column or derived field.
 
-<hr/><a id="average" href="#average">#</a>
-<em>op</em>.<b>average</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
-
-Aggregate function for the average (mean) value. This operator is a synonym for [mean](#mean).
-
-* *field*: The data column or derived field.
-
 <hr/><a id="bins" href="#bins">#</a>
 <em>op</em>.<b>bins</b>(<i>field</i>[, <i>maxbins</i>, <i>nice</i>, <i>minstep</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
@@ -47,34 +56,17 @@ Aggregate function for calculating a binning scheme in terms of the minimum bin 
 
 Aggregate function to count the number of records (rows).
 
-<hr/><a id="corr" href="#corr">#</a>
-<em>op</em>.<b>corr</b>(<i>field1</i>, <i>field2</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
-
-Aggregate function for the [product-moment correlation](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient) between two variables. To instead compute a [rank correlation](https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient), compute the average ranks for each variable and then apply this function to the result.
-
-* *field1*: The first data column or derived field.
-* *field2*: The second data column or derived field.
-
-<hr/><a id="covariance" href="#covariance">#</a>
-<em>op</em>.<b>covariance</b>(<i>field1</i>, <i>field2</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
-
-Aggregate function for the sample covariance between two variables.
-
-* *field1*: The first data column or derived field.
-* *field2*: The second data column or derived field.
-
-<hr/><a id="covariancep" href="#covariancep">#</a>
-<em>op</em>.<b>covariancep</b>(<i>field1</i>, <i>field2</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
-
-Aggregate function for the population covariance between two variables.
-
-* *field1*: The first data column or derived field.
-* *field2*: The second data column or derived field.
-
 <hr/><a id="distinct" href="#distinct">#</a>
 <em>op</em>.<b>distinct</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
 Aggregate function to count the number of distinct values.
+
+* *field*: The data column or derived field.
+
+<hr/><a id="valid" href="#valid">#</a>
+<em>op</em>.<b>valid</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+
+Aggregate function to count the number of valid values. Invalid values are `null`, `undefined`, or `NaN`.
 
 * *field*: The data column or derived field.
 
@@ -92,6 +84,27 @@ Aggregate function for the maximum value.
 
 * *field*: The data column or derived field.
 
+<hr/><a id="min" href="#min">#</a>
+<em>op</em>.<b>min</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+
+Aggregate function for the minimum value.
+
+* *field*: The data column or derived field.
+
+<hr/><a id="sum" href="#sum">#</a>
+<em>op</em>.<b>sum</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+
+Aggregate function to sum values.
+
+* *field*: The data column or derived field.
+
+<hr/><a id="product" href="#product">#</a>
+<em>op</em>.<b>product</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+
+Aggregate function to multiply values.
+
+* *field*: The data column or derived field.
+
 <hr/><a id="mean" href="#mean">#</a>
 <em>op</em>.<b>mean</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
@@ -99,17 +112,10 @@ Aggregate function for the mean (average) value. This operator is a synonym for 
 
 * *field*: The data column or derived field.
 
-<hr/><a id="median" href="#median">#</a>
-<em>op</em>.<b>median</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+<hr/><a id="average" href="#average">#</a>
+<em>op</em>.<b>average</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
-Aggregate function for the median value. This operation is a shorthand for the [quantile](#quantile) value at p = 0.5.
-
-* *field*: The data column or derived field.
-
-<hr/><a id="min" href="#min">#</a>
-<em>op</em>.<b>min</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
-
-Aggregate function for the minimum value.
+Aggregate function for the average (mean) value. This operator is a synonym for [mean](#mean).
 
 * *field*: The data column or derived field.
 
@@ -120,10 +126,10 @@ Aggregate function to determine the mode (most frequent) value.
 
 * *field*: The data column or derived field.
 
-<hr/><a id="product" href="#product">#</a>
-<em>op</em>.<b>product</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+<hr/><a id="median" href="#median">#</a>
+<em>op</em>.<b>median</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
-Aggregate function to multiply values.
+Aggregate function for the median value. This operation is a shorthand for the [quantile](#quantile) value at p = 0.5.
 
 * *field*: The data column or derived field.
 
@@ -149,34 +155,6 @@ Aggregate function for the population standard deviation.
 
 * *field*: The data column or derived field.
 
-<hr/><a id="sum" href="#sum">#</a>
-<em>op</em>.<b>sum</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
-
-Aggregate function to sum values.
-
-* *field*: The data column or derived field.
-
-<hr/><a id="unique" href="#unique">#</a>
-<em>op</em>.<b>unique</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
-
-Aggregate function to collect an array of unique values. The resulting aggregate is an array containing all unique values.
-
-* *field*: The data column or derived field.
-
-<hr/><a id="valid" href="#valid">#</a>
-<em>op</em>.<b>valid</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
-
-Aggregate function to count the number of valid values. Invalid values are `null`, `undefined`, or `NaN`.
-
-* *field*: The data column or derived field.
-
-<hr/><a id="values" href="#values">#</a>
-<em>op</em>.<b>values</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
-
-Aggregate function to collect an array of values. The resulting aggregate is an array containing all observed values.
-
-* *field*: The data column or derived field.
-
 <hr/><a id="variance" href="#variance">#</a>
 <em>op</em>.<b>variance</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
@@ -188,6 +166,44 @@ Aggregate function for the sample variance.
 <em>op</em>.<b>variancep</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
 Aggregate function for the population variance.
+
+<hr/><a id="corr" href="#corr">#</a>
+<em>op</em>.<b>corr</b>(<i>field1</i>, <i>field2</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+
+Aggregate function for the [product-moment correlation](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient) between two variables. To instead compute a [rank correlation](https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient), compute the average ranks for each variable and then apply this function to the result.
+
+* *field1*: The first data column or derived field.
+* *field2*: The second data column or derived field.
+
+<hr/><a id="covariance" href="#covariance">#</a>
+<em>op</em>.<b>covariance</b>(<i>field1</i>, <i>field2</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+
+Aggregate function for the sample covariance between two variables.
+
+* *field1*: The first data column or derived field.
+* *field2*: The second data column or derived field.
+
+<hr/><a id="covariancep" href="#covariancep">#</a>
+<em>op</em>.<b>covariancep</b>(<i>field1</i>, <i>field2</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+
+Aggregate function for the population covariance between two variables.
+
+* *field1*: The first data column or derived field.
+* *field2*: The second data column or derived field.
+
+<hr/><a id="values" href="#values">#</a>
+<em>op</em>.<b>values</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+
+Aggregate function to collect an array of values. The resulting aggregate is an array containing all observed values.
+
+* *field*: The data column or derived field.
+
+<hr/><a id="unique" href="#unique">#</a>
+<em>op</em>.<b>unique</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+
+Aggregate function to collect an array of unique values. The resulting aggregate is an array containing all unique values.
+
+* *field*: The data column or derived field.
 
 <br/>
 

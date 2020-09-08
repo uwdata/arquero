@@ -1,25 +1,18 @@
+---
+title: Arquero API Reference
+---
 # Arquero API Reference <a href="https://uwdata.github.io/arquero"><img align="right" src="../assets/logo.svg" height="38"/></a>
 
-[**Top-Level API**](/arquero/api) | [Table](table) | [Verbs](verbs) | [Operations](op)
+[**Top-Level**](/arquero/api) | [Table](table) | [Verbs](verbs) | [Op Functions](op)
 
 * [Table Constructors](#table-constructors)
-  * [table](#table)
-  * [from](#from)
-  * [fromArrow](#fromArrow)
-  * [fromCSV](#fromCSV)
-  * [fromJSON](#fromJSON)
+  * [table](#table), [from](#from), [fromArrow](#fromArrow), [fromCSV](#fromCSV), [fromJSON](#fromJSON)
 * [Expression Helpers](#expression-helpers)
-  * [bin](#bin)
-  * [desc](#desc)
-  * [rolling](#rolling)
+  * [op](#op), [bin](#bin), [desc](#desc), [rolling](#rolling), [seed](#seed)
 * [Selection Helpers](#selection-helpers)
-  * [all](#all)
-  * [not](#not)
-  * [range](#range)
+  * [all](#all), [not](#not), [range](#range)
 * [Extensibility](#extensibility)
-  * [addFunction](#addFunction)
-  * [addAggregateFunction](addAggregateFunction)
-  * [addWindowFunction](addAggregateFunction)
+  * [addFunction](#addFunction), [addAggregateFunction](addAggregateFunction), [addWindowFunction](addAggregateFunction)
 
 
 <br/>

@@ -1,40 +1,29 @@
-# Arquero Table Reference <a href="https://uwdata.github.io/arquero"><img align="right" src="../assets/logo.svg" height="38"/></a>
+---
+title: Table \| Arquero API Reference
+---
+# Arquero API Reference <a href="https://uwdata.github.io/arquero"><img align="right" src="../assets/logo.svg" height="38"/></a>
 
-[Top-Level API](/arquero/api) | [**Table**](table) | [**Verbs**](verbs) | [Operations](op)
+[Top-Level](/arquero/api) | [**Table**](table) | [Verbs](verbs) | [Op Functions](op)
 
 * [Table Metadata](#metadata)
-  * [numCols](#numCols)
-  * [numRows](#numRows)
-  * [totalRows](#totalRows)
-  * [isFiltered](#isFiltered)
-  * [isGrouped](#isGrouped)
-  * [isOrdered](#isOrdered)
-  * [comparator](#foo)
-  * [groups](#groups)
-* [Table Columns](#access)
-  * [column](#column)
-  * [columnAt](#columnAt)
-  * [columnIndex](#columnIndex)
-  * [columnName](#columnName)
+  * [numCols](#numCols), [numRows](#numRows), [totalRows](#totalRows)
+  * [isFiltered](#isFiltered), [isGrouped](#isGrouped), [isOrdered](#isOrdered)
+  * [comparator](#foo), [groups](#groups)
+* [Table Columns](#columns)
+  * [column](#column), [columnAt](#columnAt)
+  * [columnIndex](#columnIndex), [columnName](#columnName)
   * [columnNames](#columnNames)
 * [Table Values](#values)
-  * [data](#data)
-  * [get](#get)
-  * [indices](#indices)
-  * [partition](#partition)
-  * [scan](#scan)
+  * [data](#data), [get](#get)
+  * [indices](#indices), [partition](#partition), [scan](#scan)
 * [Table Output](#output)
-  * [objects](#objects)
-  * [print](#print)
-  * [toCSV](#toCSV)
-  * [toHTML](#toHTML)
-  * [toJSON](#toJSON)
-  * [toMarkdown](#toMarkdown)
+  * [objects](#objects), [print](#print)
+  * [toCSV](#toCSV), [toHTML](#toHTML), [toJSON](#toJSON), [toMarkdown](#toMarkdown)
 
 
 <br/>
 
-## <a name="access">Table Access</a>
+## <a name="metadata">Table Metadata</a>
 
 <hr/><a id="numCols" href="#numCols">#</a>
 <em>table</em>.<b>numCols</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
