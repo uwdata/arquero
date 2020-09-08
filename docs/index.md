@@ -1,4 +1,4 @@
-# Arquero <a href="https://github.com/uwdata/arquero"><img align="right" src="https://github.com/uwdata/arquero/blob/master/docs/assets/logo.svg?raw=true" height="38"></img></a>
+# Arquero <a href="https://github.com/uwdata/arquero"><img align="right" src="assets/logo.svg" height="38"/></a>
 
 **Arquero** is a JavaScript library for query processing and transformation of array-backed data tables. Following the [relational algebra](https://en.wikipedia.org/wiki/Relational_algebra) and inspired by the design of [dplyr](https://dplyr.tidyverse.org/), Arquero provides a fluent API for manipulating column-oriented data frames. Arquero supports a range of data transformation tasks, including filter, sample, aggregation, window, join, and reshaping operations.
 
@@ -12,6 +12,13 @@ To get up and running, start with the [Introducing Arquero](https://observablehq
 
 Arquero is Spanish for "archer": if datasets are [arrows](https://arrow.apache.org/), Arquero helps their aim stay true.
 
+
+## API Documentation
+
+* [Top-Level API](api) - All methods in the top-level Arquero namespace.
+* [Table API](api/table) - Table member methods and transformation verbs.
+* [Operations API](api/op) - All functions, including aggregate and window functions.
+
 ## Example
 
 The core abstractions in Arquero are *data tables*, which model each column as an array of values, and *verbs* that transform data and return new tables. Verbs are table methods, allowing method chaining for multi-step transformations. Though each table is unique, many verbs reuse the underlying columns to limit duplication.
@@ -21,9 +28,9 @@ import { all, desc, op, table } from 'arquero';
 
 // Average hours of sunshine per month, from https://usclimatedata.com/.
 const dt = table({
-  'Seattle': [69,108,178,207,253,268,312,281,221,142,72,52],
-  'Chicago': [135,136,187,215,281,311,318,283,226,193,113,106],
-  'San Francisco': [165,182,251,281,314,330,300,272,267,243,189,156]
+  'Seattle': [69, 108, 178, 207, 253, 268, 312, 281, 221, 142, 72, 52],
+  'Chicago': [135, 136, 187, 215, 281, 311, 318, 283, 226, 193, 113, 106],
+  'San Francisco': [165, 182, 251, 281, 314, 330, 300, 272, 267, 243, 189, 156]
 });
 
 // Sorted differences between Seattle and Chicago.
