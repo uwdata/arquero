@@ -6,7 +6,7 @@ import ColumnTable from '../table/column-table';
  * arrays for values. String values that match the ISO standard date format
  * are parsed into JavaScript Date objects.
  * @param {string|Object} data A string in a JSON format, or a
- *  a corresponding Object instance.
+ *  corresponding Object instance.
  * @param {ColumnTable} table A new table containing the parsed values.
  */
 export default function(data) {

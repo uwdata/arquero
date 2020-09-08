@@ -74,9 +74,6 @@ export function table(columns) {
  * Create a new table from an existing object, such as an array of
  * objects or a set of key-value pairs.
  * @param {Object|Array|Map} values Data values to populate the table.
- *  If the input matches the properties of an Apache Arrow table (it
- *  has a schema property with named fields and has a getColumn method),
- *  creates a table that directly accesses the provided columns.
  *  If array-valued or iterable, imports rows for each non-null value,
  *  using the provided column names as keys for each row object. If no
  *  names are provided, the first non-null object's own keys are used.

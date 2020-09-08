@@ -11,8 +11,8 @@ import { autoType, dsvFormat } from 'd3-dsv';
  * Parse a comma-separated values (CSV) string into a table. Other
  * delimiters, such as tabs or pipes ('|'), can be specified using
  * the options argument.
- * @param {CSVParseOptions} options The formatting options.
  * @param {string} text A string in a delimited-value format.
+ * @param {CSVParseOptions} options The formatting options.
  * @param {ColumnTable} table A new table containing the parsed values.
  */
 export default function(text, options = {}) {

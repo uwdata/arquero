@@ -1,6 +1,10 @@
 import functions from './functions';
 import Op from './op';
 
+/**
+ * All table expression operations. including normal functions,
+ * aggregate functions, and window functions.
+ */
 export default {
   ...functions,
 
