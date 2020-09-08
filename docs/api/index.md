@@ -1,21 +1,25 @@
 # Arquero API Reference <a href="https://uwdata.github.io/arquero"><img align="right" src="../assets/logo.svg" height="38"/></a>
 
-* [**Top-Level API**](#)
-  * [Table Constructors](#table-constructors) - `table`, `from`, `fromCSV`, *etc.*
-  * [Expression Helpers](#expression-helpers) - `bin`, `desc`, `rolling`
-  * [Selection Helpers](#selection-helpers) - `all`, `not`, `range`
-  * [Extensibility](#extensibility) - `addFunction`, `addAggregateFunction`, `addWindowFunction`
-* [Table API](table)
-  * [Table Accessors](table/#accessors) - `numRows`, `numCols`, `columnNames`, `column`, `get`, *etc.*
-  * [Table Output](table/#output) - `objects`, `print`, `toCSV`, `toJSON`, `toHTML`, *etc.*
-  * [Transformation Verbs](table/#verbs) - `select`, `filter`, `groupby`, `orderby`, `derive`, `rollup`, *etc.*
-  * [Reshaping Verbs](table/#reshape) - `fold`, `pivot`, `spread`, `unroll`
-  * [Join Verbs](table/#joins) - `join`, `cross`, `semijoin`, `antijoin`
-  * [Set Operation Verbs](table/#setops) - `concat`, `union`, `intersect`, `except`
-* [Operations API](op)
-  * [Standard Functions](op/#functions) - `sqrt`, `lower`, `match`, `month`, *etc.*
-  * [Aggregate Functions](op/#aggregate) - `count`, `sum`, `mean`, `stdev`, *etc.*
-  * [Window Functions](op/#window) - `rank`, `row_number`, `lag`, `lead`, *etc.*
+[**Top-Level API**](/arquero/api) | [Table](table) | [Verbs](verbs) | [Operations](op)
+
+* [Table Constructors](#table-constructors)
+  * [table](#table)
+  * [from](#from)
+  * [fromArrow](#fromArrow)
+  * [fromCSV](#fromCSV)
+  * [fromJSON](#fromJSON)
+* [Expression Helpers](#expression-helpers)
+  * [bin](#bin)
+  * [desc](#desc)
+  * [rolling](#rolling)
+* [Selection Helpers](#selection-helpers)
+  * [all](#all)
+  * [not](#not)
+  * [range](#range)
+* [Extensibility](#extensibility)
+  * [addFunction](#addFunction)
+  * [addAggregateFunction](addAggregateFunction)
+  * [addWindowFunction](addAggregateFunction)
 
 
 <br/>
@@ -98,7 +102,7 @@ Methods for invoking or modifying table expressions.
 <hr/><a id="op" href="#op">#</a>
 <em>aq</em>.<b>op</b> · [Source](https://github.com/uwdata/arquero/blob/master/src/op/op-api.js)
 
-All table expression operations, including normal functions, aggregate functions, and window functions. See the [Operations API Reference](op) for documentation of all available functions.
+All table expression operations, including standard functions, aggregate functions, and window functions. See the [Operations API Reference](op) for documentation of all available functions.
 
 <hr/><a id="bin" href="#bin">#</a>
 <em>aq</em>.<b>bin</b>(<i>name</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/bin.js)
@@ -164,12 +168,12 @@ Set a seed value for random number generation. If the seed is a valid number, a 
 
 ## <a name="selection-helpers">Selection Helpers</a>
 
-Methods for selecting columns. The result of these methods can be passed as arguments to [select](table/#select), [groupby](table/#groupby), [join](table/#join) and other transformation verbs.
+Methods for selecting columns. The result of these methods can be passed as arguments to [select](verbs/#select), [groupby](verbs/#groupby), [join](verbs/#join) and other transformation verbs.
 
 <hr/><a id="all" href="#all">#</a>
 <em>aq</em>.<b>all</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
 
-Select all columns in a table. Returns a function-valued selection compatible with [select](table/#select).
+Select all columns in a table. Returns a function-valued selection compatible with [select](verbs/#select).
 
 *Examples*
 
@@ -181,7 +185,7 @@ aq.all()
 <hr/><a id="not" href="#not">#</a>
 <em>aq</em>.<b>not</b>(<i>selection</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
 
-Negate a column *selection*, selecting all other columns in a table. Returns a function-valued selection compatible with [select](table/#select).
+Negate a column *selection*, selecting all other columns in a table. Returns a function-valued selection compatible with [select](verbs/#select).
 
 * *selection*: The selection to negate. May be a column name, column index, array of either, or a selection function (e.g., from [range](#range)).
 
@@ -199,7 +203,7 @@ aq.not(aq.range(2, 5))
 <hr/><a id="range" href="#range">#</a>
 <em>aq</em>.<b>range</b>(<i>start</i>, <i>stop</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
 
-Select a contiguous range of columns. Returns a function-valued selection compatible with [select](table/#select).
+Select a contiguous range of columns. Returns a function-valued selection compatible with [select](verbs/#select).
 
 * *start*: The name or integer index of the first selected column.
 * *stop*: The name or integer index of the last selected column.

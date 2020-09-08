@@ -1,17 +1,16 @@
-# Arquero Operations API Reference <a href="https://uwdata.github.io/arquero"><img align="right" src="../assets/logo.svg" height="38"/></a>
+# Arquero Operations Reference <a href="https://uwdata.github.io/arquero"><img align="right" src="../assets/logo.svg" height="38"/></a>
 
-* [Top-Level API](..)
-* [Table API](table)
-* [**Operations API**](op)
-  * [Standard Functions](#functions)
-  * [Aggregate Functions](#aggregate)
-  * [Window Functions](#window)
+[Top-Level API](/arquero/api) | [Table](table) | [Verbs](verbs) | [**Operations**](op)
+
+* [Standard Functions](#functions)
+* [Aggregate Functions](#aggregate)
+* [Window Functions](#window)
 
 <br/>
 
 ## <a name="functions">Standard Functions</a>
 
-Under construction.
+Under construction!
 
 <br/>
 

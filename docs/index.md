@@ -16,8 +16,9 @@ Arquero is Spanish for "archer": if datasets are [arrows](https://arrow.apache.o
 ## API Documentation
 
 * [Top-Level API](api) - All methods in the top-level Arquero namespace.
-* [Table API](api/table) - Table member methods and transformation verbs.
-* [Operations API](api/op) - All functions, including aggregate and window functions.
+* [Table](api/table) - Table access and output methods.
+* [Verbs](api/verbs) - Table transformation verbs.
+* [Operations](api/op) - All functions, including aggregate and window functions.
 
 ## Example
 
