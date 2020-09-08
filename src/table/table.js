@@ -77,7 +77,7 @@ export default class Table {
   }
 
   /**
-   * Indicates if the table's backing data is filtered.
+   * Indicates if the table has a filter applied.
    * @return {boolean} True if filtered, false otherwise.
    */
   isFiltered() {
@@ -269,8 +269,8 @@ export default class Table {
 
   /**
    * Returns an array of indices for each group in the table.
-   * If the table is not grouped, this method the results is the same
-   * as {@link indices}, but wrapped within an array.
+   * If the table is not grouped, the results is the same as
+   * {@link indices}, but wrapped within an array.
    * @return {number[][]} An array of row index arrays, one per group.
    *  The indices will be sorted and/or filtered if the table is
    *  ordered or filtered.
@@ -436,7 +436,7 @@ export default class Table {
    * any copying. To create a table with sorted data copied to new data
    * strucures, call {@link Table#reify} on the result of this method.
    * To undo ordering, use {@link Table#unorder}.
-   * @param  {...any} values Key values to sort by, in precedence order.
+   * @param  {...any} keys Key values to sort by, in precedence order.
    *  By default, sorting is done in ascending order.
    *  To sort in descending order, wrap values using {@link desc}.
    *  If a string, order by the column with that name.
@@ -446,7 +446,7 @@ export default class Table {
    *  If an object, object values must be valid values parameters
    *  with output column names for keys and table expressions
    *  for values (the output names will be ignored).
-   *  If an array, array values must be valid values parameters.
+   *  If an array, array values must be valid key parameters.
    * @return {Table} A new ordered table.
    * @example table.orderby('a', desc('b'))
    * @example table.orderby({ a: 'a', b: desc('b') )})
@@ -880,7 +880,7 @@ export default class Table {
   }
 
   /**
-   * Perform a anti-join, filtering the left table to only rows that
+   * Perform an anti-join, filtering the left table to only rows that
    * do *not* match a row in the right table.
    * @param {Table} other The other (right) table to join with.
    * @param {Array|Function} [on] The join criteria for matching table rows.
@@ -958,7 +958,7 @@ export default class Table {
    * This transformation is similar to a series of {@link Table#antijoin}
    * calls, but additionally suppresses duplicate rows.
    * @see Table#antijoin
-   * @param  {...any} tables A list of tables to intersect.
+   * @param  {...any} tables A list of tables to difference.
    * @return {Table} A new filtered table.
    * @example table.except(other)
    * @example table.except(other1, other2)
