@@ -1,19 +1,19 @@
 # Arquero API Reference <a href="https://uwdata.github.io/arquero"><img align="right" src="../assets/logo.svg" height="38"/></a>
 
-* **Top-Level API**
+* [**Top-Level API**](#)
   * [Table Constructors](#table-constructors) - `table`, `from`, `fromCSV`, *etc.*
   * [Expression Helpers](#expression-helpers) - `bin`, `desc`, `rolling`
   * [Selection Helpers](#selection-helpers) - `all`, `not`, `range`
   * [Extensibility](#extensibility) - `addFunction`, `addAggregateFunction`, `addWindowFunction`
-* **Table API**
+* [Table API](table)
   * [Table Accessors](table/#accessors) - `numRows`, `numCols`, `columnNames`, `column`, `get`, *etc.*
   * [Table Output](table/#output) - `objects`, `print`, `toCSV`, `toJSON`, `toHTML`, *etc.*
   * [Transformation Verbs](table/#verbs) - `select`, `filter`, `groupby`, `orderby`, `derive`, `rollup`, *etc.*
   * [Reshaping Verbs](table/#reshape) - `fold`, `pivot`, `spread`, `unroll`
   * [Join Verbs](table/#joins) - `join`, `cross`, `semijoin`, `antijoin`
   * [Set Operation Verbs](table/#setops) - `concat`, `union`, `intersect`, `except`
-* **Operations API**
-  * [Normal Functions](op/#functions) - `sqrt`, `lower`, `match`, `month`, *etc.*
+* [Operations API](op)
+  * [Standard Functions](op/#functions) - `sqrt`, `lower`, `match`, `month`, *etc.*
   * [Aggregate Functions](op/#aggregate) - `count`, `sum`, `mean`, `stdev`, *etc.*
   * [Window Functions](op/#window) - `rank`, `row_number`, `lag`, `lead`, *etc.*
 
