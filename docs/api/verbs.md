@@ -173,9 +173,8 @@ table.sample(50)
 table.sample(100, { replace: true })
 ```
 
-Stratified sample with dynamic sample size:
-
 ```js
+// stratified sampling with dynamic sample size
 table.groupby('colA').sample(() => op.floor(0.5 * op.count()))
 ```
 
