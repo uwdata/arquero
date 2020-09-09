@@ -66,6 +66,7 @@ Create a new <a href="table">table</a> backed by an [Apache Arrow](https://arrow
  * *arrowTable*: An Apache Arrow data table.
  * *options*: An Arrow import options object:
    * *columns*: Ordered list of column names to include.
+   * *unpack*: A boolean flag (default `false`) to unpack binary-encoded Arrow data to standard JavaScript values. Unpacking can incur an upfront time and memory cost to extract data to new arrays, but can speed up later query processing by enabling faster data access.
 
 
 <hr/><a id="fromCSV" href="#fromCSV">#</a>
