@@ -2,8 +2,8 @@ import { random } from '../../util/random';
 
 export default {
   random,
-  isnan:    Number.isNaN,
-  isfinite: Number.isFinite,
+  is_nan:    Number.isNaN,
+  is_finite: Number.isFinite,
 
   abs:      Math.abs,
   cbrt:     Math.cbrt,

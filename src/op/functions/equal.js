@@ -2,6 +2,14 @@ import isDate from '../../util/is-date';
 import isRegExp from '../../util/is-regexp';
 import isObject from '../../util/is-object';
 
+/**
+ * Compare two values for equality, using join semantics in which null
+ * !== null. If the inputs are object-valued, a deep equality check
+ * of array entries or object key-value pairs is performed.
+ * @param {*} a The first input.
+ * @param {*} b The second input.
+ * @return {boolean} True if equal, false if not.
+ */
 export default function equal(a, b) {
   return (a == null || b == null || a !== a || b !== b) ? false
     : a === b ? true

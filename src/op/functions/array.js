@@ -1,3 +1,5 @@
+import isValid from '../../util/is-valid';
+
 export default {
   concat:      (...values) => [].concat(...values),
   join:        (array, delim) => array.join(delim),
@@ -5,7 +7,7 @@ export default {
   indexof:     (seq, value) => seq.indexOf(value),
   lastindexof: (seq, value) => seq.lastIndexOf(value),
   length:      (seq) => seq.length,
-  pluck:       (array, property) => array.map(v => v[property]),
+  pluck:       (array, property) => array.map(v => isValid(v)? v[property] : undefined),
   slice:       (seq, start, end) => seq.slice(start, end),
   reverse:     (array) => array.slice().reverse()
 };

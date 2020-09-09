@@ -8,7 +8,8 @@ const t = d => (t0.setTime(+d), t0);
 
 /**
  * Function to create a new Date value.
- * @param {number} year The year.
+ * If no arguments are provided, the current time is used.
+ * @param {number} [year] The year.
  * @param {number} [month=0] The (zero-based) month.
  * @param {number} [date=1] The date within the month.
  * @param {number} [hours=0] The hour within the day.
@@ -18,15 +19,43 @@ const t = d => (t0.setTime(+d), t0);
  * @return {date} The resuting Date value.
  */
 function datetime(year, month, date, hours, minutes, seconds, milliseconds) {
-  return new Date(
-    year,
-    month || 0,
-    date == null ? 1 : date,
-    hours || 0,
-    minutes || 0,
-    seconds || 0,
-    milliseconds || 0
-  );
+  return !arguments.length
+    ? new Date(Date.now())
+    : new Date(
+        year,
+        month || 0,
+        date == null ? 1 : date,
+        hours || 0,
+        minutes || 0,
+        seconds || 0,
+        milliseconds || 0
+      );
+}
+
+/**
+ * Function to create a new Date value according to UTC time.
+ * If no arguments are provided, the current time is used.
+ * @param {number} [year] The year.
+ * @param {number} [month=0] The (zero-based) month.
+ * @param {number} [date=1] The date within the month.
+ * @param {number} [hours=0] The hour within the day.
+ * @param {number} [minutes=0] The minute within the hour.
+ * @param {number} [seconds=0] The second within the minute.
+ * @param {number} [milliseconds=0] The milliseconds within the second.
+ * @return {date} The resuting Date value.
+ */
+function utcdatetime(year, month, date, hours, minutes, seconds, milliseconds) {
+  return !arguments.length
+    ? new Date(Date.now())
+    : new Date(Date.UTC(
+        year,
+        month || 0,
+        date == null ? 1 : date,
+        hours || 0,
+        minutes || 0,
+        seconds || 0,
+        milliseconds || 0
+      ));
 }
 
 function dayofyear(date) {
@@ -95,8 +124,8 @@ export default {
   datetime,
   dayofyear,
   week,
+  utcdatetime,
   utcdayofyear,
   utcweek,
-  now: Date.now,
-  utc: Date.UTC
+  now: Date.now
 };
