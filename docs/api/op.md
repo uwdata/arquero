@@ -12,8 +12,7 @@ title: Operations \| Arquero API Reference
   * [Object Functions](#object-functions)
   * [String Functions](#string-functions)
 * [Aggregate Functions](#aggregate)
-  * [any](#any)
-  * [bins](#bins)
+  * [any](#any), [bins](#bins)
   * [count](#count), [distinct](#distinct), [valid](#valid), [invalid](#invalid)
   * [max](#max), [min](#min),  [sum](#sum), [product](#product)
   * [mean](#mean), [average](#average), [mode](#mode), [median](#median), [quantile](#quantile)
@@ -21,11 +20,9 @@ title: Operations \| Arquero API Reference
   * [corr](#corr), [covariance](#covariance), [covariancep](#covariancep)
   * [values](#values), [unique](#unique)
 * [Window Functions](#window)
-  * [row_number](#row_number)
-  * [rank](#rank), [avg_rank](#avg_rank), [dense_rank](#dense_rank), [percent_rank](#percent_rank)
-  * [cume_dist](#cume_dist), [ntile](#ntile)
-  * [lag](#lag), [lead](#lead)
-  * [first_value](#first_value), [last_value](#last_value), [nth_value](#nth_value)
+  * [row_number](#row_number), [rank](#rank), [avg_rank](#avg_rank), [dense_rank](#dense_rank)
+  * [percent_rank](#percent_rank), [cume_dist](#cume_dist), [ntile](#ntile)
+  * [lag](#lag), [lead](#lead), [first_value](#first_value), [last_value](#last_value), [nth_value](#nth_value)
 
 <br/>
 
