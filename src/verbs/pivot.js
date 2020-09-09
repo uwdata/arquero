@@ -1,13 +1,12 @@
 import _pivot from '../engine/pivot';
 import parse from './expr/parse';
-import toArray from '../util/to-array';
 
 // TODO: enforce aggregates only (no output changes) for values
 export default function(table, on, values, options) {
   return _pivot(
     table,
-    parse('fold', table, toArray(on)),
-    parse('fold', table, toArray(values), { preparse }),
+    parse('fold', table, on),
+    parse('fold', table, values, { preparse }),
     options
   );
 }

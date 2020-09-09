@@ -507,7 +507,7 @@ export default class Table {
 
   /**
    * Select a subset of columns into a new table, potentially renaming them.
-   * @param {string|string[]|Object|Function} columns The columns to select.
+   * @param {string|string[]|number|number[]|Object|Function} columns The columns to select.
    *  The input may consist of:
    *  - column name strings,
    *  - column integer indices,
@@ -634,7 +634,17 @@ export default class Table {
   /**
    * Options for unroll transformations.
    * @typedef {Object} UnrollOptions
-   * @property {number} [limit=Infinity] The maximum number of new rows to generate.
+   * @property {number} [limit=Infinity] The maximum number of new rows
+   *  to generate per array value.
+   * @property {string|string[]|number|number[]|Object|Function} [drop]
+   *  A selection of columns to drop (exclude) from the unrolled output.
+   *  The input may consist of:
+   *  - column name strings,
+   *  - column integer indices,
+   *  - objects with column names as keys,
+   *  - functions that take a table as input and returns a valid selection
+   *    parameter (typically the output of the selection helper functions
+   *    {@link all}, {@link not}, or {@link range}).
    */
 
   /**

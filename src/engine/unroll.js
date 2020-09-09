@@ -2,19 +2,19 @@ import { aggregateGet } from './reduce/util';
 import toArray from '../util/to-array';
 import has from '../util/has';
 
-export default function(table, { values = {}, ops = [], drop = {} }, options = {}) {
-  const limit = options.limit > 0 ? +options.limit : Infinity;
+export default function(table, { values = {}, ops = [] }, options = {}) {
   const names = Object.keys(values);
-  const n = names.length;
-  if (n === 0) return table;
+  if (!names.length) return table;
 
+  const limit = options.limit > 0 ? +options.limit : Infinity;
+  const drop = options.drop || {};
   const get = aggregateGet(table, ops, Object.values(values));
 
   // initialize output columns
   const data = {};
   const priors = [];
   const copies = [];
-  const unrolled = Array(n);
+  const unroll = [];
 
   // original and copied columns
   table.columnNames().forEach(name => {
@@ -28,41 +28,70 @@ export default function(table, { values = {}, ops = [], drop = {} }, options = {
   });
 
   // unrolled output columns
-  names.forEach((name, i) => {
-    if (!has(data, name)) data[name] = [];
-    unrolled[i] = data[name];
+  names.forEach(name => {
+    if (!has(drop, name)) {
+      if (!has(data, name)) data[name] = [];
+      unroll.push(data[name]);
+    }
   });
 
   let index = 0;
   const m = priors.length;
+  const n = unroll.length;
 
-  table.scan((row, data) => {
-    let maxlen = 0;
-
-    // extract parallel array data
-    const arrays = get.map(fn => {
-      const value = toArray(fn(row, data));
-      maxlen = Math.min(Math.max(maxlen, value.length), limit);
-      return value;
-    });
-
-    // copy original table data
+  const copy = (row, maxlen) => {
     for (let i = 0; i < m; ++i) {
       copies[i].length = index + maxlen;
       copies[i].fill(priors[i].get(row), index, index + maxlen);
     }
+  };
 
-    // copy unrolled array data
-    for (let i = 0; i < n; ++i) {
-      const col = unrolled[i];
-      const arr = arrays[i];
+  if (n === 1) {
+    // optimize common case of one array-valued column
+    const fn = get[0];
+    const col = unroll[0];
+
+    table.scan((row, data) => {
+      // extract array data
+      const array = toArray(fn(row, data));
+      const maxlen = Math.min(array.length, limit);
+
+      // copy original table data
+      copy(row, maxlen);
+
+      // copy unrolled array data
       for (let j = 0; j < maxlen; ++j) {
-        col[index + j] = arr[j];
+        col[index + j] = array[j];
       }
-    }
 
-    index += maxlen;
-  });
+      index += maxlen;
+    });
+  } else {
+    table.scan((row, data) => {
+      let maxlen = 0;
+
+      // extract parallel array data
+      const arrays = get.map(fn => {
+        const value = toArray(fn(row, data));
+        maxlen = Math.min(Math.max(maxlen, value.length), limit);
+        return value;
+      });
+
+      // copy original table data
+      copy(row, maxlen);
+
+      // copy unrolled array data
+      for (let i = 0; i < n; ++i) {
+        const col = unroll[i];
+        const arr = arrays[i];
+        for (let j = 0; j < maxlen; ++j) {
+          col[index + j] = arr[j];
+        }
+      }
+
+      index += maxlen;
+    });
+  }
 
   return table.create({ data, filter: null, groups: null, order: null });
 }

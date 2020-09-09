@@ -1,6 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import { op, table } from '../../src/verbs';
+import { not, op, table } from '../../src/verbs';
 
 tape('unroll generates rows for array values', t => {
   const data = {
@@ -76,6 +76,37 @@ tape('unroll preserves column order', t => {
     x: [1, 2, 3, 4, 5],
     v: [0, 0, 0, 0, 0]
   }, 'unroll data');
+
+  t.end();
+});
+
+tape('unroll can drop columns', t => {
+  const dt = table({
+      x: [[1, 2, 3, 4, 5]],
+      u: [0],
+      v: [1]
+    });
+
+  tableEqual(t, dt.unroll('x', { drop: 'x' }), {
+    u: [0, 0, 0, 0, 0],
+    v: [1, 1, 1, 1, 1]
+  }, 'unroll drop-1 data');
+
+  tableEqual(t, dt.unroll('x', { drop: ['u', 'x'] }), {
+    v: [1, 1, 1, 1, 1]
+  }, 'unroll drop-2 array data');
+
+  tableEqual(t, dt.unroll('x', { drop: [0, 1] }), {
+    v: [1, 1, 1, 1, 1]
+  }, 'unroll drop-2 index data');
+
+  tableEqual(t, dt.unroll('x', { drop: { u: 1, x: 1 } }), {
+    v: [1, 1, 1, 1, 1]
+  }, 'unroll drop-2 object data');
+
+  tableEqual(t, dt.unroll('x', { drop: not('v') }), {
+    v: [1, 1, 1, 1, 1]
+  }, 'unroll drop-not data');
 
   t.end();
 });

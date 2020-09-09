@@ -9,12 +9,11 @@ export default function(table, { values = {}, ops = [] }, options = {}) {
   const as = options.as || [];
   const vals = aggregateGet(table, ops, Object.values(values));
   const exprs = {
-    drop: values,
     values: {
       [as[0] || 'key']: () => keys,
       [as[1] || 'value']: (row, data) => vals.map(fn => fn(row, data))
     }
   };
 
-  return unroll(table, exprs, options);
+  return unroll(table, exprs, { ...options, drop: values });
 }

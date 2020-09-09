@@ -7,7 +7,6 @@ import parse from '../expression/parse';
 import has from '../util/has';
 import intersect from '../util/intersect';
 import isArray from '../util/is-array';
-import toArray from '../util/to-array';
 
 const OPT_J = { join: true };
 const OPT_L = { aggregate: false, window: false };
@@ -44,10 +43,10 @@ function parseValues(tableL, tableR, values, suffix = []) {
     let vL, vR, vJ, n = values.length;
 
     if (n--) {
-      vL = parseValue('join', tableL, toArray(values[0]), OPT_L).values;
+      vL = parseValue('join', tableL, values[0], OPT_L).values;
     }
     if (n--) {
-      vR = parseValue('join', tableR, toArray(values[1]), OPT_R).values;
+      vR = parseValue('join', tableR, values[1], OPT_R).values;
     }
     if (n--) {
       vJ = parse(values[2], OPT_J).values;

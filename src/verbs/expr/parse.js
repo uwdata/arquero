@@ -6,6 +6,7 @@ import isNumber from '../../util/is-number';
 import isObject from '../../util/is-object';
 import isString from '../../util/is-string';
 import isFunction from '../../util/is-function';
+import toArray from '../../util/to-array';
 
 export default function(name, table, params, options = { window: false }) {
   const exprs = {};
@@ -18,7 +19,7 @@ export default function(name, table, params, options = { window: false }) {
       : error(`Invalid ${name} value: ${param+''}`);
   };
 
-  params.forEach(marshal);
+  toArray(params).forEach(marshal);
 
   if (options.preparse) {
     options.preparse(exprs);

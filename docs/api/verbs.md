@@ -452,14 +452,15 @@ table.spread('arrayCol', { limit: 100 })
 ```
 
 
-<hr/><a id="spread" href="#spread">#</a>
-<em>table</em>.<b>spread</b>(<i>values</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<hr/><a id="unroll" href="#unroll">#</a>
+<em>table</em>.<b>unroll</b>(<i>values</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
 Unroll one or more array-valued columns into new rows. If more than one array value is used, the number of new rows is the smaller of the limit and the largest length. Values for all other columns are copied over.
 
 * *values*: The columns to unroll, as either an array of column names or a key-value object of table expressions.
 * *options*: An options object:
-  * *limit*: The maximum number of new columns to generate (default `Infinity`).
+  * *limit*: The maximum number of new columns to generate per array value (default `Infinity`).
+  * drop: A selection of columns to drop (exclude) from the unrolled output. The input may consist of column name strings, column integer indices, objects with output names as keys (object values will be ignored), or the output of the selection helper functions [all](./#all), [not](./#not), or [range](./#range)).
 
 *Examples*
 
