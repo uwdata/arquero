@@ -156,12 +156,12 @@ table.groupby('colA').count({ as: 'num' })
 <hr/><a id="sample" href="#sample">#</a>
 <em>table</em>.<b>sample</b>(<i>size</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
-Generate a table from a random sample of rows.
+Generate a table from a random sample of rows. If the table is grouped, perform [stratified sampling](https://en.wikipedia.org/wiki/Stratified_sampling) by sampling separately from each group.
 
-* *size*: The number of samples to draw.
+* *size*: The number of samples to draw per group. If number-valued, the same sample size is used for each group. If function-valued, the input should be an aggregate table expression compatible with [rollup](#rollup).
 * *options*: An options object:
   * *replace*: Boolean flag (default `false`) to sample with replacement.
-  * *weight*: Column values to use as weights for sampling. Rows will be sampled with probability proportional to their relative weight. The input should be a column name string or a table expression.
+  * *weight*: Column values to use as weights for sampling. Rows will be sampled with probability proportional to their relative weight. The input should be a column name string or a table expression compatible with [derive](#derive).
 
 *Examples*
 
@@ -171,6 +171,12 @@ table.sample(50)
 
 ```js
 table.sample(100, { replace: true })
+```
+
+Stratified sample with dynamic sample size:
+
+```js
+table.groupby('colA').sample(() => op.floor(0.5 * op.count()))
 ```
 
 <hr/><a id="select" href="#select">#</a>

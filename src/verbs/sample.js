@@ -1,20 +1,33 @@
 import _derive from '../engine/derive';
+import _rollup from '../engine/rollup';
 import _sample from '../engine/sample';
 import parse from '../expression/parse';
 import isNumber from '../util/is-number';
 import isString from '../util/is-string';
 
 export default function(table, size, options = {}) {
-  const weight = options.weight ? parseWeight(table, options.weight) : null;
-  return _sample(table, size, weight, options);
+  return _sample(
+    table,
+    parseSize(table, size),
+    parseWeight(table, options.weight),
+    options
+  );
 }
 
-function parseWeight(table, weight) {
-  weight = isNumber(weight) ? table.columnName(weight) : weight;
+const get = col => row => col.get(row) || 0;
 
-  const col = isString(weight)
-    ? table.column(weight)
-    : _derive(table, parse({ weight })).column('weight');
+function parseSize(table, size) {
+  return isNumber(size)
+    ? () => size
+    : get(_rollup(table, parse({ size })).column('size'));
+}
 
-  return row => col[row] || 0;
+function parseWeight(table, w) {
+  if (w == null) return null;
+  w = isNumber(w) ? table.columnName(w) : w;
+  return get(
+    isString(w)
+      ? table.column(w)
+      : _derive(table, parse({ w })).column('w')
+  );
 }

@@ -2,28 +2,27 @@ import ascending from './ascending';
 import bisector from './bisector';
 import { random } from './random';
 
-export default function(size, replace, index, weight) {
+export default function(buffer, replace, index, weight) {
   return (
     replace
       ? (weight ? sampleRW : sampleRU)
       : (weight ? sampleNW : sampleNU)
-  )(size, index, weight);
+  )(buffer.length, buffer, index, weight);
 }
 
 // uniform sampling with replacement
 // uses straightforward uniform sampling
-function sampleRU(size, index) {
+function sampleRU(size, buffer, index) {
   const n = index.length;
-  const sample = new Uint32Array(size);
   for (let i = 0; i < size; ++i) {
-    sample[i] = index[(n * random()) | 0];
+    buffer[i] = index[(n * random()) | 0];
   }
-  return sample;
+  return buffer;
 }
 
 // weighted sampling with replacement
 // uses binary search lookup against cumulative weight
-function sampleRW(size, index, weight) {
+function sampleRW(size, buffer, index, weight) {
   const n = index.length;
   const w = new Float64Array(n);
 
@@ -32,40 +31,38 @@ function sampleRW(size, index, weight) {
     w[i] = (sum += weight(index[i]));
   }
 
-  const sample = new Uint32Array(size);
   const bisect = bisector(ascending).right;
   for (let i = 0; i < size; ++i) {
-    sample[i] = index[bisect(w, sum * random())];
+    buffer[i] = index[bisect(w, sum * random())];
   }
-  return sample;
+  return buffer;
 }
 
 // uniform sampling without replacement
 // uses reservoir sampling to build out the sample
 // https://en.wikipedia.org/wiki/Reservoir_sampling
-function sampleNU(size, index) {
+function sampleNU(size, buffer, index) {
   const n = index.length;
   if (size >= n) return index;
 
-  const sample = new Uint32Array(size);
   for (let i = 0; i < size; ++i) {
-    sample[i] = index[i];
+    buffer[i] = index[i];
   }
 
   for (let i = size; i < n; ++i) {
     const j = i * random();
     if (j < size) {
-      sample[j | 0] = index[i];
+      buffer[j | 0] = index[i];
     }
   }
 
-  return sample;
+  return buffer;
 }
 
 // weighted sample without replacement
 // uses method of Efraimidis and Spirakis
 // TODO: could use min-heap to improve efficiency
-function sampleNW(size, index, weight) {
+function sampleNW(size, buffer, index, weight) {
   const n = index.length;
   if (size >= n) return index;
 
@@ -77,5 +74,8 @@ function sampleNW(size, index, weight) {
   }
 
   k.sort((a, b) => w[a] - w[b]);
-  return k.slice(0, size).map(i => index[i]);
+  for (let i = 0; i < size; ++i) {
+    buffer[i] = index[k[i]];
+  }
+  return buffer;
 }

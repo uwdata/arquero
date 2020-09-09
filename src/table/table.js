@@ -490,16 +490,22 @@ export default class Table {
    * @property {Function|string} [weight] Column values to use as weights
    *  for sampling. Rows will be sampled with probability proportional to
    *  their relative weight. The input should be a column name string or
-   *  a table expression.
+   *  a table expression compatible with {@link Table#derive}.
    */
 
   /**
    * Generate a table from a random sample of rows.
-   * @param {number} size The number of samples to draw.
+   * If the table is grouped, performs a stratified sample by
+   * sampling from each group separately.
+   * @param {number|Function} size The number of samples to draw per group.
+   *  If number-valued, the same sample size is used for each group.
+   *  If function-valued, the input should be an aggregate table
+   *  expression compatible with {@link Table#rollup}.
    * @param {SampleOptions} options Options for sampling.
    * @return {Table} A new table with sampled rows.
    * @example table.sample(50)
    * @example table.sample(100, { replace: true })
+   * @example table.groupby('colA').sample(() => op.floor(0.5 * op.count()))
    */
   sample(size, options) {
     return this.__sample(this, size, options);
