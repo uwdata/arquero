@@ -169,7 +169,7 @@ Returns the zero-based month of the specified *date* according to local time. A 
 <hr/><a id="week" href="#week">#</a>
 <em>op</em>.<b>week</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
 
-Returns the week number of the year for the specified *date* according to local time.
+Returns the Sunday-based week number of the year (0-53) for the specified *date* according to local time. All days in a new year preceding the first Sunday are considered to be in week 0.
 
 * *date*: The input Date or timestamp value.
 
@@ -183,14 +183,14 @@ Returns the date (day of month) of the specified *date* according to local time.
 <hr/><a id="dayofyear" href="#dayofyear">#</a>
 <em>op</em>.<b>dayofyear</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
 
-Returns the day of the year of the specified *date* according to local time.
+Returns the day of the year (1-366) of the specified *date* according to local time.
 
 * *date*: The input Date or timestamp value.
 
 <hr/><a id="dayofweek" href="#dayofweek">#</a>
 <em>op</em>.<b>dayofweek</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
 
-Returns the day of the week of the specified *date* according to local time. A value of `0` indicates Sunday, `1` indicates Monday, and so on.
+Returns the Sunday-based day of the week (0-6) of the specified *date* according to local time. A value of `0` indicates Sunday, `1` indicates Monday, and so on.
 
 * *date*: The input Date or timestamp value.
 
@@ -260,7 +260,7 @@ Returns the zero-based month of the specified *date* according to [Coordinated U
 <hr/><a id="utcweek" href="#utcweek">#</a>
 <em>op</em>.<b>utcweek</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
 
-Returns the week number of the year for the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+Returns the Sunday-based week number of the year (0-53) for the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). All days in a new year preceding the first Sunday are considered to be in week 0.
 
 * *date*: The input Date or timestamp value.
 
@@ -274,14 +274,14 @@ Returns the date (day of month) of the specified *date* according to [Coordinate
 <hr/><a id="utcdayofyear" href="#utcdayofyear">#</a>
 <em>op</em>.<b>utcdayofyear</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
 
-Returns the day of the year of the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+Returns the day of the year (1-366) of the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
 
 * *date*: The input Date or timestamp value.
 
 <hr/><a id="utcdayofweek" href="#utcdayofweek">#</a>
 <em>op</em>.<b>utcdayofweek</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
 
-Returns the day of the week of the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). A value of `0` indicates Sunday, `1` indicates Monday, and so on.
+Returns the Sunday-based day of the week (0-6) of the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). A value of `0` indicates Sunday, `1` indicates Monday, and so on.
 
 * *date*: The input Date or timestamp value.
 

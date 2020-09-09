@@ -65,13 +65,14 @@ function dayofyear(date) {
   t0.setMonth(0);
   t0.setDate(1);
   const tz = (t1.getTimezoneOffset() - t0.getTimezoneOffset()) * msMinute;
-  return Math.floor((1 + t1 - t0 - tz) / msDay);
+  return Math.floor(1 + ((t1 - t0) - tz) / msDay);
 }
 
 function utcdayofyear(date) {
   t1.setTime(+date);
   t1.setUTCHours(0, 0, 0, 0);
-  return Math.floor(1 + t1 - Date.UTC(date.getUTCFullYear(), 0, 1)) / msDay;
+  const t0 = Date.UTC(t1.getUTCFullYear(), 0, 1);
+  return Math.floor(1 + (t1 - t0) / msDay);
 }
 
 function week(date, firstday) {
@@ -79,13 +80,13 @@ function week(date, firstday) {
   t1.setTime(+date);
   t1.setDate(t1.getDate() - (t1.getDay() + 7 - i) % 7);
   t1.setHours(0, 0, 0, 0);
-  t0.setTime(+t1);
+  t0.setTime(+date);
   t0.setMonth(0);
   t0.setDate(1);
   t0.setDate(1 - (t0.getDay() + 7 - i) % 7);
   t0.setHours(0, 0, 0, 0);
   const tz = (t1.getTimezoneOffset() - t0.getTimezoneOffset()) * msMinute;
-  return (1 + t1 - t0 - tz) / msWeek;
+  return Math.floor((1 + (t1 - t0) - tz) / msWeek);
 }
 
 function utcweek(date, firstday) {
@@ -93,12 +94,12 @@ function utcweek(date, firstday) {
   t1.setTime(+date);
   t1.setUTCDate(t1.getUTCDate() - (t1.getUTCDay() + 7 - i) % 7);
   t1.setUTCHours(0, 0, 0, 0);
-  t0.setTime(+t1);
+  t0.setTime(+date);
   t0.setUTCMonth(0);
   t0.setUTCDate(1);
   t0.setUTCDate(1 - (t0.getUTCDay() + 7 - i) % 7);
   t0.setUTCHours(0, 0, 0, 0);
-  return (1 + t1 - t0) / msWeek;
+  return Math.floor((1 + (t1 - t0)) / msWeek);
 }
 
 export default {
