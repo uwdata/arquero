@@ -23,7 +23,7 @@ title: Table \| Arquero API Reference
 
 <br/>
 
-## <a name="metadata">Table Metadata</a>
+## <a id="metadata">Table Metadata</a>
 
 <hr/><a id="numCols" href="#numCols">#</a>
 <em>table</em>.<b>numCols</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
@@ -74,7 +74,7 @@ Returns the groupby specification, if defined. A groupby specification is an obj
 
 <br/>
 
-## <a name="columns">Table Columns</a>
+## <a id="columns">Table Columns</a>
 
 <hr/><a id="column" href="#column">#</a>
 <em>table</em>.<b>column</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
@@ -117,7 +117,7 @@ Returns an array of table column names, optionally filtered.
 
 <br/>
 
-## <a name="values">Table Values</a>
+## <a id="values">Table Values</a>
 
 <hr/><a id="data" href="#data">#</a>
 <em>table</em>.<b>data</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
@@ -158,7 +158,7 @@ Perform a table scan, invoking the provided *callback* function for each row of 
 
 <br/>
 
-## <a name="output">Table Output</a>
+## <a id="output">Table Output</a>
 
 <hr/><a id="objects" href="#objects">#</a>
 <em>table</em>.<b>objects</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)

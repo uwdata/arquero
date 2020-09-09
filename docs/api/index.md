@@ -17,7 +17,7 @@ title: Arquero API Reference
 
 <br/>
 
-## <a name="table-constructors">Table Constructors</a>
+## <a id="table-constructors">Table Constructors</a>
 
 Methods for creating new table instances.
 
@@ -89,7 +89,7 @@ Parse JavaScript Object Notation (JSON) *data* into a <a href="table">table</a>.
 
 <br/>
 
-## <a name="expression-helpers">Expression Helpers</a>
+## <a id="expression-helpers">Expression Helpers</a>
 
 Methods for invoking or modifying table expressions.
 
@@ -160,7 +160,7 @@ Set a seed value for random number generation. If the seed is a valid number, a 
 
 <br/>
 
-## <a name="selection-helpers">Selection Helpers</a>
+## <a id="selection-helpers">Selection Helpers</a>
 
 Methods for selecting columns. The result of these methods can be passed as arguments to [select](verbs/#select), [groupby](verbs/#groupby), [join](verbs/#join) and other transformation verbs.
 
@@ -215,7 +215,7 @@ aq.range(2, 5)
 
 <br/>
 
-## <a name="extensibility">Extensibility</a>
+## <a id="extensibility">Extensibility</a>
 
 Methods for adding new functions for use in table expressions.
 

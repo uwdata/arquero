@@ -6,6 +6,11 @@ title: Operations \| Arquero API Reference
 [Top-Level](/arquero/api) | [Table](table) | [Verbs](verbs) | [**Op Functions**](op)
 
 * [Standard Functions](#functions)
+  * [Array Functions](#array-functions)
+  * [Date Functions](#date-functions)
+  * [Math Functions](#math-functions)
+  * [Object Functions](#object-functions)
+  * [String Functions](#string-functions)
 * [Aggregate Functions](#aggregate)
   * [any](#any)
   * [bins](#bins)
@@ -24,18 +29,702 @@ title: Operations \| Arquero API Reference
 
 <br/>
 
-## <a name="functions">Standard Functions</a>
+## <a id="functions">Standard Functions</a>
 
-Under construction!
+Standard library of table expression functions. The [`op` object](./#op) exports these as standard JavaScript functions that behave the same whether invoked inside or outside a table expression context.
+
+### <a id="array-functions">Array Functions</a>
+
+<hr/><a id="concat" href="#concat">#</a>
+<em>op</em>.<b>concat</b>(<i>...values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/sequence.js)
+
+Merges two or more arrays in sequence, returning a new array.
+
+* *values*: The arrays to merge.
+
+<hr/><a id="join" href="#join">#</a>
+<em>op</em>.<b>join</b>(<i>array</i>[, <i>delimiter</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
+
+Creates and returns a new string by concatenating all of the elements in an *array* (or an array-like object), separated by commas or a specified *delimiter* string. If the *array* has only one item, then that item will be returned without using the delimiter.
+
+* *array*: The input array value.
+* *join*: The delimiter string (default `','`).
+
+<hr/><a id="includes" href="#includes">#</a>
+<em>op</em>.<b>includes</b>(<i>array</i>, <i>value</i>[, <i>index</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
+
+Determines whether an *array* includes a certain *value* among its entries, returning `true` or `false` as appropriate.
+
+* *array*: The input array value.
+* *value*: The value to search for.
+* *index*: The integer index to start searcing from (default `0`).
+
+<hr/><a id="indexof" href="#indexof">#</a>
+<em>op</em>.<b>indexof</b>(<i>sequence</i>, <i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
+
+Returns the first index at which a given *value* can be found in the *sequence* (array or string), or -1 if it is not present.
+
+* *sequence*: The input array or string value.
+* *value*: The value to search for.
+
+<hr/><a id="lastindexof" href="#lastindexof">#</a>
+<em>op</em>.<b>lastindexof</b>(<i>sequence</i>, <i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
+
+Returns the last index at which a given *value* can be found in the *sequence* (array or string), or -1 if it is not present.
+
+* *sequence*: The input array or string value.
+* *value*: The value to search for.
+
+<hr/><a id="length" href="#length">#</a>
+<em>op</em>.<b>length</b>(<i>sequence</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
+
+Returns the length of the input *sequence* (array or string).
+
+* *sequence*: The input array or string value.
+
+<hr/><a id="pluck" href="#pluck">#</a>
+<em>op</em>.<b>pluck</b>(<i>array</i>, <i>property</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
+
+Returns a new array in which the given *property* has been extracted for each element in the input *array*.
+
+* *array*: The input array value.
+* *property*: The property name string to extract. Nested properties are not supported: the input `"a.b"` will indicates a property with that exact name, *not* a nested property `"b"` of the object `"a"`.
+
+<hr/><a id="slice" href="#slice">#</a>
+<em>op</em>.<b>slice</b>(<i>sequence</i>[, <i>start</i>, <i>end</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
+
+Returns a copy of a portion of the input *sequence* (array or string) selected from *start* to *end* (*end* not included) where *start* and *end* represent the index of items in the sequence.
+
+* *sequence*: The input array or string value.
+* *start*: The starting integer index to copy from (inclusive, default `0`).
+* *end*: The ending integer index to copy from (exclusive, default `sequence.length`).
+
+<hr/><a id="reverse" href="#reverse">#</a>
+<em>op</em>.<b>reverse</b>(<i>array</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
+
+Returns a new array with the element order reversed: the first *array* element becomes the last, and the last *array* element becomes the first. The input *array* is unchanged.
+
+* *array*: The input array value.
+
+<hr/><a id="sequence" href="#sequence">#</a>
+<em>op</em>.<b>sequence</b>([<i>start</i>,] <i>stop</i>[, <i>step</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/sequence.js)
+
+Returns an array containing an arithmetic sequence from the *start* value to the *stop* value, in *step* increments. If *step* is positive, the last element is the largest _start + i * step_ less than *stop*; if *step* is negative, the last element is the smallest _start + i * step_ greater than *stop*. If the returned array would contain an infinite number of values, an empty range is returned.
+
+* *start*: The starting value of the sequence (default `0`).
+* *stop*: The stopping value of the sequence. The stop value is exclusive; it is not included in the result.
+* *step*: The step increment between sequence values (default `1`).
+
+
+<br>
+
+### <a id="date-functions">Date Functions</a>
+
+<hr/><a id="now" href="#now">#</a>
+<em>op</em>.<b>now</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the current time as the number of milliseconds elapsed since January 1, 1970 00:00:00 UTC.
+
+<hr/><a id="timestamp" href="#timestamp">#</a>
+<em>op</em>.<b>timestamp</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the timestamp for a *date* as the number of milliseconds elapsed since January 1, 1970 00:00:00 UTC.
+
+* *date*: The input Date value.
+
+<hr/><a id="datetime" href="#datetime">#</a>
+<em>op</em>.<b>datetime</b>([<i>year</i>, <i>month</i>, <i>date</i>, <i>hours</i>, <i>minutes</i>, <i>seconds</i>, <i>milliseconds</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Creates and returns a new Date value. If no arguments are provided, the current date and time are used.
+
+* *year*: The year.
+* *month* The (zero-based) month (default `0`).
+* *date* The date within the month (default `1`).
+* hours: The hour within the day (default `0`).
+* *minutes*: The minute within the hour (default `0`).
+* *seconds*: The second within the minute (default `0`).
+* *milliseconds*: The milliseconds within the second (default `0`).
+
+<hr/><a id="year" href="#year">#</a>
+<em>op</em>.<b>year</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the year of the specified *date* according to local time.
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="quarter" href="#quarter">#</a>
+<em>op</em>.<b>quarter</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the zero-based quarter of the specified *date* according to local time.
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="month" href="#month">#</a>
+<em>op</em>.<b>month</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the zero-based month of the specified *date* according to local time. A value of `0` indicates January, `1` indicates February, and so on.
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="week" href="#week">#</a>
+<em>op</em>.<b>week</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the week number of the year for the specified *date* according to local time.
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="date" href="#date">#</a>
+<em>op</em>.<b>date</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the date (day of month) of the specified *date* according to local time.
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="dayofyear" href="#dayofyear">#</a>
+<em>op</em>.<b>dayofyear</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the day of the year of the specified *date* according to local time.
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="dayofweek" href="#dayofweek">#</a>
+<em>op</em>.<b>dayofweek</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the day of the week of the specified *date* according to local time. A value of `0` indicates Sunday, `1` indicates Monday, and so on.
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="hours" href="#hours">#</a>
+<em>op</em>.<b>hours</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the hour of the day for the specified *date* according to local time.
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="minutes" href="#minutes">#</a>
+<em>op</em>.<b>minutes</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the minute of the hour for the specified *date* according to local time.
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="seconds" href="#seconds">#</a>
+<em>op</em>.<b>seconds</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the seconds of the minute for the specified *date* according to local time.
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="milliseconds" href="#milliseconds">#</a>
+<em>op</em>.<b>milliseconds</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the milliseconds of the second for the specified *date* according to local time.
+
+* *date*: The input Date or timestamp value.
+
+
+<hr/><a id="utcdatetime" href="#utcdatetime">#</a>
+<em>op</em>.<b>utcdatetime</b>([<i>year</i>, <i>month</i>, <i>date</i>, <i>hours</i>, <i>minutes</i>, <i>seconds</i>, <i>milliseconds</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Creates and returns a new Date value using [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). If no arguments are provided, the current date and time are used.
+
+* *year*: The year.
+* *month* The (zero-based) month (default `0`).
+* *date* The date within the month (default `1`).
+* hours: The hour within the day (default `0`).
+* *minutes*: The minute within the hour (default `0`).
+* *seconds*: The second within the minute (default `0`).
+* *milliseconds*: The milliseconds within the second (default `0`).
+
+<hr/><a id="utcyear" href="#utcyear">#</a>
+<em>op</em>.<b>utcyear</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the year of the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="utcquarter" href="#utcquarter">#</a>
+<em>op</em>.<b>utcquarter</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the zero-based quarter of the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="utcmonth" href="#utcmonth">#</a>
+<em>op</em>.<b>utcmonth</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the zero-based month of the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). A value of `0` indicates January, `1` indicates February, and so on.
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="utcweek" href="#utcweek">#</a>
+<em>op</em>.<b>utcweek</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the week number of the year for the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="utcdate" href="#utcdate">#</a>
+<em>op</em>.<b>utcdate</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the date (day of month) of the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="utcdayofyear" href="#utcdayofyear">#</a>
+<em>op</em>.<b>utcdayofyear</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the day of the year of the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="utcdayofweek" href="#utcdayofweek">#</a>
+<em>op</em>.<b>utcdayofweek</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the day of the week of the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). A value of `0` indicates Sunday, `1` indicates Monday, and so on.
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="utchours" href="#utchours">#</a>
+<em>op</em>.<b>utchours</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the hour of the day for the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="utcminutes" href="#utcminutes">#</a>
+<em>op</em>.<b>utcminutes</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the minute of the hour for the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="utcseconds" href="#utcseconds">#</a>
+<em>op</em>.<b>utcseconds</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the seconds of the minute for the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+
+* *date*: The input Date or timestamp value.
+
+<hr/><a id="utcmilliseconds" href="#utcmilliseconds">#</a>
+<em>op</em>.<b>utcmilliseconds</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns the milliseconds of the second for the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+
+* *date*: The input Date or timestamp value.
+
+
+<br>
+
+### <a id="math-functions">Math Functions</a>
+
+<hr/><a id="bin" href="#bin">#</a>
+<em>op</em>.<b>bin</b>(<i>value</i>, <i>min</i>, <i>max</i>, <i>step</i>[, <i>offset</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/bin.js)
+
+Truncate a *value* to a bin boundary. Useful for creating equal-width histograms. Values outside the `[min, max]` range will be mapped to `-Infinity` (*value &lt; min*) or `+Infinity` (*value > max*).
+
+* *value*: The number value to bin.
+* *min*: The minimum bin boundary value.
+* *max*: The maximum bin boundary value.
+* *step*: The step size between bin boundaries.
+* *offset*: Offset in steps (default `0`) by which to adjust the returned bin value. An offset of `1` returns the next boundary.
+
+<hr/><a id="random" href="#random">#</a>
+<em>op</em>.<b>random</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/util/random.js)
+
+Return a random floating point number between 0 (inclusive) and 1 (exclusive). By default uses `Math.random`. Use the [seed](./#seed) method to instead use a seeded random number generator.
+
+<hr/><a id="is_nan" href="#is_nan">#</a>
+<em>op</em>.<b>is_nan</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Tests if the input *value* is not a number (`NaN`).
+
+* *value*: The value to test.
+
+<hr/><a id="is_finite" href="#is_finite">#</a>
+<em>op</em>.<b>is_finite</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Tests if the input *value* is finite.
+
+* *value*: The value to test.
+
+<hr/><a id="abs" href="#abs">#</a>
+<em>op</em>.<b>abs</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the absolute value of the input *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="cbrt" href="#cbrt">#</a>
+<em>op</em>.<b>cbrt</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the cube root value of the input *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="ceil" href="#ceil">#</a>
+<em>op</em>.<b>ceil</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the ceiling of the input *value*, the nearest integer equal to or greater than the input.
+
+* *value*: The input number value.
+
+<hr/><a id="clz32" href="#clz32">#</a>
+<em>op</em>.<b>clz32</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the number of leading zero bits in the 32-bit binary representation of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="exp" href="#exp">#</a>
+<em>op</em>.<b>exp</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns *e<sup>value</sup>*, where *e* is Euler's number, the base of the natural logarithm.
+
+* *value*: The input number value.
+
+<hr/><a id="exp" href="#expm1">#</a>
+<em>op</em>.<b>expm1</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns *e<sup>value</sup> - 1*, where *e* is Euler's number, the base of the natural logarithm.
+
+* *value*: The input number value.
+
+<hr/><a id="floor" href="#floor">#</a>
+<em>op</em>.<b>floor</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the floor of the input *value*, the nearest integer equal to or less than the input.
+
+* *value*: The input number value.
+
+<hr/><a id="fround" href="#fround">#</a>
+<em>op</em>.<b>fround</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the nearest 32-bit single precision float representation of the input number *value*. Useful for translating between 64-bit `Number` values and values from a `Float32Array`.
+
+* *value*: The input number value.
+
+<hr/><a id="log" href="#log">#</a>
+<em>op</em>.<b>log</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the natural logarithm (base *e*) of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="log10" href="#log10">#</a>
+<em>op</em>.<b>log10</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the base 10 logarithm of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="log1p" href="#log1p">#</a>
+<em>op</em>.<b>log1p</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the natural logarithm (base *e*) of 1 + a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="log2" href="#log2">#</a>
+<em>op</em>.<b>log2</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the base 2 logarithm of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="max" href="#max">#</a>
+<em>op</em>.<b>max</b>(<i>...values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the largest (maximum) value among the input *values*.
+
+* *values*: Zero or more input values.
+
+<hr/><a id="min" href="#min">#</a>
+<em>op</em>.<b>min</b>(<i>...values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the smallest (minimum) value among the input *values*.
+
+* *values*: Zero or more input values.
+
+<hr/><a id="pow" href="#pow">#</a>
+<em>op</em>.<b>pow</b>(<i>base</i>, <i>exponent</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the *base* raised to the *exponent* power, that is, *base*<sup>*exponent*</sup>.
+
+* *base*: The base number value.
+* *exponent*: The exponent number value.
+
+<hr/><a id="round" href="#round">#</a>
+<em>op</em>.<b>round</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the value of a number rounded to the nearest integer.
+
+* *value*: The input number value.
+
+<hr/><a id="sign" href="#sign">#</a>
+<em>op</em>.<b>sign</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns either a positive or negative +/- 1, indicating the sign of the input *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="sqrt" href="#sqrt">#</a>
+<em>op</em>.<b>sqrt</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the square root of the input *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="trunc" href="#trunc">#</a>
+<em>op</em>.<b>trunc</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the integer part of a number by removing any fractional digits.
+
+* *value*: The input number value.
+
+<hr/><a id="degrees" href="#degrees">#</a>
+<em>op</em>.<b>degrees</b>(<i>radians</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Converts the input *radians* value to degrees.
+
+* *value*: The input number value in radians.
+
+<hr/><a id="radians" href="#radians">#</a>
+<em>op</em>.<b>radians</b>(<i>radians</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Converts the input *degrees* value to radians.
+
+* *value*: The input number value in degrees.
+
+<hr/><a id="acos" href="#acos">#</a>
+<em>op</em>.<b>acos</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the arc-cosine (in radians) of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="acosh" href="#acosh">#</a>
+<em>op</em>.<b>acosh</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the hyperbolic arc-cosine of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="asin" href="#asin">#</a>
+<em>op</em>.<b>asin</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the arc-sine (in radians) of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="asinh" href="#asinh">#</a>
+<em>op</em>.<b>asinh</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the hyperbolic arc-sine of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="atan" href="#atan">#</a>
+<em>op</em>.<b>atan</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the arc-tangent (in radians) of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="atan2" href="#atan2">#</a>
+<em>op</em>.<b>atan2</b>(<i>y</i>, <i>x</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the angle in the plane (in radians) between the positive x-axis and the ray from (0, 0) to the point (*x*, *y*).
+
+* *y*: The y coordinate of the point.
+* *x*: The x coordinate of the point.
+
+<hr/><a id="atanh" href="#atanh">#</a>
+<em>op</em>.<b>atanh</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the hyperbolic arc-tangent of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="cos" href="#cos">#</a>
+<em>op</em>.<b>cos</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the cosine (in radians) of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="cosh" href="#cosh">#</a>
+<em>op</em>.<b>cosh</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the hyperbolic cosine of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="sin" href="#sin">#</a>
+<em>op</em>.<b>sin</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the sine (in radians) of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="sinh" href="#sinh">#</a>
+<em>op</em>.<b>sinh</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the hyperbolic sine of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="tan" href="#tan">#</a>
+<em>op</em>.<b>tan</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the tangent (in radians) of a number *value*.
+
+* *value*: The input number value.
+
+<hr/><a id="tanh" href="#tanh">#</a>
+<em>op</em>.<b>tanh</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the hyperbolic tangent of a number *value*.
+
+* *value*: The input number value.
+
+
+<br>
+
+### <a id="object-functions">Object Functions</a>
+
+<hr/><a id="equal" href="#equal">#</a>
+<em>op</em>.<b>equal</b>(<i>a</i>, <i>b</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/equal.js)
+
+Compare two values for equality, using join semantics in which `null !== null`. If the inputs are object-valued, a deep equality check of array entries or object key-value pairs is performed. The method is helpful within custom [join](verbs/#join) condition expressions.
+
+* *a*: The first input to compare.
+* *b*: The second input to compare.
+
+<hr/><a id="has" href="#has">#</a>
+<em>op</em>.<b>has</b>(<i>object</i>, <i>property</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
+
+Returns a boolean indicating whether the *object* has the specified *property* as its own property (as opposed to inheriting it).
+
+* *object*: The object to test for property membership.
+* *property*: The string property name to test for.
+
+<hr/><a id="keys" href="#keys">#</a>
+<em>op</em>.<b>keys</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
+
+Returns an array of a given *object*'s own enumerable property names.
+
+* *object*: The input object value.
+
+<hr/><a id="values" href="#values">#</a>
+<em>op</em>.<b>values</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
+
+Returns an array of a given *object*'s own enumerable property values.
+
+* *values*: The input object value.
+
+<br>
+
+### <a id="string-functions">String Functions</a>
+
+<hr/><a id="parse_float" href="#parse_float">#</a>
+<em>op</em>.<b>parse_float</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Parses a string *value* and returns a floating point number.
+
+* *value*: The input value.
+
+<hr/><a id="parse_int" href="#parse_int">#</a>
+<em>op</em>.<b>parse_int</b>(<i>value</i>[, <i>radix</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Parses a string *value* and returns an integer of the specified radix (the base in mathematical numeral systems).
+
+* *value*: The input value.
+* *radix*: An integer between 2 and 36 that represents the radix (the base in mathematical numeral systems) of the string. Be careful: this does not default to 10! If *radix* is `undefined`, `0`, or unspecified, JavaScript assumes the following: If the input string begins with `"0x"` or `"0X"` (a zero, followed by lowercase or uppercase X), the radix is assumed to be 16 and the rest of the string is parsed as a hexidecimal number. If the input string begins with `"0"` (a zero), the radix is assumed to be 8 (octal) or 10 (decimal). Exactly which radix is chosen is implementation-dependent.  If the input string begins with any other value, the radix is 10 (decimal).
+
+<hr/><a id="endswith" href="#endswith">#</a>
+<em>op</em>.<b>endswith</b>(<i>value</i>, <i>search</i>[, <i>length</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Determines whether a string *value* ends with the characters of a specified *search* string, returning `true` or `false` as appropriate.
+
+* *value*: The input string value.
+* *search*: The search string to test for.
+* *length*: If provided, used as the length of *value* (default `value.length`).
+
+<hr/><a id="match" href="#match">#</a>
+<em>op</em>.<b>match</b>(<i>regexp</i>, <i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Retrieves the result of matching a string *value* against a regular expression *regexp*. Returns `true` if the string is found, `false` otherwise.
+
+* *regexp*: The regular expression to test with.
+* *value*: The input string to search for matches.
+
+<hr/><a id="upper" href="#upper">#</a>
+<em>op</em>.<b>upper</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Returns the string *value* converted to upper case.
+
+* *value*: The input string value.
+
+<hr/><a id="lower" href="#lower">#</a>
+<em>op</em>.<b>lower</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Returns the string *value* converted to lower case.
+
+* *value*: The input string value.
+
+<hr/><a id="replace" href="#replace">#</a>
+<em>op</em>.<b>replace</b>(<i>value</i>, <i>pattern</i>, <i>replacement</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Returns a new string with some or all matches of a *pattern* replaced by a *replacement*. The *pattern* can be a string or a regular expression, and the *replacement* must be a string. If *pattern* is a string, only the first occurrence will be replaced; to make multiple replacements, use a regular expression *pattern* with a `g` (global) flag.
+
+* *value*: The input string value.
+* *pattern*: The pattern string or regular expression to replace.
+* *replacement*: The replacement string to use.
+
+<hr/><a id="substring" href="#substring">#</a>
+<em>op</em>.<b>substring</b>(<i>value</i>[, <i>start</i>, <i>end</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Returns the part of the string *value* between the *start* and *end* indexes, or to the end of the string.
+
+* *value*: The input string value.
+* *start*: The index of the first character to include in the returned substring (default `0`).
+* *end*: The index of the first character to exclude from the returned substring (default `value.length`).
+
+<hr/><a id="substring" href="#substring">#</a>
+<em>op</em>.<b>substring</b>(<i>value</i>, <i>separator</i>[, <i>limit</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Divides a string *value* into an ordered list of substrings based on a *separator* pattern, puts these substrings into an array, and returns the array.
+
+* *value*: The input string value.
+* *separator*: A string or regular expression pattern describing where each split should occur.
+* *limit*: An integer specifying a limit on the number of substrings to be included in the array.
+
+<hr/><a id="startswith" href="#startswith">#</a>
+<em>op</em>.<b>startswith</b>(<i>value</i>, <i>search</i>[, <i>position</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Determines whether a string *value* starts with the characters of a specified *search* string, returning `true` or `false` as appropriate.
+
+* *value*: The input string value.
+* *search*: The search string to test for.
+* *position*: The position in the *value* string at which to begin searching (default `0`).
+
+<hr/><a id="trim" href="#trim">#</a>
+<em>op</em>.<b>trim</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Returns a new string with whitespace removed from both ends of the input *value* string. Whitespace in this context is all the whitespace characters (space, tab, no-break space, etc.) and all the line terminator characters (LF, CR, etc.).
+
+* *value*: The input string value to trim.
+
 
 <br/>
 
-## <a name="aggregate">Aggregate Functions</a>
+## <a id="aggregate">Aggregate Functions</a>
 
 Aggregate table expression functions for summarizing values. If invoked outside a table expression context, column (field) inputs must be column name strings, and the operator will return a corresponding table expression.
 
 <hr/><a id="any" href="#any">#</a>
-<em>op</em>.<b>any</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+<em>op</em>.<b>any</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
 Aggregate function returning an arbitrary observed value (typically the first encountered).
 
@@ -192,7 +881,7 @@ Aggregate function for the population covariance between two variables.
 * *field2*: The second data column or derived field.
 
 <hr/><a id="values" href="#values">#</a>
-<em>op</em>.<b>values</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+<em>op</em>.<b>values</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
 Aggregate function to collect an array of values. The resulting aggregate is an array containing all observed values.
 
@@ -207,7 +896,7 @@ Aggregate function to collect an array of unique values. The resulting aggregate
 
 <br/>
 
-## <a name="window">Window Functions</a>
+## <a id="window">Window Functions</a>
 
 Window table expression functions applicable over ordered table rows. If invoked outside a table expression context, column (field) inputs must be column name strings, and the operator will return a corresponding table expression.
 

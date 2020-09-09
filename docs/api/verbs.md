@@ -27,7 +27,7 @@ title: Verbs \| Arquero API Reference
 
 <br/>
 
-## <a name="core">Core Verbs</a>
+## <a id="core">Core Verbs</a>
 
 <hr/><a id="derive" href="#derive">#</a>
 <em>table</em>.<b>derive</b>(<i>values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
@@ -205,7 +205,7 @@ Create a new fully-materialized instance of this table. All filter and orderby s
 
 <br/>
 
-## <a name="joins">Join Verbs</a>
+## <a id="joins">Join Verbs</a>
 
 <hr/><a id="join" href="#join">#</a>
 <em>table</em>.<b>join</b>(<i>other</i>[, <i>on</i>, <i>values</i>, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
@@ -378,7 +378,7 @@ table.antijoin(other, (a, b) => op.equal(a.keyL, b.keyR))
 
 <br/>
 
-## <a name="reshape">Reshape Verbs</a>
+## <a id="reshape">Reshape Verbs</a>
 
 <hr/><a id="fold" href="#fold">#</a>
 <em>table</em>.<b>fold</b>(<i>values</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
@@ -471,7 +471,7 @@ table.unroll('colA', { limit: 1000 })
 
 <br/>
 
-## <a name="sets">Set Verbs</a>
+## <a id="sets">Set Verbs</a>
 
 <hr/><a id="dedupe" href="#dedupe">#</a>
 <em>table</em>.<b>dedupe</b>(<i>...keys</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
