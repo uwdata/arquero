@@ -10,13 +10,13 @@ function emitter(columns, getters) {
 export default function(tableL, tableR, predicate, { values }, options = {}) {
   // initialize data for left table
   const dataL = tableL.data();
-  const idxL = tableL.indices();
+  const idxL = tableL.indices(false);
   const nL = idxL.length;
   const hitL = new Int32Array(nL);
 
   // initialize data for right table
   const dataR = tableR.data();
-  const idxR = tableR.indices();
+  const idxR = tableR.indices(false);
   const nR = idxR.length;
   const hitR = new Int32Array(nR);
 

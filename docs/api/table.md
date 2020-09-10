@@ -133,27 +133,29 @@ Get the value for the given column and row. Row indices are relative to the [tot
 * *row*: The row index.
 
 <hr/><a id="indices" href="#indices">#</a>
-<em>table</em>.<b>indices</b>([<i>ordered</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>indices</b>([<i>order</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
 Returns an array of indices for all rows passing the table filter.
 
-* *ordered*: A boolean flag (default `false`) indicating if the returned indices should be sorted. Only applies if the table is ordered.
+* *order*: A boolean flag (default `true`) indicating if the returned indices should be sorted if this table is ordered. If `false`, the returned indices may or may not be sorted.
 
 <hr/><a id="partitions" href="#partitions">#</a>
-<em>table</em>.<b>partitions</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>partitions</b>([<i>order</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
-Returns an array of indices for each group in the table. If the table is not grouped, result is the same as [indices](#indices), but wrapped within an array. Otherwise returns an array of row index arrays, one per group. The indices will be sorted and/or filtered if the table has been ordered or filtered.
+Returns an array of indices for each group in the table. If the table is not grouped, the result is the same as [indices](#indices), but wrapped within an array. Otherwise returns an array of row index arrays, one per group. The indices will be filtered if the table has been filtered.
+
+* *order*: A boolean flag (default `true`) indicating if the returned indices should be sorted if this table is ordered. If `false`, the returned indices may or may not be sorted.
 
 <hr/><a id="scan" href="#scan">#</a>
-<em>table</em>.<b>scan</b>(<i>callback</i>, [<i>ordered</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>scan</b>(<i>callback</i>, [<i>order</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
 Perform a table scan, invoking the provided *callback* function for each row of the table. If this table is filtered, only rows passing the filter are visited.
 
 * *callback*: Function invoked for each row of the table. The callback is invoked with the following arguments:
   * *row*: The table row index.
   * *data*: The backing table data store.
-  * *stop*: A function to stop the scan early. The callback can invoke this function to prevent future scan calls.
-* *ordered*: A boolean flag (default `false`), indicating if the table should be scanned in the order determined by [orderby](verbs#orderby). Has no effect if this table is unordered.
+  * *stop*: A function to stop the scan early. The callback can invoke *stop()* to prevent future scan calls.
+* *order*: A boolean flag (default `false`), indicating if the table should be scanned in the order determined by [orderby](verbs#orderby). This argument has no effect if the table is unordered.
 
 
 <br/>

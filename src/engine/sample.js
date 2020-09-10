@@ -2,7 +2,7 @@ import sample from '../util/sample';
 
 export default function(table, size, weight, options = {}) {
   const replace = !!options.replace;
-  const parts = table.partitions();
+  const parts = table.partitions(false);
 
   let total = 0;
   size = parts.map((idx, group) => {
@@ -20,9 +20,8 @@ export default function(table, size, weight, options = {}) {
 
     if (!replace && sz === idx.length) {
       // sample size === data size, no replacement
-      for (let i = 0; i < sz; ++i) {
-        buf[i] = idx[i]; // simply copy indices
-      }
+      // no need to sample, just copy indices
+      buf.set(idx);
     } else {
       sample(buf, replace, idx, weight);
     }

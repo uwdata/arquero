@@ -246,11 +246,12 @@ export default class Table {
 
   /**
    * Returns an array of indices for all rows passing the table filter.
-   * @param {boolean} [ordered=false] A flag indicating if the returned
-   *  indices should be sorted. Only applies if the table is ordered.
+   * @param {boolean} [order=true] A flag indicating if the returned
+   *  indices should be sorted if this table is ordered. If false, the
+   *  returned indices may or may not be sorted.
    * @return {Uint32Array} An array of row indices.
    */
-  indices(ordered) {
+  indices(order = true) {
     if (this._index) return this._index;
 
     let i = -1;
@@ -258,10 +259,15 @@ export default class Table {
     this.scan(row => index[++i] = row);
 
     // sort index vector
-    if (ordered && this.isOrdered()) {
+    if (order && this.isOrdered()) {
       const compare = this._order;
       const data = this._data;
       index.sort((a, b) => compare(a, b, data));
+    }
+
+    // save indices if they reflect table metadata
+    if (!this.isOrdered || order) {
+      this._index = index;
     }
 
     return index;
@@ -269,13 +275,15 @@ export default class Table {
 
   /**
    * Returns an array of indices for each group in the table.
-   * If the table is not grouped, the results is the same as
+   * If the table is not grouped, the result is the same as
    * {@link indices}, but wrapped within an array.
+   * @param {boolean} [order=true] A flag indicating if the returned
+   *  indices should be sorted if this table is ordered. If false, the
+   *  returned indices may or may not be sorted.
    * @return {number[][]} An array of row index arrays, one per group.
-   *  The indices will be sorted and/or filtered if the table is
-   *  ordered or filtered.
+   *  The indices will be filtered if the table is filtered.
    */
-  partitions() {
+  partitions(order = true) {
     // return partitions if already generated
     if (this._partitions) {
       return this._partitions;
@@ -283,17 +291,19 @@ export default class Table {
 
     // if not grouped, return a single partition
     if (!this.isGrouped()) {
-      return [this._index = this.indices(true)];
+      return [ this.indices(order) ];
     }
 
     // generate partitions
     const { keys, size } = this._group;
     const part = repeat(size, () => []);
-    const order = !!this._index;
-    this.scan(row => part[keys[row]].push(row), order);
+
+    // populate partitions, don't sort if indices don't exist
+    const sort = !!this._index;
+    this.scan(row => part[keys[row]].push(row), sort);
 
     // if ordered but not yet sorted, sort partitions directly
-    if (this.isOrdered() && !order) {
+    if (order && !sort && this.isOrdered()) {
       const compare = this._order;
       const data = this._data;
       for (let i = 0; i < size; ++i) {
@@ -301,7 +311,12 @@ export default class Table {
       }
     }
 
-    return this._partitions = part;
+    // save partitions if they reflect table metadata
+    if (order || !this.isOrdered()) {
+      this._partitions = part;
+    }
+
+    return part;
   }
 
   /**
@@ -317,11 +332,11 @@ export default class Table {
    * Perform a table scan, visiting each row of the table.
    * If this table is filtered, only rows passing the filter are visited.
    * @param {scanVisitor} fn Callback invoked for each row of the table.
-   * @param {boolean} [ordered=false] Indicates if the table should be
-   *  scanned in the order determined by {@link Table#orderby}. Has no
-   *  effect if this table is unordered.
+   * @param {boolean} [order=false] Indicates if the table should be
+   *  scanned in the order determined by {@link Table#orderby}. This
+   *  argument has no effect if the table is unordered.
    */
-  scan(fn, ordered) {
+  scan(fn, order) {
     const filter = this._filter;
     const nrows = this._nrows;
     const data = this._data;
@@ -329,8 +344,8 @@ export default class Table {
     let i = 0;
     const stop = () => i = this._total;
 
-    if (ordered && this.isOrdered() || filter && this._index) {
-      const index = this._index = this.indices(true);
+    if (order && this.isOrdered() || filter && this._index) {
+      const index = this._index = this.indices();
       const data = this._data;
       for (; i < nrows; ++i) {
         fn(index[i], data, stop);

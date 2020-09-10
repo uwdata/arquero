@@ -5,7 +5,7 @@ export default function(tableL, tableR, predicate, options = {}) {
 
   // initialize data for right table
   const dataR = tableR.data();
-  const idxR = tableR.indices();
+  const idxR = tableR.indices(false);
   const nR = idxR.length;
 
   // scan tables, record matches against left table
