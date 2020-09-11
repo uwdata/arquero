@@ -1,10 +1,15 @@
+import parseIsoDate from '../../util/parse-iso-date';
+
 const msMinute = 6e4;
 const msDay = 864e5;
 const msWeek = 6048e5;
 
 const t0 = new Date();
 const t1 = new Date();
-const t = d => (t0.setTime(+d), t0);
+const t = d => (
+  t0.setTime(typeof d === 'string' ? parseIsoDate(d) : d),
+  t0
+);
 
 /**
  * Function to create a new Date value.
