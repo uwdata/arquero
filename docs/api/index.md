@@ -264,7 +264,7 @@ Register a custom window function. Throws an error if a function with the same n
 
 * *name*: The name to use for the window function.
 * *def*: A window operator definition object:
-  * *create*: A creation function that takes non-field parameter values as input and returns a new window operator instance. A window operator instance should have four methods: *init(state)* to initialize any operator state, and *value(state)* to retrieve the current operator output value. The *state* parameter is a [window state](https://github.com/uwdata/arquero/blob/master/src/engine/window/window-state.js) instance that provides access to underlying values and the sliding window frame.
+  * *create*: A creation function that takes non-field parameter values as input and returns a new window operator instance. A window operator instance should have two methods: *init(state)* to initialize any operator state, and *value(state)* to retrieve the current operator output value. The *state* parameter is a [window state](https://github.com/uwdata/arquero/blob/master/src/engine/window/window-state.js) instance that provides access to underlying values and the sliding window frame.
   * *param*: Two-element array containing the counts of input fields and additional parameters, respectively. If the *numFields* and *numParams* arguments are provided they override this property.
 * *numFields*: The number of field (column) inputs to the operator (default `0`).
 * *numParams*: The number of additional operator parameters (default `0`).
