@@ -140,13 +140,17 @@ aq.desc(d => op.lower(d.colA)) // descending order of lower case values
 Annotate a table expression to compute rolling aggregate or window functions within a sliding window frame. For example, to specify a rolling 7-day average centered on the current day, call *rolling* with a frame value of [-3, 3].
 
 * *expr*: The table expression to annotate.
-* *frame*:The sliding window frame offsets. Each entry indicates an offset from the current value. If an entry is non-finite, the frame will be unbounded in that direction, including all preceding or following values. If unspecified, the default frame `[-Infinity, 0]` includes the current values and all preceding values.
-* *ignorePeers*: Indicates if the sliding window frame should ignore peer (tied) values. If `false` (the default), the window frame expands to include all peers. If true, the window frame is defined by the frame offsets only. This parameter only affects operations that depend on the window frame: aggregate functions and the [first_value](op/#first_value), [last_value](op/#last_value), and [nth_value](op/#last_values) window functions.
+* *frame*:The sliding window frame offsets. Each entry indicates an offset from the current value. If an entry is non-finite, the frame will be unbounded in that direction, including all preceding or following values. If unspecified or `null`, the default frame `[-Infinity, 0]` includes the current values and all preceding values.
+* *ignorePeers*: Boolean flag indicating if the sliding window frame should ignore peer (tied) values. If `false` (the default), the window frame expands to include all peers ([following default SQL window semantics](https://www.postgresql.org/docs/9.3/functions-window.html)). If `true`, the window frame is defined by the frame offsets only, with peer rows treated as separate values. This parameter only affects operations that depend on the window frame, namely [aggregate functions](op/#aggregate-functions) and the [first_value](op/#first_value), [last_value](op/#last_value), and [nth_value](op/#last_values) window functions.
 
 *Examples*
 
 ```js
-aq.rolling(d => mean(d.colA), [-3, 3]) // centered 7-day moving average
+aq.rolling(d => mean(d.colA), [-3, 3]) // centered 7-day moving average, assuming one value per day
+```
+
+```js
+aq.rolling(d => sum(d.colA), null, true) // cumulative sum that does not group tied values
 ```
 
 

@@ -11,7 +11,7 @@ title: Operations \| Arquero API Reference
   * [Math Functions](#math-functions)
   * [Object Functions](#object-functions)
   * [String Functions](#string-functions)
-* [Aggregate Functions](#aggregate)
+* [Aggregate Functions](#aggregate-functions)
   * [any](#any), [bins](#bins)
   * [count](#count), [distinct](#distinct), [valid](#valid), [invalid](#invalid)
   * [max](#max), [min](#min),  [sum](#sum), [product](#product)
@@ -19,7 +19,7 @@ title: Operations \| Arquero API Reference
   * [stdev](#stdev), [stdevp](#stdevp), [variance](#variance), [variancep](#variance)
   * [corr](#corr), [covariance](#covariance), [covariancep](#covariancep)
   * [values](#values), [unique](#unique)
-* [Window Functions](#window)
+* [Window Functions](#window-functions)
   * [row_number](#row_number), [rank](#rank), [avg_rank](#avg_rank), [dense_rank](#dense_rank)
   * [percent_rank](#percent_rank), [cume_dist](#cume_dist), [ntile](#ntile)
   * [lag](#lag), [lead](#lead), [first_value](#first_value), [last_value](#last_value), [nth_value](#nth_value)
@@ -716,7 +716,7 @@ Returns a new string with whitespace removed from both ends of the input *value*
 
 <br/>
 
-## <a id="aggregate">Aggregate Functions</a>
+## <a id="aggregate-functions">Aggregate Functions</a>
 
 Aggregate table expression functions for summarizing values. If invoked outside a table expression context, column (field) inputs must be column name strings, and the operator will return a corresponding table expression.
 
@@ -893,7 +893,7 @@ Aggregate function to collect an array of unique values. The resulting aggregate
 
 <br/>
 
-## <a id="window">Window Functions</a>
+## <a id="window-functions">Window Functions</a>
 
 Window table expression functions applicable over ordered table rows. If invoked outside a table expression context, column (field) inputs must be column name strings, and the operator will return a corresponding table expression.
 
