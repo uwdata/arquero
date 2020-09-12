@@ -13,7 +13,8 @@ function test(t, exprs) {
     { name: 'corr', fields: ['data.a.get(row)', 'data.b.get(row)'], params: [], id: 1},
     { name: 'quantile', fields: ['(-data.bar.get(row))'], params: ['(0.5/2)'], id: 2},
     { name: 'lag', fields: ['data.value.get(row)'], params: [2], id: 3 },
-    { name: 'mean', fields: ['data.value.get(row)'], params: [], frame: [-3, 3], peers: true, id: 4 }
+    { name: 'mean', fields: ['data.value.get(row)'], params: [], frame: [-3, 3], peers: false, id: 4 },
+    { name: 'count', fields: [], params: [], frame: [-3, 3], peers: true, id: 5 }
   ], 'parsed operators');
 
   t.deepEqual(values, {
@@ -23,7 +24,8 @@ function test(t, exprs) {
     agg2: 'op[1]',
     agg3: '(1+op[2])',
     win1: '(data.value.get(row)-op[3])',
-    win2: 'op[4]'
+    win2: 'op[4]',
+    win3: 'op[5]'
   }, 'parsed output values');
 }
 
@@ -36,7 +38,8 @@ tape('parse parses expressions with global operator names', t => {
     agg2: d => corr(d.a, d.b),
     agg3: d => 1 + quantile(-d.bar, 0.5/2),
     win1: d => d.value - lag(d.value, 2),
-    win2: rolling(d => mean(d.value), [-3, 3])
+    win2: rolling(d => mean(d.value), [-3, 3]),
+    win3: rolling(() => count(), [-3, 3], true)
   });
   /* eslint-enable */
 
@@ -51,23 +54,25 @@ tape('parse parses expressions with operator object', t => {
     agg2: d => op.corr(d.a, d.b),
     agg3: d => 1 + op.quantile(-d.bar, 0.5/2),
     win1: d => d.value - op.lag(d.value, 2),
-    win2: rolling(d => op.mean(d.value), [-3, 3])
+    win2: rolling(d => op.mean(d.value), [-3, 3]),
+    win3: rolling(() => op.count(), [-3, 3], true)
   });
 
   t.end();
 });
 
 tape('parse parses expressions with nested operator object', t => {
-  const dl = { op };
+  const aq = { op };
 
   test(t, {
     constant: () => 1 + 1,
     column: d => d.a * d.b,
-    agg1: d => dl.op.mean(d.a),
-    agg2: d => dl.op.corr(d.a, d.b),
-    agg3: d => 1 + dl.op.quantile(-d.bar, 0.5/2),
-    win1: d => d.value - dl.op.lag(d.value, 2),
-    win2: rolling(d => dl.op.mean(d.value), [-3, 3])
+    agg1: d => aq.op.mean(d.a),
+    agg2: d => aq.op.corr(d.a, d.b),
+    agg3: d => 1 + aq.op.quantile(-d.bar, 0.5/2),
+    win1: d => d.value - aq.op.lag(d.value, 2),
+    win2: rolling(d => aq.op.mean(d.value), [-3, 3]),
+    win3: rolling(() => aq.op.count(), [-3, 3], true)
   });
 
   t.end();
