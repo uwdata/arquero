@@ -11,20 +11,21 @@ import wrap from './wrap';
  *  entry is non-finite, the frame will be unbounded in that direction,
  *  including all preceding or following values. If unspecified, the frame
  *  will include the current values and all preceding values.
- * @param {boolean} [ignorePeers=false] Indicates if the sliding window frame
+ * @param {boolean} [includePeers=false] Indicates if the sliding window frame
  *  should ignore peer (tied) values. If false (the default), the window frame
- *  expands to include all peers. If true, the window frame is defined by the
- *  frame offsets only. This parameter only affects operations that depend on
- *  the window frame: aggregate functions and the first_value, last_value,
- *  and nth_value window functions.
+ *  boundaries are insensitive to peer values. If `true`, the window frame
+ *  expands to include all peers. This parameter only affects operations that
+ *  depend on the window frame: aggregate functions and the first_value,
+ *  last_value, and nth_value window functions.
  * @return A new wrapped expression annotated with rolling window parameters.
  * @example rolling(d => mean(d.colA), [-3, 3])
+ * @example rolling(d => last_value(d.colA), null, true)
  */
-export default function(expr, frame, ignorePeers) {
+export default function(expr, frame, includePeers) {
   return wrap(expr, {
     window: {
       frame: frame || [-Infinity, 0],
-      peers: !ignorePeers
+      peers: !!includePeers
     }
   });
 }
