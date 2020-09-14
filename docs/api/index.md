@@ -135,7 +135,7 @@ aq.desc(d => op.lower(d.colA)) // descending order of lower case values
 ```
 
 <a id="rolling" href="#rolling">#</a>
-<em>aq</em>.<b>rolling</b>(<i>expr</i>[, <i>frame</i>, <i>ignorePeers</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/rolling.js)
+<em>aq</em>.<b>rolling</b>(<i>expr</i>[, <i>frame</i>, <i>includePeers</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/rolling.js)
 
 Annotate a table expression to compute rolling aggregate or window functions within a sliding window frame. For example, to specify a rolling 7-day average centered on the current day, call *rolling* with a frame value of [-3, 3].
 
