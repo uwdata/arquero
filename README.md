@@ -12,6 +12,13 @@ To get up and running, start with the [Introducing Arquero](https://observablehq
 
 Arquero is Spanish for "archer": if datasets are [arrows](https://arrow.apache.org/), Arquero helps their aim stay true.
 
+## API Documentation
+
+* [Top-Level API](https://uwdata.github.io/arquero/api) - All methods in the top-level Arquero namespace.
+* [Table](https://uwdata.github.io/arquero/api/table) - Table access and output methods.
+* [Verbs](https://uwdata.github.io/arquero/api/verbs) - Table transformation verbs.
+* [Op Functions](https://uwdata.github.io/arquero/api/op) - All functions, including aggregate and window functions.
+
 ## Example
 
 The core abstractions in Arquero are *data tables*, which model each column as an array of values, and *verbs* that transform data and return new tables. Verbs are table methods, allowing method chaining for multi-step transformations. Though each table is unique, many verbs reuse the underlying columns to limit duplication.
