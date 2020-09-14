@@ -29,13 +29,12 @@
     "prepublishOnly": "yarn test && yarn lint && yarn build"
   },
   "dependencies": {
-    "acorn": "^8.0.1",
-    "d3-dsv": "^2.0.0"
+    "acorn": "^8.0.1"
   },
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
-    "eslint": "^7.8.1",
+    "eslint": "^7.9.0",
     "esm": "^3.2.25",
     "rimraf": "^3.0.2",
     "rollup": "^2.26.11",

@@ -1,5 +1,6 @@
 import ColumnTable from '../table/column-table';
-import { autoType, dsvFormat } from 'd3-dsv';
+import autoType from '../util/auto-type';
+import parse from '../util/parse-dsv';
 
 /**
  * Options for CSV parsing.
@@ -16,12 +17,11 @@ import { autoType, dsvFormat } from 'd3-dsv';
  * @param {ColumnTable} table A new table containing the parsed values.
  */
 export default function(text, options = {}) {
-  const delim = options.delim || ',';
-  const dsv = dsvFormat(delim);
+  const delim = (options.delim == null ? ',' : options.delim + '').charCodeAt(0);
   const values = [];
   let names = [];
 
-  dsv.parseRows(text, (row, index) => {
+  parse(text, delim, (row, index) => {
     if (index === 0) {
       names = row;
       const n = names.length;
@@ -30,9 +30,8 @@ export default function(text, options = {}) {
       }
     } else {
       const n = names.length;
-      autoType(row);
       for (let i = 0; i < n; ++i) {
-        values[i].push(row[i]);
+        values[i].push(autoType(row[i]));
       }
     }
   });
