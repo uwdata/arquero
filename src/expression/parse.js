@@ -15,7 +15,9 @@ const PARSER_OPT = { ecmaVersion: 11 };
 const DEFAULT_TUPLE_ID = 'd';
 const DEFAULT_TUPLE_ID1 = 'd1';
 const DEFAULT_TUPLE_ID2 = 'd2';
+
 const Column = 'Column';
+const Constant = 'Identifier';
 
 // ? TODO: support external parameter values
 export default function(exprs, opt = {}) {
@@ -96,8 +98,10 @@ function parseError(msg) {
 function handleIdentifier(node, ctx, parent) {
   const { name } = node;
 
-  if (isMemberExpression(parent) || isProperty(parent) && parent.key === node) {
-    // do nothing
+  if (isMemberExpression(parent) && parent.property === node) {
+    // do nothing: check head node, not nested properties
+  } else if (isProperty(parent) && parent.key === node) {
+    // do nothing: identifiers allowed in object expressions
   } else if (ctx.columns.has(name)) {
     updateColumnNode(node, ctx.columns.get(name));
   } else if (has(constants, name)) {
@@ -114,6 +118,7 @@ function updateColumnNode(node, entry) {
 }
 
 function updateConstantNode(node, value) {
+  node.type = Constant;
   node.name = value;
 }
 
@@ -136,7 +141,9 @@ const visitors = {
   },
   Identifier(node, ctx, parent) {
     if (handleIdentifier(node, ctx, parent) && !ctx.scope.has(node.name)) {
-      ctx.error('Invalid identifier', node);
+      // handle identifier passed responsibility here
+      // raise error if identifier not defined in scope
+      ctx.error('Invalid variable name', node);
     }
   },
   CallExpression(node, ctx) {
@@ -171,26 +178,38 @@ const visitors = {
   },
   MemberExpression(node, ctx) {
     const { object, property } = node;
-    if (isIdentifier(object)) {
-      const index = object.name === ctx.tuple ? 0
-        : object.name === ctx.tuple1 ? 1
-        : object.name === ctx.tuple2 ? 2
-        : null;
-      if (index != null) {
-        // replace member expression with column ref
-        if (isIdentifier(property)) {
-          Object.assign(node, { type: Column, name: property.name, index });
-          return false;
-        } else if (isLiteral(property)) {
-          Object.assign(node, { type: Column, name: property.value, computed: true, index });
-          return false;
-        } else if (isMemberExpression(property)) {
-          object.name = property.object.name;
-          node.property = property.property;
-        }
-      } else if (ctx.columns.has(object.name)) {
-        updateColumnNode(object, ctx.columns.get(object.name));
+
+    // bail if left head is not an identifier
+    // in this case we will recurse and handle it later
+    if (!isIdentifier(object)) return;
+
+    // allow use of Math prefix to access constant values
+    if (object.name === 'Math' && isIdentifier(property) &&
+        has(constants, property.name))
+    {
+      updateConstantNode(node, constants[property.name]);
+      return;
+    }
+
+    const index = object.name === ctx.tuple ? 0
+      : object.name === ctx.tuple1 ? 1
+      : object.name === ctx.tuple2 ? 2
+      : null;
+
+    if (index != null) {
+      // replace member expression with column ref
+      if (isIdentifier(property)) {
+        Object.assign(node, { type: Column, name: property.name, index });
+        return false;
+      } else if (isLiteral(property)) {
+        Object.assign(node, { type: Column, name: property.value, computed: true, index });
+        return false;
+      } else if (isMemberExpression(property)) {
+        object.name = property.object.name;
+        node.property = property.property;
       }
+    } else if (ctx.columns.has(object.name)) {
+      updateColumnNode(object, ctx.columns.get(object.name));
     }
   }
 };

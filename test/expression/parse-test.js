@@ -99,6 +99,20 @@ tape('parse parses expressions with constant values', t => {
   constant('PI', 'Math.PI');
   constant('SQRT1_2', 'Math.SQRT1_2');
   constant('SQRT2', 'Math.SQRT2');
+
+  constant('Math.E', 'Math.E');
+  constant('Math.LN2', 'Math.LN2');
+  constant('Math.LN10', 'Math.LN10');
+  constant('Math.LOG2E', 'Math.LOG2E');
+  constant('Math.LOG10E', 'Math.LOG10E');
+  constant('Math.PI', 'Math.PI');
+  constant('Math.SQRT1_2', 'Math.SQRT1_2');
+  constant('Math.SQRT2', 'Math.SQRT2');
+
+  t.throws(() => constant('Object'), 'throws on constant Object');
+  t.throws(() => constant('Object.keys'), 'throws on constant Object.keys');
+  t.throws(() => constant('Number.NaN'), 'throws on constant Number.NaN');
+
   t.end();
 });
 
