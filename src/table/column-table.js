@@ -8,6 +8,7 @@ import toHTML from '../format/to-html';
 import toJSON from '../format/to-json';
 import toMarkdown from '../format/to-markdown';
 import arrayType from '../util/array-type';
+import error from '../util/error';
 import mapObject from '../util/map-object';
 import unroll from '../util/unroll';
 
@@ -87,6 +88,20 @@ export default class ColumnTable extends Table {
    */
   get(name, row) {
     return this._data[name].get(row);
+  }
+
+  /**
+   * Returns an accessor ("getter") function for a column. The returned
+   * function takes a row index as its single argument and returns the
+   * corresponding column value.
+   * @param {string} name The column name.
+   * @return {Function} The column getter function.
+   */
+  getter(name) {
+    const column = this.column(name);
+    return column
+      ? row => column.get(row)
+      : error(`Unrecognized column: ${name}`);
   }
 
   /**

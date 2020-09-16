@@ -210,6 +210,17 @@ export default class Table {
   }
 
   /**
+   * Returns an accessor ("getter") function for a column. The returned
+   * function takes a row index as its single argument and returns the
+   * corresponding column value.
+   * @param {string} name The column name.
+   * @return {Function} The column getter function.
+   */
+  getter(name) { // eslint-disable-line no-unused-vars
+    error('Not implemented');
+  }
+
+  /**
    * Options for generating row objects.
    * @typedef {Object} ObjectsOptions
    * @property {number} [limit=Infinity] The maximum number of objects to create.

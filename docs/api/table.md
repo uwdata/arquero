@@ -14,7 +14,7 @@ title: Table \| Arquero API Reference
   * [columnIndex](#columnIndex), [columnName](#columnName)
   * [columnNames](#columnNames)
 * [Table Values](#values)
-  * [data](#data), [get](#get)
+  * [data](#data), [get](#get), [getter](#getter)
   * [indices](#indices), [partition](#partition), [scan](#scan)
 * [Table Output](#output)
   * [objects](#objects), [print](#print)
@@ -131,6 +131,13 @@ Get the value for the given column and row. Row indices are relative to the [tot
 
 * *name*: The column name.
 * *row*: The row index.
+
+<hr/><a id="getter" href="#getter">#</a>
+<em>table</em>.<b>getter</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+
+Returns an accessor ("getter") function for a column. The returned function takes a row index as its single argument and returns the corresponding column value. Row indices are relative to the [total rows](#totalRows), not the number of [filtered rows](#numRows).
+
+* *name*: The column name.
 
 <hr/><a id="indices" href="#indices">#</a>
 <em>table</em>.<b>indices</b>([<i>order</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)

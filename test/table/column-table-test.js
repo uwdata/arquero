@@ -25,14 +25,24 @@ tape('ColumnTable supports varied column types', t => {
   t.equal(ct.numCols(), 5, 'num cols');
 
   const rows = [0, 1, 2, 3, 4];
-  const extracted = {
+  const get = {
     int: rows.map(row => ct.get('int', row)),
     num: rows.map(row => ct.get('num', row)),
     str: rows.map(row => ct.get('str', row)),
     chr: rows.map(row => ct.get('chr', row)),
     obj: rows.map(row => ct.get('obj', row))
   };
-  t.deepEqual(extracted, ref, 'extracted values match');
+  t.deepEqual(get, ref, 'extracted get values match');
+
+  const getters = ['int', 'num', 'str', 'chr', 'obj'].map(name => ct.getter(name));
+  const getter = {
+    int: rows.map(row => getters[0](row)),
+    num: rows.map(row => getters[1](row)),
+    str: rows.map(row => getters[2](row)),
+    chr: rows.map(row => getters[3](row)),
+    obj: rows.map(row => getters[4](row))
+  };
+  t.deepEqual(getter, ref, 'extracted getter values match');
 
   const scanned = {
     int: [],
