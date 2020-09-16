@@ -43,7 +43,7 @@ tape('addFunction registers new function', t => {
   );
 
   t.throws(
-    () => addFunction('abs', Math.abs),
+    () => addFunction('abs', val => val < 0 ? -val : val),
     'do not overwrite existing functions'
   );
 

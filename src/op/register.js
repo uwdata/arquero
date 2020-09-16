@@ -8,11 +8,12 @@ import has from '../util/has';
 
 function check(name) {
   if (has(ops, name)) {
-    error(`Function "${name}" is already defined.`);
+    error(`Function ${JSON.stringify(name)} is already defined.`);
   }
 }
 
 function addOp(name, def, object, numFields, numParams) {
+  if (object[name] === def) return;
   check(name);
   if (numFields != null || numParams != null) {
     def.param = [numFields || 0, numParams || 0];
@@ -65,7 +66,9 @@ export function addFunction(name, fn) {
       error('Anonymous function provided, please include a name argument.');
     }
   }
-  check(name);
-  functions[name] = fn;
-  ops[name] = fn;
+  if (functions[name] !== fn) {
+    check(name);
+    functions[name] = fn;
+    ops[name] = fn;
+  }
 }
