@@ -1,4 +1,5 @@
 export default {
+  parse_date:  (str) => new Date(str),
   parse_float: (str) => Number.parseFloat(str),
   parse_int:   (str, radix) => Number.parseInt(str, radix),
   endswith:    (str, search, length) => String(str).endsWith(search, length),

@@ -624,6 +624,13 @@ Returns an array of a given *object*'s own enumerable property values.
 
 ### <a id="string-functions">String Functions</a>
 
+<hr/><a id="parse_date" href="#parse_date">#</a>
+<em>op</em>.<b>parse_date</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Parses a string *value* and returns a Date instance. Beware: this method uses JavaScript's [`Date.parse()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/parse) functionality, which is inconsistently implemented across browsers. Use this method at your own peril.
+
+* *value*: The input value.
+
 <hr/><a id="parse_float" href="#parse_float">#</a>
 <em>op</em>.<b>parse_float</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
 
