@@ -210,7 +210,7 @@ Format this table as a comma-separated values (CSV) string. Other delimiters, su
   * *columns*: Ordered list of column names to include. If function-valued, the function should accept a table as input and return an array of column name strings.
 
 <hr/><a id="toHTML" href="#toHTML">#</a>
-<em>table</em>.<b>toCSV</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-csv.js)
+<em>table</em>.<b>toHTML</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-csv.js)
 
 Format this table as an HTML table string.
 
