@@ -202,7 +202,7 @@ Print the contents of this table using the `console.table()` method.
 <hr/><a id="toCSV" href="#toCSV">#</a>
 <em>table</em>.<b>toCSV</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-csv.js)
 
-Format this table as a comma-separated values (CSV) string. Other delimiters, such as tabs or pipes ('|'), can be specified using the options argument.
+Format this table as a comma-separated values (CSV) string. Other delimiters, such as tabs or pipes ('\|'), can be specified using the options argument.
 
 * *options*: A formatting options object:
   * *delimiter*: The delimiter between values (default `","`).
