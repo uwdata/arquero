@@ -27,6 +27,12 @@ const visitors = {
     const row = `.get(${opt.index}${index})`;
     return `data${index}${column}${row}`;
   },
+  Parameter: node => {
+    const param = node.computed
+      ? `[${JSON.stringify(node.name)}]`
+      : `.${node.name}`;
+    return `$${param}`;
+  },
   OpLookup: (node, opt) => {
     const d = !node.computed;
     const o = (opt.op || node.object.name) + (node.index || '');

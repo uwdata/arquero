@@ -9,6 +9,7 @@ title: Table \| Arquero API Reference
   * [numCols](#numCols), [numRows](#numRows), [totalRows](#totalRows)
   * [isFiltered](#isFiltered), [isGrouped](#isGrouped), [isOrdered](#isOrdered)
   * [comparator](#foo), [groups](#groups)
+  * [params](#params)
 * [Table Columns](#columns)
   * [column](#column), [columnAt](#columnAt)
   * [columnIndex](#columnIndex), [columnName](#columnName)
@@ -70,6 +71,13 @@ Returns the groupby specification, if defined. A groupby specification is an obj
 * *rows*: Row indices of example table rows for each group.
 * *size*: The total number of groups.
 * *keys*: Per-row group indices for every row in the table.
+
+<hr/><a id="params" href="#params">#</a>
+<em>table</em>.<b>params</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+
+Get or set table expression parameter values. If called with no arguments, returns the current parameter values as an object. Otherwise, adds the provided parameters to this table's parameter set and returns the table. Any prior parameters with names matching the input parameters are overridden.
+
+* *values*: A set of parameter values to add as an object of name-value pairs.
 
 
 <br/>

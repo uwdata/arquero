@@ -17,6 +17,6 @@ export default function(name, table, params) {
       : error(`Invalid ${name} key value: ${param+''}`);
   });
 
-  const fn = parse(exprs, { aggregate: false, window: false });
+  const fn = parse(exprs, { table, aggregate: false, window: false });
   return keyFunction(Object.values(fn.values), true);
 }

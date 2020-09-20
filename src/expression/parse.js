@@ -12,17 +12,19 @@ import has from '../util/has';
 import error from '../util/error';
 
 const PARSER_OPT = { ecmaVersion: 11 };
+const DEFAULT_PARAM_ID = '$';
 const DEFAULT_TUPLE_ID = 'd';
 const DEFAULT_TUPLE_ID1 = 'd1';
 const DEFAULT_TUPLE_ID2 = 'd2';
 
 const Column = 'Column';
 const Constant = 'Identifier';
+const Parameter = 'Parameter';
 
-// ? TODO: support external parameter values
 export default function(exprs, opt = {}) {
   const generate = opt.generate || codegen;
   const compiler = opt.compiler || compile;
+  const params = getParams(opt);
   const fields = {};
   const opcall = {};
   const values = {};
@@ -44,10 +46,12 @@ export default function(exprs, opt = {}) {
       return fields[code] || (fields[code] = ++fieldId);
     },
     param(node) {
-      return isLiteral(node) ? node.value : compiler.param(generate(node));
+      return isLiteral(node)
+        ? node.value
+        : compiler.param(generate(node), params);
     },
     value(name, node) {
-      values[name] = compileExpr(generate(node));
+      values[name] = compileExpr(generate(node), params);
     },
     error(msg, node) {
       // both expresions and fields are parsed
@@ -60,7 +64,7 @@ export default function(exprs, opt = {}) {
   };
 
   // copy all options to context, potentially overwriting methods
-  Object.assign(ctx, opt);
+  Object.assign(ctx, opt, { params });
 
   // parse each expression
   for (const name in exprs) {
@@ -70,7 +74,7 @@ export default function(exprs, opt = {}) {
   // compile input field accessors
   const f = [];
   for (const key in fields) {
-    f[fields[key]] = compiler.expr(key);
+    f[fields[key]] = compiler.expr(key, params);
   }
 
   // resolve input fields to operations
@@ -80,20 +84,23 @@ export default function(exprs, opt = {}) {
   return { ops, values };
 }
 
+const getParams = opt => {
+  const p = opt.table ? opt.table.params()
+    : opt.join ? { ...opt.join[1].params(), ...opt.join[0].params() }
+    : {};
+  return p || {};
+};
+
 const fieldRef = expr => {
   const col = JSON.stringify(expr+'');
   return !(expr.index || 0) ? `d=>d[${col}]` : `(a,b)=>b[${col}]`;
 };
 
-const functionName = (ctx, node) => {
-  return isIdentifier(node) ? node.name
-    : isMemberExpression(node) ? node.property.name
-    : null;
-};
+const functionName = (ctx, node) => isIdentifier(node) ? node.name
+  : isMemberExpression(node) ? node.property.name
+  : null;
 
-function parseError(msg) {
-  return (node, ctx) => ctx.error(msg, node);
-}
+const parseError = msg => (node, ctx) => ctx.error(msg, node);
 
 function handleIdentifier(node, ctx, parent) {
   const { name } = node;
@@ -102,8 +109,12 @@ function handleIdentifier(node, ctx, parent) {
     // do nothing: check head node, not nested properties
   } else if (isProperty(parent) && parent.key === node) {
     // do nothing: identifiers allowed in object expressions
-  } else if (ctx.columns.has(name)) {
-    updateColumnNode(node, ctx.columns.get(name));
+  } else if (ctx.paramsRef.has(name)) {
+    updateParameterNode(node, ctx.paramsRef.get(name));
+  } else if (ctx.columnRef.has(name)) {
+    updateColumnNode(node, name, ctx);
+  } else if (has(ctx.params, name)) {
+    updateParameterNode(node, name);
   } else if (has(constants, name)) {
     updateConstantNode(node, constants[name]);
   } else {
@@ -111,10 +122,25 @@ function handleIdentifier(node, ctx, parent) {
   }
 }
 
-function updateColumnNode(node, entry) {
+function updateColumnNode(node, key, ctx) {
+  const [name, index] = ctx.columnRef.get(key);
+
+  // check column validity if we have a backing table
+  const table = index === 0 ? ctx.table
+    : index > 0 ? ctx.join[index - 1]
+    : null;
+  if (table && !has(table.data(), name)) {
+    ctx.error(`Invalid column "${name}"`, ctx);
+  }
+
   node.type = Column;
-  node.name = entry[0];
-  node.index = entry[1];
+  node.name = name;
+  node.index = index;
+}
+
+function updateParameterNode(node, name) {
+  node.type = Parameter;
+  node.name = name;
 }
 
 function updateConstantNode(node, value) {
@@ -182,37 +208,51 @@ const visitors = {
     // bail if left head is not an identifier
     // in this case we will recurse and handle it later
     if (!isIdentifier(object)) return;
+    const { name } = object;
 
     // allow use of Math prefix to access constant values
-    if (object.name === 'Math' && isIdentifier(property) &&
+    if (name === 'Math' && isIdentifier(property) &&
         has(constants, property.name))
     {
       updateConstantNode(node, constants[property.name]);
       return;
     }
 
-    const index = object.name === ctx.tuple ? 0
-      : object.name === ctx.tuple1 ? 1
-      : object.name === ctx.tuple2 ? 2
-      : null;
+    const index = name === ctx.tuple ? 0
+      : name === ctx.tuple1 ? 1
+      : name === ctx.tuple2 ? 2
+      : -1;
 
-    if (index != null) {
+    if (index >= 0) {
       // replace member expression with column ref
-      if (isIdentifier(property)) {
-        Object.assign(node, { type: Column, name: property.name, index });
-        return false;
-      } else if (isLiteral(property)) {
-        Object.assign(node, { type: Column, name: property.value, computed: true, index });
-        return false;
-      } else if (isMemberExpression(property)) {
-        object.name = property.object.name;
-        node.property = property.property;
-      }
-    } else if (ctx.columns.has(object.name)) {
-      updateColumnNode(object, ctx.columns.get(object.name));
+      const table = index === 0 ? ctx.table : ctx.join[index - 1];
+      const names = table ? table.data() : null;
+      return spliceMember(node, { type: Column, index }, ctx, names);
+    } else if (name === ctx.param) {
+      // replace member expression with param ref
+      return spliceMember(node, { type: Parameter }, ctx, ctx.params);
+    } else if (ctx.paramsRef.has(name)) {
+      updateParameterNode(node, ctx.paramsRef.get(name));
+    } else if (ctx.columnRef.has(name)) {
+      updateColumnNode(object, name, ctx);
+    } else if (has(ctx.params, name)) {
+      updateParameterNode(object, name);
     }
   }
 };
+
+function spliceMember(node, props, ctx, values) {
+  const { property } = node;
+  const name = isIdentifier(property) ? { name: property.name }
+    : isLiteral(property) ? { name: property.value, computed: true }
+    : ctx.error('Invalid member expression', node);
+
+  if (values && !has(values, name.name)) {
+    ctx.error(`Invalid ${props.type.toLowerCase()} "${name.name}"`, node);
+  }
+  Object.assign(node, props, name);
+  return false;
+}
 
 const opVisitors = {
   ...visitors,
@@ -255,7 +295,8 @@ export function parseExpression(ctx, name, spec) {
   ctx.tuple1 = null;
   ctx.tuple2 = null;
   ctx.scope = new Set();
-  ctx.columns = new Map();
+  ctx.paramsRef = new Map();
+  ctx.columnRef = new Map();
 
   // parse input column parameters
   // if no function def, assume default tuple identifiers
@@ -265,8 +306,10 @@ export function parseExpression(ctx, name, spec) {
   } else if (ctx.join) {
     ctx.scope.add(ctx.tuple1 = DEFAULT_TUPLE_ID1);
     ctx.scope.add(ctx.tuple2 = DEFAULT_TUPLE_ID2);
+    ctx.scope.add(ctx.param = DEFAULT_PARAM_ID);
   } else {
     ctx.scope.add(ctx.tuple = DEFAULT_TUPLE_ID);
+    ctx.scope.add(ctx.param = DEFAULT_PARAM_ID);
   }
 
   // rewrite column references & function calls
@@ -280,30 +323,37 @@ function parseFunction(node, ctx) {
   if (node.async) ctx.error('Async functions not allowed', node);
 
   const { params } = node;
+  const len = params.length;
+  const setc = index => (name, key) => ctx.columnRef.set(name, [key, index]);
+  const setp = (name, key) => ctx.paramsRef.set(name, key);
 
-  if (params.length === 1) {
-    parseFunctionParam(params[0], ctx.join ? 1 : 0, ctx);
-  } else if (ctx.join && params.length === 2) {
-    parseFunctionParam(params[0], 1, ctx);
-    parseFunctionParam(params[1], 2, ctx);
-  } else if (params.length > 0) {
-    ctx.error('Table expressions with multiple arguments', node);
+  if (!len) {
+    // do nothing
+  } else if (ctx.join) {
+    parseRef(ctx, params[0], 'tuple1', setc(1));
+    if (len > 1) parseRef(ctx, params[1], 'tuple2', setc(2));
+    if (len > 2) parseRef(ctx, params[2], 'param', setp);
+  } else {
+    parseRef(ctx, params[0], 'tuple', setc(0));
+    if (len > 1) parseRef(ctx, params[1], 'param', setp);
   }
 
   ctx.root = node.body;
 }
 
-function parseFunctionParam(node, index, ctx) {
+function parseRef(ctx, node, refName, alias) {
   if (isIdentifier(node)) {
     ctx.scope.add(node.name);
-    const t = 'tuple' + (index > 0 ? index : '');
-    ctx[t] = node.name;
+    ctx[refName] = node.name;
   } else if (isObjectPattern(node)) {
     node.properties.forEach(p => {
       const key = isIdentifier(p.key) ? p.key.name
         : isLiteral(p.key) ? p.key.value
-        : ctx.error('Invalid parameter', p);
-      ctx.columns.set(p.value.name, [key, index]);
+        : ctx.error('Invalid argument', p);
+      if (!isIdentifier(p.value)) {
+        ctx.error('Unsupported destructuring pattern', p.value);
+      }
+      alias(p.value.name, key);
     });
   }
 }

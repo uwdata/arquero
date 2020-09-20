@@ -17,9 +17,9 @@ export default class Table {
    * @param {string[]} [groups.names] - Output column names for grouping variables.
    * @param {function[]} [groups.get] - Accessor functions for grouping variables.
    * @param {function} [order] - A comparator function for sorting rows.
-   * @param {number[]} [index] - Row index array, overrides filter.
+   * @param {Object} [params] - Parameter values for table expressions.
    */
-  constructor(names, nrows, data, filter, groups, order, index) {
+  constructor(names, nrows, data, filter, groups, order, params) {
     this._names = Object.freeze(names);
     this._total = nrows;
     this._nrows = filter ? filter.count() : nrows;
@@ -27,14 +27,7 @@ export default class Table {
     this._filter = filter || null;
     this._group = groups || null;
     this._order = order || null;
-
-    // update table data if explicit indices are provided
-    if (index) {
-      this._nrows = index.length;
-      this._filter = true;
-      this._index = index;
-      if (order) index.sort((a, b) => order(a, b, data));
-    }
+    if (params) this._params = params;
   }
 
   /**
@@ -60,6 +53,7 @@ export default class Table {
    *  - filter: An additional filter bitset to apply.
    *  - groups: The groupby specification to use (null for no groups).
    *  - order: The orderby comparator to use (null for no order).
+   *  - params: Table expression parameters.
    * @return {Table} A newly created table.
    */
   create({ data, filter, groups, order }) { // eslint-disable-line no-unused-vars
@@ -369,6 +363,25 @@ export default class Table {
       for (; i < nrows; ++i) {
         fn(i, data, stop);
       }
+    }
+  }
+
+  /**
+   * Get or set table expression parameter values.
+   * If called with no arguments, returns the current parameter values
+   * as an object. Otherwise, adds the provided parameters to this
+   * table's parameter set and returns the table. Any prior parameters
+   * with names matching the input parameters are overridden.
+   * @param {Object} values The parameter values.
+   * @return {Table|Object} The current parameters values (if called with
+   *  no arguments) or this table.
+   */
+  params(values) {
+    if (arguments.length) {
+      this._params = { ...this._params, ...values };
+      return this;
+    } else {
+      return this._params;
     }
   }
 

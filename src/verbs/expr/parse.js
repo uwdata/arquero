@@ -25,5 +25,5 @@ export default function(name, table, params, options = { window: false }) {
     options.preparse(exprs);
   }
 
-  return parse(exprs, options);
+  return parse(exprs, { table, ...options });
 }

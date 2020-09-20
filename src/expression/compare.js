@@ -21,6 +21,7 @@ export default function(table, fields) {
     keys = table.groups().keys;
   }
   const { ops } = parse(fields, {
+    table,
     value: (name, node) => {
       fn[name] = [
         codegen(node, { index: 'a', op: opA }),

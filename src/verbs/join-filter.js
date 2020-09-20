@@ -16,7 +16,7 @@ export default function(tableL, tableR, on, options) {
         parseKey('join', tableL, on[0]),
         parseKey('join', tableR, on[1])
       )
-    : parse({ on }, { join: true }).values.on;
+    : parse({ on }, { join: [tableL, tableR] }).values.on;
 
   return _join_filter(tableL, tableR, on, options);
 }

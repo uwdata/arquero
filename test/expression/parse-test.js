@@ -138,26 +138,45 @@ tape('parse parses expressions with literal values', t => {
 });
 
 tape('parse parses column references with nested properties', t => {
-  const exprs = parse({ f: d => d.x.y });
   t.equal(
-    exprs.values.f + '',
+    parse({ f: d => d.x.y }).values.f + '',
     '(row,data,op)=>data.x.get(row).y',
     'parsed nested members'
   );
+
+  t.equal(
+    parse({ f: d => d['x'].y }).values.f + '',
+    '(row,data,op)=>data["x"].get(row).y',
+    'parsed nested members'
+  );
+
+  t.equal(
+    parse({ f: d => d['x']['y'] }).values.f + '',
+    '(row,data,op)=>data["x"].get(row)[\'y\']',
+    'parsed nested members'
+  );
+
   t.end();
 });
 
-tape('parse parses expressions with parameter expressions', t => {
+tape('parse throws on invalid column names', t => {
+  const opt = { table: { params: () => ({}), data: () => ({}) } };
+  t.throws(() => parse({ f: d => d.foo }, opt));
+  t.throws(() => parse({ f: ({ foo }) => foo }, opt));
+  t.end();
+});
+
+tape('parse parses expressions with op parameter expressions', t => {
   const exprs = parse({
     op: d => op.quantile(d.a, op.abs(op.sqrt(0.25)))
   });
   t.equal(
-    exprs.ops[0].params[0], 0.5, 'calculated param'
+    exprs.ops[0].params[0], 0.5, 'calculated op param'
   );
   t.end();
 });
 
-tape('parse throws on invalid parameter expressions', t => {
+tape('parse throws on invalid op parameter expressions', t => {
   t.throws(() => parse({ op: d => op.quantile(d.a, d.b) }));
   t.throws(() => parse({ op: d => op.sum(op.mean(d.a)) }));
   t.throws(() => parse({ op: d => op.sum(op.lag(d.a)) }));

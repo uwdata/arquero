@@ -19,7 +19,7 @@ const get = col => row => col.get(row) || 0;
 function parseSize(table, size) {
   return isNumber(size)
     ? () => size
-    : get(_rollup(table, parse({ size })).column('size'));
+    : get(_rollup(table, parse({ size }, { table })).column('size'));
 }
 
 function parseWeight(table, w) {
@@ -28,6 +28,6 @@ function parseWeight(table, w) {
   return get(
     isString(w)
       ? table.column(w)
-      : _derive(table, parse({ w })).column('w')
+      : _derive(table, parse({ w }, { table })).column('w')
   );
 }

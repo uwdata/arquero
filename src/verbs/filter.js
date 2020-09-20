@@ -3,7 +3,7 @@ import _filter from '../engine/filter';
 import parse from '../expression/parse';
 
 export default function(table, criteria) {
-  const expr = parse({ test: criteria });
+  const expr = parse({ test: criteria }, { table });
   let { test } = expr.values;
   if (expr.ops.length) {
     const bv = _derive(table, expr).column('test');

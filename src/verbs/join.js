@@ -8,9 +8,8 @@ import has from '../util/has';
 import intersect from '../util/intersect';
 import isArray from '../util/is-array';
 
-const OPT_J = { join: true };
 const OPT_L = { aggregate: false, window: false };
-const OPT_R = { ...OPT_L, index: 1};
+const OPT_R = { ...OPT_L, index: 1 };
 
 export default function(tableL, tableR, on, values, options) {
   if (!on) {
@@ -24,21 +23,23 @@ export default function(tableL, tableR, on, values, options) {
     values = [all(), all()];
   }
 
+  const optParse = { join: [tableL, tableR] };
+
   const join = isArray(on)
     ? (on = [
         parseKey('join', tableL, on[0]),
         parseKey('join', tableR, on[1])
       ], _join_hash)
-    : (on = parse({ on }, OPT_J).values.on, _join_loop);
+    : (on = parse({ on }, optParse).values.on, _join_loop);
 
   return join(
     tableL, tableR, on,
-    parseValues(tableL, tableR, values, options && options.suffix),
+    parseValues(tableL, tableR, values, optParse, options && options.suffix),
     options
   );
 }
 
-function parseValues(tableL, tableR, values, suffix = []) {
+function parseValues(tableL, tableR, values, optParse, suffix = []) {
   if (isArray(values)) {
     let vL, vR, vJ, n = values.length;
 
@@ -49,7 +50,7 @@ function parseValues(tableL, tableR, values, suffix = []) {
       vR = parseValue('join', tableR, values[1], OPT_R).values;
     }
     if (n--) {
-      vJ = parse(values[2], OPT_J).values;
+      vJ = parse(values[2], optParse).values;
     }
 
     // handle name collisions
@@ -66,7 +67,7 @@ function parseValues(tableL, tableR, values, suffix = []) {
 
     return { values: { ...vL, ...vR, ...vJ } };
   } else {
-    return parse(values, OPT_J);
+    return parse(values, optParse);
   }
 }
 

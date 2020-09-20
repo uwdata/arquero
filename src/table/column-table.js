@@ -34,11 +34,11 @@ export default class ColumnTable extends Table {
     return new ColumnTable(columnsFrom(values, names));
   }
 
-  constructor(columns, filter, group, order) {
+  constructor(columns, filter, group, order, params) {
     mapObject(columns, Column.from, columns);
     const names = Object.keys(columns);
     const nrows = names.length ? columns[names[0]].length : 0;
-    super(names, nrows, columns, filter, group, order);
+    super(names, nrows, columns, filter, group, order, params);
   }
 
   create({ data, filter, groups, order }) {
@@ -50,7 +50,8 @@ export default class ColumnTable extends Table {
       data || this._data,
       f,
       groups !== undefined ? groups : regroup(this._group, filter && f),
-      order !== undefined ? order : this._order
+      order !== undefined ? order : this._order,
+      this._params
     );
   }
 
