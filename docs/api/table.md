@@ -79,6 +79,12 @@ Get or set table expression parameter values. If called with no arguments, retur
 
 * *values*: A set of parameter values to add as an object of name-value pairs.
 
+*Examples*
+
+```js
+table.params({ hi: 5 }).filter((d, $) => abs(d.value) < $.hi)
+```
+
 
 <br/>
 
