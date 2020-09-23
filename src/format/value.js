@@ -1,4 +1,5 @@
 import isDate from '../util/is-date';
+import isFunction from '../util/is-function';
 import isTypedArray from '../util/is-typed-array';
 
 const pad = v => (v < 10 ? '0' : '') + v;
@@ -19,6 +20,10 @@ const formatTime = d =>
 const formatDateTime = d => formatDate(d) + ' ' + formatTime(d);
 
 export default function(v, options = {}) {
+  if (isFunction(options)) {
+    return options(v) + '';
+  }
+
   const type = typeof v;
 
   if (type === 'object') {

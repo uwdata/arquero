@@ -208,6 +208,7 @@ Format this table as a comma-separated values (CSV) string. Other delimiters, su
   * *delimiter*: The delimiter between values (default `","`).
   * *limit*: The maximum number of rows to print (default `Infinity`).
   * *columns*: Ordered list of column names to include. If function-valued, the function should accept a table as input and return an array of column name strings.
+  * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions to invoke to transform column values prior to output. If specified, a formatting function overrides any automatically inferred options.
 
 <hr/><a id="toHTML" href="#toHTML">#</a>
 <em>table</em>.<b>toHTML</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-csv.js)
@@ -217,11 +218,11 @@ Format this table as an HTML table string.
 * *options*: A formatting options object:
   * *limit*: The maximum number of rows to print (default `Infinity`).
   * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings.
-  * *format*: Object of column format options. The object keys should be column names. The object values should be objects with any of the following properties. If specified, these override any automatically inferred options:
-    * *align*: One of 'l' (left), 'c' (center), or 'r' (right).
+  * *align*: Object of column alignment options. The object keys should be column names. The object values should be aligment strings, one of `'l'` (left), `'c'` (center), or `'r'` (right). If specified, these override any automatically inferred options.
+  * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions or objects with any of the following properties.If specified, these override any automatically inferred options:
     * *date*: One of 'utc' or 'loc' (for UTC or local dates), or `null` for complete date time strings.
     * *digits*: Number of significant digits to include for numbers.
-  * *style* CSS styles to include in HTML output. The object keys can be HTML table tag names: `'table'`, `'thead'`, `'tbody'`, `'tr'`, `'th'`, or `'td'`. The object values should be strings of valid CSS style directives (such as `"font-weight: bold;"`).
+  * *style* CSS styles to include in HTML output. The object keys can be HTML table tag names: `'table'`, `'thead'`, `'tbody'`, `'tr'`, `'th'`, or `'td'`. The object values should be strings of valid CSS style directives (such as `"font-weight: bold;"`) or functions that take a column name and row as inputs and return a CSS string.
 
 <hr/><a id="toJSON" href="#toJSON">#</a>
 <em>table</em>.<b>toJSON</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-json.js)
@@ -231,6 +232,7 @@ Format this table as a JavaScript Object Notation (JSON) string.
 * *options*: A formatting options object:
   * *limit*: The maximum number of rows to print (default `Infinity`).
   * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings.
+  * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions to invoke to transform column values prior to output. If specified, a formatting function overrides any automatically inferred options.
 
 <hr/><a id="toMarkdown" href="#toMarkdown">#</a>
 <em>table</em>.<b>toMarkdown</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-json.js)
@@ -240,7 +242,7 @@ Format this table as a [GitHub-Flavored Markdown table](https://github.github.co
 * *options*: A formatting options object:
   * *limit*: The maximum number of rows to print (default `Infinity`).
   * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings.
-  * *format*: Object of column format options. The object keys should be column names. The object values should be objects with any of the following properties. If specified, these override any automatically inferred options:
-    * *align*: One of 'l' (left), 'c' (center), or 'r' (right).
+  * *align*: Object of column alignment options. The object keys should be column names. The object values should be aligment strings, one of `'l'` (left), `'c'` (center), or `'r'` (right). If specified, these override any automatically inferred options.
+  * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions or objects with any of the following properties.If specified, these override any automatically inferred options:
     * *date*: One of 'utc' or 'loc' (for UTC or local dates), or `null` for complete date time strings.
     * *digits*: Number of significant digits to include for numbers.

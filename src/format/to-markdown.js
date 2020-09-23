@@ -6,11 +6,14 @@ import { columns, formats, scan } from './util';
  * @typedef {Object} MarkdownOptions
  * @property {number} [limit=Infinity] The maximum number of rows to print.
  * @property {string[]} [columns] Ordered list of column names to print.
+ * @property {Object} [align] Object of column alignment options.
+ *  The object keys should be column names. The object values should be
+ *  aligment strings, one of 'l' (left), 'c' (center), or 'r' (right).
+ *  If specified, these override the automatically inferred options.
  * @property {Object} [format] Object of column format options.
  *  The object keys should be column names. The object values should be
- *  objects with any of the following properties. If specified, these
- *  override the automatically inferred options.
- *  - {string} align One of 'l' (left), 'c' (center), or 'r' (right).
+ *  formatting functions or objects with any of the following properties.
+ *  If specified, these override the automatically inferred options.
  *  - {string} date One of 'utc' or 'loc' (for UTC or local dates), or null for full date times.
  *  - {number} digits Number of significant digits to include for numbers.
  */
@@ -23,15 +26,15 @@ import { columns, formats, scan } from './util';
  */
 export default function(table, options = {}) {
   const names = columns(table, options.columns);
-  const format = formats(table, names, options);
+  const { align, format } = formats(table, names, options);
 
-  const align = a => a === 'c' ? ':-:' : a === 'r' ? '-:' : ':-';
+  const alignValue = a => a === 'c' ? ':-:' : a === 'r' ? '-:' : ':-';
   const escape = s => s.replace(/\|/g, '\\|');
 
   let text = '|'
     + names.map(escape).join('|')
     + '|\n|'
-    + names.map(name => align(format[name].align)).join('|')
+    + names.map(name => alignValue(align[name])).join('|')
     + '|';
 
   scan(table, names, options.limit, {

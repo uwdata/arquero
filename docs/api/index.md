@@ -72,19 +72,24 @@ Create a new <a href="table">table</a> backed by an [Apache Arrow](https://arrow
 <hr/><a id="fromCSV" href="#fromCSV">#</a>
 <em>aq</em>.<b>fromCSV</b>(<i>text</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-csv.js)
 
-Parse a comma-separated values (CSV) *text* string into a <a href="table">table</a>. Delimiters other than commas, such as tabs or pipes ('\|'), can be specified using the *options* argument.
+Parse a comma-separated values (CSV) *text* string into a <a href="table">table</a>. Delimiters other than commas, such as tabs or pipes ('\|'), can be specified using the *options* argument.By default, automatic type inference is performed for input values; string values that match the ISO standard date format are parsed into JavaScript Date objects. To disable this behavior, set *options.autoType* to `false`. To perform custom parsing of input column values, use *options.parse*.
 
  * *text*: A string in a delimited-value format.
  * *options*: A CSV format options object:
    * *delimiter*: The delimiter string between column values.
+   * *autoType*: Boolean flag (default `true`) for automatic type inference.
+   * *parse*: Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
 
 
 <hr/><a id="fromJSON" href="#fromJSON">#</a>
 <em>aq</em>.<b>fromJSON</b>(<i>data</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-json.js)
 
-Parse JavaScript Object Notation (JSON) *data* into a <a href="table">table</a>. The expected JSON format is an object with column names for keys and column value arrays for values. String values that match the ISO standard date format are parsed into JavaScript Date objects.
+Parse JavaScript Object Notation (JSON) *data* into a <a href="table">table</a>. The expected JSON format is an object with column names for keys and column value arrays for values. If the input *data* is string-valued, parsed string values in JSON text that match the ISO standard date format are parsed into JavaScript Date objects. To disable this behavior, set *options.autoType* to `false`. To perform custom parsing of input column values (regardless of *data* input type), use *options.parse*.
 
 * *data*: A string in a JSON format, or a corresponding Object instance.
+* *options*: A JSON format options object:
+   * *autoType*: Boolean flag (default `true`) for automatic type inference. If `false`, automatic date parsing for input JSON strings is disabled.
+   * *parse*: Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
 
 
 <br/>

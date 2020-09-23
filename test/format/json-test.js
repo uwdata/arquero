@@ -33,6 +33,16 @@ tape('toJSON formats JSON text', t => {
   t.end();
 });
 
+tape('toJSON formats JSON text with format option', t => {
+  const dt = new ColumnTable(data());
+  t.equal(
+    toJSON(dt, { limit: 2, columns: ['str'], format: { str: d => d + '!' } }),
+    '{"str":["a!","b!"]}',
+    'json text with custom format'
+  );
+  t.end();
+});
+
 tape('fromJSON parses JSON text', t => {
   const table = fromJSON(text);
   t.equal(table.numRows(), 3, 'num rows');
@@ -41,3 +51,9 @@ tape('fromJSON parses JSON text', t => {
   t.end();
 });
 
+tape('fromJSON parses JSON text with parse option', t => {
+  const table = fromJSON(text, { parse: { str: d => d + d } });
+  const d = { ...data(), str: ['aa', 'bb', 'cc'] };
+  tableEqual(t, table, d, 'json parsed data with custom parse');
+  t.end();
+});

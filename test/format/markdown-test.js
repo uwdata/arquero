@@ -29,3 +29,34 @@ tape('toMarkdown formats markdown table text', t => {
 
   t.end();
 });
+
+tape('toMarkdown formats markdown table text with format option', t => {
+  const md = [
+    '|u|v|\n',
+    '|:-|-:|\n',
+    '|aa|10|\n',
+    '|aa|20|\n',
+    '|bb|30|\n',
+    '|aa|40|\n',
+    '|bb|50|\n'
+  ];
+
+  const dt = new ColumnTable({
+      u: ['a', 'a', 'a', 'b', 'b'],
+      v: [2, 1, 4, 5, 3]
+    })
+    .orderby('v');
+
+  t.equal(
+    toMarkdown(dt, {
+      format: {
+        u: d => d + d,
+        v: d => d * 10
+      }
+    }),
+    md.join(''),
+    'markdown text with custom format'
+  );
+
+  t.end();
+});

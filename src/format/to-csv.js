@@ -9,6 +9,10 @@ import pad from '../util/pad';
  * @property {string[]|Function} [columns] Ordered list of column names
  *  to include. If function-valued, the function should accept a table as
  *  input and return an array of column name strings.
+ * @property {Object} [format] Object of column format options.
+ *  The object keys should be column names. The object values should be
+ *  formatting functions to invoke to transform column values prior to output.
+ *  If specified, these override any automatically inferred options.
  */
 
 /**
@@ -21,6 +25,7 @@ import pad from '../util/pad';
  */
 export default function(table, options = {}) {
   const names = columns(table, options.columns);
+  const format = options.format || {};
   const delim = options.delim || ',';
   const reFormat = new RegExp(`["${delim}\n\r]`);
 
@@ -37,14 +42,12 @@ export default function(table, options = {}) {
       text += vals.join(delim) + '\n';
     },
     cell(value, name, index) {
-      vals[index] = formatValue(value);
+      vals[index] = formatValue(format[name] ? format[name](value) : value);
     }
   });
 
   return text + vals.join(delim);
 }
-
-
 
 const formatYear = year => year < 0 ? '-' + pad(-year, 6)
   : year > 9999 ? '+' + pad(year, 6)

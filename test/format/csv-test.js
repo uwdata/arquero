@@ -46,10 +46,27 @@ tape('toCSV formats delimited text for filtered table', t => {
   t.end();
 });
 
+tape('toCSV formats delimited text with format option', t => {
+  const dt = new ColumnTable(data());
+  t.equal(
+    toCSV(dt, { limit: 2, columns: ['str'], format: { str: d => d + '!' } }),
+    ['str', 'a!', 'b!'].join('\n'),
+    'csv text with custom format'
+  );
+  t.end();
+});
+
 tape('fromCSV parses delimited text', t => {
   const table = fromCSV(text.join('\n'));
   t.equal(table.numRows(), 3, 'num rows');
   t.equal(table.numCols(), 5, 'num cols');
   tableEqual(t, table, data(), 'csv parsed data');
+  t.end();
+});
+
+tape('fromCSV parses delimited text with parse option', t => {
+  const table = fromCSV(text.join('\n'), { parse: { str: d => d + d } });
+  const d = { ...data(), str: ['aa', 'bb', 'cc'] };
+  tableEqual(t, table, d, 'csv parsed data with custom parse');
   t.end();
 });

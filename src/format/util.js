@@ -12,17 +12,18 @@ export function numRows(table, limit) {
 }
 
 export function formats(table, names, options) {
+  const formatOpt = options.format || {};
+  const alignOpt = options.align || {};
   const format = {};
-  const fmtopt = options.format || {};
+  const align = {};
 
   names.forEach(name => {
-    format[name] = {
-      ...inferFormat(values(table, name), options),
-      ...fmtopt[name]
-    };
+    const auto = inferFormat(values(table, name), options);
+    align[name] = alignOpt[name] || auto.align;
+    format[name] = formatOpt[name] || auto.format;
   });
 
-  return format;
+  return { align, format };
 }
 
 function values(table, columnName) {
@@ -37,7 +38,7 @@ export function scan(table, names, limit, ctx) {
   const n = names.length;
   let r = 0;
   table.scan((row, data, stop) => {
-    ctx.row();
+    ctx.row(row);
     for (let i = 0; i < n; ++i) {
       const name = names[i];
       ctx.cell(table.get(name, row), name, i);
