@@ -3,8 +3,8 @@ import inferFormat from '../../src/format/infer';
 import formatValue from '../../src/format/value';
 
 function formatsAs(t, values, strings, options) {
-  const opt = inferFormat(f => values.forEach(f), options);
-  const out = values.map(v => formatValue(v, opt));
+  const { format } = inferFormat(f => values.forEach(f), options);
+  const out = values.map(v => formatValue(v, format));
   t.deepEqual(out, strings, `formats [${strings.join(', ')}]`);
 }
 
