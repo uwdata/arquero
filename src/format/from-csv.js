@@ -2,12 +2,19 @@ import ColumnTable from '../table/column-table';
 import autoType from '../util/auto-type';
 import isFunction from '../util/is-function';
 import parse from '../util/parse-dsv';
+import repeat from '../util/repeat';
+
+const DEFAULT_COLUMN_NAME = 'col';
 
 /**
  * Options for CSV parsing.
  * @typedef {Object} CSVParseOptions
  * @property {string} [delimiter=','] The delimiter between values.
  * @property {boolean} [autoType=true] Flag controlling automatic type inference.
+ * @property {boolean} [header=true] Flag to specify presence of header row.
+ *  If true, assumes the CSV contains a header row with column names.
+ *  If false, indicates the CSV does not contain a header row, and the
+ *  columns are given the names 'col1', 'col2', and so on.
  * @property {Object} [parse] Object of column parsing options.
  *  The object keys should be column names. The object values should be
  *  parsing functions to invoke to transform values upon input.
@@ -28,26 +35,28 @@ import parse from '../util/parse-dsv';
 export default function(text, options = {}) {
   const delim = (options.delim == null ? ',' : options.delim + '').charCodeAt(0);
   const defaultParser = options.autoType !== false ? autoType : d => d;
-  const values = [];
-  let names = [];
-  let parsers;
+  const header = options.header !== false;
+  let names, values, parsers;
 
-  parse(text, delim, (row, index) => {
+  parse(text, delim, (array, index) => {
     if (index === 0) {
-      names = row;
-      const n = names.length;
-      const p = options.parse || {};
-      parsers = Array(n);
-      for (let i = 0; i < n; ++i) {
-        const parser = p[names[i]];
-        parsers[i] = isFunction(parser) ? parser : defaultParser;
-        values[i] = [];
+      const n = array.length;
+      values = repeat(n, () => []);
+      parsers = Array(n).fill(defaultParser);
+
+      if (header) {
+        const p = options.parse || {};
+        (names = array)
+          .forEach((_, i) => isFunction(p[_]) ? (parsers[i] = p[_]) : 0);
+        return;
+      } else {
+        names = repeat(n, i => `${DEFAULT_COLUMN_NAME}${i + 1}`);
       }
-    } else {
-      const n = names.length;
-      for (let i = 0; i < n; ++i) {
-        values[i].push(parsers[i](row[i]));
-      }
+    }
+
+    const n = names.length;
+    for (let i = 0; i < n; ++i) {
+      values[i].push(parsers[i](array[i]));
     }
   });
 

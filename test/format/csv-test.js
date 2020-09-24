@@ -65,6 +65,20 @@ tape('fromCSV parses delimited text', t => {
 });
 
 tape('fromCSV parses delimited text with parse option', t => {
+  const table = fromCSV(text.slice(1).join('\n'), { header: false });
+  const cols = data();
+  const d = {
+    col1: cols.str,
+    col2: cols.int,
+    col3: cols.num,
+    col4: cols.bool,
+    col5: cols.date
+  };
+  tableEqual(t, table, d, 'csv parsed data with no header');
+  t.end();
+});
+
+tape('fromCSV parses delimited text with header option', t => {
   const table = fromCSV(text.join('\n'), { parse: { str: d => d + d } });
   const d = { ...data(), str: ['aa', 'bb', 'cc'] };
   tableEqual(t, table, d, 'csv parsed data with custom parse');
