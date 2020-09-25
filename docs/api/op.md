@@ -695,8 +695,8 @@ Returns the part of the string *value* between the *start* and *end* indexes, or
 * *start*: The index of the first character to include in the returned substring (default `0`).
 * *end*: The index of the first character to exclude from the returned substring (default `value.length`).
 
-<hr/><a id="substring" href="#substring">#</a>
-<em>op</em>.<b>substring</b>(<i>value</i>, <i>separator</i>[, <i>limit</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+<hr/><a id="split" href="#split">#</a>
+<em>op</em>.<b>split</b>(<i>value</i>, <i>separator</i>[, <i>limit</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
 
 Divides a string *value* into an ordered list of substrings based on a *separator* pattern, puts these substrings into an array, and returns the array.
 
