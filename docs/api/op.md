@@ -663,17 +663,17 @@ Retrieves the result of matching a string *value* against a regular expression *
 * *regexp*: The regular expression to test with.
 * *value*: The input string to search for matches.
 
-<hr/><a id="upper" href="#upper">#</a>
-<em>op</em>.<b>upper</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
-
-Returns the string *value* converted to upper case.
-
-* *value*: The input string value.
-
 <hr/><a id="lower" href="#lower">#</a>
 <em>op</em>.<b>lower</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
 
 Returns the string *value* converted to lower case.
+
+* *value*: The input string value.
+
+<hr/><a id="upper" href="#upper">#</a>
+<em>op</em>.<b>upper</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Returns the string *value* converted to upper case.
 
 * *value*: The input string value.
 
@@ -685,15 +685,6 @@ Returns a new string with some or all matches of a *pattern* replaced by a *repl
 * *value*: The input string value.
 * *pattern*: The pattern string or regular expression to replace.
 * *replacement*: The replacement string to use.
-
-<hr/><a id="substring" href="#substring">#</a>
-<em>op</em>.<b>substring</b>(<i>value</i>[, <i>start</i>, <i>end</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
-
-Returns the part of the string *value* between the *start* and *end* indexes, or to the end of the string.
-
-* *value*: The input string value.
-* *start*: The index of the first character to include in the returned substring (default `0`).
-* *end*: The index of the first character to exclude from the returned substring (default `value.length`).
 
 <hr/><a id="split" href="#split">#</a>
 <em>op</em>.<b>split</b>(<i>value</i>, <i>separator</i>[, <i>limit</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
@@ -712,6 +703,15 @@ Determines whether a string *value* starts with the characters of a specified *s
 * *value*: The input string value.
 * *search*: The search string to test for.
 * *position*: The position in the *value* string at which to begin searching (default `0`).
+
+<hr/><a id="substring" href="#substring">#</a>
+<em>op</em>.<b>substring</b>(<i>value</i>[, <i>start</i>, <i>end</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Returns the part of the string *value* between the *start* and *end* indexes, or to the end of the string.
+
+* *value*: The input string value.
+* *start*: The index of the first character to include in the returned substring (default `0`).
+* *end*: The index of the first character to exclude from the returned substring (default `value.length`).
 
 <hr/><a id="trim" href="#trim">#</a>
 <em>op</em>.<b>trim</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
