@@ -10,7 +10,7 @@ import toMarkdown from '../format/to-markdown';
 import arrayType from '../util/array-type';
 import error from '../util/error';
 import mapObject from '../util/map-object';
-import unroll from '../util/unroll';
+import rowObjectBuilder from '../util/row-object-builder';
 
 /**
  * Class representing a table backed by a named set of columns.
@@ -113,14 +113,8 @@ export default class ColumnTable extends Table {
   objects(options = {}) {
     const limit = numRows(this, options.limit);
     if (limit <= 0) return [];
-
     const tuples = Array(limit);
-    const names = this.columnNames();
-    const create = unroll(
-      names.map(name => this.column(name)),
-      'row',
-      '({' + names.map((_, i) => `${JSON.stringify(_)}:_${i}.get(row)`) + '})'
-    );
+    const create = rowObjectBuilder(this);
 
     let r = 0;
     this.scan((row, data, stop) => {
@@ -129,6 +123,26 @@ export default class ColumnTable extends Table {
     }, true);
 
     return tuples;
+  }
+
+  /**
+   * Returns an iterator over objects representing table rows.
+   * @return {Iterator} An iterator over row objects.
+   */
+  *[Symbol.iterator]() {
+    const create = rowObjectBuilder(this);
+    const n = this.numRows();
+
+    if (this.isOrdered() || this.isFiltered) {
+      const indices = this.indices();
+      for (let i = 0; i < n; ++i) {
+        yield create(indices[i]);
+      }
+    } else {
+      for (let i = 0; i < n; ++i) {
+        yield create(i);
+      }
+    }
   }
 
   /**
