@@ -230,6 +230,14 @@ export default class Table {
   }
 
   /**
+   * Returns an iterator over objects representing table rows.
+   * @return {Iterator} An iterator over row objects.
+   */
+  [Symbol.iterator]() {
+    error('Not implemented');
+  }
+
+  /**
    * Print the contents of this table using the console.table() method.
    * @param {ObjectsOptions} options The options for row object generation,
    *  determining which rows and columns are printed.
@@ -350,7 +358,7 @@ export default class Table {
     const stop = () => i = this._total;
 
     if (order && this.isOrdered() || filter && this._index) {
-      const index = this._index = this.indices();
+      const index = this.indices();
       const data = this._data;
       for (; i < nrows; ++i) {
         fn(index[i], data, stop);

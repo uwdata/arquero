@@ -117,6 +117,30 @@ tape('ColumnTable supports object output', t => {
   t.end();
 });
 
+tape('ColumnTable supports iterator output', t => {
+  const output = [
+    { u: 'a', v: 2 },
+    { u: 'a', v: 1 },
+    { u: 'a', v: 4 },
+    { u: 'b', v: 5 },
+    { u: 'b', v: 3 }
+  ];
+
+  const dt = new ColumnTable({
+      u: ['a', 'a', 'a', 'b', 'b'],
+      v: [2, 1, 4, 5, 3]
+    });
+
+  t.deepEqual([...dt], output, 'iterator data');
+  t.deepEqual(
+    [...dt.orderby('v')],
+    output.slice().sort((a, b) => a.v - b.v),
+    'iterator data orderby'
+  );
+
+  t.end();
+});
+
 tape('ColumnTable toString shows table state', t => {
   const dt = new ColumnTable({
     a: ['a', 'a', 'a', 'b', 'b'],
