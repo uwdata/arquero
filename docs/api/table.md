@@ -168,7 +168,7 @@ Returns an array of indices for each group in the table. If the table is not gro
 * *order*: A boolean flag (default `true`) indicating if the returned indices should be sorted if this table is ordered. If `false`, the returned indices may or may not be sorted.
 
 <hr/><a id="scan" href="#scan">#</a>
-<em>table</em>.<b>scan</b>(<i>callback</i>, [<i>order</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>scan</b>(<i>callback</i>[, <i>order</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
 Perform a table scan, invoking the provided *callback* function for each row of the table. If this table is filtered, only rows passing the filter are visited.
 
