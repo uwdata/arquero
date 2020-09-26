@@ -13,7 +13,6 @@ export default function(table, { values = {}, ops = [] }, options = {}) {
     const columns = spread(table, get[index], limit);
     const n = columns.length;
     for (let i = 0; i < n; ++i) {
-      // TODO: pad index based on total count?
       // TODO: revise name to avoid conflicts?
       data[`${name}${i + 1}`] = columns[i];
     }
