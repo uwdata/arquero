@@ -18,7 +18,7 @@ title: Table \| Arquero API Reference
   * [data](#data), [get](#get), [getter](#getter)
   * [indices](#indices), [partition](#partition), [scan](#scan)
 * [Table Output](#output)
-  * [objects](#objects), [print](#print)
+  * [objects](#objects), [Symbol.iterator](#@@iterator), [print](#print)
   * [toCSV](#toCSV), [toHTML](#toHTML), [toJSON](#toJSON), [toMarkdown](#toMarkdown)
 
 
@@ -190,6 +190,24 @@ Returns an array of objects representing table rows. A new set of objects will b
 
 * *options*: Options for row generation:
   * *limit*: The maximum number of objects to create (default `Infinity`).
+
+<hr/><a id="@@iterator" href="#@@iterator">#</a>
+<em>table</em>\[<b>Symbol.iterator</b>\]() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+
+Returns an iterator over generated row objects. Similar to the [objects](#objects) method, this method generates new row object instances; however, rather than returning an array, this method provides an iterator over row objects for each active row in the table.
+
+*Examples*
+
+```js
+for (const rowObject of table) {
+  // do something with row object
+}
+```
+
+```js
+// slightly less efficient version of table.objects()
+const objects = [...table];
+```
 
 <hr/><a id="print" href="#print">#</a>
 <em>table</em>.<b>print</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
