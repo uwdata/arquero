@@ -47,6 +47,15 @@ tape('addFunction registers new function', t => {
     'do not overwrite existing functions'
   );
 
+  const abs = op.abs;
+  t.doesNotThrow(
+    () => {
+      addFunction('abs', val => val < 0 ? -val : val, { override: true });
+      addFunction('abs', abs, { override: true });
+    },
+    'support override option'
+  );
+
   t.end();
 });
 
@@ -58,7 +67,7 @@ tape('addAggregateFunction registers new aggregate function', t => {
     value: s => s.altsum
   });
 
-  addAggregateFunction('altsum1', { create }, 1, 0);
+  addAggregateFunction('altsum1', { create }, { numFields: 1, numParams: 0 });
   t.deepEqual(
     aggregateFunctions.altsum1,
     { create, param: [1, 0] },
@@ -94,7 +103,7 @@ tape('addWindowFunction registers new window function', t => {
     value: (w, f) => w.value(w.index, f) - w.index + (offset || 0)
   });
 
-  addWindowFunction('vmi1', { create }, 1, 1);
+  addWindowFunction('vmi1', { create }, { numFields: 1, numParams: 1 });
   t.deepEqual(
     windowFunctions.vmi1,
     { create, param: [1, 1] },
