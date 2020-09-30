@@ -7,7 +7,7 @@ export default function(table, size, weight, options = {}) {
   let total = 0;
   size = parts.map((idx, group) => {
     let s = size(group);
-    total += (s = replace ? s : Math.min(idx.length, s));
+    total += (s = (replace ? s : Math.min(idx.length, s)));
     return s;
   });
 
