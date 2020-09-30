@@ -1,6 +1,6 @@
 {
   "name": "arquero",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Query processing and transformation of array-backed data tables.",
   "keywords": [
     "data",
@@ -29,12 +29,12 @@
     "prepublishOnly": "yarn test && yarn lint && yarn build"
   },
   "dependencies": {
-    "acorn": "^8.0.1"
+    "acorn": "^8.0.2"
   },
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
-    "eslint": "^7.9.0",
+    "eslint": "^7.10.0",
     "esm": "^3.2.25",
     "rimraf": "^3.0.2",
     "rollup": "^2.28.2",
