@@ -18,5 +18,10 @@ export default function(table, others) {
     data[name] = Column.from(arr);
   });
 
-  return table.create({ data, filter: null, groups: null, order: null });
+  return table.create({
+    data,
+    filter: null,
+    groups: null,
+    order:  null
+  });
 }

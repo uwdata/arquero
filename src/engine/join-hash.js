@@ -81,5 +81,10 @@ export default function(tableL, tableR, [keyL, keyR], { values }, options = {}) 
     }
   }
 
-  return tableL.create({ data, groups: null, order: null });
+  return tableL.create({
+    data,
+    filter: null,
+    groups: null,
+    order:  null
+  });
 }

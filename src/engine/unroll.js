@@ -93,5 +93,10 @@ export default function(table, { values = {}, ops = [] }, options = {}) {
     });
   }
 
-  return table.create({ data, filter: null, groups: null, order: null });
+  return table.create({
+    data,
+    filter: null,
+    groups: null,
+    order:  null
+  });
 }
