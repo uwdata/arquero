@@ -82,7 +82,7 @@ Alternatively, you can build and import `arquero.min.js` from the `build` direct
 
 Arquero uses modern JavaScript features, and so will not work with some outdated browsers. To use Arquero with older browsers including Internet Explorer, set up your project with a transpiler such as [Babel](https://babeljs.io/).
 
-### In Node.js
+### In Node.js or Application Bundles
 
 First install `arquero` as a dependency, via `npm install arquero --save` or `yarn add arquero`. Arquero assumes Node version 12 or higher.
 
