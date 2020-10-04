@@ -16,7 +16,7 @@ title: Table \| Arquero API Reference
   * [columnNames](#columnNames)
 * [Table Values](#values)
   * [data](#data), [get](#get), [getter](#getter)
-  * [indices](#indices), [partition](#partition), [scan](#scan)
+  * [indices](#indices), [partitions](#partitions), [scan](#scan)
 * [Table Output](#output)
   * [objects](#objects), [Symbol.iterator](#@@iterator), [print](#print)
   * [toCSV](#toCSV), [toHTML](#toHTML), [toJSON](#toJSON), [toMarkdown](#toMarkdown)
