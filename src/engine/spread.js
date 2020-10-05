@@ -6,6 +6,7 @@ export default function(table, { values = {}, ops = [] }, options = {}) {
   const names = Object.keys(values);
   if (names.length === 0) return table;
 
+  const as = (names.length === 1 && options.as) || [];
   const get = aggregateGet(table, ops, Object.values(values));
   const data = { ...table.data() };
 
@@ -13,8 +14,7 @@ export default function(table, { values = {}, ops = [] }, options = {}) {
     const columns = spread(table, get[index], limit);
     const n = columns.length;
     for (let i = 0; i < n; ++i) {
-      // TODO: revise name to avoid conflicts?
-      data[`${name}${i + 1}`] = columns[i];
+      data[as[i] || `${name}${i + 1}`] = columns[i];
     }
   });
 

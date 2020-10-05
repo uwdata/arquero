@@ -668,6 +668,10 @@ export default class Table {
    * Options for spread transformations.
    * @typedef {Object} SpreadOptions
    * @property {number} [limit=Infinity] The maximum number of new columns to generate.
+   * @property {string[]} [as] Output column names to use. This option only
+   *  applies when a single column is spread. If the given array of names is
+   *  shorter than the number of generated columns, the additional columns
+   *  will be named using the standard naming convention.
    */
 
   /**

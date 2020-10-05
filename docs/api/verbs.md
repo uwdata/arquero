@@ -445,6 +445,7 @@ Spread array elements into a set of new columns. Output columns are named based 
 * *values*: The columns to spread, as either an array of column names or a key-value object of table expressions.
 * *options*: An options object:
   * *limit*: The maximum number of new columns to generate (default `Infinity`).
+  * *as*: String array of output column names to use. This option only applies when a single column is spread. If the given array of names is shorter than the number of generated columns, the additional columns will be named using the standard naming convention.
 
 *Examples*
 
@@ -454,6 +455,10 @@ table.spread({ a: split(d.text, '') })
 
 ```js
 table.spread('arrayCol', { limit: 100 })
+```
+
+```js
+table.spread('arrayCol', { limit: 2, as: ['value1', 'value2'] })
 ```
 
 
@@ -477,6 +482,7 @@ table.unroll('colA', { limit: 1000 })
 ```js
 table.unroll('colA', { limit: 1000, index: 'idxnum' })
 ```
+
 
 <br/>
 
