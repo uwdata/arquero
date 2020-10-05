@@ -17,6 +17,38 @@ tape('unroll generates rows for array values', t => {
   t.end();
 });
 
+tape('unroll generates rows for array values with index', t => {
+  const data = {
+    k: ['a', 'b'],
+    x: [[1, 2, 3], [1, 2, 3]]
+  };
+
+  const ut = table(data).unroll('x', { limit: 2, index: true });
+
+  tableEqual(t, ut, {
+    k: ['a', 'a', 'b', 'b'],
+    x: [1, 2, 1, 2],
+    index: [0, 1, 0, 1]
+  }, 'unroll data with index');
+  t.end();
+});
+
+tape('unroll generates rows for array values with named index', t => {
+  const data = {
+    k: ['a', 'b'],
+    x: [[1, 2, 3], [1, 2, 3]]
+  };
+
+  const ut = table(data).unroll('x', { limit: 2, index: 'arridx' });
+
+  tableEqual(t, ut, {
+    k: ['a', 'a', 'b', 'b'],
+    x: [1, 2, 1, 2],
+    arridx: [0, 1, 0, 1]
+  }, 'unroll data with index');
+  t.end();
+});
+
 tape('unroll generates rows for parallel array values', t => {
   const data = {
     k: ['a', 'b'],
@@ -31,6 +63,42 @@ tape('unroll generates rows for parallel array values', t => {
     x: [1, 2, 3, 4, 5, 6],
     y: [9, 8, 7, 9, 8, undefined]
   }, 'unroll data');
+  t.end();
+});
+
+tape('unroll generates rows for parallel array values with index', t => {
+  const data = {
+    k: ['a', 'b'],
+    x: [[1, 2, 3], [4, 5, 6]],
+    y: [[9, 8, 7], [9, 8]]
+  };
+
+  const ut = table(data).unroll(['x', 'y'], { index: true });
+
+  tableEqual(t, ut, {
+    k: ['a', 'a', 'a', 'b', 'b', 'b'],
+    x: [1, 2, 3, 4, 5, 6],
+    y: [9, 8, 7, 9, 8, undefined],
+    index: [0, 1, 2, 0, 1, 2]
+  }, 'unroll data with index');
+  t.end();
+});
+
+tape('unroll generates rows for parallel array values with named index', t => {
+  const data = {
+    k: ['a', 'b'],
+    x: [[1, 2, 3], [4, 5, 6]],
+    y: [[9, 8, 7], [9, 8]]
+  };
+
+  const ut = table(data).unroll(['x', 'y'], { index: 'arridx' });
+
+  tableEqual(t, ut, {
+    k: ['a', 'a', 'a', 'b', 'b', 'b'],
+    x: [1, 2, 3, 4, 5, 6],
+    y: [9, 8, 7, 9, 8, undefined],
+    arridx: [0, 1, 2, 0, 1, 2]
+  }, 'unroll data with index');
   t.end();
 });
 

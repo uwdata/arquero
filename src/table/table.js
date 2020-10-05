@@ -689,6 +689,10 @@ export default class Table {
    * @typedef {Object} UnrollOptions
    * @property {number} [limit=Infinity] The maximum number of new rows
    *  to generate per array value.
+   * @property {boolean|string} [index=false] Flag or column name for adding
+   *  zero-based array index values as an output column. If true, a new column
+   *  named "index" will be included. If string-valued, a new column with
+   *  the given name will be added.
    * @property {string|string[]|number|number[]|Object|Function} [drop]
    *  A selection of columns to drop (exclude) from the unrolled output.
    *  The input may consist of:

@@ -7,6 +7,9 @@ export default function(table, { values = {}, ops = [] }, options = {}) {
   if (!names.length) return table;
 
   const limit = options.limit > 0 ? +options.limit : Infinity;
+  const index = options.index
+    ? options.index === true ? 'index' : options.index + ''
+    : null;
   const drop = options.drop || {};
   const get = aggregateGet(table, ops, Object.values(values));
 
@@ -35,16 +38,27 @@ export default function(table, { values = {}, ops = [] }, options = {}) {
     }
   });
 
-  let index = 0;
+  // index column, if requested
+  const icol = index ? (data[index] = []) : null;
+
+  let start = 0;
   const m = priors.length;
   const n = unroll.length;
 
   const copy = (row, maxlen) => {
     for (let i = 0; i < m; ++i) {
-      copies[i].length = index + maxlen;
-      copies[i].fill(priors[i].get(row), index, index + maxlen);
+      copies[i].length = start + maxlen;
+      copies[i].fill(priors[i].get(row), start, start + maxlen);
     }
   };
+
+  const indices = icol
+    ? (row, maxlen) => {
+        for (let i = 0; i < maxlen; ++i) {
+          icol[row + i] = i;
+        }
+      }
+    : () => {};
 
   if (n === 1) {
     // optimize common case of one array-valued column
@@ -61,10 +75,13 @@ export default function(table, { values = {}, ops = [] }, options = {}) {
 
       // copy unrolled array data
       for (let j = 0; j < maxlen; ++j) {
-        col[index + j] = array[j];
+        col[start + j] = array[j];
       }
 
-      index += maxlen;
+      // fill in array indices
+      indices(start, maxlen);
+
+      start += maxlen;
     });
   } else {
     table.scan((row, data) => {
@@ -85,11 +102,14 @@ export default function(table, { values = {}, ops = [] }, options = {}) {
         const col = unroll[i];
         const arr = arrays[i];
         for (let j = 0; j < maxlen; ++j) {
-          col[index + j] = arr[j];
+          col[start + j] = arr[j];
         }
       }
 
-      index += maxlen;
+      // fill in array indices
+      indices(start, maxlen);
+
+      start += maxlen;
     });
   }
 
