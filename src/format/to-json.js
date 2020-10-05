@@ -36,7 +36,7 @@ export default function(table, options = {}) {
         const value = column.get(row);
         text += (r ? ',' : '') + JSON.stringify(formatter(value));
         if (++r >= limit) stop();
-      });
+      }, true);
     }
 
     text += ']';
