@@ -3,7 +3,7 @@ title: Operations \| Arquero API Reference
 ---
 # Arquero API Reference <a href="https://uwdata.github.io/arquero"><img align="right" src="../assets/logo.svg" height="38"/></a>
 
-[Top-Level](/arquero/api) | [Table](table) | [Verbs](verbs) | [**Op Functions**](op)
+[Top-Level](/arquero/api) | [Table](table) | [Verbs](verbs) | [**Op Functions**](op) | [Expressions](expressions)
 
 * [Standard Functions](#functions)
   * [Array Functions](#array-functions)

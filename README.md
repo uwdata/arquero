@@ -18,6 +18,7 @@ Arquero is Spanish for "archer": if datasets are [arrows](https://arrow.apache.o
 * [Table](https://uwdata.github.io/arquero/api/table) - Table access and output methods.
 * [Verbs](https://uwdata.github.io/arquero/api/verbs) - Table transformation verbs.
 * [Op Functions](https://uwdata.github.io/arquero/api/op) - All functions, including aggregate and window functions.
+* [Expressions](https://uwdata.github.io/arquero/api/expressions) - Parsing and generation of table expressions.
 
 ## Example
 
