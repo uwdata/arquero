@@ -1,3 +1,4 @@
+import { formatDate, formatUTCDate } from '../../util/format-date';
 import parseIsoDate from '../../util/parse-iso-date';
 
 const msMinute = 6e4;
@@ -108,6 +109,8 @@ function utcweek(date, firstday) {
 }
 
 export default {
+  format_date:     (date, shorten) => formatDate(t(date), !shorten),
+  format_utcdate:  (date, shorten) => formatUTCDate(t(date), !shorten),
   timestamp:       (date) => +t(date),
   year:            (date) => t(date).getFullYear(),
   quarter:         (date) => Math.floor(t(date).getMonth() / 3),

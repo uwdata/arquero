@@ -219,7 +219,6 @@ Returns the milliseconds of the second for the specified *date* according to loc
 
 * *date*: The input Date or timestamp value.
 
-
 <hr/><a id="utcdatetime" href="#utcdatetime">#</a>
 <em>op</em>.<b>utcdatetime</b>([<i>year</i>, <i>month</i>, <i>date</i>, <i>hours</i>, <i>minutes</i>, <i>seconds</i>, <i>milliseconds</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
 
@@ -310,6 +309,21 @@ Returns the milliseconds of the second for the specified *date* according to [Co
 
 * *date*: The input Date or timestamp value.
 
+<hr/><a id="format_date" href="#format_date">#</a>
+<em>op</em>.<b>format_date</b>(<i>date</i>[, <i>shorten</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string for the given *date* in local timezone. The resulting string is compatible with [parse_date](#parse_date) and JavaScript's built-in [Date.parse](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/parse).
+
+* *date*: The input Date or timestamp value.
+* *shorten*: A boolean flag (default `false`) indicating if the formatted string should be shortened if possible. For example, the local date `2001-01-01` will shorten from `"2001-01-01T00:00:00.000"` to `"2001-01-01T00:00"`.
+
+<hr/><a id="format_utcdate" href="#format_utcdate">#</a>
+<em>op</em>.<b>format_utcdate</b>(<i>date</i>[, <i>shorten</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+
+Returns an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string for the given *date* in [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). The resulting string is compatible with [parse_date](#parse_date) and JavaScript's built-in [Date.parse](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/parse).
+
+* *date*: The input Date or timestamp value.
+* *shorten*: A boolean flag (default `false`) indicating if the formatted string should be shortened if possible. For example, the UTC date `2001-01-01` will shorten from `"2001-01-01T00:00:00.000Z"` to `"2001-01-01"`.
 
 <br>
 
@@ -627,7 +641,7 @@ Returns an array of a given *object*'s own enumerable property values.
 <hr/><a id="parse_date" href="#parse_date">#</a>
 <em>op</em>.<b>parse_date</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
 
-Parses a string *value* and returns a Date instance. Beware: this method uses JavaScript's [`Date.parse()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/parse) functionality, which is inconsistently implemented across browsers. Use this method at your own peril.
+Parses a string *value* and returns a Date instance. Beware: this method uses JavaScript's [`Date.parse()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/parse) functionality, which is inconsistently implemented across browsers. That said, [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted strings such as those produced by [format_date](#format_date) and [format_utcdate](#format_utcdate) should be supported across platforms. Note that "bare" ISO date strings such as `"2001-01-01"` are interpreted by JavaScript as indicating midnight of that day in [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time), *not* local time. To indicate the local timezone, an ISO string can include additional time components and no `Z` suffix: `"2001-01-01T00:00"`.
 
 * *value*: The input value.
 

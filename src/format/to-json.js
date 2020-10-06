@@ -1,4 +1,6 @@
 import { columns, numRows } from './util';
+import { formatUTCDate } from '../util/format-date';
+import isDate from '../util/is-date';
 
 /**
  * Options for JSON formatting.
@@ -7,11 +9,15 @@ import { columns, numRows } from './util';
  * @property {string[]|Function} [columns] Ordered list of column names
  *  to include. If function-valued, the function should accept a table as
  *  input and return an array of column name strings.
-* @property {Object} [format] Object of column format options.
- *  The object keys should be column names. The object values should be
- *  formatting functions to invoke to transform column values prior to output.
- *  If specified, these override any automatically inferred options.
+* @property {Object} [format] Object of column format options. The object
+ *  keys should be column names. The object values should be formatting
+ *  functions to invoke to transform column values prior to output. If
+ *  specified, these override any automatically inferred options.
  */
+
+const defaultFormatter = value => isDate(value)
+  ? formatUTCDate(value, true)
+  : value;
 
 /**
  * Format a table as a JavaScript Object Notation (JSON) string.
@@ -31,7 +37,7 @@ export default function(table, options = {}) {
     const column = table.column(name);
     if (limit > 0) {
       let r = 0;
-      const formatter = format[name] || (d => d);
+      const formatter = format[name] || defaultFormatter;
       table.scan((row, data, stop) => {
         const value = column.get(row);
         text += (r ? ',' : '') + JSON.stringify(formatter(value));
