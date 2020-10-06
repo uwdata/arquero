@@ -1,23 +1,7 @@
+import { formatDate, formatUTCDate } from '../util/format-date';
 import isDate from '../util/is-date';
 import isFunction from '../util/is-function';
 import isTypedArray from '../util/is-typed-array';
-
-const pad = v => (v < 10 ? '0' : '') + v;
-
-const dateString = (y, m, d) => `${y}-${pad(m)}-${pad(d)}`;
-
-const timeString = (H, M, S) => `${pad(H)}:${pad(M)}:${pad(S)}`;
-
-const formatDateUTC = d =>
-  dateString(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
-
-const formatDate = d =>
-  dateString(d.getFullYear(), d.getMonth() + 1, d.getDate());
-
-const formatTime = d =>
-  timeString(d.getHours(), d.getMinutes(), d.getSeconds());
-
-const formatDateTime = d => formatDate(d) + ' ' + formatTime(d);
 
 export default function(v, options = {}) {
   if (isFunction(options)) {
@@ -28,9 +12,7 @@ export default function(v, options = {}) {
 
   if (type === 'object') {
     if (isDate(v)) {
-      return options.date === 'utc' ? formatDateUTC(v) + ' UTC'
-        : options.date === 'loc' ? formatDate(v)
-        : formatDateTime(v);
+      return options.utc ? formatUTCDate(v) : formatDate(v);
     } else {
       const s = JSON.stringify(
         v,

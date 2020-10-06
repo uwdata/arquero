@@ -1,5 +1,6 @@
 import { columns, scan } from './util';
-import pad from '../util/pad';
+import { formatUTCDate } from '../util/format-date';
+import isDate from '../util/is-date';
 
 /**
  * Options for CSV formatting.
@@ -30,7 +31,7 @@ export default function(table, options = {}) {
   const reFormat = new RegExp(`["${delim}\n\r]`);
 
   const formatValue = value => value == null ? ''
-    : value instanceof Date ? formatDate(value)
+    : isDate(value) ? formatUTCDate(value, true)
     : reFormat.test(value += '') ? '"' + value.replace(/"/g, '""') + '"'
     : value;
 
@@ -48,25 +49,3 @@ export default function(table, options = {}) {
 
   return text + vals.join(delim);
 }
-
-const formatYear = year => year < 0 ? '-' + pad(-year, 6)
-  : year > 9999 ? '+' + pad(year, 6)
-  : pad(year, 4);
-
-const formatDate = date => {
-  const hours = date.getUTCHours(),
-        min = date.getUTCMinutes(),
-        sec = date.getUTCSeconds(),
-        ms = date.getUTCMilliseconds();
-
-  return isNaN(date) ? 'Invalid Date'
-      : formatYear(date.getUTCFullYear()) + '-'
-      + pad(date.getUTCMonth() + 1, 2) + '-'
-      + pad(date.getUTCDate(), 2)
-      + (
-        ms ? 'T' + pad(hours, 2) + ':' + pad(min, 2) + ':' + pad(sec, 2) + '.' + pad(ms, 3) + 'Z'
-        : sec ? 'T' + pad(hours, 2) + ':' + pad(min, 2) + ':' + pad(sec, 2) + 'Z'
-        : min || hours ? 'T' + pad(hours, 2) + ':' + pad(min, 2) + 'Z'
-        : ''
-      );
-};
