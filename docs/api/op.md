@@ -677,6 +677,32 @@ Retrieves the result of matching a string *value* against a regular expression *
 * *regexp*: The regular expression to test with.
 * *value*: The input string to search for matches.
 
+<hr/><a id="normalize" href="#normalize">#</a>
+<em>op</em>.<b>normalize</b>(<i>value</i>[, <i>form</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Returns the Unicode normalization form of the string *value*.
+
+* *value*: The input string to normalize.
+* *form*: The Unicode normalization form, one of `'NFC'` (default, canonical decomposition, followed by canonical composition), `'NFD'` (canonical decomposition), `'NFKC'` (compatibility decomposition, followed by canonical composition), or `'NFKD'` (compatibility decomposition).
+
+<hr/><a id="padend" href="#padend">#</a>
+<em>op</em>.<b>padend</b>(<i>value</i>, <i>length</i>[, <i>fill</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Pad a string *value* with a given *fill* string (applied from the end of *value* and repeated, if needed) so that the resulting string reaches a given *length*.
+
+* *value*: The input string to pad.
+* *length*: The length of the resulting string once the *value* string has been padded. If the length is lower than `value.length`, the *value* string will be returned as-is.
+* *fill*: The string to pad the *value* string with (default `''`). If *fill* is too long to stay within the target *length*, it will be truncated: for left-to-right languages the left-most part and for right-to-left languages the right-most will be applied.
+
+<hr/><a id="padstart" href="#padstart">#</a>
+<em>op</em>.<b>padstart</b>(<i>value</i>, <i>length</i>[, <i>fill</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Pad a string *value* with a given *fill* string (applied from the start of *value* and repeated, if needed) so that the resulting string reaches a given *length*.
+
+* *value*: The input string to pad.
+* *length*: The length of the resulting string once the *value* string has been padded. If the length is lower than `value.length`, the *value* string will be returned as-is.
+* *fill*: The string to pad the *value* string with (default `''`). If *fill* is too long to stay within the target *length*, it will be truncated: for left-to-right languages the left-most part and for right-to-left languages the right-most will be applied.
+
 <hr/><a id="lower" href="#lower">#</a>
 <em>op</em>.<b>lower</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
 
@@ -690,6 +716,14 @@ Returns the string *value* converted to lower case.
 Returns the string *value* converted to upper case.
 
 * *value*: The input string value.
+
+<hr/><a id="repeat" href="#repeat">#</a>
+<em>op</em>.<b>repeat</b>(<i>value</i>, <i>number</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+
+Returns a new string which contains the specified *number* of copies of the *value* string concatenated together.
+
+* *value*: The input string to repeat.
+* *number*: An integer between `0` and `+Infinity`, indicating the number of times to repeat the string.
 
 <hr/><a id="replace" href="#replace">#</a>
 <em>op</em>.<b>replace</b>(<i>value</i>, <i>pattern</i>, <i>replacement</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
