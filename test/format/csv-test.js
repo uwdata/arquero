@@ -22,6 +22,8 @@ const text = [
   'c,3,78.9,false,2020-02-29'
 ];
 
+const tabText = text.map(t => t.split(',').join('\t'));
+
 tape('toCSV formats delimited text', t => {
   const dt = new ColumnTable(data());
   t.equal(toCSV(dt), text.join('\n'), 'csv text');
@@ -31,6 +33,23 @@ tape('toCSV formats delimited text', t => {
       .map(s => s.split(',').slice(0, 2).join(','))
       .join('\n'),
     'csv text with limit'
+  );
+  t.end();
+});
+
+tape('toCSV formats delimited text with delimiter option', t => {
+  const dt = new ColumnTable(data());
+  t.equal(
+    toCSV(dt,  { delimiter: '\t' }),
+    tabText.join('\n'),
+    'csv text with delimiter'
+  );
+  t.equal(
+    toCSV(dt, { limit: 2, delimiter: '\t', columns: ['str', 'int'] }),
+    text.slice(0, 3)
+      .map(s => s.split(',').slice(0, 2).join('\t'))
+      .join('\n'),
+    'csv text with delimiter and limit'
   );
   t.end();
 });
@@ -61,6 +80,14 @@ tape('fromCSV parses delimited text', t => {
   t.equal(table.numRows(), 3, 'num rows');
   t.equal(table.numCols(), 5, 'num cols');
   tableEqual(t, table, data(), 'csv parsed data');
+  t.end();
+});
+
+tape('fromCSV parses delimited text with delimiter', t => {
+  const table = fromCSV(tabText.join('\n'), { delimiter: '\t' });
+  t.equal(table.numRows(), 3, 'num rows');
+  t.equal(table.numCols(), 5, 'num cols');
+  tableEqual(t, table, data(), 'csv parsed data with delimiter');
   t.end();
 });
 

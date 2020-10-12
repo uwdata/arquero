@@ -33,7 +33,8 @@ const DEFAULT_COLUMN_NAME = 'col';
  * @param {ColumnTable} table A new table containing the parsed values.
  */
 export default function(text, options = {}) {
-  const delim = (options.delim == null ? ',' : options.delim + '').charCodeAt(0);
+  const delimiter = options.delimiter == null ? ',' : options.delimiter;
+  const delim = (delimiter + '').charCodeAt(0);
   const defaultParser = options.autoType !== false ? autoType : d => d;
   const header = options.header !== false;
   let names, values, parsers;

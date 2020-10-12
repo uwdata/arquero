@@ -27,7 +27,7 @@ import isDate from '../util/is-date';
 export default function(table, options = {}) {
   const names = columns(table, options.columns);
   const format = options.format || {};
-  const delim = options.delim || ',';
+  const delim = options.delimiter || ',';
   const reFormat = new RegExp(`["${delim}\n\r]`);
 
   const formatValue = value => value == null ? ''
