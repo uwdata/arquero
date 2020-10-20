@@ -141,7 +141,7 @@ export default {
     create(num) {
       num = +num;
       if (!(num > 0)) error('ntile num must be greater than zero.');
-      const { init, value } = cume_dist();
+      const { init, value } = cume_dist.create();
       return {
         init,
         value: w => Math.ceil(num * value(w))
