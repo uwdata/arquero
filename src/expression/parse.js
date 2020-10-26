@@ -228,7 +228,7 @@ const visitors = {
       const table = index === 0 ? ctx.table : ctx.join[index - 1];
       const names = table ? table.data() : null;
       return spliceMember(node, { type: Column, index }, ctx, names);
-    } else if (name === ctx.param) {
+    } else if (name === ctx.$param) {
       // replace member expression with param ref
       return spliceMember(node, { type: Parameter }, ctx, ctx.params);
     } else if (ctx.paramsRef.has(name)) {
@@ -294,6 +294,7 @@ export function parseExpression(ctx, name, spec) {
   ctx.tuple = null;
   ctx.tuple1 = null;
   ctx.tuple2 = null;
+  ctx.$param = null;
   ctx.scope = new Set();
   ctx.paramsRef = new Map();
   ctx.columnRef = new Map();
@@ -306,10 +307,10 @@ export function parseExpression(ctx, name, spec) {
   } else if (ctx.join) {
     ctx.scope.add(ctx.tuple1 = DEFAULT_TUPLE_ID1);
     ctx.scope.add(ctx.tuple2 = DEFAULT_TUPLE_ID2);
-    ctx.scope.add(ctx.param = DEFAULT_PARAM_ID);
+    ctx.scope.add(ctx.$param = DEFAULT_PARAM_ID);
   } else {
     ctx.scope.add(ctx.tuple = DEFAULT_TUPLE_ID);
-    ctx.scope.add(ctx.param = DEFAULT_PARAM_ID);
+    ctx.scope.add(ctx.$param = DEFAULT_PARAM_ID);
   }
 
   // rewrite column references & function calls
@@ -332,10 +333,10 @@ function parseFunction(node, ctx) {
   } else if (ctx.join) {
     parseRef(ctx, params[0], 'tuple1', setc(1));
     if (len > 1) parseRef(ctx, params[1], 'tuple2', setc(2));
-    if (len > 2) parseRef(ctx, params[2], 'param', setp);
+    if (len > 2) parseRef(ctx, params[2], '$param', setp);
   } else {
     parseRef(ctx, params[0], 'tuple', setc(0));
-    if (len > 1) parseRef(ctx, params[1], 'param', setp);
+    if (len > 1) parseRef(ctx, params[1], '$param', setp);
   }
 
   ctx.root = node.body;

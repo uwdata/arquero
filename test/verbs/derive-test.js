@@ -84,3 +84,50 @@ tape('derive supports aggregate and window operators', t => {
 
   t.end();
 });
+
+tape('derive supports parameters', t => {
+  const output = {
+    n: [1, 2, 3, 4],
+    p: [NaN, 1, 1, 1 ]
+  };
+
+  const dt = table({ n: [1, 2, 3, 4] }).params({lag: 1});
+
+  tableEqual(t,
+    dt.derive({p: (d, $) => d.n * $.lag - op.lag(d.n, 1)}),
+    output,
+    'parameter in main scope'
+  );
+
+  tableEqual(t,
+    dt.derive({p: (d, $) => d.n - op.lag(d.n, $.lag)}),
+    output,
+    'parameter in operator input scope'
+  );
+
+  tableEqual(t,
+    dt.derive({p: 'd.n * $.lag - op.lag(d.n, 1)'}),
+    output,
+    'default parameter in main scope'
+  );
+
+  tableEqual(t,
+    dt.derive({p: 'd.n * lag - op.lag(d.n, 1)'}),
+    output,
+    'direct parameter in main scope'
+  );
+
+  tableEqual(t,
+    dt.derive({p: 'd.n - op.lag(d.n, $.lag)'}),
+    output,
+    'default parameter in operator input scope'
+  );
+
+  tableEqual(t,
+    dt.derive({p: 'd.n - op.lag(d.n, lag)'}),
+    output,
+    'direct parameter in operator input scope'
+  );
+
+  t.end();
+});
