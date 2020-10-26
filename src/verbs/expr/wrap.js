@@ -5,11 +5,20 @@
  * @return {Object} A new wrapped expression object.
  */
 export default function(expr, properties) {
-  return (expr && expr.expr != null)
-    ? { ...expr, ...properties }
-    : {
-        expr,
-        ...properties,
-        toString: () => String(expr)
-      };
+  return expr instanceof Wrapper
+    ? new Wrapper(expr.expr, { ...expr, ...properties })
+    : new Wrapper(expr, properties);
+}
+
+class Wrapper {
+  constructor(expr, properties) {
+    Object.assign(this, properties);
+    this.expr = expr;
+  }
+  toString() {
+    return String(this.expr);
+  }
+  toObject() {
+    return { ...this, expr: String(this.expr) };
+  }
 }
