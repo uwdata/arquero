@@ -23,13 +23,27 @@ export default function resolve(table, sel, map = {}) {
   return map;
 }
 
+function decorate(value, toObject) {
+  value.toObject = toObject;
+  return value;
+}
+
+function toObject(value) {
+  return isArray(value) ? value.map(toObject)
+    : value && value.toObject ? value.toObject()
+    : value;
+}
+
 /**
  * Select all columns in a table.
  * Returns a function-valued selection compatible with {@link Table#select}.
  * @return {Function} Selection function compatible with {@link Table#select}.
  */
 export function all() {
-  return table => table.columnNames();
+  return decorate(
+    table => table.columnNames(),
+    () => ({ select: 'all' })
+  );
 }
 
 /**
@@ -41,10 +55,13 @@ export function all() {
  */
 export function not(...selection) {
   selection = selection.flat();
-  return table => {
-    const drop = resolve(table, selection);
-    return table.columnNames(name => !drop[name]);
-  };
+  return decorate(
+    table => {
+      const drop = resolve(table, selection);
+      return table.columnNames(name => !drop[name]);
+    },
+    () => ({ select: 'not', columns: toObject(selection) })
+  );
 }
 
 /**
@@ -54,10 +71,13 @@ export function not(...selection) {
  * @return {Function} Selection function compatible with {@link Table#select}.
  */
 export function range(start, end) {
-  return table => {
-    let i = isNumber(start) ? start : table.columnIndex(start);
-    let j = isNumber(end) ? end : table.columnIndex(end);
-    if (j < i) { const t = j; j = i; i = t; }
-    return table.columnNames().slice(i, j + 1);
-  };
+  return decorate(
+    table => {
+      let i = isNumber(start) ? start : table.columnIndex(start);
+      let j = isNumber(end) ? end : table.columnIndex(end);
+      if (j < i) { const t = j; j = i; i = t; }
+      return table.columnNames().slice(i, j + 1);
+    },
+    () => ({ selection: 'range', start, end })
+  );
 }
