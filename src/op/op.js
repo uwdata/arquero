@@ -17,4 +17,7 @@ export class Op {
     ];
     return `d => op.${this.name}(${a})`;
   }
+  toObject() {
+    return { expr: this.toString(), func: true };
+  }
 }
