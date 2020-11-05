@@ -12,8 +12,9 @@ import wrap from './wrap';
  * @example field('colA')
  */
 export default function(expr, name, index = 0) {
-  const field = true;
-  return name
-    ? wrap(expr, { expr: name, field, index })
-    : wrap(expr, { field, index });
+  const props = index ? { field: true, index } : { field: true };
+  return wrap(
+    expr,
+    name ? { expr: name, ...props } : props
+  );
 }
