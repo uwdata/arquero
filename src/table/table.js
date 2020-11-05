@@ -386,7 +386,9 @@ export default class Table {
    */
   params(values) {
     if (arguments.length) {
-      this._params = { ...this._params, ...values };
+      if (values) {
+        this._params = { ...this._params, ...values };
+      }
       return this;
     } else {
       return this._params;
