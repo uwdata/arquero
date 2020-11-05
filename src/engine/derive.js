@@ -1,6 +1,7 @@
 import { window } from './window/window';
 import { aggregate } from './reduce/util';
 import { isWindow } from '../op';
+import toArray from '../util/to-array';
 
 function isWindowed(op) {
   return isWindow(op.name) ||
@@ -24,7 +25,7 @@ export default function(table, { values, ops }) {
 
   // perform table scans to generate output values
   winOps.length
-    ? window(table, data, values, result, winOps)
+    ? window(table, data, values, toArray(result), winOps)
     : output(table, data, values, result);
 
   return table.create({ data });

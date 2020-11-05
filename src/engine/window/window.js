@@ -15,7 +15,7 @@ function windowOp(spec) {
   return op;
 }
 
-export function window(table, output, values, results = {}, ops) {
+export function window(table, output, values, results = [], ops) {
   // instantiate window states
   const input = table.data();
   const states = windowStates(ops, input);
