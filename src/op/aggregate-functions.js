@@ -1,5 +1,6 @@
 import bins from '../util/bins';
 import noop from '../util/no-op';
+import product from '../util/product';
 
 /**
  * Initialize an aggregate operator.
@@ -182,12 +183,15 @@ export default {
   /** @type {AggregateDef} */
   product: {
     create: () => ({
-      init: s => s.product = 1,
-      value: s => s.valid ? s.product : undefined,
+      init:  s => s.product = 1,
+      value: s => s.valid
+        ? s.product = (Number.isNaN(s.product) ? product(s.list.values()) : s.product)
+        : undefined,
       add: (s, v) => s.product *= v,
       rem: (s, v) => s.product /= v
     }),
-    param: [1]
+    param: [1],
+    stream: ['values']
   },
 
   /** @type {AggregateDef} */
