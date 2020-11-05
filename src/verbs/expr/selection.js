@@ -42,7 +42,7 @@ function toObject(value) {
 export function all() {
   return decorate(
     table => table.columnNames(),
-    () => ({ select: 'all' })
+    () => ({ all: [] })
   );
 }
 
@@ -60,7 +60,7 @@ export function not(...selection) {
       const drop = resolve(table, selection);
       return table.columnNames(name => !drop[name]);
     },
-    () => ({ select: 'not', columns: toObject(selection) })
+    () => ({ not: toObject(selection) })
   );
 }
 
@@ -78,6 +78,6 @@ export function range(start, end) {
       if (j < i) { const t = j; j = i; i = t; }
       return table.columnNames().slice(i, j + 1);
     },
-    () => ({ selection: 'range', start, end })
+    () => ({ range: [start, end] })
   );
 }
