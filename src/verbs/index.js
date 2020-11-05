@@ -53,6 +53,7 @@ Object.assign(ColumnTable.prototype, {
 export { default as op } from '../op/op-api';
 export { default as bin } from './expr/bin';
 export { default as desc } from './expr/desc';
+export { default as field } from './expr/field';
 export { default as rolling } from './expr/rolling';
 export { all, not, range } from './expr/selection';
 
