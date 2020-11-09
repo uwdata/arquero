@@ -1,7 +1,5 @@
 export default function walk(node, ctx, visitors, parent) {
-  if (node.$skip) return;
-
-  const visit = visitors[node.type];
+  const visit = visitors[node.type] || visitors['Default'];
   if (visit && visit(node, ctx, parent) === false) return;
 
   const walker = walkers[node.type];

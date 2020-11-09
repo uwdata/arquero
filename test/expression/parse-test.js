@@ -368,3 +368,177 @@ tape('parse throws on dirty tricks', t => {
 
   t.end();
 });
+
+tape('parse supports ast output option', t => {
+  const ast = parse({
+    constant: () => 1 + Math.E,
+    column: d => d.a * d.b,
+    agg1: d => op.mean(d.a),
+    agg2: d => op.corr(d.a, d.b),
+    agg3: d => 1 + op.quantile(-d.bar, 0.5/2),
+    win1: d => d.value - op.lag(d.value, 2),
+    win2: rolling(d => op.mean(d.value), [-3, 3]),
+    win3: rolling(() => op.count(), [-3, 3], true)
+  }, { ast: true });
+
+  t.deepEqual(
+    JSON.parse(JSON.stringify(ast)),
+    {
+      'constant': {
+        'type': 'BinaryExpression',
+        'left': {
+          'type': 'Literal',
+          'value': 1,
+          'raw': '1'
+        },
+        'operator': '+',
+        'right': {
+          'type': 'Constant',
+          'name': 'E',
+          'raw': 'Math.E'
+        }
+      },
+      'column': {
+        'type': 'BinaryExpression',
+        'left': {
+          'type': 'Column',
+          'index': 0,
+          'name': 'a'
+        },
+        'operator': '*',
+        'right': {
+          'type': 'Column',
+          'index': 0,
+          'name': 'b'
+        }
+      },
+      'agg1': {
+        'type': 'CallExpression',
+        'callee': {
+          'type': 'Function',
+          'name': 'mean'
+        },
+        'arguments': [
+          {
+            'type': 'Column',
+            'index': 0,
+            'name': 'a'
+          }
+        ]
+      },
+      'agg2': {
+        'type': 'CallExpression',
+        'callee': {
+          'type': 'Function',
+          'name': 'corr'
+        },
+        'arguments': [
+          {
+            'type': 'Column',
+            'index': 0,
+            'name': 'a'
+          },
+          {
+            'type': 'Column',
+            'index': 0,
+            'name': 'b'
+          }
+        ]
+      },
+      'agg3': {
+        'type': 'BinaryExpression',
+        'left': {
+          'type': 'Literal',
+          'value': 1,
+          'raw': '1'
+        },
+        'operator': '+',
+        'right': {
+          'type': 'CallExpression',
+          'callee': {
+            'type': 'Function',
+            'name': 'quantile'
+          },
+          'arguments': [
+            {
+              'type': 'UnaryExpression',
+              'operator': '-',
+              'prefix': true,
+              'argument': {
+                'type': 'Column',
+                'index': 0,
+                'name': 'bar'
+              }
+            },
+            {
+              'type': 'BinaryExpression',
+              'left': {
+                'type': 'Literal',
+                'value': 0.5,
+                'raw': '0.5'
+              },
+              'operator': '/',
+              'right': {
+                'type': 'Literal',
+                'value': 2,
+                'raw': '2'
+              }
+            }
+          ]
+        }
+      },
+      'win1': {
+        'type': 'BinaryExpression',
+        'left': {
+          'type': 'Column',
+          'index': 0,
+          'name': 'value'
+        },
+        'operator': '-',
+        'right': {
+          'type': 'CallExpression',
+          'callee': {
+            'type': 'Function',
+            'name': 'lag'
+          },
+          'arguments': [
+            {
+              'type': 'Column',
+              'index': 0,
+              'name': 'value'
+            },
+            {
+              'type': 'Literal',
+              'value': 2,
+              'raw': '2'
+            }
+          ]
+        }
+      },
+      'win2': {
+        'type': 'CallExpression',
+        'callee': {
+          'type': 'Function',
+          'name': 'mean'
+        },
+        'arguments': [
+          {
+            'type': 'Column',
+            'index': 0,
+            'name': 'value'
+          }
+        ]
+      },
+      'win3': {
+        'type': 'CallExpression',
+        'callee': {
+          'type': 'Function',
+          'name': 'count'
+        },
+        'arguments': []
+      }
+    }
+  );
+
+  t.end();
+});

@@ -27,6 +27,8 @@ const visitors = {
     const row = `.get(${opt.index}${index})`;
     return `data${index}${column}${row}`;
   },
+  Constant: node => node.raw,
+  Function: node => `fn.${node.name}`,
   Parameter: node => {
     const param = node.computed
       ? `[${JSON.stringify(node.name)}]`

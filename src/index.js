@@ -2,11 +2,15 @@
 import Table from './table/table';
 import ColumnTable from './table/column-table';
 import Reducer from './engine/reduce/reducer';
+import parse from './expression/parse';
+import walk_ast from './expression/ast/walk';
 
 export const internal = {
   Table,
   ColumnTable,
-  Reducer
+  Reducer,
+  parse,
+  walk_ast
 };
 
 // export public API
