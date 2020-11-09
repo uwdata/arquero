@@ -1015,7 +1015,7 @@ Window function to assign the first value in a sliding window frame.
 * *field*: The data column or derived field.
 
 <hr/><a id="last_value" href="#last_value">#</a>
-<em>op</em>.<b>first_value</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>op</em>.<b>last_value</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
 
 Window function to assign the last value in a sliding window frame.
 
