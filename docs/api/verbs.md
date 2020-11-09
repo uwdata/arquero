@@ -321,7 +321,7 @@ table.cross(other, [['leftKey', 'leftVal'], ['rightVal']])
 ```
 
 <hr/><a id="lookup" href="#lookup">#</a>
-<em>table</em>.<b>lookup</b>(<i>other</i>, <i>on</i>, <i>values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>lookup</b>(<i>other</i>, <i>on</i>, <i>...values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
 Lookup values from a secondary table and add them as new columns. A lookup occurs upon matching key values for rows in both tables. If the secondary table has multiple rows with the same key, only the last observed instance will be considered in the lookup. Lookup is similar to [join_left](#join_left), but with a streamlined syntax and the added constraint of allowing at most one match only.
 
@@ -471,7 +471,7 @@ Unroll one or more array-valued columns into new rows. If more than one array va
 * *index*: Boolean flag (default `false`) or column name or adding zero-based array index values as an output column. If `true`, a new column named "index" will be added. If string-valued, a new column with the given name will be added.
 * *options*: An options object:
   * *limit*: The maximum number of new columns to generate per array value (default `Infinity`).
-  * drop: A selection of columns to drop (exclude) from the unrolled output. The input may consist of column name strings, column integer indices, objects with output names as keys (object values will be ignored), or the output of the selection helper functions [all](./#all), [not](./#not), or [range](./#range)).
+  * *drop*: A selection of columns to drop (exclude) from the unrolled output. The input may consist of column name strings, column integer indices, objects with output names as keys (object values will be ignored), or the output of the selection helper functions [all](./#all), [not](./#not), or [range](./#range)).
 
 *Examples*
 
