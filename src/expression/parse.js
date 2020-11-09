@@ -1,12 +1,25 @@
 import { parse } from 'acorn';
-import constants from './constants';
+
 import {
-  isFunctionExpression, isIdentifier, isLiteral,
-  isMemberExpression, isObjectPattern, isProperty
-} from './util';
+  ArrowFunctionExpression,
+  Column,
+  Constant,
+  Function,
+  FunctionExpression,
+  Identifier,
+  Literal,
+  MemberExpression,
+  ObjectPattern,
+  OpLookup,
+  Parameter,
+  Property
+} from './ast/constants';
+import clean from './ast/clean';
+import walk from './ast/walk';
+
 import codegen from './codegen';
 import compile from './compile';
-import walk from './walk';
+import constants from './constants';
 import { getAggregate, getFunction, getWindow, isAggregate, isWindow } from '../op';
 import has from '../util/has';
 import error from '../util/error';
@@ -17,9 +30,10 @@ const DEFAULT_TUPLE_ID = 'd';
 const DEFAULT_TUPLE_ID1 = 'd1';
 const DEFAULT_TUPLE_ID2 = 'd2';
 
-const Column = 'Column';
-const Constant = 'Identifier';
-const Parameter = 'Parameter';
+const is = (type, node) => node && node.type === type;
+const isFunctionExpression = node =>
+  is(FunctionExpression, node) ||
+  is(ArrowFunctionExpression, node);
 
 export default function(exprs, opt = {}) {
   const generate = opt.generate || codegen;
@@ -46,12 +60,14 @@ export default function(exprs, opt = {}) {
       return fields[code] || (fields[code] = ++fieldId);
     },
     param(node) {
-      return isLiteral(node)
+      return is(Literal, node)
         ? node.value
         : compiler.param(generate(node), params);
     },
     value(name, node) {
-      values[name] = compileExpr(generate(node), params);
+      values[name] = opt.ast
+        ? clean(node)
+        : compileExpr(generate(node), params);
     },
     error(msg, node) {
       // both expresions and fields are parsed
@@ -69,6 +85,11 @@ export default function(exprs, opt = {}) {
   // parse each expression
   for (const name in exprs) {
     parseExpression(ctx, name, exprs[name]);
+  }
+
+  // return expression asts if requested
+  if (opt.ast) {
+    return values;
   }
 
   // compile input field accessors
@@ -96,8 +117,8 @@ const fieldRef = expr => {
   return !(expr.index || 0) ? `d=>d[${col}]` : `(a,b)=>b[${col}]`;
 };
 
-const functionName = (ctx, node) => isIdentifier(node) ? node.name
-  : isMemberExpression(node) ? node.property.name
+const functionName = (ctx, node) => is(Identifier, node) ? node.name
+  : is(MemberExpression, node) ? node.property.name
   : null;
 
 const parseError = msg => (node, ctx) => ctx.error(msg, node);
@@ -105,9 +126,9 @@ const parseError = msg => (node, ctx) => ctx.error(msg, node);
 function handleIdentifier(node, ctx, parent) {
   const { name } = node;
 
-  if (isMemberExpression(parent) && parent.property === node) {
+  if (is(MemberExpression, parent) && parent.property === node) {
     // do nothing: check head node, not nested properties
-  } else if (isProperty(parent) && parent.key === node) {
+  } else if (is(Property, parent) && parent.key === node) {
     // do nothing: identifiers allowed in object expressions
   } else if (ctx.paramsRef.has(name)) {
     updateParameterNode(node, ctx.paramsRef.get(name));
@@ -116,7 +137,7 @@ function handleIdentifier(node, ctx, parent) {
   } else if (has(ctx.params, name)) {
     updateParameterNode(node, name);
   } else if (has(constants, name)) {
-    updateConstantNode(node, constants[name]);
+    updateConstantNode(node, name);
   } else {
     return true;
   }
@@ -143,9 +164,10 @@ function updateParameterNode(node, name) {
   node.name = name;
 }
 
-function updateConstantNode(node, value) {
+function updateConstantNode(node, name) {
   node.type = Constant;
-  node.name = value;
+  node.name = name;
+  node.raw = constants[name];
 }
 
 const visitors = {
@@ -184,20 +206,22 @@ const visitors = {
       if ((ctx.join || ctx.window === false) && isWindow(def)) {
         ctx.error('Window function not allowed', node);
       }
-      const op = ctx.op(parseOperator(ctx, def, name, node.arguments));
-      Object.assign(node, {
-        type: 'OpLookup',
-        computed: true,
-        object: { type: 'Identifier', name: 'op' },
-        property: { type: 'Literal', raw: op.id }
-      });
+
+      if (ctx.ast) {
+        node.callee = { type: Function, name };
+        node.arguments.forEach(arg => walk(arg, ctx, opVisitors));
+      } else {
+        const op = ctx.op(parseOperator(ctx, def, name, node.arguments));
+        Object.assign(node, {
+          type: OpLookup,
+          computed: true,
+          object: { type: Identifier, name: 'op' },
+          property: { type: Literal, raw: op.id }
+        });
+      }
       return false;
     } else if (getFunction(name)) {
-      node.callee = {
-        type: 'Identifier',
-        name: `fn.${name}`,
-        $skip: true
-      };
+      node.callee = { type: Function, name };
     } else {
       ctx.error('Illegal function call', node);
     }
@@ -207,14 +231,13 @@ const visitors = {
 
     // bail if left head is not an identifier
     // in this case we will recurse and handle it later
-    if (!isIdentifier(object)) return;
+    if (!is(Identifier, object)) return;
     const { name } = object;
 
     // allow use of Math prefix to access constant values
-    if (name === 'Math' && isIdentifier(property) &&
-        has(constants, property.name))
-    {
-      updateConstantNode(node, constants[property.name]);
+    if (name === 'Math' && is(Identifier, property)
+        && has(constants, property.name)) {
+      updateConstantNode(node, property.name);
       return;
     }
 
@@ -243,8 +266,8 @@ const visitors = {
 
 function spliceMember(node, props, ctx, values) {
   const { property } = node;
-  const name = isIdentifier(property) ? { name: property.name }
-    : isLiteral(property) ? { name: property.value, computed: true }
+  const name = is(Identifier, property) ? { name: property.name }
+    : is(Literal, property) ? { name: property.value, computed: true }
     : ctx.error('Invalid member expression', node);
 
   if (values && !has(values, name.name)) {
@@ -267,11 +290,7 @@ const opVisitors = {
 
     // rewrite if built-in function
     if (getFunction(name)) {
-      node.callee = {
-        type: 'Identifier',
-        name: `fn.${name}`,
-        $skip: true
-      };
+      node.callee = { type: Function, name };
     } else {
       ctx.error('Illegal function call', node);
     }
@@ -343,15 +362,15 @@ function parseFunction(node, ctx) {
 }
 
 function parseRef(ctx, node, refName, alias) {
-  if (isIdentifier(node)) {
+  if (is(Identifier, node)) {
     ctx.scope.add(node.name);
     ctx[refName] = node.name;
-  } else if (isObjectPattern(node)) {
+  } else if (is(ObjectPattern, node)) {
     node.properties.forEach(p => {
-      const key = isIdentifier(p.key) ? p.key.name
-        : isLiteral(p.key) ? p.key.value
+      const key = is(Identifier, p.key) ? p.key.name
+        : is(Literal, p.key) ? p.key.value
         : ctx.error('Invalid argument', p);
-      if (!isIdentifier(p.value)) {
+      if (!is(Identifier, p.value)) {
         ctx.error('Unsupported destructuring pattern', p.value);
       }
       alias(p.value.name, key);
