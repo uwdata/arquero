@@ -6,13 +6,13 @@ import wrap from './wrap';
  *  expression for a column name.
  * @param {string} [name] The column name to use. If provided, will
  *  overwrite the input expression value.
- * @param {number} [index=0] The table index of the field, in case of
+ * @param {number} [table=0] The table index of the field, in case of
  *  expressions over multiple tables.
  * @return A wrapped expression for a named column.
  * @example field('colA')
  */
-export default function(expr, name, index = 0) {
-  const props = index ? { field: true, index } : { field: true };
+export default function(expr, name, table = 0) {
+  const props = table ? { field: true, table } : { field: true };
   return wrap(
     expr,
     name ? { expr: name, ...props } : props

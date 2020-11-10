@@ -21,6 +21,7 @@ import codegen from './codegen';
 import compile from './compile';
 import constants from './constants';
 import { getAggregate, getFunction, getWindow, isAggregate, isWindow } from '../op';
+import isFunction from '../util/is-function';
 import has from '../util/has';
 import error from '../util/error';
 
@@ -106,15 +107,20 @@ export default function(exprs, opt = {}) {
 }
 
 const getParams = opt => {
-  const p = opt.table ? opt.table.params()
-    : opt.join ? { ...opt.join[1].params(), ...opt.join[0].params() }
-    : {};
-  return p || {};
+  return (opt.table ? getTableParams(opt.table)
+    : opt.join ? {
+        ...getTableParams(opt.join[1]),
+        ...getTableParams(opt.join[0])
+      }
+    : {}) || {};
 };
+
+const getTableParams = table =>
+  table && isFunction(table.params) ? table.params() : {};
 
 const fieldRef = expr => {
   const col = JSON.stringify(expr+'');
-  return !(expr.index || 0) ? `d=>d[${col}]` : `(a,b)=>b[${col}]`;
+  return !(expr.table || 0) ? `d=>d[${col}]` : `(a,b)=>b[${col}]`;
 };
 
 const functionName = (ctx, node) => is(Identifier, node) ? node.name
@@ -156,7 +162,7 @@ function updateColumnNode(node, key, ctx) {
 
   node.type = Column;
   node.name = name;
-  node.index = index;
+  node.table = index;
 }
 
 function updateParameterNode(node, name) {
@@ -250,7 +256,7 @@ const visitors = {
       // replace member expression with column ref
       const table = index === 0 ? ctx.table : ctx.join[index - 1];
       const names = table ? table.data() : null;
-      return spliceMember(node, { type: Column, index }, ctx, names);
+      return spliceMember(node, { type: Column, table: index }, ctx, names);
     } else if (name === ctx.$param) {
       // replace member expression with param ref
       return spliceMember(node, { type: Parameter }, ctx, ctx.params);

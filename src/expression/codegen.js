@@ -23,9 +23,9 @@ const visitors = {
     const column = node.computed
       ? `[${JSON.stringify(node.name)}]`
       : `.${node.name}`;
-    const index = node.index || '';
-    const row = `.get(${opt.index}${index})`;
-    return `data${index}${column}${row}`;
+    const table = node.table || '';
+    const row = `.get(${opt.index}${table})`;
+    return `data${table}${column}${row}`;
   },
   Constant: node => node.raw,
   Function: node => `fn.${node.name}`,

@@ -11,6 +11,7 @@ function stripMember(node) {
   delete node.object;
   delete node.property;
   delete node.computed;
+  if (!node.table) delete node.table;
 }
 
 export default function(ast) {

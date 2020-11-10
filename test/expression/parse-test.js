@@ -402,13 +402,11 @@ tape('parse supports ast output option', t => {
         'type': 'BinaryExpression',
         'left': {
           'type': 'Column',
-          'index': 0,
           'name': 'a'
         },
         'operator': '*',
         'right': {
           'type': 'Column',
-          'index': 0,
           'name': 'b'
         }
       },
@@ -421,7 +419,6 @@ tape('parse supports ast output option', t => {
         'arguments': [
           {
             'type': 'Column',
-            'index': 0,
             'name': 'a'
           }
         ]
@@ -435,12 +432,10 @@ tape('parse supports ast output option', t => {
         'arguments': [
           {
             'type': 'Column',
-            'index': 0,
             'name': 'a'
           },
           {
             'type': 'Column',
-            'index': 0,
             'name': 'b'
           }
         ]
@@ -466,7 +461,6 @@ tape('parse supports ast output option', t => {
               'prefix': true,
               'argument': {
                 'type': 'Column',
-                'index': 0,
                 'name': 'bar'
               }
             },
@@ -491,7 +485,6 @@ tape('parse supports ast output option', t => {
         'type': 'BinaryExpression',
         'left': {
           'type': 'Column',
-          'index': 0,
           'name': 'value'
         },
         'operator': '-',
@@ -504,7 +497,6 @@ tape('parse supports ast output option', t => {
           'arguments': [
             {
               'type': 'Column',
-              'index': 0,
               'name': 'value'
             },
             {
@@ -524,7 +516,6 @@ tape('parse supports ast output option', t => {
         'arguments': [
           {
             'type': 'Column',
-            'index': 0,
             'name': 'value'
           }
         ]
