@@ -54,10 +54,10 @@ export default class QueryBuilder extends Query {
    * Provide an informative object string tag.
    */
   get [Symbol.toStringTag]() {
-    if (!this._names) return 'Object'; // bail if called on prototype
-    const ns = this._query.length;
+    if (!this._verbs) return 'Object'; // bail if called on prototype
+    const ns = this._verbs.length;
     return `QueryBuilder: ${ns} verbs`
-      + (this._source ? ` on "${this._source}"` : '');
+      + (this._table ? ` on '${this._table}'` : '');
   }
 
   /**
