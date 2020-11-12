@@ -12,7 +12,7 @@ title: Arquero API Reference
 * [Selection Helpers](#selection-helpers)
   * [all](#all), [not](#not), [range](#range)
 * [Extensibility](#extensibility)
-  * [addFunction](#addFunction), [addAggregateFunction](#addAggregateFunction), [addWindowFunction](#addAggregateFunction)
+  * [addFunction](#addFunction), [addAggregateFunction](#addAggregateFunction), [addWindowFunction](#addWindowFunction)
 * [Queries](#queries)
   * [query](#query), [queryFrom](#queryFrom)
 
