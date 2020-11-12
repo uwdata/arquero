@@ -3,6 +3,12 @@ import bundleSize from 'rollup-plugin-bundle-size';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 
+function onwarn(warning, defaultHandler) {
+  if (warning.code !== 'CIRCULAR_DEPENDENCY') {
+    defaultHandler(warning);
+  }
+}
+
 export default {
   input: 'src/index.js',
   plugins: [
@@ -10,6 +16,7 @@ export default {
     bundleSize(),
     nodeResolve({ modulesOnly: true })
   ],
+  onwarn,
   output: [
     {
       file: 'dist/arquero.js',
