@@ -305,11 +305,12 @@ Use the query *toObject()* method to serialize a query to a JSON-compatible obje
 *Examples*
 
 ```js
+// create a query, then evaluate it on an input table
 const q = aq.query()
   .derive({ add1: d => d.value + 1 })
   .filter(d => d.add1 > 5 );
 
-const t = aq.evaluate(table);
+const t = q.evaluate(table);
 ```
 
 ```js
@@ -330,7 +331,7 @@ Parse a serialized query *object* and return a new query instance. The input *ob
 *Examples*
 
 ```js
-// round-trips a query to a serialized form and back again
+// round-trip a query to a serialized form and back again
 aq.queryFrom(
   aq.query()
     .derive({ add1: d => d.value + 1 })
