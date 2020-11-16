@@ -131,3 +131,26 @@ tape('derive supports parameters', t => {
 
   t.end();
 });
+
+tape('derive supports streaming value windows', t => {
+  const dt = table({ val: [1, 2, 3, 4, 5] })
+    .orderby('val')
+    .derive({
+      sum: rolling(op.sum('val'), [-2, 0]),
+      index: () => op.row_number() - 1
+    })
+    .derive({
+      frame: rolling(op.values('index'), [-2, 0])
+    });
+
+  tableEqual(t, dt,
+    {
+      val: [1, 2, 3, 4, 5],
+      sum: [1, 3, 6, 9, 12],
+      index: [0, 1, 2, 3, 4],
+      frame: [ [0], [0,1], [0,1,2], [1,2,3], [2,3,4] ]
+    },
+    'derive data'
+  );
+  t.end();
+});

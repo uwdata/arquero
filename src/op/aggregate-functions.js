@@ -85,7 +85,7 @@ export default {
   values: {
     create: () => initOp({
       init: s => s.values = true,
-      value: s => s.list.values()
+      value: s => s.list.values().slice()
     }),
     param: [1]
   },
