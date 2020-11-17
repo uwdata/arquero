@@ -1,6 +1,7 @@
 import { parse } from 'acorn';
 
 import {
+  ArrayPattern,
   ArrowFunctionExpression,
   Column,
   Constant,
@@ -176,6 +177,18 @@ function updateConstantNode(node, name) {
   node.raw = constants[name];
 }
 
+function handleDeclaration(node, ctx) {
+  if (is(Identifier, node)) {
+    ctx.scope.add(node.name);
+  } else if (is(ArrayPattern, node)) {
+    node.elements.forEach(elm => handleDeclaration(elm, ctx));
+  } else if (is(ObjectPattern, node)) {
+    node.properties.forEach(prop => handleDeclaration(prop.value, ctx));
+  } else {
+    ctx.error('Unsupported variable declaration', node.id);
+  }
+}
+
 const visitors = {
   FunctionDeclaration: parseError('Function definitions not allowed'),
   ForStatement: parseError('For loops not allowed'),
@@ -191,7 +204,7 @@ const visitors = {
   UpdateExpression: parseError('Updates not allowed'),
 
   VariableDeclarator(node, ctx) {
-    ctx.scope.add(node.id.name);
+    handleDeclaration(node.id, ctx);
   },
   Identifier(node, ctx, parent) {
     if (handleIdentifier(node, ctx, parent) && !ctx.scope.has(node.name)) {

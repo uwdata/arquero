@@ -279,6 +279,35 @@ tape('parse parses expressions with switch statements', t => {
   t.end();
 });
 
+tape('parse parses expressions with destructuring assignments', t => {
+  const exprs = {
+    arr: () => {
+      const [start, stop, step] = op.bins('value');
+      return op.bin('value', start, stop, step);
+    },
+    obj: () => {
+      const { start, stop, step } = op.bins('value');
+      return op.bin('value', start, stop, step);
+    },
+    nest: () => {
+      const { start: [{ baz: bop }], stop, step } = op.bins('value');
+      return op.bin('value', bop, stop, step);
+    }
+  };
+
+  t.deepEqual(
+    parse(exprs, { compiler }).values,
+    {
+      arr: '{const [start,stop,step]=op[0];return fn.bin(\'value\',start,stop,step);}',
+      obj: '{const {start:start,stop:stop,step:step}=op[0];return fn.bin(\'value\',start,stop,step);}',
+      nest: '{const {start:[{baz:bop}],stop:stop,step:step}=op[0];return fn.bin(\'value\',bop,stop,step);}'
+    },
+    'parsed destructuring assignmeents'
+  );
+
+  t.end();
+});
+
 tape('parse throws on expressions with for loops', t => {
   const exprs = {
     val: () => {

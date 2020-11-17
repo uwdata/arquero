@@ -1,3 +1,4 @@
+export const ArrayPattern = 'ArrayPattern';
 export const ArrowFunctionExpression = 'ArrowFunctionExpression';
 export const FunctionExpression = 'FunctionExpression';
 export const Identifier = 'Identifier';

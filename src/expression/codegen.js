@@ -87,6 +87,9 @@ const visitors = {
   FunctionExpression: func,
   FunctionDeclaration: func,
 
+  ArrayPattern: (node, opt) => {
+    return '[' + list(node.elements, opt) + ']';
+  },
   ObjectPattern: (node, opt) => {
     return '{' + list(node.properties, opt) + '}';
   },
