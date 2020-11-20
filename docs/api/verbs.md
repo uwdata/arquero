@@ -20,7 +20,7 @@ title: Verbs \| Arquero API Reference
 * [Reshape Verbs](#reshape)
   * [fold](#fold), [pivot](#pivot)
   * [spread](#spread), [unroll](#unroll)
-* [Set Verbs](#sets):
+* [Set Verbs](#sets)
   * [dedupe](#dedupe)
   * [concat](#concat), [union](#union)
   * [intersect](#intersect), [except](#except)
