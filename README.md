@@ -10,7 +10,7 @@
 
 To get up and running, start with the [Introducing Arquero](https://observablehq.com/@uwdata/introducing-arquero) tutorial, part of the [Arquero notebook collection](https://observablehq.com/collection/@uwdata/arquero).
 
-Arquero is Spanish for "archer": if datasets are [arrows](https://arrow.apache.org/), Arquero helps their aim stay true. 🏹
+Arquero is Spanish for "archer": if datasets are [arrows](https://arrow.apache.org/), Arquero helps their aim stay true. 🏹 Arquero also refers to a goalkeeper: safeguard your data from analytic "own goals"! 🥅 ✋ ⚽
 
 ## API Documentation
 
