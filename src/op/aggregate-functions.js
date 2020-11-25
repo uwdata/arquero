@@ -1,4 +1,5 @@
 import bins from '../util/bins';
+import isBigInt from '../util/is-bigint';
 import noop from '../util/no-op';
 import product from '../util/product';
 
@@ -10,6 +11,11 @@ function initOp(op) {
   op.add = op.add || noop;
   op.rem = op.rem || noop;
   return op;
+}
+
+function initProduct(s, value) {
+  s.product_v = false;
+  return s.product = value;
 }
 
 /**
@@ -124,9 +130,9 @@ export default {
       },
       value: s => s.distinct + (s.valid === s.count ? 0 : 1),
       add: (s, v) => {
-        const count = s.counts.get(v) || -1;
+        const count = s.counts.get(v) || 0;
         s.counts.set(v, count + 1);
-        if (count < 0) ++s.distinct;
+        if (count < 1) ++s.distinct;
       },
       rem: (s, v) => {
         const count = s.counts.get(v);
@@ -174,7 +180,9 @@ export default {
     create: () => ({
       init:  s => s.sum = 0,
       value: s => s.sum,
-      add: (s, v) => s.sum += +v,
+      add: (s, v) => isBigInt(v)
+        ? (s.sum === 0 ? s.sum = v : s.sum += v)
+        : s.sum += +v,
       rem: (s, v) => s.sum -= v
     }),
     param: [1]
@@ -183,12 +191,20 @@ export default {
   /** @type {AggregateDef} */
   product: {
     create: () => ({
-      init:  s => s.product = 1,
+      init:  s => initProduct(s, 1),
       value: s => s.valid
-        ? s.product = (Number.isNaN(s.product) ? product(s.list.values()) : s.product)
+        ? (
+            s.product_v
+              ? initProduct(s, product(s.list.values()))
+              : s.product
+          )
         : undefined,
-      add: (s, v) => s.product *= v,
-      rem: (s, v) => s.product /= v
+      add: (s, v) => isBigInt(v)
+        ? (s.product === 1 ? s.product = v : s.product *= v)
+        : s.product *= v,
+      rem: (s, v) => (v == 0 || v === Infinity || v === -Infinity)
+        ? s.product_v = true
+        : s.product /= v
     }),
     param: [1],
     stream: ['values']
