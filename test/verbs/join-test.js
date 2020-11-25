@@ -73,9 +73,8 @@ tape('join performs natural join', t => {
   const tj = tl.join(tr);
 
   tableEqual(t, tj, {
-    k_1: [ 1, 2 ],
+    k: [ 1, 2 ],
     a: [ 3, 4 ],
-    k_2: [ 1, 2 ],
     b: [ 5, 6 ]
   }, 'natural join data');
 

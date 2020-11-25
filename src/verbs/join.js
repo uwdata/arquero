@@ -1,7 +1,7 @@
 import _join from '../engine/join';
 import parseKey from './expr/parse-key';
 import parseValue from './expr/parse';
-import { all } from './expr/selection';
+import { all, not } from './expr/selection';
 import parse from '../expression/parse';
 import has from '../util/has';
 import intersect from '../util/intersect';
@@ -15,6 +15,7 @@ export default function(tableL, tableR, on, values, options) {
     // perform natural join if join condition not provided
     const isect = intersect(tableL.columnNames(), tableR.columnNames());
     on = [isect, isect];
+    if (!values) values = [all(), not(isect)];
   }
 
   if (!values) {
