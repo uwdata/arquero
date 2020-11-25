@@ -1,5 +1,4 @@
-import _join_loop from '../engine/join-loop';
-import _join_hash from '../engine/join-hash';
+import _join from '../engine/join';
 import parseKey from './expr/parse-key';
 import parseValue from './expr/parse';
 import { all } from './expr/selection';
@@ -25,15 +24,12 @@ export default function(tableL, tableR, on, values, options) {
 
   const optParse = { join: [tableL, tableR] };
 
-  const join = isArray(on)
-    ? (on = [
-        parseKey('join', tableL, on[0]),
-        parseKey('join', tableR, on[1])
-      ], _join_hash)
-    : (on = parse({ on }, optParse).values.on, _join_loop);
+  const predicate = isArray(on)
+    ? [ parseKey('join', tableL, on[0]), parseKey('join', tableR, on[1]) ]
+    : parse({ on }, optParse).values.on;
 
-  return join(
-    tableL, tableR, on,
+  return _join(
+    tableL, tableR, predicate,
     parseValues(tableL, tableR, values, optParse, options && options.suffix),
     options
   );
