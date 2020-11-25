@@ -68,15 +68,21 @@ tape('cross computes Cartesian product with column renaming', t => {
 
 tape('join performs natural join', t => {
   const tl = table({ k: [1, 2], a: [3, 4]});
-  const tr = table({ k: [1, 2], b: [5, 6]});
+  const t1 = table({ k: [1, 2], b: [5, 6]});
+  const t2 = table({ u: [1, 2], v: [5, 6]});
 
-  const tj = tl.join(tr);
-
-  tableEqual(t, tj, {
+  tableEqual(t, tl.join(t1), {
     k: [ 1, 2 ],
     a: [ 3, 4 ],
     b: [ 5, 6 ]
-  }, 'natural join data');
+  }, 'natural join data, common columns');
+
+  tableEqual(t, tl.join(t2), {
+    k: [ 1, 1, 2, 2 ],
+    a: [ 3, 3, 4, 4 ],
+    u: [ 1, 2, 1, 2 ],
+    v: [ 5, 6, 5, 6 ]
+  }, 'natural join data, no common columns');
 
   t.end();
 });
