@@ -82,6 +82,29 @@ tape('join performs natural join', t => {
   t.end();
 });
 
+tape('join handles filtered tables', t => {
+  const tl = table({
+      key: [1, 2, 3, 4],
+      value1: [1, 2, 3, 4]
+    })
+    .filter(d => d.key < 3);
+
+  const tr = table({
+      key: [1, 2, 5],
+      value2: [1, 2, 5]
+    });
+
+  const tj = tl.join_left(tr, null, [all(), not('key')]);
+
+  tableEqual(t, tj, {
+    key: [ 1, 2 ],
+    value1: [ 1, 2 ],
+    value2: [ 1, 2 ]
+  }, 'natural join on filtered data');
+
+  t.end();
+});
+
 tape('join performs inner join with predicate', t => {
   const [tl, tr] = joinTables();
 
