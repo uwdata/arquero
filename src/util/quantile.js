@@ -1,13 +1,17 @@
+import isBigInt from './is-bigint';
+import toNumeric from './to-numeric';
+
 export default function quantile(values, p) {
   const n = values.length;
 
   if (!n) return;
-  if ((p = +p) <= 0 || n < 2) return +values[0];
-  if (p >= 1) return +values[n - 1];
+  if ((p = +p) <= 0 || n < 2) return toNumeric(values[0]);
+  if (p >= 1) return toNumeric(values[n - 1]);
 
   const i = (n - 1) * p;
   const i0 = Math.floor(i);
-  const v0 = +values[i0];
-  const v1 = +values[i0 + 1];
-  return v0 + (v1 - v0) * (i - i0);
+  const v0 = toNumeric(values[i0]);
+  return isBigInt(v0)
+    ? v0
+    : v0 + (toNumeric(values[i0 + 1]) - v0) * (i - i0);
 }

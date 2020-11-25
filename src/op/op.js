@@ -1,4 +1,5 @@
 import toArray from '../util/to-array';
+import toString from '../util/to-string';
 
 export default function(name, fields = [], params = []) {
   return new Op(name, toArray(fields), toArray(params));
@@ -11,11 +12,11 @@ export class Op {
     this.params = params;
   }
   toString() {
-    const a = [
-      ...this.fields.map(f => `d[${JSON.stringify(f)}]`),
-      ...this.params.map(p => JSON.stringify(p))
+    const args = [
+      ...this.fields.map(f => `d[${toString(f)}]`),
+      ...this.params.map(toString)
     ];
-    return `d => op.${this.name}(${a})`;
+    return `d => op.${this.name}(${args})`;
   }
   toObject() {
     return { expr: this.toString(), func: true };

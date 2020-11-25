@@ -1,4 +1,4 @@
-import toString from './to-string';
+import toString from './object-to-string';
 
 export default function(value) {
   return toString.call(value) === '[object Date]';

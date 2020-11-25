@@ -154,3 +154,42 @@ tape('derive supports streaming value windows', t => {
   );
   t.end();
 });
+
+tape('derive supports bigint values', t => {
+  const data = {
+    v: [1n, 2n, 3n, 4n, 5n]
+  };
+
+  function roll(obj) {
+    for (const key in obj) {
+      obj[key] = rolling(obj[key], [-1, 1]);
+    }
+    return obj;
+  }
+
+  const dt = table(data)
+    .derive(roll({
+      v:    d => 2n ** d.v,
+      sum:  op.sum('v'),
+      prod: op.product('v'),
+      min:  op.min('v'),
+      max:  op.max('v'),
+      med:  op.median('v'),
+      vals: op.values('v'),
+      uniq: op.unique('v')
+    }));
+
+  t.deepEqual(
+    dt.objects(),
+    [
+      { v: 2n,  sum: 3n,  prod: 2n,  min: 1n, max: 2n, med: 1n, vals: [ 1n, 2n ], uniq: [ 1n, 2n ] },
+      { v: 4n,  sum: 6n,  prod: 6n,  min: 1n, max: 3n, med: 2n, vals: [ 1n, 2n, 3n ], uniq: [ 1n, 2n, 3n ] },
+      { v: 8n,  sum: 9n,  prod: 24n, min: 2n, max: 4n, med: 3n, vals: [ 2n, 3n, 4n ], uniq: [ 2n, 3n, 4n ] },
+      { v: 16n, sum: 12n, prod: 60n, min: 3n, max: 5n, med: 4n, vals: [ 3n, 4n, 5n ], uniq: [ 3n, 4n, 5n ] },
+      { v: 32n, sum: 9n,  prod: 20n, min: 4n, max: 5n, med: 4n, vals: [ 4n, 5n ], uniq: [ 4n, 5n ] }
+    ],
+    'derive data'
+  );
+
+  t.end();
+});

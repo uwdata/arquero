@@ -37,6 +37,48 @@ tape('rollup produces grouped aggregates', t => {
   t.end();
 });
 
+tape('rollup supports bigint values', t => {
+  const data = {
+    v: [1n, 2n, 3n, 4n, 5n]
+  };
+
+  const dt = table(data)
+    .rollup({
+      any:  op.any('v'),
+      dist: op.distinct('v'),
+      cnt:  op.count('v'),
+      val:  op.valid('v'),
+      inv:  op.invalid('v'),
+      sum:  op.sum('v'),
+      prod: op.product('v'),
+      min:  op.min('v'),
+      max:  op.max('v'),
+      med:  op.median('v'),
+      vals: op.values('v'),
+      uniq: op.unique('v')
+    });
+
+  t.deepEqual(
+    dt.objects()[0],
+    {
+      any: 1n,
+      dist: 5,
+      cnt: 5,
+      val: 5,
+      inv: 0,
+      sum: 15n,
+      prod: 120n,
+      min: 1n,
+      max: 5n,
+      med: 3n,
+      vals: [1n, 2n, 3n, 4n, 5n],
+      uniq: [1n, 2n, 3n, 4n, 5n]
+    },
+    'rollup data'
+  );
+  t.end();
+});
+
 tape('rollup supports histogram', t => {
   const data = { x: [1, 1, 3, 4, 5, 6, 7, 8, 9, 10] };
   const result = {
