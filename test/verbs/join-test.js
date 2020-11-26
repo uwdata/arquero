@@ -89,6 +89,12 @@ tape('join performs natural join', t => {
     b: [ 5, 6, 2 ]
   }, 'natural right join data, common columns');
 
+  tableEqual(t, tl.join_full(t1), {
+    k: [ 1, 2, 3, 4 ],
+    a: [ 3, 4, 1, undefined ],
+    b: [ 5, 6, undefined, 2 ]
+  }, 'natural full join data, common columns');
+
   t.throws(
     () =>tl.join(t2),
     'natural join throws, no common columns'
@@ -99,23 +105,26 @@ tape('join performs natural join', t => {
 
 tape('join handles filtered tables', t => {
   const tl = table({
-      key: [1, 2, 3, 4],
-      value1: [1, 2, 3, 4]
-    })
-    .filter(d => d.key < 3);
+    key: [1, 2, 3, 4],
+    value1: [1, 2, 3, 4]
+  }).filter(d => d.key < 3);
 
   const tr = table({
-      key: [1, 2, 5],
-      value2: [1, 2, 5]
-    });
+    key: [1, 2, 5],
+    value2: [1, 2, 5]
+  });
 
-  const tj = tl.join_left(tr, null, [all(), not('key')]);
-
-  tableEqual(t, tj, {
+  tableEqual(t, tl.join_left(tr), {
     key: [ 1, 2 ],
     value1: [ 1, 2 ],
     value2: [ 1, 2 ]
-  }, 'natural join on filtered data');
+  }, 'natural left join on filtered data');
+
+  tableEqual(t, tl.join_right(tr), {
+    key: [ 1, 2, 5 ],
+    value1: [ 1, 2, undefined ],
+    value2: [ 1, 2, 5 ]
+  }, 'natural left join on filtered data');
 
   t.end();
 });
@@ -280,6 +289,15 @@ tape('join_full performs full outer join with keys', t => {
 tape('join handles column name collisions', t => {
   const [tl] = joinTables();
   const tr = table({ k: ['a', 'b'], x: [9, 8] });
+
+  const tj0 = tl.join(tr, 'k');
+
+  tableEqual(t, tj0, {
+    k: [ 'a', 'b', 'b' ],
+    x_1: [ 1, 2, 3 ],
+    y: [ 9, 8, 7 ],
+    x_2: [ 9, 8, 8 ]
+  }, 'name collision join data');
 
   const tj1 = tl.join(tr, ['k', 'k'], [all(), all()]);
 

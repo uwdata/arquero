@@ -7,6 +7,9 @@ import error from '../util/error';
 import has from '../util/has';
 import intersect from '../util/intersect';
 import isArray from '../util/is-array';
+import isString from '../util/is-string';
+import toArray from '../util/to-array';
+import toString from '../util/to-string';
 
 const OPT_L = { aggregate: false, window: false };
 const OPT_R = { ...OPT_L, index: 1 };
@@ -17,28 +20,69 @@ export default function(tableL, tableR, on, values, options = {}) {
     const isect = intersect(tableL.columnNames(), tableR.columnNames());
     if (!isect.length) error('Natural join requires shared column names.');
     on = [isect, isect];
-    if (!(values || options.left && options.right)) {
-      values = [all(), not(isect)];
-      if (options.right) values.reverse();
-    }
-  }
-
-  if (!values) {
-    // include all table columns if values not provided
-    values = [all(), all()];
+  } else if (isString(on)) {
+    on = [on, on];
+  } else if (isArray(on) && on.length === 1) {
+    on.push(on[0]);
   }
 
   const optParse = { join: [tableL, tableR] };
+  let predicate;
 
-  const predicate = isArray(on)
-    ? [ parseKey('join', tableL, on[0]), parseKey('join', tableR, on[1]) ]
-    : parse({ on }, optParse).values.on;
+  if (isArray(on)) {
+    const [onL, onR] = on.map(toArray);
+    if (onL.length !== onR.length) {
+      error('Mismatched number of join keys');
+    }
+
+    predicate = [
+      parseKey('join', tableL, onL),
+      parseKey('join', tableR, onR)
+    ];
+
+    if (!values) {
+      // infer output columns, suppress duplicated key columns
+      values = inferValues(tableL, tableR, onL, onR, options);
+    }
+  } else {
+    predicate = parse({ on }, optParse).values.on;
+
+    if (!values) {
+      // include all table columns if values not provided
+      values = [all(), all()];
+    }
+  }
 
   return _join(
     tableL, tableR, predicate,
     parseValues(tableL, tableR, values, optParse, options && options.suffix),
     options
   );
+}
+
+function inferValues(tableL, tableR, onL, onR, options) {
+  const isect = [];
+  onL.forEach((s, i) => isString(s) && s === onR[i] ? isect.push(s) : 0);
+
+  const vL = all();
+  const vR = not(isect);
+
+  if (options.left && options.right) {
+    const shared = new Set(isect);
+    const values = {};
+    vL(tableL).forEach(s => {
+      const c = `[${toString(s)}]`;
+      values[s] = shared.has(s)
+        ? `(a, b) => a${c} === undefined ? b${c} : a${c}`
+        : `a => a${c}`;
+    });
+    vR(tableR).forEach(s => {
+      values[s] = `(a, b) => b[${toString(s)}]`;
+    });
+    return values;
+  }
+
+  return options.right ? [vR, vL] : [vL, vR];
 }
 
 function parseValues(tableL, tableR, values, optParse, suffix = []) {
