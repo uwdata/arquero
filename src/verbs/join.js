@@ -3,6 +3,7 @@ import parseKey from './expr/parse-key';
 import parseValue from './expr/parse';
 import { all, not } from './expr/selection';
 import parse from '../expression/parse';
+import error from '../util/error';
 import has from '../util/has';
 import intersect from '../util/intersect';
 import isArray from '../util/is-array';
@@ -10,12 +11,16 @@ import isArray from '../util/is-array';
 const OPT_L = { aggregate: false, window: false };
 const OPT_R = { ...OPT_L, index: 1 };
 
-export default function(tableL, tableR, on, values, options) {
+export default function(tableL, tableR, on, values, options = {}) {
   if (!on) {
     // perform natural join if join condition not provided
     const isect = intersect(tableL.columnNames(), tableR.columnNames());
+    if (!isect.length) error('Natural join requires shared column names.');
     on = [isect, isect];
-    if (!values) values = [all(), not(isect)];
+    if (!(values || options.left && options.right)) {
+      values = [all(), not(isect)];
+      if (options.right) values.reverse();
+    }
   }
 
   if (!values) {
