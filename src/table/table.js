@@ -774,13 +774,16 @@ export default class Table {
    *  are compared.
    *  If array-valued, a two-element array should be provided, containing
    *  the columns to compare for the left and right tables, respectively.
+   *  If a one-element array or a string value is provided, the same
+   *  column names will be drawn from both tables.
    *  If function-valued, should be a two-table table expression that
    *  returns a boolean value. When providing a custom predicate, note that
    *  join key values can be arrays or objects, and that normal join
    *  semantics do not consider null or undefined values to be equal (that is,
    *  null !== null). Use the op.equal function to handle these cases.
    * @param {Array|Object} [values] The columns to include in the join output.
-   *  If unspecified, all columns from both tables are included.
+   *  If unspecified, all columns from both tables are included; paired
+   *  join keys sharing the same column name are included only once.
    *  If array-valued, a two element array should be provided, containing
    *  the columns to include for the left and right tables, respectively.
    *  Array input may consist of column name strings, objects with output
@@ -807,13 +810,16 @@ export default class Table {
    *  are compared.
    *  If array-valued, a two-element array should be provided, containing
    *  the columns to compare for the left and right tables, respectively.
+   *  If a one-element array or a string value is provided, the same
+   *  column names will be drawn from both tables.
    *  If function-valued, should be a two-table table expression that
    *  returns a boolean value. When providing a custom predicate, note that
    *  join key values can be arrays or objects, and that normal join
    *  semantics do not consider null or undefined values to be equal (that is,
    *  null !== null). Use the op.equal function to handle these cases.
    * @param {Array|Object} [values] The columns to include in the join output.
-   *  If unspecified, all columns from both tables are included.
+   *  If unspecified, all columns from both tables are included; paired
+   *  join keys sharing the same column name are included only once.
    *  If array-valued, a two element array should be provided, containing
    *  the columns to include for the left and right tables, respectively.
    *  Array input may consist of column name strings, objects with output
@@ -842,13 +848,16 @@ export default class Table {
    *  are compared.
    *  If array-valued, a two-element array should be provided, containing
    *  the columns to compare for the left and right tables, respectively.
+   *  If a one-element array or a string value is provided, the same
+   *  column names will be drawn from both tables.
    *  If function-valued, should be a two-table table expression that
    *  returns a boolean value. When providing a custom predicate, note that
    *  join key values can be arrays or objects, and that normal join
    *  semantics do not consider null or undefined values to be equal (that is,
    *  null !== null). Use the op.equal function to handle these cases.
    * @param {Array|Object} [values] The columns to include in the join output.
-   *  If unspecified, all columns from both tables are included.
+   *  If unspecified, all columns from both tables are included; paired
+   *  join keys sharing the same column name are included only once.
    *  If array-valued, a two element array should be provided, containing
    *  the columns to include for the left and right tables, respectively.
    *  Array input may consist of column name strings, objects with output
@@ -877,13 +886,16 @@ export default class Table {
    *  are compared.
    *  If array-valued, a two-element array should be provided, containing
    *  the columns to compare for the left and right tables, respectively.
+   *  If a one-element array or a string value is provided, the same
+   *  column names will be drawn from both tables.
    *  If function-valued, should be a two-table table expression that
    *  returns a boolean value. When providing a custom predicate, note that
    *  join key values can be arrays or objects, and that normal join
    *  semantics do not consider null or undefined values to be equal (that is,
    *  null !== null). Use the op.equal function to handle these cases.
    * @param {Array|Object} [values] The columns to include in the join output.
-   *  If unspecified, all columns from both tables are included.
+   *  If unspecified, all columns from both tables are included; paired
+   *  join keys sharing the same column name are included only once.
    *  If array-valued, a two element array should be provided, containing
    *  the columns to include for the left and right tables, respectively.
    *  Array input may consist of column name strings, objects with output
@@ -938,6 +950,8 @@ export default class Table {
    *  are compared.
    *  If array-valued, a two-element array should be provided, containing
    *  the columns to compare for the left and right tables, respectively.
+   *  If a one-element array or a string value is provided, the same
+   *  column names will be drawn from both tables.
    *  If function-valued, should be a two-table table expression that
    *  returns a boolean value. When providing a custom predicate, note that
    *  join key values can be arrays or objects, and that normal join
@@ -961,6 +975,8 @@ export default class Table {
    *  are compared.
    *  If array-valued, a two-element array should be provided, containing
    *  the columns to compare for the left and right tables, respectively.
+   *  If a one-element array or a string value is provided, the same
+   *  column names will be drawn from both tables.
    *  If function-valued, should be a two-table table expression that
    *  returns a boolean value. When providing a custom predicate, note that
    *  join key values can be arrays or objects, and that normal join
