@@ -42,7 +42,7 @@ export default function(tableL, tableR, on, values, options = {}) {
 
     if (!values) {
       // infer output columns, suppress duplicated key columns
-      values = inferValues(tableL, tableR, onL, onR, options);
+      values = inferValues(tableL, onL, onR, options);
     }
   } else {
     predicate = parse({ on }, optParse).values.on;
@@ -60,29 +60,26 @@ export default function(tableL, tableR, on, values, options = {}) {
   );
 }
 
-function inferValues(tableL, tableR, onL, onR, options) {
+function inferValues(tableL, onL, onR, options) {
   const isect = [];
   onL.forEach((s, i) => isString(s) && s === onR[i] ? isect.push(s) : 0);
-
-  const vL = all();
   const vR = not(isect);
 
   if (options.left && options.right) {
+    // for full join, merge shared key columns together
     const shared = new Set(isect);
-    const values = {};
-    vL(tableL).forEach(s => {
-      const c = `[${toString(s)}]`;
-      values[s] = shared.has(s)
-        ? `(a, b) => a${c} === undefined ? b${c} : a${c}`
-        : `a => a${c}`;
-    });
-    vR(tableR).forEach(s => {
-      values[s] = `(a, b) => b[${toString(s)}]`;
-    });
-    return values;
+    return [
+      tableL.columnNames().map(s => {
+        const c = `[${toString(s)}]`;
+        return shared.has(s)
+          ? { [s]: `(a, b) => a${c} === undefined ? b${c} : a${c}` }
+          : s;
+      }),
+      vR
+    ];
   }
 
-  return options.right ? [vR, vL] : [vL, vR];
+  return options.right ? [vR, all()] : [all(), vR];
 }
 
 function parseValues(tableL, tableR, values, optParse, suffix = []) {
@@ -90,7 +87,7 @@ function parseValues(tableL, tableR, values, optParse, suffix = []) {
     let vL, vR, vJ, n = values.length;
 
     if (n--) {
-      vL = parseValue('join', tableL, values[0], OPT_L).values;
+      vL = parseValue('join', tableL, values[0], optParse).values;
     }
     if (n--) {
       vR = parseValue('join', tableR, values[1], OPT_R).values;

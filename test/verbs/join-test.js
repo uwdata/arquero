@@ -290,17 +290,23 @@ tape('join handles column name collisions', t => {
   const [tl] = joinTables();
   const tr = table({ k: ['a', 'b'], x: [9, 8] });
 
-  const tj0 = tl.join(tr, 'k');
-
-  tableEqual(t, tj0, {
+  const tj_inner = tl.join(tr, 'k');
+  tableEqual(t, tj_inner, {
     k: [ 'a', 'b', 'b' ],
     x_1: [ 1, 2, 3 ],
     y: [ 9, 8, 7 ],
     x_2: [ 9, 8, 8 ]
-  }, 'name collision join data');
+  }, 'name collision inner join data');
+
+  const tj_full = tl.join_full(tr, 'k');
+  tableEqual(t, tj_full, {
+    k: [ 'a', 'b', 'b', 'c' ],
+    x_1: [ 1, 2, 3, 4 ],
+    y: [ 9, 8, 7, 6 ],
+    x_2: [ 9, 8, 8, undefined ]
+  }, 'name collision full join data');
 
   const tj1 = tl.join(tr, ['k', 'k'], [all(), all()]);
-
   tableEqual(t, tj1, {
     k_1: [ 'a', 'b', 'b' ],
     x_1: [ 1, 2, 3 ],
@@ -314,7 +320,6 @@ tape('join handles column name collisions', t => {
     all(),
     { y: (a, b) => a.x + b.x }
   ]);
-
   tableEqual(t, tj2, {
     k_1: [ 'a', 'b', 'b' ],
     x_1: [ 1, 2, 3 ],
