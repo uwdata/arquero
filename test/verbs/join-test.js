@@ -67,40 +67,64 @@ tape('cross computes Cartesian product with column renaming', t => {
 });
 
 tape('join performs natural join', t => {
-  const tl = table({ k: [1, 2], a: [3, 4]});
-  const tr = table({ k: [1, 2], b: [5, 6]});
+  const tl = table({ k: [1, 2, 3], a: [3, 4, 1]});
+  const t1 = table({ k: [1, 2, 4], b: [5, 6, 2]});
+  const t2 = table({ u: [1, 2], v: [5, 6]});
 
-  const tj = tl.join(tr);
-
-  tableEqual(t, tj, {
-    k_1: [ 1, 2 ],
+  tableEqual(t, tl.join(t1), {
+    k: [ 1, 2 ],
     a: [ 3, 4 ],
-    k_2: [ 1, 2 ],
     b: [ 5, 6 ]
-  }, 'natural join data');
+  }, 'natural join data, common columns');
+
+  tableEqual(t, tl.join_left(t1), {
+    k: [ 1, 2, 3 ],
+    a: [ 3, 4, 1 ],
+    b: [ 5, 6, undefined ]
+  }, 'natural left join data, common columns');
+
+  tableEqual(t, tl.join_right(t1), {
+    k: [ 1, 2, 4 ],
+    a: [ 3, 4, undefined ],
+    b: [ 5, 6, 2 ]
+  }, 'natural right join data, common columns');
+
+  tableEqual(t, tl.join_full(t1), {
+    k: [ 1, 2, 3, 4 ],
+    a: [ 3, 4, 1, undefined ],
+    b: [ 5, 6, undefined, 2 ]
+  }, 'natural full join data, common columns');
+
+  t.throws(
+    () =>tl.join(t2),
+    'natural join throws, no common columns'
+  );
 
   t.end();
 });
 
 tape('join handles filtered tables', t => {
   const tl = table({
-      key: [1, 2, 3, 4],
-      value1: [1, 2, 3, 4]
-    })
-    .filter(d => d.key < 3);
+    key: [1, 2, 3, 4],
+    value1: [1, 2, 3, 4]
+  }).filter(d => d.key < 3);
 
   const tr = table({
-      key: [1, 2, 5],
-      value2: [1, 2, 5]
-    });
+    key: [1, 2, 5],
+    value2: [1, 2, 5]
+  });
 
-  const tj = tl.join_left(tr, null, [all(), not('key')]);
-
-  tableEqual(t, tj, {
+  tableEqual(t, tl.join_left(tr), {
     key: [ 1, 2 ],
     value1: [ 1, 2 ],
     value2: [ 1, 2 ]
-  }, 'natural join on filtered data');
+  }, 'natural left join on filtered data');
+
+  tableEqual(t, tl.join_right(tr), {
+    key: [ 1, 2, 5 ],
+    value1: [ 1, 2, undefined ],
+    value2: [ 1, 2, 5 ]
+  }, 'natural left join on filtered data');
 
   t.end();
 });
@@ -266,8 +290,23 @@ tape('join handles column name collisions', t => {
   const [tl] = joinTables();
   const tr = table({ k: ['a', 'b'], x: [9, 8] });
 
-  const tj1 = tl.join(tr, ['k', 'k'], [all(), all()]);
+  const tj_inner = tl.join(tr, 'k');
+  tableEqual(t, tj_inner, {
+    k: [ 'a', 'b', 'b' ],
+    x_1: [ 1, 2, 3 ],
+    y: [ 9, 8, 7 ],
+    x_2: [ 9, 8, 8 ]
+  }, 'name collision inner join data');
 
+  const tj_full = tl.join_full(tr, 'k');
+  tableEqual(t, tj_full, {
+    k: [ 'a', 'b', 'b', 'c' ],
+    x_1: [ 1, 2, 3, 4 ],
+    y: [ 9, 8, 7, 6 ],
+    x_2: [ 9, 8, 8, undefined ]
+  }, 'name collision full join data');
+
+  const tj1 = tl.join(tr, ['k', 'k'], [all(), all()]);
   tableEqual(t, tj1, {
     k_1: [ 'a', 'b', 'b' ],
     x_1: [ 1, 2, 3 ],
@@ -281,7 +320,6 @@ tape('join handles column name collisions', t => {
     all(),
     { y: (a, b) => a.x + b.x }
   ]);
-
   tableEqual(t, tj2, {
     k_1: [ 'a', 'b', 'b' ],
     x_1: [ 1, 2, 3 ],
