@@ -18,6 +18,10 @@ import mapObject from '../util/map-object';
  *  If specified, these override the automatically inferred options.
  *  - {string} date One of 'utc' or 'loc' (for UTC or local dates), or null for full date times.
  *  - {number} digits Number of significant digits to include for numbers.
+ * @property {Function} [null] Format function for null and undefined values.
+ *  If specified, this function will be invoked with the null or undefined
+ *  value as the sole input, and the return value will be used as the HTML
+ *  output for the value.
  * @property {Object} [style] CSS styles to include in HTML output.
  *  The object keys should be HTML table tag names: 'table', 'thead',
  *  'tbody', 'tr', 'th', or 'td'. The object values should be strings of
@@ -35,11 +39,16 @@ export default function(table, options = {}) {
   const names = columns(table, options.columns);
   const { align, format } = formats(table, names, options);
   const style = styles(options);
+  const nullish = options.null;
 
   const alignValue = a => a === 'c' ? 'center' : a === 'r' ? 'right' : 'left';
   const escape = s => s.replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
+  const baseFormat = (value, opt) => escape(formatValue(value, opt));
+  const formatter = nullish
+    ? (value, opt) => value == null ? nullish(value) : baseFormat(value, opt)
+    : baseFormat;
 
   let r = -1;
   let idx = -1;
@@ -65,7 +74,7 @@ export default function(table, options = {}) {
     },
     cell(value, name) {
       text += tag('td', name)
-        + escape(formatValue(value, format[name]))
+        + formatter(value, format[name])
         + '</td>';
     }
   });
