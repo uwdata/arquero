@@ -240,6 +240,7 @@ Format this table as an HTML table string.
   * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions or objects with any of the following properties.If specified, these override any automatically inferred options:
     * *date*: One of 'utc' or 'loc' (for UTC or local dates), or `null` for complete date time strings.
     * *digits*: Number of significant digits to include for numbers.
+  * *null*: Optional format function for `null` and `undefined` values. If specified, this function be invoked with the `null` or `undefined` value as the sole input argument. The return value is then used as the HTML output for the input value.
   * *style*: CSS styles to include in HTML output. The object keys can be HTML table tag names: `'table'`, `'thead'`, `'tbody'`, `'tr'`, `'th'`, or `'td'`. The object values should be strings of valid CSS style directives (such as `"font-weight: bold;"`) or functions that take a column name and row as inputs and return a CSS string.
 
 <hr/><a id="toJSON" href="#toJSON">#</a>

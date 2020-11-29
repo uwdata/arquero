@@ -103,3 +103,29 @@ tape('toHTML formats html table text with style option', t => {
 
   t.end();
 });
+
+tape('toHTML formats html table text with null option', t => {
+  const a = 'style="text-align: right;"';
+  const html = (a) => [
+    '<table><thead>',
+    '<tr><th>u</th></tr>',
+    '</thead><tbody>',
+    `<tr><td ${a}>a</td></tr>`,
+    `<tr><td ${a}>0</td></tr>`,
+    `<tr><td ${a}><span class="null">null</span></td></tr>`,
+    `<tr><td ${a}><span class="null">undefined</span></td></tr>`,
+    '</tbody></table>'
+  ];
+
+  const dt = new ColumnTable({ u: ['a', 0, null, undefined] });
+
+  t.equal(
+    toHTML(dt, {
+      null: v => `<span class="null">${v}</span>`
+    }),
+    html(a).join(''),
+    'html text with custom null format'
+  );
+
+  t.end();
+});
