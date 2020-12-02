@@ -1,4 +1,4 @@
-import { columns, numRows } from './util';
+import { columns } from './util';
 import { formatUTCDate } from '../util/format-date';
 import isDate from '../util/is-date';
 
@@ -6,6 +6,7 @@ import isDate from '../util/is-date';
  * Options for JSON formatting.
  * @typedef {Object} JSONFormatOptions
  * @property {number} [limit=Infinity] The maximum number of rows to print.
+ * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
  * @property {string[]|Function} [columns] Ordered list of column names
  *  to include. If function-valued, the function should accept a table as
  *  input and return an array of column name strings.
@@ -26,24 +27,20 @@ const defaultFormatter = value => isDate(value)
  * @return {string} A JSON string.
  */
 export default function(table, options = {}) {
-  const limit = numRows(table, options.limit);
-  const names = columns(table, options.columns);
   const format = options.format || {};
+  const names = columns(table, options.columns);
   let text = '{';
 
   names.forEach((name, i) => {
     text += (i ? ',' : '') + JSON.stringify(name) + ':[';
 
     const column = table.column(name);
-    if (limit > 0) {
-      let r = 0;
-      const formatter = format[name] || defaultFormatter;
-      table.scan((row, data, stop) => {
-        const value = column.get(row);
-        text += (r ? ',' : '') + JSON.stringify(formatter(value));
-        if (++r >= limit) stop();
-      }, true);
-    }
+    const formatter = format[name] || defaultFormatter;
+    let r = -1;
+    table.scan(row => {
+      const value = column.get(row);
+      text += (++r ? ',' : '') + JSON.stringify(formatter(value));
+    }, true, options.limit, options.offset);
 
     text += ']';
   });
