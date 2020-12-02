@@ -57,6 +57,12 @@ export default class BitSet {
     return -1;
   }
 
+  nth(n) {
+    let i = this.next(0);
+    while (n-- && i >= 0) i = this.next(i + 1);
+    return i;
+  }
+
   not() {
     const bits = this._bits;
     const n = bits.length;

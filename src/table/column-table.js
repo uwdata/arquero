@@ -2,7 +2,6 @@ import Column from './column';
 import columnsFrom from './columns-from';
 import Table from './table';
 import { regroup, reindex } from './regroup';
-import { numRows } from '../format/util';
 import toCSV from '../format/to-csv';
 import toHTML from '../format/to-html';
 import toJSON from '../format/to-json';
@@ -111,17 +110,11 @@ export default class ColumnTable extends Table {
    * @return {Array} An array of row objects.
    */
   objects(options = {}) {
-    const limit = numRows(this, options.limit);
-    if (limit <= 0) return [];
-    const tuples = Array(limit);
     const create = rowObjectBuilder(this);
-
-    let r = 0;
-    this.scan((row, data, stop) => {
-      tuples[r] = create(row);
-      if (++r >= limit) stop();
-    }, true);
-
+    const tuples = [];
+    this.scan(row => {
+      tuples.push(create(row));
+    }, true, options.limit, options.offset);
     return tuples;
   }
 

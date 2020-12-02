@@ -7,6 +7,7 @@ import isDate from '../util/is-date';
  * @typedef {Object} CSVFormatOptions
  * @property {string} [delimiter=','] The delimiter between values.
  * @property {number} [limit=Infinity] The maximum number of rows to print.
+ * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
  * @property {string[]|Function} [columns] Ordered list of column names
  *  to include. If function-valued, the function should accept a table as
  *  input and return an array of column name strings.
@@ -38,7 +39,7 @@ export default function(table, options = {}) {
   const vals = names.map(formatValue);
   let text = '';
 
-  scan(table, names, options.limit, {
+  scan(table, names, options.limit, options.offset, {
     row() {
       text += vals.join(delim) + '\n';
     },
