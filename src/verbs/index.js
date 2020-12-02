@@ -55,7 +55,9 @@ export { default as bin } from './expr/bin';
 export { default as desc } from './expr/desc';
 export { default as field } from './expr/field';
 export { default as rolling } from './expr/rolling';
-export { all, not, range } from './expr/selection';
+export {
+  all, endswith, matches, not, range, startswith
+} from './expr/selection';
 
 /**
  * Create a new table for a set of named columns.

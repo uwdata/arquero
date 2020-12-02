@@ -1,7 +1,9 @@
 import tape from 'tape';
 import { query } from '../../src/query/query-builder';
 import { Verbs } from '../../src/query/verb';
-import { all, bin, desc, not, op, range, rolling } from '../../src/verbs';
+import {
+  all, bin, desc, endswith, matches, not, op, range, rolling, startswith
+} from '../../src/verbs';
 
 const {
   count, dedupe, derive, filter, groupby, orderby,
@@ -355,7 +357,11 @@ tape('select verb serializes to AST', t => {
     all(),
     range(0, 1),
     range('a', 'b'),
-    not('foo', 'bar', range(0, 1), range('a', 'b'))
+    not('foo', 'bar', range(0, 1), range('a', 'b')),
+    matches('foo.bar'),
+    matches(/a|b/i),
+    startswith('foo.'),
+    endswith('.baz')
   ]);
 
   t.deepEqual(
@@ -408,6 +414,26 @@ tape('select verb serializes to AST', t => {
               ]
             }
           ]
+        },
+        {
+          type: 'Selection',
+          operator: 'matches',
+          arguments: [ 'foo\\.bar', '' ]
+        },
+        {
+          type: 'Selection',
+          operator: 'matches',
+          arguments: [ 'a|b', 'i' ]
+        },
+        {
+          type: 'Selection',
+          operator: 'matches',
+          arguments: [ '^foo\\.', '' ]
+        },
+        {
+          type: 'Selection',
+          operator: 'matches',
+          arguments: [ '\\.baz$', '' ]
         }
       ]
     },

@@ -11,6 +11,7 @@ title: Arquero API Reference
   * [op](#op), [bin](#bin), [desc](#desc), [rolling](#rolling), [seed](#seed)
 * [Selection Helpers](#selection-helpers)
   * [all](#all), [not](#not), [range](#range)
+  * [matches](#matches), [startswith](#startswith), [endswith](#endswith)
 * [Extensibility](#extensibility)
   * [addFunction](#addFunction), [addAggregateFunction](#addAggregateFunction), [addWindowFunction](#addWindowFunction)
 * [Queries](#queries)
@@ -313,6 +314,50 @@ aq.range('colB', 'colE')
 aq.range(2, 5)
 ```
 
+<hr/><a id="matches" href="#matches">#</a>
+<em>aq</em>.<b>matches</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+
+Select all columns whose names match a pattern. Returns a function-valued selection compatible with [select](verbs/#select).
+
+* *pattern*: A string or [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) pattern to match.
+
+*Examples*
+
+```js
+// contains the string 'col'
+aq.matches('col')
+```
+
+```js
+// has 'a', 'b', or 'c' as the first character (case-insensitve)
+aq.matches(/^[abc]/i)
+```
+
+<hr/><a id="startswith" href="#startswith">#</a>
+<em>aq</em>.<b>startswith</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+
+Select all columns whose names start with a string. Returns a function-valued selection compatible with [select](verbs/#select).
+
+* *string*: The string to match at the start of the column name.
+
+*Examples*
+
+```js
+aq.startswith('prefix_')
+```
+
+<hr/><a id="endswith" href="#endswith">#</a>
+<em>aq</em>.<b>endswith</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+
+Select all columns whose names end with a string. Returns a function-valued selection compatible with [select](verbs/#select).
+
+* *string*: The string to match at the end of the column name.
+
+*Examples*
+
+```js
+aq.endswith('_suffix')
+```
 
 <br/>
 
