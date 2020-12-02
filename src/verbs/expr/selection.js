@@ -1,4 +1,5 @@
 import error from '../../util/error';
+import escapeRegExp from '../../util/escape-regexp';
 import isArray from '../../util/is-array';
 import isFunction from '../../util/is-function';
 import isObject from '../../util/is-object';
@@ -80,4 +81,35 @@ export function range(start, end) {
     },
     () => ({ range: [start, end] })
   );
+}
+
+/**
+ * Select all columns whose names match a pattern.
+ * @param {string|RegExp} pattern A string or regular expression pattern to match.
+ * @return {Function} Selection function compatible with {@link Table#select}.
+ */
+export function matches(pattern) {
+  if (isString(pattern)) pattern = RegExp(escapeRegExp(pattern));
+  return decorate(
+    table => table.columnNames().filter(name => pattern.test(name)),
+    () => ({ matches: [pattern.source, pattern.flags] })
+  );
+}
+
+/**
+ * Select all columns whose names start with a string.
+ * @param {string} string The string to match at the start of the column name.
+ * @return {Function} Selection function compatible with {@link Table#select}.
+ */
+export function startswith(string) {
+  return matches(RegExp('^' + escapeRegExp(string)));
+}
+
+/**
+ * Select all columns whose names end with a string.
+ * @param {string} string The string to match at the end of the column name.
+ * @return {Function} Selection function compatible with {@link Table#select}.
+ */
+export function endswith(string) {
+  return matches(RegExp(escapeRegExp(string) + '$'));
 }

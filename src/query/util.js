@@ -1,4 +1,4 @@
-import { all, desc, field, not, range, rolling } from '../verbs';
+import { all, desc, field, matches, not, range, rolling } from '../verbs';
 import Query from './query';
 import error from '../util/error';
 import isArray from '../util/is-array';
@@ -25,6 +25,7 @@ export function getTable(catalog, ref) {
 export function isSelection(value) {
   return isObject(value) && (
     isArray(value.all) ||
+    isArray(value.matches) ||
     isArray(value.not) ||
     isArray(value.range)
   );
@@ -44,6 +45,7 @@ export function fromObject(value) {
     : isArray(value.verbs) ? Query.from(value)
     : isArray(value.all) ? all()
     : isArray(value.range) ? range(...value.range)
+    : isArray(value.match) ? matches(RegExp(...value.match))
     : isArray(value.not) ? not(value.not.map(toObject))
     : fromExprObject(value);
 }

@@ -1,6 +1,8 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import { all, desc, not, range, table } from '../../src/verbs';
+import {
+  all, desc, endswith, matches, not, range, startswith, table
+} from '../../src/verbs';
 
 tape('select selects a subset of columns', t => {
   const data = {
@@ -116,6 +118,37 @@ tape('select accepts selection helpers', t => {
     table(data).select(not(range(0, 1))).columnNames(),
     ['c'],
     'select not range'
+  );
+
+  t.deepEqual(
+    table(data).select(matches('b')).columnNames(),
+    ['b'],
+    'select match string'
+  );
+
+  t.deepEqual(
+    table(data).select(matches(/A|c/i)).columnNames(),
+    ['a', 'c'],
+    'select match regexp'
+  );
+
+  const data2 = {
+    'foo.bar': [],
+    'foo.baz': [],
+    'bop.bar': [],
+    'bop.baz': []
+  };
+
+  t.deepEqual(
+    table(data2).select(startswith('foo.')).columnNames(),
+    ['foo.bar', 'foo.baz'],
+    'select startswith'
+  );
+
+  t.deepEqual(
+    table(data2).select(endswith('.baz')).columnNames(),
+    ['foo.baz', 'bop.baz'],
+    'select startswith'
   );
 
   t.end();
