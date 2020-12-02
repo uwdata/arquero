@@ -1,7 +1,9 @@
 import tape from 'tape';
 import { query } from '../../src/query/query-builder';
 import { Verb, Verbs } from '../../src/query/verb';
-import { all, bin, desc, not, op, range, rolling } from '../../src/verbs';
+import {
+  all, bin, desc, endswith, matches, not, op, range, rolling, startswith
+} from '../../src/verbs';
 import { field, func } from './util';
 
 const {
@@ -266,7 +268,11 @@ tape('select verb serializes to object', t => {
     all(),
     range(0, 1),
     range('a', 'b'),
-    not('foo', 'bar', range(0, 1), range('a', 'b'))
+    not('foo', 'bar', range(0, 1), range('a', 'b')),
+    matches('foo.bar'),
+    matches(/a|b/i),
+    startswith('foo.'),
+    endswith('.baz')
   ]);
 
   test(t,
@@ -287,7 +293,11 @@ tape('select verb serializes to object', t => {
             { range: [0, 1] },
             { range: ['a', 'b'] }
           ]
-        }
+        },
+        { matches: ['foo\\.bar', ''] },
+        { matches: ['a|b', 'i'] },
+        { matches: ['^foo\\.', ''] },
+        { matches: ['\\.baz$', ''] }
       ]
     },
     'serialized select verb'

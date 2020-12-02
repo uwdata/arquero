@@ -105,6 +105,7 @@ function astSelection(sel) {
   return sel.all ? { type, operator: 'all' }
     : sel.not ? { type, operator: 'not', arguments: astExprList(sel.not) }
     : sel.range ? { type, operator: 'range', arguments: astExprList(sel.range) }
+    : sel.matches ? { type, operator: 'matches', arguments: sel.matches }
     : error('Invalid input');
 }
 
