@@ -5,6 +5,7 @@ import { columns, formats, scan } from './util';
  * Options for Markdown formatting.
  * @typedef {Object} MarkdownOptions
  * @property {number} [limit=Infinity] The maximum number of rows to print.
+ * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
  * @property {string[]} [columns] Ordered list of column names to print.
  * @property {Object} [align] Object of column alignment options.
  *  The object keys should be column names. The object values should be
@@ -37,7 +38,7 @@ export default function(table, options = {}) {
     + names.map(name => alignValue(align[name])).join('|')
     + '|';
 
-  scan(table, names, options.limit, {
+  scan(table, names, options.limit, options.offset, {
     row() {
       text += '\n|';
     },

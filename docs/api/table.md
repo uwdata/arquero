@@ -190,6 +190,7 @@ Returns an array of objects representing table rows. A new set of objects will b
 
 * *options*: Options for row generation:
   * *limit*: The maximum number of objects to create (default `Infinity`).
+  * *offset*: The row offset indicating how many initial rows to skip (default `0`).
 
 <hr/><a id="@@iterator" href="#@@iterator">#</a>
 <em>table</em>\[<b>Symbol.iterator</b>\]() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
@@ -216,6 +217,7 @@ Print the contents of this table using the `console.table()` method.
 
 * *options*: Options for printing, typically an object value. If number-valued, the call is equivalent to `{ limit: value }`.
   * *limit*: The maximum number of rows to print (default `10`).
+  * *offset*: The row offset indicating how many initial rows to skip (default `0`).
 
 <hr/><a id="toCSV" href="#toCSV">#</a>
 <em>table</em>.<b>toCSV</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-csv.js)
@@ -225,6 +227,7 @@ Format this table as a comma-separated values (CSV) string. Other delimiters, su
 * *options*: A formatting options object:
   * *delimiter*: The delimiter between values (default `","`).
   * *limit*: The maximum number of rows to print (default `Infinity`).
+  * *offset*: The row offset indicating how many initial rows to skip (default `0`).
   * *columns*: Ordered list of column names to include. If function-valued, the function should accept a table as input and return an array of column name strings.
   * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions to invoke to transform column values prior to output. If specified, a formatting function overrides any automatically inferred options.
 
@@ -235,6 +238,7 @@ Format this table as an HTML table string.
 
 * *options*: A formatting options object:
   * *limit*: The maximum number of rows to print (default `Infinity`).
+  * *offset*: The row offset indicating how many initial rows to skip (default `0`).
   * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings.
   * *align*: Object of column alignment options. The object keys should be column names. The object values should be aligment strings, one of `'l'` (left), `'c'` (center), or `'r'` (right). If specified, these override any automatically inferred options.
   * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions or objects with any of the following properties.If specified, these override any automatically inferred options:
@@ -250,6 +254,7 @@ Format this table as a JavaScript Object Notation (JSON) string.
 
 * *options*: A formatting options object:
   * *limit*: The maximum number of rows to print (default `Infinity`).
+  * *offset*: The row offset indicating how many initial rows to skip (default `0`).
   * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings.
   * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions to invoke to transform column values prior to output. If specified, a formatting function overrides any automatically inferred options.
 
@@ -260,6 +265,7 @@ Format this table as a [GitHub-Flavored Markdown table](https://github.github.co
 
 * *options*: A formatting options object:
   * *limit*: The maximum number of rows to print (default `Infinity`).
+  * *offset*: The row offset indicating how many initial rows to skip (default `0`).
   * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings.
   * *align*: Object of column alignment options. The object keys should be column names. The object values should be aligment strings, one of `'l'` (left), `'c'` (center), or `'r'` (right). If specified, these override any automatically inferred options.
   * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions or objects with any of the following properties.If specified, these override any automatically inferred options:

@@ -1,6 +1,5 @@
 import error from '../util/error';
 import repeat from '../util/repeat';
-import { numRows } from '../format/util';
 
 /**
  * Abstract class representing a data table.
@@ -218,6 +217,7 @@ export default class Table {
    * Options for generating row objects.
    * @typedef {Object} ObjectsOptions
    * @property {number} [limit=Infinity] The maximum number of objects to create.
+   * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
    */
 
   /**
@@ -249,9 +249,8 @@ export default class Table {
       options.limit = 10;
     }
 
-    const show = numRows(this, options.limit);
-    const msg = `${this[Symbol.toStringTag]}. Showing ${show} rows.`;
     const obj = this.objects(options);
+    const msg = `${this[Symbol.toStringTag]}. Showing ${obj.length} rows.`;
 
     console.log(msg);   // eslint-disable-line no-console
     console.table(obj); // eslint-disable-line no-console
@@ -348,27 +347,33 @@ export default class Table {
    * @param {boolean} [order=false] Indicates if the table should be
    *  scanned in the order determined by {@link Table#orderby}. This
    *  argument has no effect if the table is unordered.
+   * @property {number} [limit=Infinity] The maximum number of objects to create.
+   * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
    */
-  scan(fn, order) {
+  scan(fn, order, limit = Infinity, offset = 0) {
     const filter = this._filter;
     const nrows = this._nrows;
     const data = this._data;
 
-    let i = 0;
+    let i = offset || 0;
+    if (i > nrows) return;
+
+    const n = Math.min(nrows, i + limit);
     const stop = () => i = this._total;
 
     if (order && this.isOrdered() || filter && this._index) {
       const index = this.indices();
       const data = this._data;
-      for (; i < nrows; ++i) {
+      for (; i < n; ++i) {
         fn(index[i], data, stop);
       }
     } else if (filter) {
-      for (i = filter.next(0); i >= 0; i = filter.next(i + 1)) {
+      let c = n - i + 1;
+      for (i = filter.nth(i); --c; i = filter.next(i + 1)) {
         fn(i, data, stop);
       }
     } else {
-      for (; i < nrows; ++i) {
+      for (; i < n; ++i) {
         fn(i, data, stop);
       }
     }
