@@ -1,5 +1,6 @@
 import Query from '../query/query';
 import { Verb, Verbs } from '../query/verb';
+import toArray from '../util/to-array';
 
 /**
  * Create a new query builder instance. The query builder provides
@@ -127,11 +128,17 @@ export default class QueryBuilder extends Query {
    * @param {Object} values Object of name-value pairs defining the
    *  columns to derive. The input object should have output column
    *  names for keys and table expressions for values.
+   * @param {RelocateOptions} options Options for relocating derived columns.
+   *  Use either a before or after property to indicate where to place
+   *  derived columns. Specifying both before and after is an error. Unlike
+   *  the relocate verb, this option affects only new columns; updated
+   *  columns with existing names are excluded from relocation.
    * @return {QueryBuilder} A new builder with "derive" verb appended.
    * @example query.derive({ sumXY: d => d.x + d.y })
+   * @example query.derive({ z: d => d.x * d.y }, { before: 'x' })
    */
-  derive(values) {
-    return this.append(Verbs.derive(values));
+  derive(values, options) {
+    return this.append(Verbs.derive(values, options));
   }
 
   /**
@@ -192,6 +199,45 @@ export default class QueryBuilder extends Query {
    */
   orderby(...keys) {
     return this.append(Verbs.orderby(keys.flat()));
+  }
+
+  /**
+   * Options for relocate transformations.
+   * @typedef {Object} RelocateOptions
+   * @property {string|string[]|number|number[]|Object|Function} [before]
+   *  An anchor column that relocated columns should be placed before.
+   *  The value can be any legal column selection. If multiple columns are
+   *  selected, only the first column will be used as an anchor.
+   *  It is an error to specify both before and after options.
+   * @property {string|string[]|number|number[]|Object|Function} [after]
+   *  An anchor column that relocated columns should be placed after.
+   *  The value can be any legal column selection. If multiple columns are
+   *  selected, only the last column will be used as an anchor.
+   *  It is an error to specify both before and after options.
+   */
+
+  /**
+   * Relocate a subset of columns to change their positions, also
+   * potentially renaming them.
+   * @param {string|string[]|number|number[]|Object|Function} columns An
+   * ordered selection of columns to relocate. The input may consist of:
+   *  - column name strings,
+   *  - column integer indices,
+   *  - objects with current column names as keys and new column names as
+   *    values (for renaming), or
+   *  - functions that take a table as input and returns a valid selection
+   *    parameter (typically the output of the selection helper functions
+   *    {@link all}, {@link not}, or {@link range}).
+   * @param {RelocateOptions} options Options for relocating. Must include
+   *  either the before or after property to indicate where to place the
+   *  relocated columns. Specifying both before and after is an error.
+   * @return {QueryBuilder} A new builder with "relocate" verb appended.
+   * @example query.relocate(['colY', 'colZ'], { after: 'colX' })
+   * @example query.relocate(not('colB', 'colC'), { before: 'colA' })
+   * @example query.relocate({ colA: 'newA', colB: 'newB' }, { after: 'colC' })
+   */
+  relocate(columns, options) {
+    return this.append(Verbs.relocate(toArray(columns), options));
   }
 
   /**

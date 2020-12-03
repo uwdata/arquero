@@ -2,6 +2,8 @@ import tape from 'tape';
 import { desc, not, op } from '../../src/verbs';
 import { field, func } from './util';
 import { query } from '../../src/query/query-builder';
+import { Verbs } from '../../src/query/verb';
+import isFunction from '../../src/util/is-function';
 
 tape('query builder builds single-table queries', t => {
   const q = query()
@@ -14,7 +16,8 @@ tape('query builder builds single-table queries', t => {
     verbs: [
       {
         verb: 'derive',
-        values: { bar: func('d => d.foo + 1') }
+        values: { bar: func('d => d.foo + 1') },
+        options: undefined
       },
       {
         verb: 'rollup',
@@ -99,5 +102,16 @@ tape('query builder supports multi-table queries', t => {
     ]
   }, 'serialized query from builder');
 
+  t.end();
+});
+
+tape('query builder supports all defined verbs', t => {
+  const verbs = Object.keys(Verbs);
+  const q = query();
+  t.equal(
+    verbs.filter(v => isFunction(q[v])).length,
+    verbs.length,
+    'query builder supports all verbs'
+  );
   t.end();
 });

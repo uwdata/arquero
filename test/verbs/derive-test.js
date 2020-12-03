@@ -29,6 +29,33 @@ tape('derive overwrites existing columns', t => {
   t.end();
 });
 
+tape('derive can relocate new columns', t => {
+  const data = {
+    a: [1, 3, 5, 7],
+    b: [2, 4, 6, 8]
+  };
+
+  tableEqual(t,
+    table(data).derive({ z: d => d.a + d.b }, { before: 'a' }),
+    { z: [3, 7, 11, 15], ...data },
+    'derive data, with before'
+  );
+
+  tableEqual(t,
+    table(data).derive({ z: d => d.a + d.b }, { after: 'a' }),
+    { a: data.a, z: [3, 7, 11, 15], b: data.b },
+    'derive data, with before'
+  );
+
+  tableEqual(t,
+    table(data).derive({ a: d => -d.a, z: d => d.a + d.b }, { after: 'b' }),
+    { a: [-1, -3, -5, -7], b: data.b, z: [3, 7, 11, 15] },
+    'derive data, with after and overwrite'
+  );
+
+  t.end();
+});
+
 tape('derive supports aggregate and window operators', t => {
   const n = 10;
   const k = Array(n);

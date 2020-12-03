@@ -11,7 +11,7 @@ import { field, func } from './util';
 const {
   count, dedupe, derive, filter, groupby, orderby,
   reify, rollup, select, sample, ungroup, unorder,
-  fold, pivot, spread, unroll,
+  relocate, fold, pivot, spread, unroll,
   cross, join, semijoin, antijoin,
   concat, union, except, intersect
 } = Verbs;
@@ -31,7 +31,8 @@ tape('Query serializes to objects', t => {
     verbs: [
       {
         verb: 'derive',
-        values: { bar: func('d => d.foo + 1') }
+        values: { bar: func('d => d.foo + 1') },
+        options: undefined
       },
       {
         verb: 'rollup',
@@ -180,12 +181,17 @@ tape('Query evaluates derive verbs', t => {
     bar: [1, 1, 0, 0]
    });
 
-  const verb = derive({
-    baz: d => d.foo + 1 - op.mean(d.foo),
-    bop: 'd => 2 * (d.foo - op.mean(d.foo))',
-    sum: rolling(d => op.sum(d.foo)),
-    win: rolling(d => op.product(d.foo), [0, 1])
-  });
+  const verb = derive(
+    {
+      baz: d => d.foo + 1 - op.mean(d.foo),
+      bop: 'd => 2 * (d.foo - op.mean(d.foo))',
+      sum: rolling(d => op.sum(d.foo)),
+      win: rolling(d => op.product(d.foo), [0, 1])
+    },
+    {
+      before: 'bar'
+    }
+  );
 
   tableEqual(
     t,
@@ -194,11 +200,11 @@ tape('Query evaluates derive verbs', t => {
     ).evaluate(dt),
     {
       foo: [0, 1, 2, 3],
-      bar: [1, 1, 0, 0],
       baz: [-0.5, 0.5, 1.5, 2.5],
       bop: [-3, -1, 1, 3],
       sum: [0, 1, 3, 6],
-      win: [0, 2, 6, 3]
+      win: [0, 2, 6, 3],
+      bar: [1, 1, 0, 0]
     },
     'derive query result'
   );
@@ -308,6 +314,35 @@ tape('Query evaluates orderby verbs', t => {
       bar: [1, 1, 0, 0]
     },
     'orderby query result, desc'
+  );
+
+  t.end();
+});
+
+tape('Query evaluates relocate verbs', t => {
+  const a = [1], b = [2], c = [3], d = [4];
+  const dt = table({ a, b, c, d });
+
+  tableEqual(
+    t,
+    Query.from(
+      new Query([
+        relocate('b', { after: 'b' })
+      ]).toObject()
+    ).evaluate(dt),
+    { a, c, d, b },
+    'relocate query result'
+  );
+
+  tableEqual(
+    t,
+    Query.from(
+      new Query([
+        relocate(not('b', 'd'), { before: range(0, 1) })
+      ]).toObject()
+    ).evaluate(dt),
+    { a, c, b, d },
+    'relocate query result'
   );
 
   t.end();
