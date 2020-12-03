@@ -128,7 +128,10 @@ export const Verbs = {
                 { name: 'keys', type: ExprList, default: [] }
               ]),
   derive:     createVerb('derive', [
-                { name: 'values', type: ExprObject }
+                { name: 'values', type: ExprObject },
+                { name: 'options', type: Options,
+                  props: { before: SelectionList, after: SelectionList }
+                }
               ]),
   filter:     createVerb('filter', [
                 { name: 'criteria', type: ExprObject }
@@ -138,6 +141,12 @@ export const Verbs = {
               ]),
   orderby:    createVerb('orderby', [
                 { name: 'keys', type: OrderbyKeys }
+              ]),
+  relocate:   createVerb('relocate', [
+                { name: 'columns', type: SelectionList },
+                { name: 'options', type: Options,
+                  props: { before: SelectionList, after: SelectionList }
+                }
               ]),
   rollup:     createVerb('rollup', [
                 { name: 'values', type: ExprObject }
@@ -206,143 +215,3 @@ export const Verbs = {
                 { name: 'tables', type: TableRefList }
               ])
 };
-
-
-// export const Reify = createVerb('reify');
-
-// export const Count = createVerb('count', [
-//   { name: 'options', type: Options }
-// ]);
-
-// export const Dedupe = createVerb('dedupe', [
-//   { name: 'keys', type: ExprList, default: [] }
-// ]);
-
-// export const Derive = createVerb('derive', [
-//   { name: 'values', type: ExprObject }
-// ]);
-
-// export const Filter = createVerb('filter', [
-//   { name: 'criteria', type: ExprObject }
-// ]);
-
-// export const Groupby = createVerb('groupby', [
-//   { name: 'keys', type: ExprList }
-// ]);
-
-// export const Orderby = createVerb('orderby', [
-//   { name: 'keys', type: OrderbyKeys }
-// ]);
-
-// export const Rollup = createVerb('rollup', [
-//   { name: 'values', type: ExprObject }
-// ]);
-
-// export const Sample = createVerb('sample', [
-//   { name: 'size', type: ExprNumber },
-//   { name: 'options', type: Options, props: { weight: Expr } }
-// ]);
-
-// export const Select = createVerb('select', [
-//   { name: 'columns', type: SelectionList }
-// ]);
-
-// export const Ungroup = createVerb('ungroup');
-
-// export const Unorder = createVerb('unorder');
-
-// export const Fold = createVerb('fold', [
-//   { name: 'values', type: ExprList },
-//   { name: 'options', type: Options }
-// ]);
-
-// export const Pivot = createVerb('pivot', [
-//   { name: 'keys', type: ExprList },
-//   { name: 'values', type: ExprList },
-//   { name: 'options', type: Options }
-// ]);
-
-// export const Spread = createVerb('spread', [
-//   { name: 'values', type: ExprList },
-//   { name: 'options', type: Options }
-// ]);
-
-// export const Unroll = createVerb('unroll', [
-//   { name: 'values', type: ExprList },
-//   { name: 'options', type: Options, props: { drop: ExprList } }
-// ]);
-
-// export const Lookup = createVerb('lookup', [
-//   { name: 'table', type: TableRef },
-//   { name: 'on', type: JoinKeys },
-//   { name: 'values', type: ExprList }
-// ]);
-
-// export const Join = createVerb('join', [
-//   { name: 'table', type: TableRef },
-//   { name: 'on', type: JoinKeys },
-//   { name: 'values', type: JoinValues },
-//   { name: 'options', type: Options }
-// ]);
-
-// export const Cross = createVerb('cross', [
-//   { name: 'table', type: TableRef },
-//   { name: 'values', type: JoinValues },
-//   { name: 'options', type: Options }
-// ]);
-
-// export const Semijoin = createVerb('semijoin', [
-//   { name: 'table', type: TableRef },
-//   { name: 'on', type: JoinKeys }
-// ]);
-
-// export const Antijoin = createVerb('antijoin', [
-//   { name: 'table', type: TableRef },
-//   { name: 'on', type: JoinKeys }
-// ]);
-
-// export const Concat = createVerb('concat', [
-//   { name: 'tables', type: TableRefList }
-// ]);
-
-// export const Union = createVerb('union', [
-//   { name: 'tables', type: TableRefList }
-// ]);
-
-// export const Intersect = createVerb('intersect', [
-//   { name: 'tables', type: TableRefList }
-// ]);
-
-// export const Except = createVerb('except', [
-//   { name: 'tables', type: TableRefList }
-// ]);
-
-// /**
-//  * A lookup table of verb classes.
-//  */
-// export const Verbs = {
-//   count:     Count,
-//   dedupe:    Dedupe,
-//   derive:    Derive,
-//   filter:    Filter,
-//   groupby:   Groupby,
-//   orderby:   Orderby,
-//   rollup:    Rollup,
-//   sample:    Sample,
-//   select:    Select,
-//   ungroup:   Ungroup,
-//   unorder:   Unorder,
-//   fold:      Fold,
-//   pivot:     Pivot,
-//   spread:    Spread,
-//   unroll:    Unroll,
-//   lookup:    Lookup,
-//   join:      Join,
-//   cross:     Cross,
-//   semijoin:  Semijoin,
-//   antijoin:  Antijoin,
-//   concat:    Concat,
-//   union:     Union,
-//   intersect: Intersect,
-//   except:    Except
-// };
