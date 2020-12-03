@@ -8,6 +8,7 @@ import __join from './join';
 import __join_filter from './join-filter';
 import __lookup from './lookup';
 import __pivot from './pivot';
+import __relocate from './relocate';
 import __rollup from './rollup';
 import __sample from './sample';
 import __select from './select';
@@ -37,6 +38,7 @@ Object.assign(ColumnTable.prototype, {
   __join_filter,
   __lookup,
   __pivot,
+  __relocate,
   __rollup,
   __sample,
   __select,

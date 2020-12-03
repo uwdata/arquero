@@ -4,6 +4,7 @@ import isFunction from '../../util/is-function';
 import isObject from '../../util/is-object';
 import isNumber from '../../util/is-number';
 import isString from '../../util/is-string';
+import toString from '../../util/to-string';
 
 export default function resolve(table, sel, map = {}) {
   sel = isNumber(sel) ? table.columnName(sel) : sel;
@@ -17,7 +18,7 @@ export default function resolve(table, sel, map = {}) {
   } else if (isObject(sel)) {
     Object.assign(map, sel);
   } else {
-    error(`Invalid column selection: ${sel+''}`);
+    error(`Invalid column selection: ${toString(sel)}`);
   }
 
   return map;

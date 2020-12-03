@@ -6,7 +6,7 @@ import { all, bin, desc, not, op, range, rolling } from '../../src/verbs';
 const {
   count, dedupe, derive, filter, groupby, orderby,
   reify, rollup, sample, select, ungroup, unorder,
-  pivot, unroll, join, concat
+  relocate, pivot, unroll, join, concat
 } = Verbs;
 
 function toAST(verb) {
@@ -65,12 +65,17 @@ tape('dedupe verb serializes to AST', t => {
 });
 
 tape('derive verb serializes to AST', t => {
-  const verb = derive({
-    col: d => d.foo,
-    foo: 'd.bar * 5',
-    bar: d => d.foo + 1,
-    baz: rolling(d => op.mean(d.foo), [-3, 3])
-  });
+  const verb = derive(
+    {
+      col: d => d.foo,
+      foo: 'd.bar * 5',
+      bar: d => d.foo + 1,
+      baz: rolling(d => op.mean(d.foo), [-3, 3])
+    },
+    {
+      before: 'bop'
+    }
+  );
 
   t.deepEqual(
     toAST(verb),
@@ -104,7 +109,12 @@ tape('derive verb serializes to AST', t => {
           },
           as: 'baz'
         }
-      ]
+      ],
+      options: {
+        before: [
+          { type: 'Column', name: 'bop' }
+        ]
+      }
     },
     'ast derive verb'
   );
@@ -231,6 +241,54 @@ tape('reify verb serializes to AST', t => {
     toAST(verb),
     { type: 'Verb', verb: 'reify' },
     'ast reify verb'
+  );
+
+  t.end();
+});
+
+tape('relocate verb serializes to AST', t => {
+  t.deepEqual(
+    toAST(relocate(['foo', 'bar'], { before: 'baz' })),
+    {
+      type: 'Verb',
+      verb: 'relocate',
+      columns: [
+        { type: 'Column', name: 'foo' },
+        { type: 'Column', name: 'bar' }
+      ],
+      options: {
+        before: [ { type: 'Column', name: 'baz' } ]
+      }
+    },
+    'ast relocate verb'
+  );
+
+  t.deepEqual(
+    toAST(relocate(not('foo'), { after: range('a', 'b') })),
+    {
+      type: 'Verb',
+      verb: 'relocate',
+      columns: [
+        {
+          type: 'Selection',
+          operator: 'not',
+          arguments: [ { type: 'Column', name: 'foo' } ]
+        }
+      ],
+      options: {
+        after: [
+          {
+            type: 'Selection',
+            operator: 'range',
+            arguments: [
+              { type: 'Column', name: 'a' },
+              { type: 'Column', name: 'b' }
+            ]
+          }
+        ]
+      }
+    },
+    'ast relocate verb'
   );
 
   t.end();

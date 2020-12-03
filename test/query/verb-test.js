@@ -7,7 +7,7 @@ import { field, func } from './util';
 const {
   count, dedupe, derive, filter, groupby, orderby,
   reify, rollup, sample, select, ungroup, unorder,
-  pivot, unroll, join, concat
+  relocate, pivot, unroll, join, concat
 } = Verbs;
 
 function test(t, verb, expect, msg) {
@@ -65,11 +65,16 @@ tape('dedupe verb serializes to object', t => {
 });
 
 tape('derive verb serializes to object', t => {
-  const verb = derive({
-    foo: 'd.bar * 5',
-    bar: d => d.foo + 1,
-    baz: rolling(d => op.mean(d.foo), [-3, 3])
-  });
+  const verb = derive(
+    {
+      foo: 'd.bar * 5',
+      bar: d => d.foo + 1,
+      baz: rolling(d => op.mean(d.foo), [-3, 3])
+    },
+    {
+      before: 'bop'
+    }
+  );
 
   test(t,
     verb,
@@ -82,6 +87,9 @@ tape('derive verb serializes to object', t => {
           'd => op.mean(d.foo)',
           { window: { frame: [ -3, 3 ], peers: false } }
         )
+      },
+      options: {
+        before: 'bop'
       }
     },
     'serialized derive verb'
@@ -176,6 +184,30 @@ tape('reify verb serializes to AST', t => {
     verb,
     { verb: 'reify' },
     'serialized reify verb'
+  );
+
+  t.end();
+});
+
+tape('relocate verb serializes to object', t => {
+  test(t,
+    relocate(['foo', 'bar'], { before: 'baz' }),
+    {
+      verb: 'relocate',
+      columns: ['foo', 'bar'],
+      options: { before: 'baz' }
+    },
+    'serialized relocate verb'
+  );
+
+  test(t,
+    relocate(not('foo'), { after: range('a', 'b') }),
+    {
+      verb: 'relocate',
+      columns: { not: ['foo'] },
+      options: { after: { range: ['a', 'b'] } }
+    },
+    'serialized relocate verb'
   );
 
   t.end();

@@ -12,7 +12,7 @@ title: Verbs \| Arquero API Reference
   * [orderby](#orderby), [unorder](#unorder)
   * [rollup](#rollup), [count](#count)
   * [sample](#sample)
-  * [select](#select)
+  * [select](#select), [relocate](#relocate)
   * [reify](#reify)
 * [Join Verbs](#joins)
   * [join](#join), [join_left](#join_left), [join_right](#join_right), [join_full](#join_full), [cross](#cross), [lookup](#lookup)
@@ -30,16 +30,23 @@ title: Verbs \| Arquero API Reference
 ## <a id="core">Core Verbs</a>
 
 <hr/><a id="derive" href="#derive">#</a>
-<em>table</em>.<b>derive</b>(<i>values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>derive</b>(<i>values</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
 Derive new column values based on the provided expressions.
 
 * *values*: Object of name-value pairs defining the columns to derive. The input object should have output column names for keys and table expressions for values.
+* *options*: An options object for relocating derived columns. Use either the *before* or *after* property to indicate where to place derived columns. Specifying both before and after is an error. Unlike the [relocate](#relocate) verb, this option affects only new columns; overwritten columns with existing names are excluded from relocation.
+  * *before*: An anchor column that relocated columns should be placed before. The value can be any legal column selection. If multiple columns are selected, only the *first* column will be used as an anchor.
+  * *after*: An anchor column that relocated columns should be placed after. The value can be any legal column selection. If multiple columns are selected, only the *last* column will be used as an anchor.
 
 *Examples*
 
 ```js
 table.derive({ sumXY: d => d.x + d.y })
+```
+
+```js
+table.derive({ z: d => d.x * d.y }, { before: 'x' })
 ```
 
 <hr/><a id="filter" href="#filter">#</a>
@@ -200,12 +207,49 @@ table.select({ colA: 'newA', colB: 'newB' })
 ```
 
 
+<hr/><a id="relocate" href="#relocate">#</a>
+<em>table</em>.<b>relocate</b>(<i>columns</i>, <i>options</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+
+Relocate a subset of columns to change their positions, also potentially renaming them.
+
+* *columns*: An ordered selection of columns to relocate. The input may consist of: column name strings, column integer indices, objects with current column names as keys and new column names as values (for renaming), or functions that take a table as input and return a valid selection parameter (typically the output of the selection helper functions [all](./#all), [not](./#not), or [range](./#range)).
+* *options*: An options object for specifying where columns should be relocated. The options must include either the *before* or *after* property to indicate where to place the selected columns. Specifying both *before* and *after* is an error.
+  * *before*: An anchor column that relocated columns should be placed before. The value can be any legal column selection. If multiple columns are selected, only the *first* column will be used as an anchor.
+  * *after*: An anchor column that relocated columns should be placed after. The value can be any legal column selection. If multiple columns are selected, only the *last* column will be used as an anchor.
+
+*Examples*
+
+```js
+// place colY and colZ immediately after colX
+table.relocate(['colY', 'colZ'], { after: 'colX' })
+```
+
+```js
+// place all columns but colB and colC immediately before
+// the position of colA prior to relocation
+table.relocate(not('colB', 'colC'), { before: 'colA' })
+```
+
+```js
+// place colA and colB immediately after colC, while also
+// respectively renaming them as newA and newB
+table.relocate({ colA: 'newA', colB: 'newB' }, { after: 'colC' })
+```
+
+
 <hr/><a id="reify" href="#reify">#</a>
 <em>table</em>.<b>reify</b>([<i>indices</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
 Create a new fully-materialized instance of this table. All filter and orderby settings are removed from the new table. Instead, the data itself is filtered and ordered as needed to produce new backing data columns.
 
 * *indices*: An array of ordered row indices to materialize. If unspecified, all rows passing the table filter are used.
+
+*Examples*
+
+```js
+// materialize any internal filtering and ordering
+table.reify()
+```
 
 
 <br/>
