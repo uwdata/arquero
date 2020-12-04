@@ -54,7 +54,7 @@ Determines whether an *array* includes a certain *value* among its entries, retu
 
 * *array*: The input array value.
 * *value*: The value to search for.
-* *index*: The integer index to start searcing from (default `0`).
+* *index*: The integer index to start searching from (default `0`).
 
 <hr/><a id="indexof" href="#indexof">#</a>
 <em>op</em>.<b>indexof</b>(<i>sequence</i>, <i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)

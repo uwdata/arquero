@@ -52,7 +52,7 @@ Filter a table to a subset of rows based on the input criteria. The resulting ta
 *Examples*
 
 ```js
-table.filter(d => abs(d.value) < 5)
+table.filter(d => op.abs(d.value) < 5)
 ```
 
 <hr/><a id="groupby" href="#groupby">#</a>
@@ -94,15 +94,19 @@ Order table rows based on a set of column values. Subsequent operations sensitiv
 *Examples*
 
 ```js
-table.orderby('a', desc('b'))
+// order by column 'a' in ascending order, than 'b' in descending order
+table.orderby('a', aq.desc('b'))
 ```
 
 ```js
-table.orderby({ a: 'a', b: desc('b') )})
+// same as above, but with object syntax
+// key order is significant, but the key names are ignored
+table.orderby({ a: 'a', b: aq.desc('b') )})
 ```
 
 ```js
-table.orderby(desc(d => d.a))
+// orderby accepts table expressions as well as column names
+table.orderby(aq.desc(d => d.a))
 ```
 
 <hr/><a id="unorder" href="#unorder">#</a>
@@ -127,7 +131,7 @@ Rollup a table to produce an aggregate summary. Often used in conjunction with [
 *Examples*
 
 ```js
-table.groupby('colA').rollup({ mean: d => mean(d.colB) })
+table.groupby('colA').rollup({ mean: d => op.mean(d.colB) })
 ```
 
 ```js
@@ -166,10 +170,12 @@ Generate a table from a random sample of rows. If the table is grouped, perform 
 *Examples*
 
 ```js
+// sample 50 rows without replacement
 table.sample(50)
 ```
 
 ```js
+// sample 100 rows with replacement
 table.sample(100, { replace: true })
 ```
 
@@ -429,7 +435,7 @@ table.fold(['colA', 'colB'])
 ```
 
 ```js
-table.fold(range(5, 8))
+table.fold(aq.range(5, 8))
 ```
 
 
@@ -457,7 +463,7 @@ table.pivot(['keyA', 'keyB'], ['valueA', 'valueB'])
 ```
 
 ```js
-table.pivot({ key: d => d.key }, { value: d => sum(d.value) })
+table.pivot({ key: d => d.key }, { value: d => op.sum(d.value) })
 ```
 
 
@@ -474,7 +480,7 @@ Spread array elements into a set of new columns. Output columns are named based 
 *Examples*
 
 ```js
-table.spread({ a: split(d.text, '') })
+table.spread({ a: d => op.split(d.text, '') })
 ```
 
 ```js
