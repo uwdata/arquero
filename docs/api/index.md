@@ -28,12 +28,25 @@ Methods for creating new table instances.
 
 Create a new <a href="table">table</a> for a set of named *columns*.
 
+This method can be used to create a new table that binds together columns from multiple input sources, so long as all provided columns have the same length. See the examples below for more.
+
 * *columns*: An object providing a named set of column arrays. Object keys are column names; the enumeration order of the keys determines the column indices. Object values must be arrays (or array-like values) of identical length.
 
 *Examples*
 
 ```js
+// create a new table with 2 columns and 3 rows
 aq.table({ colA: ['a', 'b', 'c'], colB: [3, 4, 5] })
+```
+
+```js
+// create a new table that binds columns from two input tables
+// later columns will override earlier columns with the same name
+// we call reify() to ensure all columns are dense and ordered
+aq.table({
+  ...table1.reify().columns(),
+  ...table2.reify().columns()
+})
 ```
 
 
@@ -48,14 +61,20 @@ Create a new <a href="table">table</a> from an existing object, such as an array
 *Examples*
 
 ```js
+// from an array, create a new table with two columns and two rows
+// akin to table({ colA: [1, 3], colB: [2, 4] })
 aq.from([ { colA: 1, colB: 2 }, { colA: 3, colB: 4 } ])
 ```
 
 ```js
-aq.from({ a: 1, b: 2, c: 3})
+// from an object, create a new table with 'key' and 'value columns
+// akin to table({ key: ['a', 'b', 'c'], value: [1, 2, 3] })
+aq.from({ a: 1, b: 2, c: 3 })
 ```
 
 ```js
+// from a Map, create a new table with 'key' and 'value columns
+// akin to table({ key: ['d', 'e', 'f'], value: [4, 5, 6] })
 aq.from(new Map([ ['d', 4], ['e', 5], ['f', 6] ])
 ```
 
@@ -70,6 +89,14 @@ Create a new <a href="table">table</a> backed by an [Apache Arrow](https://arrow
    * *columns*: Ordered list of column names to include.
    * *unpack*: A boolean flag (default `false`) to unpack binary-encoded Arrow data to standard JavaScript values. Unpacking can incur an upfront time and memory cost to extract data to new arrays, but can speed up later query processing by enabling faster data access.
 
+*Examples*
+
+```js
+// requires that Apache Arrow has been imported as the 'arrow' variable
+// load an Arrow file from 'url' and create a corresponding Arquero table
+aq.fromArrow(await arrow.Table.from(fetch(url)))
+```
+
 
 <hr/><a id="fromCSV" href="#fromCSV">#</a>
 <em>aq</em>.<b>fromCSV</b>(<i>text</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-csv.js)
@@ -83,6 +110,19 @@ Parse a comma-separated values (CSV) *text* string into a <a href="table">table<
    * *autoType*: Boolean flag (default `true`) for automatic type inference.
    * *parse*: Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
 
+*Examples*
+
+```js
+// create table from an input CSV string
+// akin to table({ a: [1, 3], b: [2, 4] })
+aq.fromCSV('a,b\n1,2\n3,4')
+```
+
+```js
+// create table from an input CSV loaded from 'url'
+aq.fromCSV(await fetch(url).text())
+```
+
 
 <hr/><a id="fromJSON" href="#fromJSON">#</a>
 <em>aq</em>.<b>fromJSON</b>(<i>data</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-json.js)
@@ -93,6 +133,25 @@ Parse JavaScript Object Notation (JSON) *data* into a <a href="table">table</a>.
 * *options*: A JSON format options object:
   * *autoType*: Boolean flag (default `true`) for automatic type inference. If `false`, automatic date parsing for input JSON strings is disabled.
   * *parse*: Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
+
+*Examples*
+
+```js
+// create table from an input JSON string
+// akin to table({ a: [1, 3], b: [2, 4] })
+aq.fromJSON('{"a":[1,3],"b":[2,4]}')
+```
+
+```js
+// create table from an input JSON string loaded from 'url'
+aq.fromJSON(await fetch(url).text())
+```
+
+```js
+// create table from an input JSON object loaded from 'url'
+// passing pre-parsed JSON bypasses autoType Date parsing
+aq.fromJSON(await fetch(url).json())
+```
 
 
 <br/>
@@ -135,11 +194,13 @@ Annotate a table expression (*expr*) to indicate descending sort order.
 *Examples*
 
 ```js
-aq.desc('colA') // sort colA in descending order
+// sort colA in descending order
+aq.desc('colA')
 ```
 
 ```js
-aq.desc(d => op.lower(d.colA)) // descending order of lower case values
+// sort colA in descending order of lower case values
+aq.desc(d => op.lower(d.colA))
 ```
 
 <a id="rolling" href="#rolling">#</a>
@@ -154,15 +215,18 @@ Annotate a table expression to compute rolling aggregate or window functions wit
 *Examples*
 
 ```js
-aq.rolling(d => op.sum(d.colA)) // cumulative sum
+// cumulative sum, with an implicit frame of [-Infinity, 0]
+aq.rolling(d => op.sum(d.colA))
 ```
 
 ```js
-aq.rolling(d => op.mean(d.colA), [-3, 3]) // centered 7-day moving average, assuming one value per day
+// centered 7-day moving average, assuming one value per day
+aq.rolling(d => op.mean(d.colA), [-3, 3])
 ```
 
 ```js
-aq.rolling(d => op.last_value(d.colA), [-3, 3], true) // last value in frame, including peers (ties)
+// retrieve last value in window frame, including peers (ties)
+aq.rolling(d => op.last_value(d.colA), [-3, 3], true)
 ```
 
 <hr/><a id="seed" href="#seed">#</a>
@@ -172,6 +236,22 @@ Set a seed value for random number generation. If the seed is a valid number, a 
 
 * *seed*: The random seed value. Should either be an integer or a fraction between 0 and 1.
 
+*Examples*
+
+```js
+// set random seed as an integer
+aq.seed(12345)
+```
+
+```js
+// set random seed as a fraction, maps to floor(fraction * (2 ** 32))
+aq.seed(0.5)
+```
+
+```js
+// revert to using Math.random
+aq.seed(null)
+```
 
 <br/>
 
@@ -247,10 +327,18 @@ Register a function for use within table expressions. If only a single argument 
 *Examples*
 
 ```js
+// add a function named square, which is then available as op.square()
+// if a 'square' function already exists, this results in an error
 aq.addFunction('square', x => x * x);
 ```
 
 ```js
+// add a function named square, override any previous 'square' definition
+aq.addFunction('square', x => x * x, { override: true });
+```
+
+```js
+// add a function using its existing name
 aq.addFunction(function square(x) { return x * x; });
 ```
 
