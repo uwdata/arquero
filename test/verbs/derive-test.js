@@ -193,3 +193,27 @@ tape('derive supports bigint values', t => {
 
   t.end();
 });
+
+tape('derive supports recode function', t => {
+  const dt = table({ x: ['foo', 'bar', 'baz'] });
+
+  tableEqual(t,
+    dt.derive({ x: d => op.recode(d.x, {foo: 'farp', bar: 'borp'}, 'other') }),
+    { x: ['farp', 'borp', 'other'] },
+    'derive data, recode inline map'
+  );
+
+  const map = {
+    foo: 'farp',
+    bar: 'borp'
+  };
+
+  tableEqual(t,
+    dt.params({ map })
+      .derive({ x: (d, $) => op.recode(d.x, $.map) }),
+    { x: ['farp', 'borp', 'baz'] },
+    'derive data, recode param map'
+  );
+
+  t.end();
+});
