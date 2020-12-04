@@ -4,12 +4,14 @@ import date from './date';
 import equal from './equal';
 import math from './math';
 import object from './object';
+import recode from './recode';
 import sequence from './sequence';
 import string from './string';
 
 export default {
   bin,
   equal,
+  recode,
   sequence,
   ...array,
   ...date,
