@@ -7,15 +7,18 @@ import has from '../../util/has';
  * is returned unchanged.
  * @param {*} value The value to recode. The value must be safely
  *  coercible to a string for lookup against the value map.
- * @param {object} map An object with input values for keys and output
- *  recoded values as values. Only the object's own properties will
- *  be considered.
+ * @param {object|Map} map An object or Map with input values for keys and
+ *  output recoded values as values. If a non-Map object, only the object's
+ *  own properties will be considered.
  * @param {*} [fallback] A default fallback value to use if the input
  *  value is not found in the value map.
  * @return {*} The recoded value.
  */
 export default function(value, map, fallback) {
-  return has(map, value)
-    ? map[value]
-    : fallback !== undefined ? fallback : value;
+  if (map instanceof Map) {
+    if (map.has(value)) return map.get(value);
+  } else if (has(map, value)) {
+    return map[value];
+  }
+  return fallback !== undefined ? fallback : value;
 }
