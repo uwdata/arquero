@@ -227,7 +227,7 @@ tape('derive supports recode function', t => {
   tableEqual(t,
     dt.derive({ x: d => op.recode(d.x, {foo: 'farp', bar: 'borp'}, 'other') }),
     { x: ['farp', 'borp', 'other'] },
-    'derive data, recode inline map'
+    'derive data, recode inline map Object'
   );
 
   const map = {
@@ -239,7 +239,16 @@ tape('derive supports recode function', t => {
     dt.params({ map })
       .derive({ x: (d, $) => op.recode(d.x, $.map) }),
     { x: ['farp', 'borp', 'baz'] },
-    'derive data, recode param map'
+    'derive data, recode param map Object'
+  );
+
+  const map2 = new Map([['foo', 'farp'], ['bar', 'borp']]);
+
+  tableEqual(t,
+    dt.params({ map2 })
+      .derive({ x: (d, $) => op.recode(d.x, $.map2) }),
+    { x: ['farp', 'borp', 'baz'] },
+    'derive data, recode param map Map'
   );
 
   t.end();

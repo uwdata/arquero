@@ -640,30 +640,32 @@ Returns an array of a given *object*'s own enumerable property values.
 Recodes an input *value* to an alternative value, based on a provided value *map* object. If a *fallback* value is specified, it will be returned when the input value is not found in the map; otherwise, the input value is returned unchanged.
 
 * *value*: The value to recode. The value must be safely coercible to a string for lookup against the value map.
-* *map*: An object with input values for keys and recoded values for values. Only the object's own properties will be considered; inherited properties on the prototype chain are ignored.
+* *map*: An object or [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) with input values for keys and recoded values for values. If a non-Map object, only the object's own properties will be considered; inherited properties on the prototype chain are ignored.
 * *fallback*: An optional fallback value to use if the input value is not found in the value map. If a fallback is not specified, the input value will be returned unchanged when not found in the map.
 
 *Examples*
 
 ```js
 // recode values in a derive statement
-table.derive({
-  val: d => op.recode(d.val, { 'opt:a': 'A', 'opt:b': 'B' })
-})
+table.derive({ val: d => op.recode(d.val, { 'opt:a': 'A', 'opt:b': 'B' }) })
 ```
 
 ```js
-// define value map externally
-const map = {
-  'opt:a': 'A',
-  'opt:b': 'B'
-};
-
-// bind value map as a parameter
+// define value map externally, bind as parameter
+const map = { 'opt:a': 'A', 'opt:b': 'B' };
 table
   .params({ map })
   .derive({ val: (d, $) => op.recode(d.val, $.map, '?') })
 ```
+
+```js
+// using a Map object, bind as parameter
+const map = new Map().set('opt:a', 'A').set('opt:b', 'B');
+table
+  .params({ map })
+  .derive({ val: (d, $) => op.recode(d.val, $.map, '?') })
+```
+
 
 <br>
 
