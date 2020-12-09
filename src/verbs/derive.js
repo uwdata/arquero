@@ -8,7 +8,7 @@ export default function(table, values, options = {}) {
   return options.before == null && options.after == null
     ? dt
     : relocate(dt,
-        Object.keys(values).filter(name => table.columnIndex(name) >= 0),
+        Object.keys(values).filter(name => table.columnIndex(name) < 0),
         options
       );
 }
