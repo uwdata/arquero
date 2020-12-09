@@ -1,5 +1,5 @@
 import tape from 'tape';
-import fromArrow from '../../src/format/from-arrow';
+import fromArrow, { LIST, STRUCT } from '../../src/format/from-arrow';
 
 // test stubs for Arrow Column API
 function arrowColumn(data, nullCount = 0) {
@@ -50,6 +50,23 @@ function arrowDictionary(data) {
   return column;
 }
 
+function arrowListColumn(data) {
+  const c = arrowColumn(data.map(d => arrowColumn(d)));
+  c.typeId = LIST;
+  c.numChildren = 1;
+  return c;
+}
+
+function arrowStructColumn(names, children) {
+  return {
+    type: { children: names.map(name => ({ name })) },
+    typeId: STRUCT,
+    length: children[0].length,
+    numChildren: names.length,
+    getChildAt: i => children[i]
+  };
+}
+
 // test stub for Arrow Table API
 function arrowTable(columns) {
   return {
@@ -83,5 +100,41 @@ tape('fromArrow can unpack Apache Arrow tables', t => {
   t.notEqual(dt.column('v').data, u._data, 'copy column data with nulls');
   t.deepEqual(dt.column('x').data, x._data, 'unpack dictionary column without nulls');
   t.deepEqual(dt.column('y').data, y._data, 'unpack dictionary column with nulls');
+  t.end();
+});
+
+tape('fromArrow can read Apache Arrow lists', t => {
+  const d = [[1, 2, 3], [4, 5]];
+  const l = arrowListColumn(d);
+  const at = arrowTable({ l });
+  const dt = fromArrow(at);
+
+  t.deepEqual(dt.column('l').data, d, 'extract Arrow list');
+  t.end();
+});
+
+tape('fromArrow can read Apache Arrow structs', t => {
+  const d = [{ foo: 1, bar: [2, 3] }, { foo: 2, bar: [4] }];
+  const s = arrowStructColumn(Object.keys(d[0]), [
+    arrowColumn(d.map(v => v.foo)),
+    arrowListColumn(d.map(v => v.bar))
+  ]);
+  const at = arrowTable({ s });
+  const dt = fromArrow(at);
+
+  t.deepEqual(dt.column('s').data, d, 'extract Arrow struct');
+  t.end();
+});
+
+tape('fromArrow can read nested Apache Arrow structs', t => {
+  const d = [{ foo: 1, bar: { bop: 2 } }, { foo: 2, bar: { bop: 3 } }];
+  const s = arrowStructColumn(Object.keys(d[0]), [
+    arrowColumn(d.map(v => v.foo)),
+    arrowStructColumn(['bop'], [ arrowColumn([2, 3]) ])
+  ]);
+  const at = arrowTable({ s });
+  const dt = fromArrow(at);
+
+  t.deepEqual(dt.column('s').data, d, 'extract nested Arrow struct');
   t.end();
 });
