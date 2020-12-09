@@ -1,7 +1,7 @@
 import isBigInt from './is-bigint';
 
 export default function(v) {
-  return isBigInt(v)
-    ? (v.toString() + 'n')
+  return v === undefined ? v + ''
+    : isBigInt(v) ? v + 'n'
     : JSON.stringify(v);
 }
