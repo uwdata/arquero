@@ -101,7 +101,7 @@ aq.fromArrow(await arrow.Table.from(fetch(url)))
 <hr/><a id="fromCSV" href="#fromCSV">#</a>
 <em>aq</em>.<b>fromCSV</b>(<i>text</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-csv.js)
 
-Parse a comma-separated values (CSV) *text* string into a <a href="table">table</a>. Delimiters other than commas, such as tabs or pipes ('\|'), can be specified using the *options* argument.By default, automatic type inference is performed for input values; string values that match the ISO standard date format are parsed into JavaScript Date objects. To disable this behavior, set *options.autoType* to `false`. To perform custom parsing of input column values, use *options.parse*.
+Parse a comma-separated values (CSV) *text* string into a <a href="table">table</a>. Delimiters other than commas, such as tabs or pipes ('\|'), can be specified using the *options* argument. By default, automatic type inference is performed for input values; string values that match the ISO standard date format are parsed into JavaScript Date objects. To disable this behavior set *options.autoType* to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use *options.parse*.
 
  * *text*: A string in a delimited-value format.
  * *options*: A CSV format options object:
@@ -116,6 +116,12 @@ Parse a comma-separated values (CSV) *text* string into a <a href="table">table<
 // create table from an input CSV string
 // akin to table({ a: [1, 3], b: [2, 4] })
 aq.fromCSV('a,b\n1,2\n3,4')
+```
+
+```js
+// override autoType with custom parser for column 'a'
+// akin to table({ a: ['00152', '30219'], b: [2, 4] })
+aq.fromCSV('a,b\n00152,2\n30219,4', { parse: { a: String } })
 ```
 
 ```js
