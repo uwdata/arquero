@@ -7,6 +7,7 @@ function arrowColumn(data, nullCount = 0) {
     length: data.length,
     get: row => data[row],
     toArray: () => data,
+    isValid: row => data[row] != null,
     [Symbol.iterator]: () => data[Symbol.iterator](),
     nullCount,
     _data: data
@@ -51,19 +52,20 @@ function arrowDictionary(data) {
 }
 
 function arrowListColumn(data) {
-  const c = arrowColumn(data.map(d => arrowColumn(d)));
+  const c = arrowColumn(data.map(d => d ? arrowColumn(d) : null));
   c.typeId = LIST;
   c.numChildren = 1;
   return c;
 }
 
-function arrowStructColumn(names, children) {
+function arrowStructColumn(valid, names, children) {
   return {
     type: { children: names.map(name => ({ name })) },
     typeId: STRUCT,
-    length: children[0].length,
+    length: valid.length,
     numChildren: names.length,
-    getChildAt: i => children[i]
+    getChildAt: i => children[i],
+    isValid: row => !!valid[row]
   };
 }
 
@@ -104,7 +106,7 @@ tape('fromArrow can unpack Apache Arrow tables', t => {
 });
 
 tape('fromArrow can read Apache Arrow lists', t => {
-  const d = [[1, 2, 3], [4, 5]];
+  const d = [[1, 2, 3], null, [4, 5]];
   const l = arrowListColumn(d);
   const at = arrowTable({ l });
   const dt = fromArrow(at);
@@ -114,10 +116,10 @@ tape('fromArrow can read Apache Arrow lists', t => {
 });
 
 tape('fromArrow can read Apache Arrow structs', t => {
-  const d = [{ foo: 1, bar: [2, 3] }, { foo: 2, bar: [4] }];
-  const s = arrowStructColumn(Object.keys(d[0]), [
-    arrowColumn(d.map(v => v.foo)),
-    arrowListColumn(d.map(v => v.bar))
+  const d = [{ foo: 1, bar: [2, 3] }, null, { foo: 2, bar: [4] }];
+  const s = arrowStructColumn(d, Object.keys(d[0]), [
+    arrowColumn(d.map(v => v ? v.foo : null)),
+    arrowListColumn(d.map(v => v ? v.bar : null))
   ]);
   const at = arrowTable({ s });
   const dt = fromArrow(at);
@@ -128,9 +130,9 @@ tape('fromArrow can read Apache Arrow structs', t => {
 
 tape('fromArrow can read nested Apache Arrow structs', t => {
   const d = [{ foo: 1, bar: { bop: 2 } }, { foo: 2, bar: { bop: 3 } }];
-  const s = arrowStructColumn(Object.keys(d[0]), [
-    arrowColumn(d.map(v => v.foo)),
-    arrowStructColumn(['bop'], [ arrowColumn([2, 3]) ])
+  const s = arrowStructColumn(d, Object.keys(d[0]), [
+    arrowColumn(d.map(v => v ? v.foo : null)),
+    arrowStructColumn([1, 1], ['bop'], [ arrowColumn([2, 3]) ])
   ]);
   const at = arrowTable({ s });
   const dt = fromArrow(at);
