@@ -179,7 +179,7 @@ export default {
   sum: {
     create: () => ({
       init:  s => s.sum = 0,
-      value: s => s.sum,
+      value: s => s.valid ? s.sum : undefined,
       add: (s, v) => isBigInt(v)
         ? (s.sum === 0 ? s.sum = v : s.sum += v)
         : s.sum += +v,
