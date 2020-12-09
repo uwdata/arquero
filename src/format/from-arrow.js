@@ -44,35 +44,32 @@ export default function(arrowTable, options = {}) {
 }
 
 function arrayFromNested(vector) {
-  const create = vector.typeId === LIST ? listExtractor(vector)
+  const extract = vector.typeId === LIST ? i => arrayExtractor(vector.get(i))
     : vector.typeId === STRUCT ? structExtractor(vector)
     : error(`Unsupported Arrow type: ${toString(vector.VectorName)}`);
 
   // generate and return objects for each nested value
-  return Array.from({ length: vector.length }, create);
+  return Array.from(
+    { length: vector.length },
+    (_, i) => vector.isValid(i) ? extract(i) : null
+  );
 }
 
-function listExtractor(vector) {
-  // extract a list value. recurse if nested, otherwise convert to array
-  return (_, i) => {
-    const v = vector.get(i);
-    return v.numChildren ? arrayFromNested(v) : arrayFromVector(v);
-  };
+function arrayExtractor(vector) {
+  // extract an array, recurse if nested.
+  return vector.numChildren
+    ? arrayFromNested(vector)
+    : arrayFromVector(vector);
 }
 
 function structExtractor(vector) {
-  // extract struct field names
+  // extract struct field names and values
   const names = vector.type.children.map(field => field.name);
-
-  // extract struct field values into parallel arrays
-  const data = names.map((_, i) => {
-    const v = vector.getChildAt(i);
-    return v.numChildren ? arrayFromNested(v) : arrayFromVector(v);
-  });
+  const values = names.map((_, i) => arrayExtractor(vector.getChildAt(i)));
 
   // function to generate objects with field name properties
   return unroll(
-    data, '_,i',
+    values, 'i',
     '({' + names.map((_, d) => `${toString(_)}:_${d}[i]`) + '})'
   );
 }
