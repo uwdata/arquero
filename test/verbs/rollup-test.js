@@ -37,6 +37,32 @@ tape('rollup produces grouped aggregates', t => {
   t.end();
 });
 
+tape('rollup handles empty tables', t => {
+  [[], [null, null], [undefined, undefined], [NaN, NaN]].forEach(v => {
+    const rt = table({ v }).rollup({
+      sum:  op.sum('v'),
+      prod: op.product('v'),
+      mode: op.mode('v'),
+      med:  op.median('v'),
+      min:  op.min('v'),
+      max:  op.min('v'),
+      sd:   op.stdev('v')
+    });
+
+    tableEqual(t, rt, {
+      sum:  [undefined],
+      prod: [undefined],
+      mode: [undefined],
+      med:  [undefined],
+      min:  [undefined],
+      max:  [undefined],
+      sd:   [undefined]
+    }, 'rollup data, ' + (v.length ? v[0] : 'empty'));
+  });
+
+  t.end();
+});
+
 tape('rollup supports bigint values', t => {
   const data = {
     v: [1n, 2n, 3n, 4n, 5n]
