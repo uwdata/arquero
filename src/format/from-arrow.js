@@ -1,5 +1,12 @@
 import ColumnTable from '../table/column-table';
 import error from '../util/error';
+import toString from '../util/to-string';
+import unroll from '../util/unroll';
+
+// Hardwire Arrow type ids to avoid explicit dependency
+// https://github.com/apache/arrow/blob/master/js/src/enum.ts
+export const LIST = 12;
+export const STRUCT = 13;
 
 /**
  * Options for Apache Arrow import.
@@ -26,15 +33,51 @@ export default function(arrowTable, options = {}) {
   names.forEach(name => {
     const column = arrowTable.getColumn(name);
     if (column == null) {
-      error(`Arrow column does not exist: ${JSON.stringify(name)}`);
+      error(`Arrow column does not exist: ${toString(name)}`);
     }
-    columns[name] = unpack ? arrayFromArrow(column) : column;
+    columns[name] = column.numChildren ? arrayFromNested(column)
+      : unpack ? arrayFromVector(column)
+      : column;
   });
 
   return new ColumnTable(columns);
 }
 
-function arrayFromArrow(column) {
+function arrayFromNested(vector) {
+  const create = vector.typeId === LIST ? listExtractor(vector)
+    : vector.typeId === STRUCT ? structExtractor(vector)
+    : error(`Unsupported Arrow type: ${toString(vector.VectorName)}`);
+
+  // generate and return objects for each nested value
+  return Array.from({ length: vector.length }, create);
+}
+
+function listExtractor(vector) {
+  // extract a list value. recurse if nested, otherwise convert to array
+  return (_, i) => {
+    const v = vector.get(i);
+    return v.numChildren ? arrayFromNested(v) : arrayFromVector(v);
+  };
+}
+
+function structExtractor(vector) {
+  // extract struct field names
+  const names = vector.type.children.map(field => field.name);
+
+  // extract struct field values into parallel arrays
+  const data = names.map((_, i) => {
+    const v = vector.getChildAt(i);
+    return v.numChildren ? arrayFromNested(v) : arrayFromVector(v);
+  });
+
+  // function to generate objects with field name properties
+  return unroll(
+    data, '_,i',
+    '({' + names.map((_, d) => `${toString(_)}:_${d}[i]`) + '})'
+  );
+}
+
+function arrayFromVector(column) {
   // if dictionary column, perform more efficient extraction
   // if has null values, extract to standard array
   // otherwise, let Arrow try to use copy-less subarray call
