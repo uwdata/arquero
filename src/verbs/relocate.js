@@ -26,9 +26,9 @@ export default function(table, columns, { before, after } = {}) {
 
     // at anchor column, insert relocated columns
     if (name === anchor) {
-      if (bef && assign) _cols[name] = name;
+      if (aft && assign) _cols[name] = name;
       Object.assign(_cols, columns);
-      if (bef) return; // exit if current column has been handled
+      if (aft) return; // exit if current column has been handled
     }
 
     if (assign) _cols[name] = name;

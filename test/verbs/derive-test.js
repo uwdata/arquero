@@ -35,22 +35,46 @@ tape('derive can relocate new columns', t => {
     b: [2, 4, 6, 8]
   };
 
+  const t1 = table(data).derive({ z: d => d.a + d.b }, { before: 'a' });
+
   tableEqual(t,
-    table(data).derive({ z: d => d.a + d.b }, { before: 'a' }),
+    t1,
     { z: [3, 7, 11, 15], ...data },
     'derive data, with before'
   );
 
-  tableEqual(t,
-    table(data).derive({ z: d => d.a + d.b }, { after: 'a' }),
-    { a: data.a, z: [3, 7, 11, 15], b: data.b },
-    'derive data, with before'
+  t.deepEqual(
+    t1.columnNames(),
+    ['z', 'a', 'b'],
+    'derive data columns, with before'
   );
 
+  const t2 = table(data).derive({ z: d => d.a + d.b }, { after: 'a' });
+
   tableEqual(t,
-    table(data).derive({ a: d => -d.a, z: d => d.a + d.b }, { after: 'b' }),
+    t2,
+    { a: data.a, z: [3, 7, 11, 15], b: data.b },
+    'derive data, with after'
+  );
+
+  t.deepEqual(
+    t2.columnNames(),
+    ['a', 'z', 'b'],
+    'derive data columns, with after'
+  );
+
+  const t3 = table(data).derive({ a: d => -d.a, z: d => d.a + d.b }, { after: 'b' });
+
+  tableEqual(t,
+    t3,
     { a: [-1, -3, -5, -7], b: data.b, z: [3, 7, 11, 15] },
     'derive data, with after and overwrite'
+  );
+
+  t.deepEqual(
+    t3.columnNames(),
+    ['a', 'b', 'z'],
+    'derive data columns, with after and overwrite'
   );
 
   t.end();

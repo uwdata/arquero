@@ -1,32 +1,37 @@
 import tape from 'tape';
-import tableEqual from '../table-equal';
 import { not, range, table } from '../../src/verbs';
 
 tape('relocate repositions columns', t => {
   const a = [1], b = [2], c = [3], d = [4];
   const dt = table({ a, b, c, d });
 
-  tableEqual(t,
-    dt.relocate(not('b', 'd'), { before: 'b' }),
-    { a, c, b, d },
+  t.deepEqual(
+    dt.relocate('a', { before: 'd' }).columnNames(),
+    ['b', 'c', 'a', 'd'],
     'relocate data, before'
   );
 
-  tableEqual(t,
-    dt.relocate(not('b', 'd'), { after: 'd' }),
-    { b, d, a, c },
+  t.deepEqual(
+    dt.relocate(not('b', 'd'), { before: 'b' }).columnNames(),
+    ['a', 'c', 'b', 'd'],
+    'relocate data, before'
+  );
+
+  t.deepEqual(
+    dt.relocate(not('b', 'd'), { after: 'd' }).columnNames(),
+    ['b', 'd', 'a', 'c'],
     'relocate data, after'
   );
 
-  tableEqual(t,
-    dt.relocate(not('b', 'd'), { before: 'c' }),
-    { b, a, c, d },
+  t.deepEqual(
+    dt.relocate(not('b', 'd'), { before: 'c' }).columnNames(),
+    ['b', 'a', 'c', 'd'],
     'relocate data, before self'
   );
 
-  tableEqual(t,
-    dt.relocate(not('b', 'd'), { after: 'a' }),
-    { a, c, b, d },
+  t.deepEqual(
+    dt.relocate(not('b', 'd'), { after: 'a' }).columnNames(),
+    ['a', 'c', 'b', 'd'],
     'relocate data, after self'
   );
 
@@ -37,15 +42,15 @@ tape('relocate repositions columns using multi-column anchor', t => {
   const a = [1], b = [2], c = [3], d = [4];
   const dt = table({ a, b, c, d });
 
-  tableEqual(t,
-    dt.relocate([1, 3], { before: range(2, 3) }),
-    { b, a, c, d },
+  t.deepEqual(
+    dt.relocate([1, 3], { before: range(2, 3) }).columnNames(),
+    ['a', 'b', 'd', 'c'],
     'relocate data, before range'
   );
 
-  tableEqual(t,
-    dt.relocate([1, 3], { after: range(2, 3) }),
-    { b, d, a, c },
+  t.deepEqual(
+    dt.relocate([1, 3], { after: range(2, 3) }).columnNames(),
+    ['a', 'c', 'b', 'd'],
     'relocate data, after range'
   );
 
@@ -56,15 +61,15 @@ tape('relocate repositions and renames columns', t => {
   const a = [1], b = [2], c = [3], d = [4];
   const dt = table({ a, b, c, d });
 
-  tableEqual(t,
-    dt.relocate({ a: 'e', c: 'f' }, { before: { b: '?' } }),
-    { e: a, f: c, b, d },
+  t.deepEqual(
+    dt.relocate({ a: 'e', c: 'f' }, { before: { b: '?' } }).columnNames(),
+    ['e', 'f', 'b', 'd'],
     'relocate data, before plus rename'
   );
 
-  tableEqual(t,
-    dt.relocate({ a: 'e', c: 'f' }, { after: { b: '?' } }),
-    { b, d, e: a, f: c },
+  t.deepEqual(
+    dt.relocate({ a: 'e', c: 'f' }, { after: { b: '?' } }).columnNames(),
+    ['b', 'e', 'f', 'd'],
     'relocate data, after plus rename'
   );
 
