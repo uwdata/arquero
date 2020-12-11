@@ -445,7 +445,7 @@ export default class Table {
    * @param {Object} values Object of name-value pairs defining the
    *  columns to derive. The input object should have output column
    *  names for keys and table expressions for values.
-   * @param {RelocateOptions} options Options for relocating derived columns.
+   * @param {RelocateOptions=} options Options for relocating derived columns.
    *  Use either a before or after property to indicate where to place
    *  derived columns. Specifying both before and after is an error. Unlike
    *  the relocate verb, this option affects only new columns; updated
@@ -463,7 +463,7 @@ export default class Table {
    * The resulting table provides a filtered view over the original data;
    * no data copy is made. To create a table that copies only filtered data
    * to new data structures, call {@link Table#reify} on the output table.
-   * @param {Function} criteria The filter criteria as a table expression.
+   * @param {Function|string} criteria The filter criteria as a table expression.
    *  Both aggregate and window functions are permitted, and will take into
    *  account any {@link Table#groupby} or {@link Table#orderby} settings.
    * @return {Table} A new table with filtered rows.
@@ -602,7 +602,7 @@ export default class Table {
    *  If number-valued, the same sample size is used for each group.
    *  If function-valued, the input should be an aggregate table
    *  expression compatible with {@link Table#rollup}.
-   * @param {SampleOptions} options Options for sampling.
+   * @param {SampleOptions=} options Options for sampling.
    * @return {Table} A new table with sampled rows.
    * @example table.sample(50)
    * @example table.sample(100, { replace: true })
@@ -672,7 +672,7 @@ export default class Table {
    *  with column name strings, objects with output names as keys and current
    *  names as values (output names will be ignored), or the output of the
    *  selection helper functions {@link all}, {@link not}, or {@link range}.
-   * @param {FoldOptions} options Options for folding.
+   * @param {FoldOptions=} options Options for folding.
    * @return {Table} A new folded table.
    * @example table.fold('colA')
    * @example table.fold(['colA', 'colB'])
@@ -708,7 +708,7 @@ export default class Table {
    *  Column string names will be wrapped in any *any* aggregate.
    *  If object-valued, the input object should have output value
    *  names for keys and table expressions for values.
-   * @param {PivotOptions} options Options for pivoting.
+   * @param {PivotOptions=} options Options for pivoting.
    * @return {Table} A new pivoted table.
    * @example table.pivot('key', 'value')
    * @example table.pivot(['keyA', 'keyB'], ['valueA', 'valueB'])
@@ -733,7 +733,7 @@ export default class Table {
    * Output columns are named based on the value key and array index.
    * @param {string|Array|Object} values The columns to spread, as either
    *  an array of column names or a key-value object of table expressions.
-   * @param {SpreadOptions} [options] Options for spreading.
+   * @param {SpreadOptions=} [options] Options for spreading.
    * @return {Table} A new table with the spread columns added.
    * @example table.spread({ a: split(d.text, '') })
    * @example table.spread('arrayCol', { limit: 100 })
@@ -769,7 +769,7 @@ export default class Table {
    * Values for all other columns are copied over.
    * @param {string|Array|Object} values The columns to unroll, as either
    *  an array of column names or a key-value object of table expressions.
-   * @param {UnrollOptions} [options] Options for unrolling.
+   * @param {UnrollOptions=} [options] Options for unrolling.
    * @return {Table} A new unrolled table.
    * @example table.unroll('colA', { limit: 1000 })
    */
