@@ -289,5 +289,23 @@ export default {
    * @param {number} nth The nth position, starting from 1.
    * @return {*} The nth value in the current frame.
    */
-  nth_value: (field, nth) => Op('nth_value', field, nth)
+  nth_value: (field, nth) => Op('nth_value', field, nth),
+
+  /**
+   * Window function to fill in missing values with preceding values.
+   * @param {*} field The data field.
+   * @param {*} [defaultValue=undefined] The default value.
+   * @return {*} The current value if valid, otherwise the first preceding
+   *  valid value. If no such value exists, returns the default value.
+   */
+  fill_down: (field, defaultValue) => Op('fill_down', field, defaultValue),
+
+  /**
+   * Window function to fill in missing values with subsequent values.
+   * @param {*} field The data field.
+   * @param {*} [defaultValue=undefined] The default value.
+   * @return {*} The current value if valid, otherwise the first subsequent
+   *  valid value. If no such value exists, returns the default value.
+   */
+  fill_up: (field, defaultValue) => Op('fill_up', field, defaultValue)
 };
