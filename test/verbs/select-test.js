@@ -19,6 +19,27 @@ tape('select selects a subset of columns', t => {
   t.end();
 });
 
+tape('select handles columns with numeric names', t => {
+  const data = {
+    country: [0],
+    '1999': [1],
+    '2000': [2]
+  };
+
+  const dt = table(data, ['country', '1999', '2000']);
+  t.deepEqual(
+    dt.columnNames(),
+    ['country', '1999', '2000']
+  );
+
+  t.deepEqual(
+    dt.select('1999', 'country', '2000').columnNames(),
+    ['1999', 'country', '2000']
+  );
+
+  t.end();
+});
+
 tape('select renames columns', t => {
   const data = {
     a: [1, 3, 5, 7],

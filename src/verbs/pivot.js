@@ -11,12 +11,10 @@ export default function(table, on, values, options) {
   );
 }
 
-function preparse(values) {
+function preparse(map) {
   // map direct field reference to "any" aggregate
-  for (const key in values) {
-    const value = values[key];
-    if (value.field) {
-      values[key] = `d => any(d[${JSON.stringify(value+'')}])`;
-    }
-  }
+  map.forEach((value, key) => value.field
+    ? map.set(key, `d => any(d[${JSON.stringify(value+'')}])`)
+    : 0
+  );
 }

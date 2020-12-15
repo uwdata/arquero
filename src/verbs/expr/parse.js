@@ -1,6 +1,7 @@
 import field from './field';
 import resolve from './selection';
 import parse from '../../expression/parse';
+import assign from '../../util/assign';
 import error from '../../util/error';
 import isNumber from '../../util/is-number';
 import isObject from '../../util/is-object';
@@ -9,13 +10,13 @@ import isFunction from '../../util/is-function';
 import toArray from '../../util/to-array';
 
 export default function(name, table, params, options = { window: false }) {
-  const exprs = {};
+  const exprs = new Map();
 
   const marshal = param => {
     param = isNumber(param) ? table.columnName(param) : param;
-    isString(param) ? (exprs[param] = field(param))
-      : isFunction(param) ? Object.keys(resolve(table, param)).forEach(marshal)
-      : isObject(param) ? Object.assign(exprs, param)
+    isString(param) ? exprs.set(param, field(param))
+      : isFunction(param) ? resolve(table, param).forEach(marshal)
+      : isObject(param) ? assign(exprs, param)
       : error(`Invalid ${name} value: ${param+''}`);
   };
 

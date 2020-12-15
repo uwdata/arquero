@@ -11,7 +11,8 @@ const _compare = (u, v, lt, gt) =>
 
 export default function(table, fields) {
   // parse expressions, generate code for both a and b values
-  const fn = {};
+  const names = [];
+  const exprs = [];
   let opA = 'op';
   let opB = 'op';
   let keys = null;
@@ -23,10 +24,11 @@ export default function(table, fields) {
   const { ops } = parse(fields, {
     table,
     value: (name, node) => {
-      fn[name] = [
+      names.push(name);
+      exprs.push([
         codegen(node, { index: 'a', op: opA }),
         codegen(node, { index: 'b', op: opB })
-      ];
+      ]);
     },
     window: false
   });
@@ -35,14 +37,15 @@ export default function(table, fields) {
   const op = ops.length ? aggregate(table, ops) : null;
 
   // generate comparison code for each field
+  const n = names.length;
   let code = 'return (a, b) => {\n';
   if (op && table.isGrouped()) {
     code += '  const ka = keys[a], kb = keys[b];\n';
   }
   code += '  var u, v;\n  return ';
-  for (const name in fields) {
-    const o = fields[name].desc ? -1 : 1;
-    const [u, v] = fn[name];
+  for (let i = 0; i < n; ++i) {
+    const o = fields.get(names[i]).desc ? -1 : 1;
+    const [u, v] = exprs[i];
     code += _compare(u, v, -o, o);
   }
   code += '0;\n};';

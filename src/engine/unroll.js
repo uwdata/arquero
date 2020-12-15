@@ -1,29 +1,29 @@
 import { aggregateGet } from './reduce/util';
+import columnSet from '../table/column-set';
 import toArray from '../util/to-array';
-import has from '../util/has';
 
-export default function(table, { values = {}, ops = [] }, options = {}) {
-  const names = Object.keys(values);
+export default function(table, { names = [], exprs = [], ops = [] }, options = {}) {
   if (!names.length) return table;
 
   const limit = options.limit > 0 ? +options.limit : Infinity;
   const index = options.index
     ? options.index === true ? 'index' : options.index + ''
     : null;
-  const drop = options.drop || {};
-  const get = aggregateGet(table, ops, Object.values(values));
+  const drop = new Set(options.drop);
+  const get = aggregateGet(table, ops, exprs);
 
   // initialize output columns
-  const data = {};
+  const cols = columnSet();
+  const nset = new Set(names);
   const priors = [];
   const copies = [];
   const unroll = [];
 
   // original and copied columns
   table.columnNames().forEach(name => {
-    if (!has(drop, name)) {
-      const col = data[name] = [];
-      if (!has(values, name)) {
+    if (!drop.has(name)) {
+      const col = cols.add(name, []);
+      if (!nset.has(name)) {
         priors.push(table.column(name));
         copies.push(col);
       }
@@ -32,14 +32,14 @@ export default function(table, { values = {}, ops = [] }, options = {}) {
 
   // unrolled output columns
   names.forEach(name => {
-    if (!has(drop, name)) {
-      if (!has(data, name)) data[name] = [];
-      unroll.push(data[name]);
+    if (!drop.has(name)) {
+      if (!cols.has(name)) cols.add(name, []);
+      unroll.push(cols.data[name]);
     }
   });
 
   // index column, if requested
-  const icol = index ? (data[index] = []) : null;
+  const icol = index ? cols.add(index, []) : null;
 
   let start = 0;
   const m = priors.length;
@@ -113,10 +113,5 @@ export default function(table, { values = {}, ops = [] }, options = {}) {
     });
   }
 
-  return table.create({
-    data,
-    filter: null,
-    groups: null,
-    order:  null
-  });
+  return table.create(cols.new());
 }

@@ -59,7 +59,7 @@ function astOptions(value, types = {}) {
 }
 
 function astParse(expr, opt) {
-  return parse({ expr }, { ...opt, ast: true }).expr;
+  return parse({ expr }, { ...opt, ast: true }).exprs[0];
 }
 
 function astColumn(name) {

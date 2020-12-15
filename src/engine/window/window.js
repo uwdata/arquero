@@ -1,5 +1,7 @@
 import { reducers } from '../reduce/util';
 import { getWindow, isAggregate } from '../../op';
+import concat from '../../util/concat';
+import unroll2 from '../../util/unroll2';
 import windowState from './window-state';
 
 const frameValue = op =>
@@ -15,11 +17,17 @@ function windowOp(spec) {
   return op;
 }
 
-export function window(table, output, values, results = [], ops) {
+export function window(table, output, exprs, results = [], ops) {
   // instantiate window states
   const input = table.data();
   const states = windowStates(ops, input);
   const nstate = states.length;
+
+  const write = unroll2(
+    output, exprs,
+    ['r', 'input', 'result'],
+    '{' + concat(output, (_, i) => `_${i}[r] = $${i}(r, input, result);`) + '}'
+  );
 
   // scan each ordered partition
   table.partitions().forEach((rows, partitionIndex) => {
@@ -38,11 +46,7 @@ export function window(table, output, values, results = [], ops) {
       for (let i = 0; i < nstate; ++i) {
         states[i].step(index);
       }
-      // write output values (TODO rewrite for performance?)
-      const row = rows[index];
-      for (const name in values) {
-        output[name][row] = values[name](row, input, result);
-      }
+      write(rows[index], input, result);
     }
   });
 }

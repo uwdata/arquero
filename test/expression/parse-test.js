@@ -5,8 +5,8 @@ import { op, rolling } from '../../src/verbs';
 // pass code through for testing
 const compiler = { param: x => x, expr: x => x };
 
-function test(t, exprs) {
-  const { ops, values} = parse(exprs, { compiler });
+function test(t, input) {
+  const { ops, names, exprs } = parse(input, { compiler });
 
   t.deepEqual(ops, [
     { name: 'mean', fields: ['data.a.get(row)'], params: [], id: 0 },
@@ -17,16 +17,27 @@ function test(t, exprs) {
     { name: 'count', fields: [], params: [], frame: [-3, 3], peers: true, id: 5 }
   ], 'parsed operators');
 
-  t.deepEqual(values, {
-    constant: '(1+1)',
-    column: '(data.a.get(row)*data.b.get(row))',
-    agg1: 'op[0]',
-    agg2: 'op[1]',
-    agg3: '(1+op[2])',
-    win1: '(data.value.get(row)-op[3])',
-    win2: 'op[4]',
-    win3: 'op[5]'
-  }, 'parsed output values');
+  t.deepEqual(names, [
+    'constant',
+    'column',
+    'agg1',
+    'agg2',
+    'agg3',
+    'win1',
+    'win2',
+    'win3'
+  ], 'parsed output names');
+
+  t.deepEqual(exprs, [
+    '(1+1)',
+    '(data.a.get(row)*data.b.get(row))',
+    'op[0]',
+    'op[1]',
+    '(1+op[2])',
+    '(data.value.get(row)-op[3])',
+    'op[4]',
+    'op[5]'
+  ], 'parsed output expressions');
 }
 
 tape('parse parses expressions with global operator names', t => {
@@ -80,9 +91,9 @@ tape('parse parses expressions with nested operator object', t => {
 
 tape('parse parses expressions with constant values', t => {
   function constant(string, result) {
-    const exprs = parse({ f: `d => ${string}` });
+    const { exprs } = parse({ f: `d => ${string}` });
     t.equal(
-      exprs.values.f + '',
+      exprs[0] + '',
       `(row,data,op)=>${result}`,
       `parsed ${string} constant`
     );
@@ -118,9 +129,9 @@ tape('parse parses expressions with constant values', t => {
 
 tape('parse parses expressions with literal values', t => {
   function literal(string, result) {
-    const exprs = parse({ f: `d => ${string}` });
+    const { exprs } = parse({ f: `d => ${string}` });
     t.equal(
-      exprs.values.f + '',
+      exprs[0] + '',
       `(row,data,op)=>${result}`,
       `parsed ${string} literal`
     );
@@ -139,19 +150,19 @@ tape('parse parses expressions with literal values', t => {
 
 tape('parse parses column references with nested properties', t => {
   t.equal(
-    parse({ f: d => d.x.y }).values.f + '',
+    parse({ f: d => d.x.y }).exprs[0] + '',
     '(row,data,op)=>data.x.get(row).y',
     'parsed nested members'
   );
 
   t.equal(
-    parse({ f: d => d['x'].y }).values.f + '',
+    parse({ f: d => d['x'].y }).exprs[0] + '',
     '(row,data,op)=>data["x"].get(row).y',
     'parsed nested members'
   );
 
   t.equal(
-    parse({ f: d => d['x']['y'] }).values.f + '',
+    parse({ f: d => d['x']['y'] }).exprs[0] + '',
     '(row,data,op)=>data["x"].get(row)[\'y\']',
     'parsed nested members'
   );
@@ -197,9 +208,9 @@ tape('parse throws on invalid op parameter expressions', t => {
 });
 
 tape('parse parses template literals', t => {
-  const exprs = parse({ f: d => `${d.x} + ${d.y}` });
+  const { exprs } = parse({ f: d => `${d.x} + ${d.y}` });
   t.equal(
-    exprs.values.f + '',
+    exprs[0] + '',
     '(row,data,op)=>`${data.x.get(row)} + ${data.y.get(row)}`',
     'parsed template literal'
   );
@@ -214,18 +225,17 @@ tape('parse parses expressions with block statements', t => {
   t.deepEqual(
     parse(exprs, { compiler }),
     {
+      names: [ 'val' ],
+      exprs: [ '{const s=op[0];return (s*s);}' ],
       ops: [
         { name: 'sum', fields: [ 'data.a.get(row)' ], params: [], id: 0 }
-      ],
-      values: {
-        val: '{const s=op[0];return (s*s);}'
-      }
+      ]
     },
     'parsed block'
   );
 
   t.equal(
-    parse(exprs).values.val + '',
+    parse(exprs).exprs[0] + '',
     '(row,data,op)=>{const s=op[0];return (s*s);}',
     'compiled block'
   );
@@ -247,10 +257,14 @@ tape('parse parses expressions with if statements', t => {
   };
 
   t.deepEqual(
-    parse(exprs, { compiler }).values,
+    parse(exprs, { compiler }),
     {
-      val1: '{const d=(3-2);if ((d<1)){return 1;} else {return 0;};}',
-      val2: '{const d=(3-2);if ((d<1)){return 1;};return 0;}'
+      names: ['val1', 'val2'],
+      exprs: [
+        '{const d=(3-2);if ((d<1)){return 1;} else {return 0;};}',
+        '{const d=(3-2);if ((d<1)){return 1;};return 0;}'
+      ],
+      ops: []
     },
     'parsed if'
   );
@@ -271,7 +285,7 @@ tape('parse parses expressions with switch statements', t => {
   };
 
   t.equal(
-    parse(exprs, { compiler }).values.val,
+    parse(exprs, { compiler }).exprs[0],
     '{const v=\'foo\';switch (v) {case \'foo\': return 1;case \'bar\': return 2;default: return 3;};}',
     'parsed switch'
   );
@@ -296,11 +310,17 @@ tape('parse parses expressions with destructuring assignments', t => {
   };
 
   t.deepEqual(
-    parse(exprs, { compiler }).values,
+    parse(exprs, { compiler }),
     {
-      arr: '{const [start,stop,step]=op[0];return fn.bin(\'value\',start,stop,step);}',
-      obj: '{const {start:start,stop:stop,step:step}=op[0];return fn.bin(\'value\',start,stop,step);}',
-      nest: '{const {start:[{baz:bop}],stop:stop,step:step}=op[0];return fn.bin(\'value\',bop,stop,step);}'
+      names: ['arr', 'obj', 'nest'],
+      exprs: [
+        '{const [start,stop,step]=op[0];return fn.bin(\'value\',start,stop,step);}',
+        '{const {start:start,stop:stop,step:step}=op[0];return fn.bin(\'value\',start,stop,step);}',
+        '{const {start:[{baz:bop}],stop:stop,step:step}=op[0];return fn.bin(\'value\',bop,stop,step);}'
+      ],
+      ops: [
+        { name: 'bins', fields: [ '\'value\'' ], params: [], id: 0 }
+      ]
     },
     'parsed destructuring assignmeents'
   );
@@ -411,9 +431,9 @@ tape('parse supports ast output option', t => {
   }, { ast: true });
 
   t.deepEqual(
-    JSON.parse(JSON.stringify(ast)),
-    {
-      'constant': {
+    JSON.parse(JSON.stringify(ast.exprs)),
+    [
+      {
         'type': 'BinaryExpression',
         'left': {
           'type': 'Literal',
@@ -427,7 +447,7 @@ tape('parse supports ast output option', t => {
           'raw': 'Math.E'
         }
       },
-      'column': {
+      {
         'type': 'BinaryExpression',
         'left': {
           'type': 'Column',
@@ -439,7 +459,7 @@ tape('parse supports ast output option', t => {
           'name': 'b'
         }
       },
-      'agg1': {
+      {
         'type': 'CallExpression',
         'callee': {
           'type': 'Function',
@@ -452,7 +472,7 @@ tape('parse supports ast output option', t => {
           }
         ]
       },
-      'agg2': {
+      {
         'type': 'CallExpression',
         'callee': {
           'type': 'Function',
@@ -469,7 +489,7 @@ tape('parse supports ast output option', t => {
           }
         ]
       },
-      'agg3': {
+      {
         'type': 'BinaryExpression',
         'left': {
           'type': 'Literal',
@@ -510,7 +530,7 @@ tape('parse supports ast output option', t => {
           ]
         }
       },
-      'win1': {
+      {
         'type': 'BinaryExpression',
         'left': {
           'type': 'Column',
@@ -536,7 +556,7 @@ tape('parse supports ast output option', t => {
           ]
         }
       },
-      'win2': {
+      {
         'type': 'CallExpression',
         'callee': {
           'type': 'Function',
@@ -549,7 +569,7 @@ tape('parse supports ast output option', t => {
           }
         ]
       },
-      'win3': {
+      {
         'type': 'CallExpression',
         'callee': {
           'type': 'Function',
@@ -557,7 +577,7 @@ tape('parse supports ast output option', t => {
         },
         'arguments': []
       }
-    }
+    ]
   );
 
   t.end();

@@ -1,3 +1,4 @@
+import assign from '../../util/assign';
 import error from '../../util/error';
 import escapeRegExp from '../../util/escape-regexp';
 import isArray from '../../util/is-array';
@@ -7,17 +8,17 @@ import isNumber from '../../util/is-number';
 import isString from '../../util/is-string';
 import toString from '../../util/to-string';
 
-export default function resolve(table, sel, map = {}) {
+export default function resolve(table, sel, map = new Map()) {
   sel = isNumber(sel) ? table.columnName(sel) : sel;
 
   if (isString(sel)) {
-    map[sel] = sel;
+    map.set(sel, sel);
   } else if (isArray(sel)) {
     sel.forEach(r => resolve(table, r, map));
   } else if (isFunction(sel)) {
     resolve(table, sel(table), map);
   } else if (isObject(sel)) {
-    Object.assign(map, sel);
+    assign(map, sel);
   } else {
     error(`Invalid column selection: ${toString(sel)}`);
   }
@@ -60,7 +61,7 @@ export function not(...selection) {
   return decorate(
     table => {
       const drop = resolve(table, selection);
-      return table.columnNames(name => !drop[name]);
+      return table.columnNames(name => !drop.has(name));
     },
     () => ({ not: toObject(selection) })
   );

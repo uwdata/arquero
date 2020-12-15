@@ -1,11 +1,11 @@
 import { aggregateGet } from './reduce/util';
+import columnSet from '../table/column-set';
 
-export default function(tableL, tableR, [keyL, keyR], { values, ops }) {
+export default function(tableL, tableR, [keyL, keyR], { names, exprs, ops }) {
   // instantiate output data
-  const data = { ...tableL.columns() };
-  const names = Object.keys(values);
+  const cols = columnSet(tableL);
   const total = tableL.totalRows();
-  names.forEach(name => data[name] = Array(total));
+  names.forEach(name => cols.add(name, Array(total)));
 
   // build lookup table
   const lut = new Map();
@@ -29,11 +29,11 @@ export default function(tableL, tableR, [keyL, keyR], { values, ops }) {
 
   // output values for matching rows
   const dataR = tableR.data();
-  const get = aggregateGet(tableR, ops, Object.values(values));
+  const get = aggregateGet(tableR, ops, exprs);
   const n = get.length;
 
   for (let i = 0; i < n; ++i) {
-    const column = data[names[i]];
+    const column = cols.data[names[i]];
     const getter = get[i];
     for (let j = 0; j < m; ++j) {
       const rrow = rowR[j];
@@ -41,5 +41,5 @@ export default function(tableL, tableR, [keyL, keyR], { values, ops }) {
     }
   }
 
-  return tableL.create({ data });
+  return tableL.create(cols);
 }

@@ -1,6 +1,7 @@
 import { window } from './window/window';
 import { aggregate } from './reduce/util';
 import { isWindow } from '../op';
+import columnSet from '../table/column-set';
 import toArray from '../util/to-array';
 
 function isWindowed(op) {
@@ -11,13 +12,11 @@ function isWindowed(op) {
     );
 }
 
-export default function(table, { values, ops }) {
+export default function(table, { names, exprs, ops }, options = {}) {
   // instantiate output data
   const total = table.totalRows();
-  const data = { ...table.columns() };
-  for (const name in values) {
-    data[name] = Array(total);
-  }
+  const cols = columnSet(options.drop ? null : table);
+  const data = names.map(name => cols.add(name, Array(total)));
 
   // analyze operations, compute non-windowed aggregates
   const [ aggOps, winOps ] = segmentOps(ops);
@@ -25,10 +24,10 @@ export default function(table, { values, ops }) {
 
   // perform table scans to generate output values
   winOps.length
-    ? window(table, data, values, toArray(result), winOps)
-    : output(table, data, values, result);
+    ? window(table, data, exprs, toArray(result), winOps)
+    : output(table, data, exprs, result);
 
-  return table.create({ data });
+  return table.create(cols);
 }
 
 function segmentOps(ops) {
@@ -44,20 +43,21 @@ function segmentOps(ops) {
   return [aggOps, winOps];
 }
 
-function output(table, data, values, result = {}) {
+function output(table, data, exprs, result = {}) {
   const groups = table.groups();
+  const n = data.length;
 
   if (groups) {
     const { keys } = groups;
-    for (const name in values) {
-      const get = values[name];
-      const col = data[name];
+    for (let i = 0; i < n; ++i) {
+      const get = exprs[i];
+      const col = data[i];
       table.scan((row, d) => col[row] = get(row, d, result[keys[row]]));
     }
   } else {
-    for (const name in values) {
-      const get = values[name];
-      const col = data[name];
+    for (let i = 0; i < n; ++i) {
+      const get = exprs[i];
+      const col = data[i];
       table.scan((row, d) => col[row] = get(row, d, result));
     }
   }

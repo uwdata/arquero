@@ -1,3 +1,3 @@
 export default function(value) {
-  return value === Object(value);
+  return value instanceof Map;
 }

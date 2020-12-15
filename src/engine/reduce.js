@@ -1,34 +1,31 @@
 import { groupInit, groupOutput, reduceFlat, reduceGroups } from './reduce/util';
+import columnSet from '../table/column-set';
 
 export default function(table, reducer) {
-  const data = {};
+  const cols = columnSet();
 
   if (table.isGrouped()) {
     const groups = table.groups();
-    const counts = groupInit(data, table);
+    const counts = groupInit(cols, table);
     output(
       reduceGroups(table, reducer, groups),
-      reducer, data, counts
+      reducer, cols, counts
     );
-    groupOutput(data, table, counts);
+    groupOutput(cols.data, table, counts);
   } else {
     output(
       reduceFlat(table, reducer),
-      reducer, data
+      reducer, cols
     );
   }
 
-  return table.create({
-    data,
-    filter: null,
-    groups: null,
-    order: null
-  });
+  return table.create(cols.new());
 }
 
-function output(cells, reducer, data, counts) {
+function output(cells, reducer, cols, counts) {
   // initialize output columns
-  reducer.outputs().map(name => data[name] = []);
+  reducer.outputs().map(name => cols.add(name, []));
+  const { data } = cols;
 
   // write aggregate values to output columns
   if (counts) {

@@ -1,16 +1,17 @@
+import columnSet from '../table/column-set';
 import error from '../util/error';
 import isString from '../util/is-string';
 
 export default function(table, columns) {
-  const data = {};
+  const cols = columnSet();
 
-  for (const curr in columns) {
-    const value = columns[curr];
+  columns.forEach((value, curr) => {
     const next = isString(value) ? value : curr;
     if (next) {
-      data[next] = table.column(curr) || error(`Unrecognized column: ${curr}`);
+      const col = table.column(curr) || error(`Unrecognized column: ${curr}`);
+      cols.add(next, col);
     }
-  }
+  });
 
-  return table.create({ data });
+  return table.create(cols);
 }

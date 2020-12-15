@@ -89,3 +89,22 @@ tape('pivot respects input options', t => {
 
   t.end();
 });
+
+tape('pivot correctly orders integer column names', t => {
+  const data = {
+    g: ['a', 'a', 'a', 'b', 'b', 'b'],
+    k: [2002, 2001, 2000, 2002, 2001, 2000],
+    x: [1, 2, 3, 4, 5, 6]
+  };
+
+  const ut = table(data)
+    .groupby('g')
+    .pivot('k', 'x', { sort: false });
+
+  tableEqual(t, ut, {
+    'g': ['a', 'b'], '2002': [ 1, 4 ], '2001': [ 2, 5 ], '2000': [ 3, 6 ]
+  }, 'pivot data');
+
+  t.deepEqual(ut.columnNames(), ['g', '2002', '2001', '2000']);
+  t.end();
+});
