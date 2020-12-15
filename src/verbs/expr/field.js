@@ -2,7 +2,7 @@ import wrap from './wrap';
 
 /**
  * Annotate an expression to indicate it is a string field reference.
- * @param {string|Object} expr The column name, or an existing wrapped
+ * @param {string|object} expr The column name, or an existing wrapped
  *  expression for a column name.
  * @param {string} [name] The column name to use. If provided, will
  *  overwrite the input expression value.

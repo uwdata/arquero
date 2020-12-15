@@ -5,7 +5,7 @@ import wrap from './wrap';
  * functions within a sliding window frame. For example, to specify a
  * rolling 7-day average centered on the current day, use rolling with
  * a frame value of [-3, 3].
- * @param {string|Function|Object} expr The table expression to annotate.
+ * @param {string|Function|object} expr The table expression to annotate.
  * @param {[number?, number?]} [frame=[-Infinity, 0]] The sliding window frame
  *  offsets. Each entry indicates an offset from the current value. If an
  *  entry is non-finite, the frame will be unbounded in that direction,

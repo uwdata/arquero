@@ -50,8 +50,8 @@ export default class Query {
    * as an object. Otherwise, adds the provided parameters to this
    * query's parameter set and returns the table. Any prior parameters
    * with names matching the input parameters are overridden.
-   * @param {Object} values The parameter values.
-   * @return {Query|Object} The current parameter values (if called
+   * @param {object} values The parameter values.
+   * @return {Query|object} The current parameter values (if called
    *  with no arguments) or this query.
    */
   params(values) {

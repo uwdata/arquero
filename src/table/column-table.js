@@ -57,7 +57,7 @@ export default class ColumnTable extends Table {
 
   /**
    * Get the backing set of columns for this table.
-   * @return {Object} Object of named column instances.
+   * @return {object} Object of named column instances.
    */
   columns() {
     return this._data;

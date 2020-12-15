@@ -8,14 +8,14 @@ const DEFAULT_COLUMN_NAME = 'col';
 
 /**
  * Options for CSV parsing.
- * @typedef {Object} CSVParseOptions
+ * @typedef {object} CSVParseOptions
  * @property {string} [delimiter=','] The delimiter between values.
  * @property {boolean} [autoType=true] Flag controlling automatic type inference.
  * @property {boolean} [header=true] Flag to specify presence of header row.
  *  If true, assumes the CSV contains a header row with column names.
  *  If false, indicates the CSV does not contain a header row, and the
  *  columns are given the names 'col1', 'col2', and so on.
- * @property {Object} [parse] Object of column parsing options.
+ * @property {object} [parse] Object of column parsing options.
  *  The object keys should be column names. The object values should be
  *  parsing functions to invoke to transform values upon input.
  */
