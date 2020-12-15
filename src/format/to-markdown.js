@@ -3,15 +3,15 @@ import { columns, formats, scan } from './util';
 
 /**
  * Options for Markdown formatting.
- * @typedef {Object} MarkdownOptions
+ * @typedef {object} MarkdownOptions
  * @property {number} [limit=Infinity] The maximum number of rows to print.
  * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
  * @property {string[]} [columns] Ordered list of column names to print.
- * @property {Object} [align] Object of column alignment options.
+ * @property {object} [align] Object of column alignment options.
  *  The object keys should be column names. The object values should be
  *  aligment strings, one of 'l' (left), 'c' (center), or 'r' (right).
  *  If specified, these override the automatically inferred options.
- * @property {Object} [format] Object of column format options.
+ * @property {object} [format] Object of column format options.
  *  The object keys should be column names. The object values should be
  *  formatting functions or objects with any of the following properties.
  *  If specified, these override the automatically inferred options.

@@ -63,7 +63,7 @@ export {
 
 /**
  * Create a new table for a set of named columns.
- * @param {Object.<string, Array|TypedArray>} columns
+ * @param {object} columns
  *  The set of named column arrays.
  *  Object keys are the column names.
  *  The enumeration order of the keys determines the column indices.
@@ -81,7 +81,7 @@ export function table(columns, names) {
 /**
  * Create a new table from an existing object, such as an array of
  * objects or a set of key-value pairs.
- * @param {Object|Array|Map} values Data values to populate the table.
+ * @param {object|Array|Map} values Data values to populate the table.
  *  If array-valued or iterable, imports rows for each non-null value,
  *  using the provided column names as keys for each row object. If no
  *  names are provided, the first non-null object's own keys are used.

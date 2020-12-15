@@ -1,6 +1,6 @@
 /**
  * Options for binning number values.
- * @typedef {Object} BinOptions
+ * @typedef {object} BinOptions
  * @property {number} [maxbins] The maximum number of bins.
  * @property {number} [minstep] The minimum step size between bins.
  * @property {boolean} [nice=true] Flag indicating if bins should

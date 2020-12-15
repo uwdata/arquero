@@ -28,7 +28,7 @@ function addOp(name, def, object, options = {}) {
 
 /**
  * Options for registering new functions formatting.
- * @typedef {Object} AddFunctionOptions
+ * @typedef {object} AddFunctionOptions
  * @property {boolean} [override=false] Flag indicating if the added
  *  function can override an existing function with the same name.
  * @param {number} [numFields=0] The number of field inputs to the operator.
