@@ -35,7 +35,8 @@ title: Verbs \| Arquero API Reference
 Derive new column values based on the provided expressions.
 
 * *values*: Object of name-value pairs defining the columns to derive. The input object should have output column names for keys and table expressions for values.
-* *options*: An options object for relocating derived columns. Use either the *before* or *after* property to indicate where to place derived columns. Specifying both before and after is an error. Unlike the [relocate](#relocate) verb, this option affects only new columns; overwritten columns with existing names are excluded from relocation.
+* *options*: An options object for dropping or relocating derived columns. Use either the *before* or *after* property to indicate where to place derived columns. Specifying both before and after is an error. Unlike the [relocate](#relocate) verb, this option affects only new columns; overwritten columns with existing names are excluded from relocation.
+  * *drop*: A boolean (default `false`) indicating if the original columns should be dropped, leaving only the derived columns. If `true`, the *before* and *after* options are ignored.
   * *before*: An anchor column that relocated columns should be placed before. The value can be any legal column selection. If multiple columns are selected, only the *first* column will be used as an anchor.
   * *after*: An anchor column that relocated columns should be placed after. The value can be any legal column selection. If multiple columns are selected, only the *last* column will be used as an anchor.
 

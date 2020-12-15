@@ -6,7 +6,7 @@ export default function(table, values, options) {
     table,
     parse('unroll', table, values),
     options && options.drop
-      ? { ...options, drop: parse('unroll', table, options.drop).values }
+      ? { ...options, drop: parse('unroll', table, options.drop).names }
       : options
   );
 }

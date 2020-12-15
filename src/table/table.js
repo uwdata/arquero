@@ -49,13 +49,14 @@ export default class Table {
    * setting is not specified, it is inherited from the current table.
    * @param {Object} [config] Configuration settings for the new table:
    *  - data: The data payload to use.
+   *  - names: An ordered list of column names.
    *  - filter: An additional filter bitset to apply.
    *  - groups: The groupby specification to use (null for no groups).
    *  - order: The orderby comparator to use (null for no order).
    *  - params: Table expression parameters.
    * @return {Table} A newly created table.
    */
-  create({ data, filter, groups, order }) { // eslint-disable-line no-unused-vars
+  create({ data, names, filter, groups, order }) { // eslint-disable-line no-unused-vars
   }
 
   /**
@@ -439,17 +440,35 @@ export default class Table {
   }
 
   /**
+   * Options for relocate transformations.
+   * @typedef {Object} DeriveOptions
+   * @property {boolean} [drop=false] A flag indicating if the original
+   *  columns should be dropped, leaving only the derived columns. If true,
+   *  the before and after options are ignored.
+   * @property {string|string[]|number|number[]|Object|Function} [before]
+   *  An anchor column that relocated columns should be placed before.
+   *  The value can be any legal column selection. If multiple columns are
+   *  selected, only the first column will be used as an anchor.
+   *  It is an error to specify both before and after options.
+   * @property {string|string[]|number|number[]|Object|Function} [after]
+   *  An anchor column that relocated columns should be placed after.
+   *  The value can be any legal column selection. If multiple columns are
+   *  selected, only the last column will be used as an anchor.
+   *  It is an error to specify both before and after options.
+   */
+
+  /**
    * Derive new column values based on the provided expressions. By default,
    * new columns are added after (higher indices than) existing columns. Use
    * the before or after options to place new columns elsewhere.
    * @param {Object} values Object of name-value pairs defining the
    *  columns to derive. The input object should have output column
    *  names for keys and table expressions for values.
-   * @param {RelocateOptions=} options Options for relocating derived columns.
-   *  Use either a before or after property to indicate where to place
-   *  derived columns. Specifying both before and after is an error. Unlike
-   *  the relocate verb, this option affects only new columns; updated
-   *  columns with existing names are excluded from relocation.
+   * @param {DeriveOptions=} options Options for dropping or relocating
+   *  derived columns. Use either a before or after property to indicate
+   *  where to place derived columns. Specifying both before and after is an
+   *  error. Unlike the relocate verb, this option affects only new columns;
+   *  updated columns with existing names are excluded from relocation.
    * @return {Table} A new table with derived columns added.
    * @example table.derive({ sumXY: d => d.x + d.y })
    * @example table.derive({ z: d => d.x * d.y }, { before: 'x' })

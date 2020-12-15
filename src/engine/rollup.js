@@ -1,49 +1,41 @@
-import { aggregate, groupInit, groupOutput, reducers } from './reduce/util';
-import reduce from './reduce';
+import { aggregate, groupInit, groupOutput } from './reduce/util';
+import columnSet from '../table/column-set';
 import isArray from '../util/is-array';
 
-export default function(table, { values, ops }) {
-  if (values == null) {
-    // no expression values, only operator output
-    return reduce(table, reducers(ops));
-  }
-
+export default function(table, { names, exprs, ops }) {
   // output data
-  const data = {};
+  const cols = columnSet();
 
   // write groupby fields to output
   if (table.isGrouped()) {
-    groupOutput(data, table, groupInit(data, table).fill(1));
+    groupOutput(cols.data, table, groupInit(cols, table).fill(1));
   }
+
+  // generate summary output
+  output(names, exprs, aggregate(table, ops), cols);
 
   // perform aggregation and return output table
-  return table.create({
-    data: output(values, aggregate(table, ops), data),
-    filter: null,
-    groups: null,
-    order:  null
-  });
+  return table.create(cols.new());
 }
 
-function output(values, result, data) {
+function output(names, exprs, result, cols) {
   const grouped = isArray(result);
   const size = grouped ? result.length : 1;
+  const n = names.length;
 
   if (grouped) {
-    for (const name in values) {
-      const get = values[name];
-      const col = data[name] = Array(size);
-      for (let i = 0; i < size; ++i) {
-        col[i] = get(i, null, result[i]);
+    for (let i = 0; i < n; ++i) {
+      const get = exprs[i];
+      const col = Array(size);
+      for (let j = 0; j < size; ++j) {
+        col[j] = get(j, null, result[j]);
       }
+      cols.add(names[i], col);
     }
   } else {
-    for (const name in values) {
-      const get = values[name];
-      const col = data[name] = Array(size);
-      col[0] = get(0, null, result);
+    for (let i = 0; i < n; ++i) {
+      const get = exprs[i];
+      cols.add(names[i], [ get(0, null, result) ]);
     }
   }
-
-  return data;
 }
