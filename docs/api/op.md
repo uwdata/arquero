@@ -703,12 +703,12 @@ Determines whether a string *value* ends with the characters of a specified *sea
 * *length*: If provided, used as the length of *value* (default `value.length`).
 
 <hr/><a id="match" href="#match">#</a>
-<em>op</em>.<b>match</b>(<i>regexp</i>, <i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+<em>op</em>.<b>match</b>(<i>value</i>, <i>regexp</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
 
-Retrieves the result of matching a string *value* against a regular expression *regexp*. Returns `true` if the string is found, `false` otherwise.
+Retrieves the result of matching a string *value* against a regular expression *regexp*. Returns an array whose contents depend on the presence or absence of the regular expression global (`g`) flag, or `null` if no matches are found. If the `g` flag is used, all results matching the complete regular expression will be returned, but capturing groups will not. If the `g` flag is not used, only the first complete match and its related capturing groups are returned.
 
-* *regexp*: The regular expression to test with.
-* *value*: The input string to search for matches.
+* *value*: The input string value.
+* *regexp*: The [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) to match against.
 
 <hr/><a id="normalize" href="#normalize">#</a>
 <em>op</em>.<b>normalize</b>(<i>value</i>[, <i>form</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)

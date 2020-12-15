@@ -3,7 +3,7 @@ export default {
   parse_float: (str) => Number.parseFloat(str),
   parse_int:   (str, radix) => Number.parseInt(str, radix),
   endswith:    (str, search, length) => String(str).endsWith(search, length),
-  match:       (regexp, str) => regexp.test(str),
+  match:       (str, regexp) => String(str).match(regexp),
   normalize:   (str, form) => String(str).normalize(form),
   padend:      (str, len, fill) => String(str).padEnd(len, fill),
   padstart:    (str, len, fill) => String(str).padStart(len, fill),
