@@ -23,6 +23,7 @@ title: Operations \| Arquero API Reference
   * [row_number](#row_number), [rank](#rank), [avg_rank](#avg_rank), [dense_rank](#dense_rank)
   * [percent_rank](#percent_rank), [cume_dist](#cume_dist), [ntile](#ntile)
   * [lag](#lag), [lead](#lead), [first_value](#first_value), [last_value](#last_value), [nth_value](#nth_value)
+  * [fill_down](#fill_down), [fill_up](#fill_up)
 
 <br/>
 
@@ -1061,3 +1062,19 @@ Window function to assign the nth value in a sliding window frame (counting from
 
 * *field*: The data column or derived field.
 * *nth*: The nth position, starting from 1.
+
+<hr/><a id="fill_down" href="#fill_down">#</a>
+<em>op</em>.<b>fill_down</b>(<i>field</i>[, <i>defaultValue</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+
+Window function to fill in missing values with preceding values. Returns the value at the current window position if it is valid (not `null`, `undefined`, or `NaN`), otherwise returns the first preceding valid value. If no such value exists, returns the default value.
+
+* *field*: The data column or derived field.
+* *defaultValue*: The default value (default `undefined`).
+
+<hr/><a id="fill_up" href="#fill_up">#</a>
+<em>op</em>.<b>fill_up</b>(<i>field</i>[, <i>defaultValue</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+
+Window function to fill in missing values with subsequent values. Returns the value at the current window position if it is valid (not `null`, `undefined`, or `NaN`), otherwise returns the first subsequent valid value. If no such value exists, returns the default value.
+
+* *field*: The data column or derived field.
+* *defaultValue*: The default value (default `undefined`).
