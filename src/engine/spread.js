@@ -3,20 +3,38 @@ import columnSet from '../table/column-set';
 import toArray from '../util/to-array';
 
 export default function(table, { names, exprs, ops = [] }, options = {}) {
-  const limit = options.limit > 0 ? +options.limit : Infinity;
   if (names.length === 0) return table;
 
+  // ignore as if there are multiple field names
   const as = (names.length === 1 && options.as) || [];
-  const get = aggregateGet(table, ops, exprs);
-  const cols = columnSet(table);
+  const drop = options.drop == null ? true : !!options.drop;
+  const limit = options.limit == null
+    ? as.length || Infinity
+    : Math.max(1, +options.limit || 1);
 
-  names.forEach((name, index) => {
+  const get = aggregateGet(table, ops, exprs);
+  const cols = columnSet();
+  const map = names.reduce((map, name, i) => map.set(name, i), new Map());
+
+  const add = (index, name) => {
     const columns = spread(table, get[index], limit);
     const n = columns.length;
     for (let i = 0; i < n; ++i) {
-      cols.add(as[i] || `${name}${i + 1}`, columns[i]);
+      cols.add(as[i] || `${name}_${i + 1}`, columns[i]);
+    }
+  };
+
+  table.columnNames().forEach(name => {
+    if (map.has(name)) {
+      if (!drop) cols.add(name, table.column(name));
+      add(map.get(name), name);
+      map.delete(name);
+    } else {
+      cols.add(name, table.column(name));
     }
   });
+
+  map.forEach(add);
 
   return table.create(cols);
 }
@@ -29,7 +47,7 @@ function spread(table, get, limit) {
     const values = toArray(get(row, data));
     const n = Math.min(values.length, limit);
     for (let i = 0; i < n; ++i) {
-      const column = columns[i] || (columns[i] = Array(nrows).fill(null));
+      const column = columns[i] || (columns[i] = Array(nrows).fill(undefined));
       column[row] = values[i];
     }
   });
