@@ -90,7 +90,7 @@ export default class QueryBuilder extends Query {
 
   /**
    * Options for count transformations.
-   * @typedef {Object} CountOptions
+   * @typedef {object} CountOptions
    * @property {string} [as='count'] The name of the output count column.
    */
 
@@ -125,16 +125,16 @@ export default class QueryBuilder extends Query {
 
   /**
    * Options for relocate transformations.
-   * @typedef {Object} DeriveOptions
+   * @typedef {object} DeriveOptions
    * @property {boolean} [drop=false] A flag indicating if the original
    *  columns should be dropped, leaving only the derived columns. If true,
    *  the before and after options are ignored.
-   * @property {string|string[]|number|number[]|Object|Function} [before]
+   * @property {string|string[]|number|number[]|object|Function} [before]
    *  An anchor column that relocated columns should be placed before.
    *  The value can be any legal column selection. If multiple columns are
    *  selected, only the first column will be used as an anchor.
    *  It is an error to specify both before and after options.
-   * @property {string|string[]|number|number[]|Object|Function} [after]
+   * @property {string|string[]|number|number[]|object|Function} [after]
    *  An anchor column that relocated columns should be placed after.
    *  The value can be any legal column selection. If multiple columns are
    *  selected, only the last column will be used as an anchor.
@@ -143,7 +143,7 @@ export default class QueryBuilder extends Query {
 
   /**
    * Derive new column values based on the provided expressions.
-   * @param {Object} values Object of name-value pairs defining the
+   * @param {object} values Object of name-value pairs defining the
    *  columns to derive. The input object should have output column
    *  names for keys and table expressions for values.
    * @param {DeriveOptions=} options Options for dropping or relocating
@@ -221,13 +221,13 @@ export default class QueryBuilder extends Query {
 
   /**
    * Options for relocate transformations.
-   * @typedef {Object} RelocateOptions
-   * @property {string|string[]|number|number[]|Object|Function} [before]
+   * @typedef {object} RelocateOptions
+   * @property {string|string[]|number|number[]|object|Function} [before]
    *  An anchor column that relocated columns should be placed before.
    *  The value can be any legal column selection. If multiple columns are
    *  selected, only the first column will be used as an anchor.
    *  It is an error to specify both before and after options.
-   * @property {string|string[]|number|number[]|Object|Function} [after]
+   * @property {string|string[]|number|number[]|object|Function} [after]
    *  An anchor column that relocated columns should be placed after.
    *  The value can be any legal column selection. If multiple columns are
    *  selected, only the last column will be used as an anchor.
@@ -237,7 +237,7 @@ export default class QueryBuilder extends Query {
   /**
    * Relocate a subset of columns to change their positions, also
    * potentially renaming them.
-   * @param {string|string[]|number|number[]|Object|Function} columns An
+   * @param {string|string[]|number|number[]|object|Function} columns An
    * ordered selection of columns to relocate. The input may consist of:
    *  - column name strings,
    *  - column integer indices,
@@ -262,7 +262,7 @@ export default class QueryBuilder extends Query {
    * Rollup a table to produce an aggregate summary.
    * Often used in conjunction with {@link QueryBuilder#groupby}.
    * To produce counts only, {@link QueryBuilder#count} is a convenient shortcut.
-   * @param {Object} values Object of name-value pairs defining aggregated
+   * @param {object} values Object of name-value pairs defining aggregated
    *  output columns. The input object should have output column
    *  names for keys and table expressions for values.
    * @return {QueryBuilder} A new builder with "rollup" verb appended.
@@ -275,7 +275,7 @@ export default class QueryBuilder extends Query {
 
   /**
    * Options for sample transformations.
-   * @typedef {Object} SampleOptions
+   * @typedef {object} SampleOptions
    * @property {boolean} [replace=false] Flag for sampling with replacement.
    * @property {Function|string} [weight] Column values to use as weights
    *  for sampling. Rows will be sampled with probability proportional to
@@ -303,7 +303,7 @@ export default class QueryBuilder extends Query {
 
   /**
    * Select a subset of columns into a new table, potentially renaming them.
-   * @param {string|string[]|number|number[]|Object|Function} columns The columns to select.
+   * @param {string|string[]|number|number[]|object|Function} columns The columns to select.
    *  The input may consist of:
    *  - column name strings,
    *  - column integer indices,
@@ -345,7 +345,7 @@ export default class QueryBuilder extends Query {
 
   /**
    * Options for fold transformations.
-   * @typedef {Object} FoldOptions
+   * @typedef {object} FoldOptions
    * @property {string[]} [as=['key', 'value']] An array indicating the
    *  output column names to use for the key and value columns, respectively.
    */
@@ -373,7 +373,7 @@ export default class QueryBuilder extends Query {
 
   /**
    * Options for pivot transformations.
-   * @typedef {Object} PivotOptions
+   * @typedef {object} PivotOptions
    * @property {number} [limit=Infinity] The maximum number of new columns to generate.
    * @property {string} [keySeparator='_'] A string to place between multiple key names.
    * @property {string} [valueSeparator='_'] A string to place between key and value names.
@@ -393,7 +393,7 @@ export default class QueryBuilder extends Query {
    * @param {*} keys Key values to map to new column names. Keys may be an
    *  array of column name strings, column index numbers, or value objects
    *  with output column names for keys and table expressions for values.
-   * @param {string|string[]|Object} values Output values for pivoted columns.
+   * @param {string|string[]|object} values Output values for pivoted columns.
    *  Column string names will be wrapped in any *any* aggregate.
    *  If object-valued, the input object should have output value
    *  names for keys and table expressions for values.
@@ -409,7 +409,7 @@ export default class QueryBuilder extends Query {
 
   /**
    * Options for spread transformations.
-   * @typedef {Object} SpreadOptions
+   * @typedef {object} SpreadOptions
    * @property {number} [limit=Infinity] The maximum number of new columns to generate.
    * @property {string[]} [as] Output column names to use. This option only
    *  applies when a single column is spread. If the given array of names is
@@ -420,7 +420,7 @@ export default class QueryBuilder extends Query {
   /**
    * Spread array elements into a set of new columns.
    * Output columns are named based on the value key and array index.
-   * @param {string|Array|Object} values The columns to spread, as either
+   * @param {string|Array|object} values The columns to spread, as either
    *  an array of column names or a key-value object of table expressions.
    * @param {SpreadOptions=} [options] Options for spreading.
    * @return {QueryBuilder} A new builder with "spread" verb appended.
@@ -433,14 +433,14 @@ export default class QueryBuilder extends Query {
 
   /**
    * Options for unroll transformations.
-   * @typedef {Object} UnrollOptions
+   * @typedef {object} UnrollOptions
    * @property {number} [limit=Infinity] The maximum number of new rows
    *  to generate per array value.
    * @property {boolean|string} [index=false] Flag or column name for adding
    *  zero-based array index values as an output column. If true, a new column
    *  named "index" will be included. If string-valued, a new column with
    *  the given name will be added.
-   * @property {string|string[]|number|number[]|Object|Function} [drop]
+   * @property {string|string[]|number|number[]|object|Function} [drop]
    *  A selection of columns to drop (exclude) from the unrolled output.
    *  The input may consist of:
    *  - column name strings,
@@ -456,7 +456,7 @@ export default class QueryBuilder extends Query {
    * If more than one array value is used, the number of new rows
    * is the smaller of the limit and the largest length.
    * Values for all other columns are copied over.
-   * @param {string|Array|Object} values The columns to unroll, as either
+   * @param {string|Array|object} values The columns to unroll, as either
    *  an array of column names or a key-value object of table expressions.
    * @param {UnrollOptions} [options] Options for unrolling.
    * @return {QueryBuilder} A new builder with "unroll" verb appended.
@@ -479,7 +479,7 @@ export default class QueryBuilder extends Query {
    * @param {Array} on A two-element array of lookup keys (column name
    *  strings or table expressions) for this table and the secondary table,
    *  respectively.
-   * @param {string|Object} values The column values to add from the
+   * @param {string|object} values The column values to add from the
    *  secondary table. Can be column name strings or objects with column
    *  names as keys and table expressions as values.
    * @return {QueryBuilder} A new builder with "lookup" verb appended.
@@ -491,7 +491,7 @@ export default class QueryBuilder extends Query {
 
   /**
    * Options for join transformations.
-   * @typedef {Object} JoinOptions
+   * @typedef {object} JoinOptions
    * @property {boolean} [left=false] Flag indicating a left outer join.
    *  If both the *left* and *right* are true, indicates a full outer join.
    * @property {boolean} [right=false] Flag indicating a right outer join.
@@ -522,7 +522,7 @@ export default class QueryBuilder extends Query {
    *  join key values can be arrays or objects, and that normal join
    *  semantics do not consider null or undefined values to be equal (that is,
    *  null !== null). Use the op.equal function to handle these cases.
-   * @param {Array|Object} [values] The columns to include in the join output.
+   * @param {Array|object} [values] The columns to include in the join output.
    *  If unspecified, all columns from both tables are included; paired
    *  join keys sharing the same column name are included only once.
    *  If array-valued, a two element array should be provided, containing
@@ -558,7 +558,7 @@ export default class QueryBuilder extends Query {
    *  join key values can be arrays or objects, and that normal join
    *  semantics do not consider null or undefined values to be equal (that is,
    *  null !== null). Use the op.equal function to handle these cases.
-   * @param {Array|Object} [values] The columns to include in the join output.
+   * @param {Array|object} [values] The columns to include in the join output.
    *  If unspecified, all columns from both tables are included; paired
    *  join keys sharing the same column name are included only once.
    *  If array-valued, a two element array should be provided, containing
@@ -596,7 +596,7 @@ export default class QueryBuilder extends Query {
    *  join key values can be arrays or objects, and that normal join
    *  semantics do not consider null or undefined values to be equal (that is,
    *  null !== null). Use the op.equal function to handle these cases.
-   * @param {Array|Object} [values] The columns to include in the join output.
+   * @param {Array|object} [values] The columns to include in the join output.
    *  If unspecified, all columns from both tables are included; paired
    *  join keys sharing the same column name are included only once.
    *  If array-valued, a two element array should be provided, containing
@@ -634,7 +634,7 @@ export default class QueryBuilder extends Query {
    *  join key values can be arrays or objects, and that normal join
    *  semantics do not consider null or undefined values to be equal (that is,
    *  null !== null). Use the op.equal function to handle these cases.
-   * @param {Array|Object} [values] The columns to include in the join output.
+   * @param {Array|object} [values] The columns to include in the join output.
    *  If unspecified, all columns from both tables are included; paired
    *  join keys sharing the same column name are included only once.
    *  If array-valued, a two element array should be provided, containing
@@ -663,7 +663,7 @@ export default class QueryBuilder extends Query {
    * This is a convenience method for {@link QueryBuilder#join} in which the
    * join criteria is always true.
    * @param {string} other The name of the other (right) table to join with.
-   * @param {Array|Object} [values] The columns to include in the output.
+   * @param {Array|object} [values] The columns to include in the output.
    *  If unspecified, all columns from both tables are included.
    *  If array-valued, a two element array should be provided, containing
    *  the columns to include for the left and right tables, respectively.

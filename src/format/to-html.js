@@ -5,15 +5,15 @@ import mapObject from '../util/map-object';
 
 /**
  * Options for HTML formatting.
- * @typedef {Object} HTMLOptions
+ * @typedef {object} HTMLOptions
  * @property {number} [limit=Infinity] The maximum number of rows to print.
  * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
  * @property {string[]} [columns] Ordered list of column names to print.
- * @property {Object} [align] Object of column alignment options.
+ * @property {object} [align] Object of column alignment options.
  *  The object keys should be column names. The object values should be
  *  aligment strings, one of 'l' (left), 'c' (center), or 'r' (right).
  *  If specified, these override the automatically inferred options.
- * @property {Object} [format] Object of column format options.
+ * @property {object} [format] Object of column format options.
  *  The object keys should be column names. The object values should be
  *  formatting functions or objects with any of the following properties.
  *  If specified, these override the automatically inferred options.
@@ -23,7 +23,7 @@ import mapObject from '../util/map-object';
  *  If specified, this function will be invoked with the null or undefined
  *  value as the sole input, and the return value will be used as the HTML
  *  output for the value.
- * @property {Object} [style] CSS styles to include in HTML output.
+ * @property {object} [style] CSS styles to include in HTML output.
  *  The object keys should be HTML table tag names: 'table', 'thead',
  *  'tbody', 'tr', 'th', or 'td'. The object values should be strings of
  *  valid CSS style directives (such as "font-weight: bold;") or functions

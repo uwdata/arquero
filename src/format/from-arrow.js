@@ -10,7 +10,7 @@ export const STRUCT = 13;
 
 /**
  * Options for Apache Arrow import.
- * @typedef {Object} ArrowOptions
+ * @typedef {object} ArrowOptions
  * @property {string[]} [columns] Ordered list of column names to import.
  * @property {boolean} [unpack=false] Flag to unpack binary-encoded Arrow
  *  data to standard JavaScript values. Unpacking can incur an upfront time
@@ -20,7 +20,7 @@ export const STRUCT = 13;
 
 /**
  * Create a new table backed by an Apache Arrow table instance.
- * @param {Object} arrowTable An Apache Arrow data table.
+ * @param {object} arrowTable An Apache Arrow data table.
  * @param {ArrowOptions} options Options for Arrow import.
  * @param {ColumnTable} table A new table containing the imported values.
  */

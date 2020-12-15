@@ -9,10 +9,10 @@ function autoType(key, value) {
 
 /**
  * Options for JSON parsing.
- * @typedef {Object} JSONParseOptions
+ * @typedef {object} JSONParseOptions
  * @property {boolean} [autoType=true] Flag controlling automatic type inference.
  *  If set to false, automatic date parsing for input JSON strings is disabled.
- * @property {Object} [parse] Object of column parsing options.
+ * @property {object} [parse] Object of column parsing options.
  *  The object keys should be column names. The object values should be
  *  parsing functions to invoke to transform values upon input.
  */
@@ -24,7 +24,7 @@ function autoType(key, value) {
  * date format are parsed into JavaScript Date objects. To disable this
  * behavior, set the autoType option to false. To perform custom parsing
  * of input column values, use the parse option.
- * @param {string|Object} data A string in a JSON format, or a
+ * @param {string|object} data A string in a JSON format, or a
  *  corresponding Object instance.
  * @param {JSONParseOptions} options The formatting options.
  * @param {ColumnTable} table A new table containing the parsed values.

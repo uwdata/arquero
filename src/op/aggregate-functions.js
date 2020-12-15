@@ -21,14 +21,14 @@ function initProduct(s, value) {
 /**
  * Initialize an aggregate operator.
  * @callback AggregateInit
- * @param {Object} state The aggregate state object.
+ * @param {object} state The aggregate state object.
  * @return {void}
  */
 
 /**
  * Add a value to an aggregate operator.
  * @callback AggregateAdd
- * @param {Object} state The aggregate state object.
+ * @param {object} state The aggregate state object.
  * @param {*} value The value to add.
  * @return {void}
  */
@@ -36,7 +36,7 @@ function initProduct(s, value) {
 /**
  * Remove a value from an aggregate operator.
  * @callback AggregateRem
- * @param {Object} state The aggregate state object.
+ * @param {object} state The aggregate state object.
  * @param {*} value The value to remove.
  * @return {void}
  */
@@ -44,13 +44,13 @@ function initProduct(s, value) {
 /**
  * Retrive an output value from an aggregate operator.
  * @callback AggregateValue
- * @param {Object} state The aggregate state object.
+ * @param {object} state The aggregate state object.
  * @return {*} The output value.
  */
 
 /**
  * An operator instance for an aggregate function.
- * @typedef {Object} AggregateOperator
+ * @typedef {object} AggregateOperator
  * @property {AggregateInit} init Initialize the operator.
  * @property {AggregateAdd} add Add a value to the operator state.
  * @property {AggregateRem} rem Remove a value from the operator state.
@@ -66,7 +66,7 @@ function initProduct(s, value) {
 
 /**
  * An operator definition for an aggregate function.
- * @typedef {Object} AggregateDef
+ * @typedef {object} AggregateDef
  * @property {AggregateCreate} create Create a new operator instance.
  * @property {number[]} param Two-element array containing the
  *  counts of input fields and additional parameters.

@@ -16,7 +16,7 @@ import noop from '../util/no-op';
 
 /**
  * An operator instance for a window function.
- * @typedef {Object} WindowOperator
+ * @typedef {object} WindowOperator
  * @property {AggregateInit} init Initialize the operator.
  * @property {AggregateValue} value Retrieve an output value.
  */
@@ -30,7 +30,7 @@ import noop from '../util/no-op';
 
 /**
  * An operator definition for a window function.
- * @typedef {Object} WindowDef
+ * @typedef {object} WindowDef
  * @property {AggregateCreate} create Create a new operator instance.
  * @property {number[]} param Two-element array containing the
  *  counts of input fields and additional parameters.

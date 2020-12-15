@@ -2,9 +2,9 @@ import isFunction from '../../util/is-function';
 
 /**
  * Annotate an expression in an object wrapper.
- * @param {string|Function|Object} expr An expression to annotate.
- * @param {Object} properties The properties to annotate with.
- * @return {Object} A new wrapped expression object.
+ * @param {string|Function|object} expr An expression to annotate.
+ * @param {object} properties The properties to annotate with.
+ * @return {object} A new wrapped expression object.
  */
 export default function(expr, properties) {
   return expr && expr.expr
