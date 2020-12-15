@@ -1,3 +1,4 @@
+import columnSet from '../table/column-set';
 import concat from '../util/concat';
 import isArray from '../util/is-array';
 import unroll from '../util/unroll2';
@@ -8,7 +9,7 @@ function emitter(columns, getters) {
     '{' + concat(columns, (_, i) => `_${i}.push($${i}(${args}));`) + '}');
 }
 
-export default function(tableL, tableR, predicate, { values }, options = {}) {
+export default function(tableL, tableR, predicate, { names, exprs }, options = {}) {
   // initialize data for left table
   const dataL = tableL.data();
   const idxL = tableL.indices(false);
@@ -22,10 +23,13 @@ export default function(tableL, tableR, predicate, { values }, options = {}) {
   const hitR = new Int32Array(nR);
 
   // initialize output data
-  const data = {}, columns = [], getters = [];
-  for (const name in values) {
-    columns.push(data[name] = []);
-    getters.push(values[name]);
+  const ncols = names.length;
+  const cols = columnSet();
+  const columns = Array(ncols);
+  const getters = Array(ncols);
+  for (let i = 0; i < names.length; ++i) {
+    columns[i] = cols.add(names[i], []);
+    getters[i] = exprs[i];
   }
   const emit = emitter(columns, getters);
 
@@ -49,12 +53,7 @@ export default function(tableL, tableR, predicate, { values }, options = {}) {
     }
   }
 
-  return tableL.create({
-    data,
-    filter: null,
-    groups: null,
-    order:  null
-  });
+  return tableL.create(cols.new());
 }
 
 function loopJoin(emit, predicate, dataL, dataR, idxL, idxR, hitL, hitR, nL, nR) {

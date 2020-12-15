@@ -1,27 +1,21 @@
-import Column from '../table/column';
+import columnSet from '../table/column-set';
 
 export default function(table, others) {
   if (others.length === 0) return table;
 
   const tables = [table, ...others];
-  const names = table.columnNames();
   const nrows = tables.reduce((n, t) => n + t.numRows(), 0);
-  const data = {};
+  const cols = columnSet();
 
-  names.forEach(name => {
+  table.columnNames().forEach(name => {
     const arr = Array(nrows);
     let row = 0;
     tables.forEach(table => {
       const col = table.column(name) || { get: () => undefined };
       table.scan(trow => arr[row++] = col.get(trow));
     });
-    data[name] = Column.from(arr);
+    cols.add(name, arr);
   });
 
-  return table.create({
-    data,
-    filter: null,
-    groups: null,
-    order:  null
-  });
+  return table.create(cols.new());
 }

@@ -1,34 +1,34 @@
 import { aggregate, aggregateGet, groupInit, groupOutput } from './reduce/util';
+import columnSet from '../table/column-set';
 
 const opt = (value, defaultValue) => value != null ? value : defaultValue;
 
 export default function(table, on, values, options = {}) {
   const { keys, keyColumn } = pivotKeys(table, on, options);
   const vsep = opt(options.valueSeparator, '_');
-  const namefn = Object.keys(values.values).length > 1
+  const namefn = values.names.length > 1
     ? (i, name) => keys[i] + vsep + name
     : i => keys[i];
 
   // perform separate aggregate operations for each key
   // if keys do not match, emit NaN so aggregate skips it
   // use custom toString method for proper field resolution
-  const results = keys.map(
-    k => values.ops.map(op => {
-      const fields = op.fields.map(f => {
-        const fn = (r, d) => k === keyColumn[r] ? f(r, d) : NaN;
-        fn.toString = () => k + ':' + f + '';
-        return fn;
-      });
-      return { ...op, fields };
-    })
-  ).map(ops => aggregate(table, ops));
+  const results = keys
+    .map(
+      k => values.ops.map(op => {
+        const fields = op.fields.map(f => {
+          const fn = (r, d) => k === keyColumn[r] ? f(r, d) : NaN;
+          fn.toString = () => k + ':' + f + '';
+          return fn;
+        });
+        return { ...op, fields };
+      })
+    )
+    .map(ops => aggregate(table, ops));
 
-  return table.create({
-    data: output(table, values.values, namefn, keys, results),
-    filter: null,
-    groups: null,
-    order: null
-  });
+  return table.create(
+    output(table, values, namefn, results)
+  );
 }
 
 function pivotKeys(table, on, options) {
@@ -37,7 +37,7 @@ function pivotKeys(table, on, options) {
   const ksep = opt(options.keySeparator, '_');
 
   // construct key accessor function
-  const get = aggregateGet(table, on.ops, Object.values(on.values));
+  const get = aggregateGet(table, on.ops, on.exprs);
   const key = get.length === 1
     ? get[0]
     : (row, data) => get.map(fn => fn(row, data)).join(ksep);
@@ -62,21 +62,22 @@ function pivotKeys(table, on, options) {
   };
 }
 
-function output(table, values, namefn, keys, results) {
-  const n = results.length;
-  const data = {};
+function output(table, { names, exprs }, namefn, results) {
+  const n = names.length;
+  const m = results.length;
+  const cols = columnSet();
 
   if (table.isGrouped()) {
     // write groupby fields to output
-    groupOutput(data, table, groupInit(data, table).fill(1));
+    groupOutput(cols.data, table, groupInit(cols, table).fill(1));
 
     // write values to output
     const size = results[0].length;
-    for (const name in values) {
-      const get = values[name];
-      for (let i = 0; i < n; ++i) {
+    for (let i = 0; i < n; ++i) {
+      const get = exprs[i];
+      for (let i = 0; i < m; ++i) {
         const result = results[i];
-        const col = data[namefn(i, name)] = Array(size);
+        const col = cols.add(namefn(i, names[i]), Array(size));
         for (let j = 0; j < size; ++j) {
           col[j] = get(j, null, result[j]);
         }
@@ -84,13 +85,13 @@ function output(table, values, namefn, keys, results) {
     }
   } else {
     // write values to output
-    for (const name in values) {
-      const get = values[name];
-      for (let i = 0; i < n; ++i) {
-        data[namefn(i, name)] = [ get(0, null, results[i]) ];
+    for (let i = 0; i < n; ++i) {
+      const get = exprs[i];
+      for (let j = 0; j < m; ++j) {
+        cols.add(namefn(j, names[i]), [ get(0, null, results[j]) ]);
       }
     }
   }
 
-  return data;
+  return cols.new();
 }

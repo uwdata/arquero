@@ -12,22 +12,22 @@ export default function(table, values) {
 }
 
 function parseValues(table, params) {
-  const exprs = {};
-
   let index = -1;
+  const exprs = new Map();
+  const add = val => exprs.set(++index + '', val);
+
   params.forEach(param => {
     const expr = param.expr != null ? param.expr : param;
 
     if (isObject(expr) && !isFunction(expr)) {
-      for (const key in expr) {
-        exprs[++index] = expr[key];
-      }
+      for (const key in expr) add(expr[key]);
     } else {
-      param = isNumber(expr) ? field(param, table.columnName(expr))
-        : isString(expr) ? field(param)
-        : isFunction(expr) ? param
-        : error(`Invalid orderby field: ${param+''}`);
-      exprs[++index] = param;
+      add(
+        isNumber(expr) ? field(param, table.columnName(expr))
+          : isString(expr) ? field(param)
+          : isFunction(expr) ? param
+          : error(`Invalid orderby field: ${param+''}`)
+      );
     }
   });
 

@@ -124,15 +124,33 @@ export default class QueryBuilder extends Query {
   }
 
   /**
+   * Options for relocate transformations.
+   * @typedef {Object} DeriveOptions
+   * @property {boolean} [drop=false] A flag indicating if the original
+   *  columns should be dropped, leaving only the derived columns. If true,
+   *  the before and after options are ignored.
+   * @property {string|string[]|number|number[]|Object|Function} [before]
+   *  An anchor column that relocated columns should be placed before.
+   *  The value can be any legal column selection. If multiple columns are
+   *  selected, only the first column will be used as an anchor.
+   *  It is an error to specify both before and after options.
+   * @property {string|string[]|number|number[]|Object|Function} [after]
+   *  An anchor column that relocated columns should be placed after.
+   *  The value can be any legal column selection. If multiple columns are
+   *  selected, only the last column will be used as an anchor.
+   *  It is an error to specify both before and after options.
+   */
+
+  /**
    * Derive new column values based on the provided expressions.
    * @param {Object} values Object of name-value pairs defining the
    *  columns to derive. The input object should have output column
    *  names for keys and table expressions for values.
-   * @param {RelocateOptions=} options Options for relocating derived columns.
-   *  Use either a before or after property to indicate where to place
-   *  derived columns. Specifying both before and after is an error. Unlike
-   *  the relocate verb, this option affects only new columns; updated
-   *  columns with existing names are excluded from relocation.
+   * @param {DeriveOptions=} options Options for dropping or relocating
+   *  derived columns. Use either a before or after property to indicate
+   *  where to place derived columns. Specifying both before and after is an
+   *  error. Unlike the relocate verb, this option affects only new columns;
+   *  updated columns with existing names are excluded from relocation.
    * @return {QueryBuilder} A new builder with "derive" verb appended.
    * @example query.derive({ sumXY: d => d.x + d.y })
    * @example query.derive({ z: d => d.x * d.y }, { before: 'x' })

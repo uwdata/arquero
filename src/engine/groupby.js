@@ -7,12 +7,11 @@ export default function(table, exprs) {
   });
 }
 
-function createGroups(table, { values = {}, ops = [] }) {
+function createGroups(table, { names = [], exprs = [], ops = [] }) {
   const data = table.data();
-  const names = Object.keys(values);
   if (names.length === 0) return null;
 
-  let get = aggregateGet(table, ops, Object.values(values));
+  let get = aggregateGet(table, ops, exprs);
   const getKey = keyFunction(get);
   const keys = new Uint32Array(table.totalRows());
   const index = {};

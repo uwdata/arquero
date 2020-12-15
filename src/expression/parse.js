@@ -22,6 +22,7 @@ import codegen from './codegen';
 import compile from './compile';
 import constants from './constants';
 import { getAggregate, getFunction, getWindow, isAggregate, isWindow } from '../op';
+import entries from '../util/entries';
 import isFunction from '../util/is-function';
 import has from '../util/has';
 import error from '../util/error';
@@ -37,13 +38,14 @@ const isFunctionExpression = node =>
   is(FunctionExpression, node) ||
   is(ArrowFunctionExpression, node);
 
-export default function(exprs, opt = {}) {
+export default function(input, opt = {}) {
   const generate = opt.generate || codegen;
   const compiler = opt.compiler || compile;
   const params = getParams(opt);
   const fields = {};
   const opcall = {};
-  const values = {};
+  const names = [];
+  const exprs = [];
   let fieldId = 0;
   let opId = -1;
 
@@ -67,9 +69,8 @@ export default function(exprs, opt = {}) {
         : compiler.param(generate(node), params);
     },
     value(name, node) {
-      values[name] = opt.ast
-        ? clean(node)
-        : compileExpr(generate(node), params);
+      names.push(name);
+      exprs.push(opt.ast ? clean(node) : compileExpr(generate(node), params));
     },
     error(msg, node) {
       // both expresions and fields are parsed
@@ -85,13 +86,13 @@ export default function(exprs, opt = {}) {
   Object.assign(ctx, opt, { params });
 
   // parse each expression
-  for (const name in exprs) {
-    parseExpression(ctx, name, exprs[name]);
+  for (const [name, value] of entries(input)) {
+    parseExpression(ctx, name + '', value);
   }
 
   // return expression asts if requested
   if (opt.ast) {
-    return values;
+    return { names, exprs };
   }
 
   // compile input field accessors
@@ -104,7 +105,7 @@ export default function(exprs, opt = {}) {
   const ops = Object.values(opcall);
   ops.forEach(op => op.fields = op.fields.map(id => f[id]));
 
-  return { ops, values };
+  return { names, exprs, ops };
 }
 
 const getParams = opt => {
@@ -157,7 +158,7 @@ function updateColumnNode(node, key, ctx) {
   const table = index === 0 ? ctx.table
     : index > 0 ? ctx.join[index - 1]
     : null;
-  if (table && !has(table.data(), name)) {
+  if (table && !table.column(name)) {
     ctx.error(`Invalid column "${name}"`, ctx);
   }
 

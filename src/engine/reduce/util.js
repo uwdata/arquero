@@ -92,11 +92,11 @@ export function reduceGroups(table, reducer, groups) {
   return cells;
 }
 
-export function groupInit(data, table) {
+export function groupInit(cols, table) {
   const { names, size } = table.groups();
 
   // initialize group output columns
-  names.forEach(name => data[name] = Array(size));
+  names.forEach(name => cols.add(name, Array(size)));
 
   // return empty row count array
   return new Uint32Array(size + 1);

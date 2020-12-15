@@ -22,10 +22,25 @@ tape('derive overwrites existing columns', t => {
     b: [2, 4, 6, 8]
   };
 
-  const dt = table(data).derive({ a: d => d.a + d.b });
-  t.equal(dt.numRows(), 4, 'num rows');
-  t.equal(dt.numCols(), 2, 'num cols');
-  tableEqual(t, dt, { ...data, a: [3, 7, 11, 15] }, 'derive data');
+  tableEqual(t,
+    table(data).derive({ a: d => d.a + d.b }),
+    { ...data, a: [3, 7, 11, 15] },
+    'derive data'
+  );
+  t.end();
+});
+
+tape('derive drops existing columns with option', t => {
+  const data = {
+    a: [1, 3, 5, 7],
+    b: [2, 4, 6, 8]
+  };
+
+  tableEqual(t,
+    table(data).derive({ z: d => d.a + d.b }, { drop: true }),
+    { z: [3, 7, 11, 15] },
+    'derive data'
+  );
   t.end();
 });
 

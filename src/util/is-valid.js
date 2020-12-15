@@ -1,3 +1,3 @@
-export default function isValid(value) {
+export default function(value) {
   return value != null && value === value;
 }

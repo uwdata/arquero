@@ -4,7 +4,6 @@ import parseValue from './expr/parse';
 import { all, not } from './expr/selection';
 import parse from '../expression/parse';
 import error from '../util/error';
-import has from '../util/has';
 import intersect from '../util/intersect';
 import isArray from '../util/is-array';
 import isString from '../util/is-string';
@@ -35,7 +34,7 @@ export default function(tableL, tableR, on, values, options = {}) {
       values = inferValues(tableL, onL, onR, options);
     }
   } else {
-    predicate = parse({ on }, optParse).values.on;
+    predicate = parse({ on }, optParse).exprs[0];
 
     if (!values) {
       // include all table columns if values not provided
@@ -90,40 +89,43 @@ function inferValues(tableL, onL, onR, options) {
 function parseValues(tableL, tableR, values, optParse, suffix = []) {
   if (isArray(values)) {
     let vL, vR, vJ, n = values.length;
+    vL = vR = vJ = { names: [], exprs: [] };
 
     if (n--) {
-      vL = parseValue('join', tableL, values[0], optParse).values;
+      vL = parseValue('join', tableL, values[0], optParse);
     }
     if (n--) {
-      vR = parseValue('join', tableR, values[1], OPT_R).values;
+      vR = parseValue('join', tableR, values[1], OPT_R);
     }
     if (n--) {
-      vJ = parse(values[2], optParse).values;
+      vJ = parse(values[2], optParse);
     }
 
     // handle name collisions
     const rename = new Set();
-    for (const name in vR) {
-      if (has(vL, name)) {
+    const namesL = new Set(vL.names);
+    vR.names.forEach(name => {
+      if (namesL.has(name)) {
         rename.add(name);
       }
-    }
+    });
     if (rename.size) {
-      vL = rekey(vL, rename, suffix[0] || '_1');
-      vR = rekey(vR, rename, suffix[1] || '_2');
+      rekey(vL.names, rename, suffix[0] || '_1');
+      rekey(vR.names, rename, suffix[1] || '_2');
     }
 
-    return { values: { ...vL, ...vR, ...vJ } };
+
+    return {
+      names: vL.names.concat(vR.names, vJ.names),
+      exprs: vL.exprs.concat(vR.exprs, vJ.exprs)
+    };
   } else {
     return parse(values, optParse);
   }
 }
 
-function rekey(values, names, suffix) {
-  const object = {};
-  for (const name in values) {
-    const key = name + (names.has(name) ? suffix : '');
-    object[key] = values[name];
-  }
-  return object;
+function rekey(names, rename, suffix) {
+  names.forEach((name, i) => rename.has(name)
+    ? (names[i] = name + suffix)
+    : 0);
 }
