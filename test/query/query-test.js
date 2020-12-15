@@ -626,10 +626,23 @@ tape('Query evaluates spread verbs', t => {
       new Query([spread(['list'])]).toObject()
     ).evaluate(dt),
     {
+      'list_1': [1],
+      'list_2': [2],
+      'list_3': [3]
+    },
+    'spread query result, column names'
+  );
+
+  tableEqual(
+    t,
+    Query.from(
+      new Query([spread(['list'], { drop: false })]).toObject()
+    ).evaluate(dt),
+    {
       'list': [[1, 2, 3]],
-      'list1': [1],
-      'list2': [2],
-      'list3': [3]
+      'list_1': [1],
+      'list_2': [2],
+      'list_3': [3]
     },
     'spread query result, column names'
   );
@@ -640,10 +653,10 @@ tape('Query evaluates spread verbs', t => {
       new Query([spread([{ list: d => d.list }])]).toObject()
     ).evaluate(dt),
     {
-      'list': [[1, 2, 3]],
-      'list1': [1],
-      'list2': [2],
-      'list3': [3]
+      // 'list': [[1, 2, 3]],
+      'list_1': [1],
+      'list_2': [2],
+      'list_3': [3]
     },
     'spread query result, table expression'
   );
@@ -654,9 +667,9 @@ tape('Query evaluates spread verbs', t => {
       new Query([spread(['list'], { limit: 2 })]).toObject()
     ).evaluate(dt),
     {
-      'list': [[1, 2, 3]],
-      'list1': [1],
-      'list2': [2]
+      // 'list': [[1, 2, 3]],
+      'list_1': [1],
+      'list_2': [2]
     },
     'spread query result, limit'
   );
