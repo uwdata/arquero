@@ -292,3 +292,35 @@ tape('derive supports recode function', t => {
 
   t.end();
 });
+
+tape('derive supports fill window functions', t => {
+  const t1 = table({ x: ['a', null, undefined, 'b', NaN, null, 'c'] });
+
+  tableEqual(t,
+    t1.derive({ x: op.fill_down('x') }),
+    { x: ['a', 'a', 'a', 'b', 'b', 'b', 'c'] },
+    'derive data, fill_down'
+  );
+
+  tableEqual(t,
+    t1.derive({ x: op.fill_up('x') }),
+    { x: ['a', 'b', 'b', 'b', 'c', 'c', 'c'] },
+    'derive data, fill_up'
+  );
+
+  const t2 = table({ x: [null, 'a', null] });
+
+  tableEqual(t,
+    t2.derive({ x: op.fill_down('x', '?') }),
+    { x: ['?', 'a', 'a'] },
+    'derive data, fill_down with default'
+  );
+
+  tableEqual(t,
+    t2.derive({ x: op.fill_up('x', '?') }),
+    { x: ['a', 'a', '?'] },
+    'derive data, fill_up with default'
+  );
+
+  t.end();
+});

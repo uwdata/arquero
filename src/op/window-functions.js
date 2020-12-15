@@ -1,4 +1,5 @@
 import error from '../util/error';
+import isValid from '../util/is-valid';
 import noop from '../util/no-op';
 
 /**
@@ -216,5 +217,41 @@ export default {
       };
     },
     param: [1, 1]
+  },
+
+  /** @type {WindowDef} */
+  fill_down: {
+    create(defaultValue) {
+      let value;
+      return {
+        init: () => value = defaultValue,
+        value: (w, f) => {
+          const v = w.value(w.index, f);
+          return isValid(v) ? (value = v) : value;
+        }
+      };
+    },
+    param: [1, 1]
+  },
+
+  /** @type {WindowDef} */
+  fill_up: {
+    create(defaultValue) {
+      let value, idx;
+      return {
+        init: () => (value = defaultValue, idx = -1),
+        value: (w, f) => w.index <= idx ? value
+          : (idx = find(w, f, w.index)) >= 0 ? (value = w.value(idx, f))
+          : (idx = w.size, value = defaultValue)
+      };
+    },
+    param: [1, 1]
   }
 };
+
+function find(w, f, i) {
+  for (const n = w.size; i < n; ++i) {
+    if (isValid(w.value(i, f))) return i;
+  }
+  return -1;
+}
