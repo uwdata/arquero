@@ -83,12 +83,16 @@ aq.from(new Map([ ['d', 4], ['e', 5], ['f', 6] ])
 <hr/><a id="fromArrow" href="#fromArrow">#</a>
 <em>aq</em>.<b>fromArrow</b>(<i>arrowTable</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-arrow.js)
 
-Create a new <a href="table">table</a> backed by an [Apache Arrow](https://arrow.apache.org/) table instance.
+Create a new <a href="table">table</a> backed by an [Apache Arrow](https://arrow.apache.org/docs/js/) table instance. Both standard and filtered tables are supported. If the input Arrow table is filtered, new column arrays are created and filled with unpacked, non-filtered values.
 
- * *arrowTable*: An Apache Arrow data table.
- * *options*: An Arrow import options object:
-   * *columns*: Ordered list of column names to include.
-   * *unpack*: A boolean flag (default `false`) to unpack binary-encoded Arrow data to standard JavaScript values. Unpacking can incur an upfront time and memory cost to extract data to new arrays, but can speed up later query processing by enabling faster data access.
+For primitive data types, by default Arquero uses the binary-encoded Arrow columns as-is with zero data copying. Nested list or struct types are always unpacked into JavaScript array or object instances, respectively.
+
+The *unpack* option determines if Arrow data should be "unpacked" from binary format to standard JavaScript values. By default, Arrow columns for non-nested data types are used directly. This avoids data copies, but can result in slower access paths, particularly for dictionary columns and strings that need to be extracted from a backing buffer. With *unpack* set to `true`, Arquero performs extraction up front, increasing initialization time and memory use, but enabling faster performance for subsequent queries.
+
+* *arrowTable*: An [Apache Arrow](https://arrow.apache.org/docs/js/) data table.
+* *options*: An Arrow import options object:
+  * *columns*: Ordered list of column names to include.
+  * *unpack*: A boolean flag (default `false`) to unpack binary-encoded Arrow data to standard JavaScript values. Unpacking can incur an upfront time and memory cost to extract data to new arrays, but can speed up later query processing by enabling faster data access.
 
 *Examples*
 
@@ -104,12 +108,12 @@ aq.fromArrow(await arrow.Table.from(fetch(url)))
 
 Parse a comma-separated values (CSV) *text* string into a <a href="table">table</a>. Delimiters other than commas, such as tabs or pipes ('\|'), can be specified using the *options* argument. By default, automatic type inference is performed for input values; string values that match the ISO standard date format are parsed into JavaScript Date objects. To disable this behavior set *options.autoType* to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use *options.parse*.
 
- * *text*: A string in a delimited-value format.
- * *options*: A CSV format options object:
-   * *delimiter*: The delimiter string between column values.
-   * *header*: Boolean flag (default `true`) to specify the presence of a  header row. If `true`, indicates the CSV contains a header row with column names. If `false`, indicates the CSV does not contain a header row and the columns are given the names `'col1'`, `'col2'`, and so on.
-   * *autoType*: Boolean flag (default `true`) for automatic type inference.
-   * *parse*: Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
+* *text*: A string in a delimited-value format.
+* *options*: A CSV format options object:
+  * *delimiter*: The delimiter string between column values.
+  * *header*: Boolean flag (default `true`) to specify the presence of a  header row. If `true`, indicates the CSV contains a header row with column names. If `false`, indicates the CSV does not contain a header row and the columns are given the names `'col1'`, `'col2'`, and so on.
+  * *autoType*: Boolean flag (default `true`) for automatic type inference.
+  * *parse*: Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
 
 *Examples*
 
