@@ -93,7 +93,7 @@ export function range(start, end) {
 export function matches(pattern) {
   if (isString(pattern)) pattern = RegExp(escapeRegExp(pattern));
   return decorate(
-    table => table.columnNames().filter(name => pattern.test(name)),
+    table => table.columnNames(name => pattern.test(name)),
     () => ({ matches: [pattern.source, pattern.flags] })
   );
 }
