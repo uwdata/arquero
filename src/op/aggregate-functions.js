@@ -1,4 +1,5 @@
 import bins from '../util/bins';
+import distinctMap from '../util/distinct-map';
 import isBigInt from '../util/is-bigint';
 import noop from '../util/no-op';
 import product from '../util/product';
@@ -124,25 +125,10 @@ export default {
   /** @type {AggregateDef} */
   distinct: {
     create: () => ({
-      init: s => {
-        s.counts = new Map();
-        s.distinct = 0;
-      },
-      value: s => s.distinct + (s.valid === s.count ? 0 : 1),
-      add: (s, v) => {
-        const count = s.counts.get(v) || 0;
-        s.counts.set(v, count + 1);
-        if (count < 1) ++s.distinct;
-      },
-      rem: (s, v) => {
-        const count = s.counts.get(v);
-        if (count === 1) {
-          --s.distinct;
-          s.counts.delete(v);
-        } else {
-          s.counts.set(v, count - 1);
-        }
-      }
+      init: s => s.distinct = distinctMap(),
+      value: s => s.distinct.count() + (s.valid === s.count ? 0 : 1),
+      add: (s, v) => s.distinct.increment(v),
+      rem: (s, v) => s.distinct.decrement(v)
     }),
     param: [1]
   },
@@ -150,7 +136,7 @@ export default {
   /** @type {AggregateDef} */
   unique: {
     create: () => initOp({
-      value: s => Array.from(s.counts.keys())
+      value: s => s.distinct.values()
     }),
     param: [1],
     req: ['distinct']
@@ -162,12 +148,12 @@ export default {
       value: s => {
         let mode = undefined;
         let max = 0;
-        for (const [value, count] of s.counts) {
+        s.distinct.forEach((value, count) => {
           if (count > max) {
             max = count;
             mode = value;
           }
-        }
+        });
         return mode;
       }
     }),
