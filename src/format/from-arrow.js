@@ -3,6 +3,7 @@ import error from '../util/error';
 import toString from '../util/to-string';
 import unroll from '../util/unroll';
 import unroll2 from '../util/unroll2';
+import resolve, { all } from '../verbs/expr/selection';
 
 // Hardwire Arrow type ids to avoid explicit dependency
 // https://github.com/apache/arrow/blob/master/js/src/enum.ts
@@ -12,7 +13,12 @@ export const STRUCT = 13;
 /**
  * Options for Apache Arrow import.
  * @typedef {object} ArrowOptions
- * @property {string[]} [columns] Ordered list of column names to import.
+ * @property {string|string[]|number|number[]|object|Function} columns
+ *  An ordered set of columns to import. The input may consist of:
+ *  - column name strings,
+ *  - column integer indices,
+ *  - objects with current column names as keys and new column names as values (for renaming), or
+ *  - selection helper functions such as {@link all}, {@link not}, or {@link range}.
  * @property {boolean} [unpack=false] Flag to unpack binary-encoded Arrow
  *  data to standard JavaScript values. Unpacking can incur an upfront time
  *  and memory cost to extract data to new arrays, but can speed up later
@@ -26,19 +32,32 @@ export const STRUCT = 13;
  * @param {ColumnTable} table A new table containing the imported values.
  */
 export default function(arrowTable, options = {}) {
-  const names = options.columns || arrowTable.schema.fields.map(f => f.name);
+  const { names, cols } = resolveColumns(arrowTable, options.columns);
   const count = arrowTable.count();
-
-  const cols = names.map(name =>
-    arrowTable.getColumn(name) ||
-    error(`Arrow column does not exist: ${toString(name)}`)
-  );
 
   const data = arrowTable.length === count
     ? collect(names, cols, !!options.unpack)
     : collectFiltered(arrowTable, names, cols, count);
 
   return new ColumnTable(data, null, null, null, null, names);
+}
+
+function resolveColumns(arrowTable, selection) {
+  const fields = arrowTable.schema.fields.map(f => f.name);
+  const map = resolve({
+    columnNames: filter => filter ? fields.filter(filter) : fields.slice(),
+    columnIndex: name => fields.indexOf(name)
+  }, selection || all());
+
+  const names = [];
+  const cols = [];
+
+  map.forEach((name, key) => {
+    names.push(name);
+    cols.push(arrowTable.getColumn(key));
+  });
+
+  return { names, cols };
 }
 
 function collect(names, cols, unpack) {

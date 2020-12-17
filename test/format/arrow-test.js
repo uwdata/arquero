@@ -1,5 +1,6 @@
 import tape from 'tape';
 import fromArrow, { LIST, STRUCT } from '../../src/format/from-arrow';
+import { not } from '../../src/verbs';
 
 // test stubs for Arrow Column API
 function arrowColumn(data, nullCount = 0) {
@@ -122,6 +123,35 @@ tape('fromArrow can unpack Apache Arrow tables', t => {
   t.notEqual(dt.column('v').data, u._data, 'copy column data with nulls');
   t.deepEqual(dt.column('x').data, x._data, 'unpack dictionary column without nulls');
   t.deepEqual(dt.column('y').data, y._data, 'unpack dictionary column with nulls');
+  t.end();
+});
+
+tape('fromArrow can select Apache Arrow columns', t => {
+  const u = arrowColumn([1, 2, 3, 4, 5]);
+  const v = arrowColumn(['a', 'b', null, 'd', 'e'], 1);
+  const x = arrowDictionary(['cc', 'dd', 'cc', 'dd', 'cc']);
+  const y = arrowDictionary(['aa', 'aa', null, 'bb', 'bb']);
+  const at = arrowTable({ u, v, x, y });
+
+  const s1 = fromArrow(at, { columns: 'x' });
+  t.deepEqual(s1.columnNames(), ['x'], 'select by column name');
+  t.equal(s1.column('x'), x, 'correct column selected');
+
+  const s2 = fromArrow(at, { columns: ['u', 'y'] });
+  t.deepEqual(s2.columnNames(), ['u', 'y'], 'select by column names');
+  t.equal(s2.column('u'), u, 'correct column selected');
+  t.equal(s2.column('y'), y, 'correct column selected');
+
+  const s3 = fromArrow(at, { columns: not('u', 'y') });
+  t.deepEqual(s3.columnNames(), ['v', 'x'], 'select by helper');
+  t.equal(s3.column('v'), v, 'correct column selected');
+  t.equal(s3.column('x'), x, 'correct column selected');
+
+  const s4 = fromArrow(at, { columns: { u: 'a', x: 'b'} });
+  t.deepEqual(s4.columnNames(), ['a', 'b'], 'select by helper');
+  t.equal(s4.column('a'), u, 'correct column selected');
+  t.equal(s4.column('b'), x, 'correct column selected');
+
   t.end();
 });
 
