@@ -3,7 +3,7 @@ import fromArrow, { LIST, STRUCT } from '../../src/format/from-arrow';
 
 // test stubs for Arrow Column API
 function arrowColumn(data, nullCount = 0) {
-  return {
+  const column = {
     length: data.length,
     get: row => data[row],
     toArray: () => data,
@@ -12,6 +12,9 @@ function arrowColumn(data, nullCount = 0) {
     nullCount,
     _data: data
   };
+
+  column.chunks = [ column ];
+  return column;
 }
 
 function arrowDictionary(data) {
@@ -40,7 +43,7 @@ function arrowDictionary(data) {
     get: row => data[row],
     toArray: () => data,
     [Symbol.iterator]: () => data[Symbol.iterator](),
-    dictionary: { toArray: () => dict },
+    dictionary: { toArray: () => dict, get: idx => dict[idx] },
     nullCount,
     nullBitmap: nullCount ? bitmap : null,
     data: { values: keys, length: data.length },
@@ -52,14 +55,14 @@ function arrowDictionary(data) {
 }
 
 function arrowListColumn(data) {
-  const c = arrowColumn(data.map(d => d ? arrowColumn(d) : null));
-  c.typeId = LIST;
-  c.numChildren = 1;
-  return c;
+  const column = arrowColumn(data.map(d => d ? arrowColumn(d) : null));
+  column.typeId = LIST;
+  column.numChildren = 1;
+  return column;
 }
 
 function arrowStructColumn(valid, names, children) {
-  return {
+  const column = {
     type: { children: names.map(name => ({ name })) },
     typeId: STRUCT,
     length: valid.length,
@@ -67,15 +70,32 @@ function arrowStructColumn(valid, names, children) {
     getChildAt: i => children[i],
     isValid: row => !!valid[row]
   };
+
+  column.chunks = [ column ];
+  return column;
 }
 
 // test stub for Arrow Table API
-function arrowTable(columns) {
+function arrowTable(columns, filter) {
+  const names = Object.keys(columns);
+  const length = columns[names[0]].length;
+
   return {
-    schema: {
-      fields: Object.keys(columns).map(name => ({ name }))
-    },
-    getColumn: name => columns[name]
+    getColumn: name => columns[name],
+    length,
+    schema: { fields: names.map(name => ({ name })) },
+    count: filter
+      ? () => filter.reduce((s, v) => s += +v, 0)
+      : () => length,
+    scan: filter
+      ? (next, bind) => {
+          bind();
+          for (let i = 0; i < length; ++i) (filter[i] ? next(i) : 0);
+        }
+      : (next, bind) => {
+          bind();
+          for (let i = 0; i < length; ++i) next(i);
+        }
   };
 }
 
@@ -138,5 +158,46 @@ tape('fromArrow can read nested Apache Arrow structs', t => {
   const dt = fromArrow(at);
 
   t.deepEqual(dt.column('s').data, d, 'extract nested Arrow struct');
+  t.end();
+});
+
+tape('fromArrow can read filtered Apache Arrow tables', t => {
+  const n = arrowColumn([1, null, null, 4, 5], 2);
+  n.typeId = 2;
+  n.ArrayType = Int32Array;
+
+  const u = arrowColumn(Int8Array.of(1, 2, 3, 4, 5));
+  u.typeId = 2;
+  u.ArrayType = Int8Array;
+
+  const v = arrowColumn(Float64Array.of(1.2, 2.3, 3.4, 4.5, 5.6));
+  v.typeId = 3;
+  v.ArrayType = Float64Array;
+
+  const w = arrowColumn(['a', 'b', null, 'd', 'e'], 1);
+  const x = arrowDictionary(['cc', 'dd', 'cc', 'dd', 'cc']);
+  const y = arrowDictionary(['aa', 'aa', null, 'bb', 'bb']);
+  const ft = arrowTable({ n, u, v, w, x, y }, [1, 1, 0, 0, 1]);
+  const dt = fromArrow(ft);
+
+  const data = ['n', 'u', 'v', 'w', 'x', 'y']
+    .map(name => dt.column(name).data);
+
+  t.ok(
+    data[0] instanceof Array &&
+    data[1] instanceof Int8Array &&
+    data[2] instanceof Float64Array,
+    'proper array types are used'
+  );
+
+  t.deepEqual(
+    data.map(col => Array.from(col)),
+    [
+      [1, null, 5], [1, 2, 5], [1.2, 2.3, 5.6],
+      ['a', 'b', 'e'], ['cc', 'dd', 'cc'], ['aa', 'aa', 'bb']
+    ],
+    'extract filtered Arrow data'
+  );
+
   t.end();
 });
