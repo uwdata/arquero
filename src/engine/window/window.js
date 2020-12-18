@@ -70,8 +70,9 @@ function windowStates(ops, data) {
       : winOps.push(windowOp(op));
   });
 
-  return Object.values(map).map(_ =>
-    windowState(data, _.frame, _.peers, _.winOps, reducers(_.aggOps, true)
+  return Object.values(map).map(_ => windowState(
+    data, _.frame, _.peers, _.winOps,
+    reducers(_.aggOps, _.frame[0] != null)
   ));
 }
 
