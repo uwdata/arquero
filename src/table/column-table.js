@@ -149,6 +149,7 @@ export default class ColumnTable extends Table {
    */
   reify(indices) {
     const nrows = indices ? indices.length : this.numRows();
+    const names = this._names;
     let data, groups;
 
     if (!indices && !this.isOrdered()) {
@@ -161,7 +162,6 @@ export default class ColumnTable extends Table {
 
     if (!data) {
       const scan = indices ? f => indices.forEach(f) : f => this.scan(f, true);
-      const names = this.columnNames();
       const ncols = names.length;
       data = {};
 
@@ -178,7 +178,7 @@ export default class ColumnTable extends Table {
       }
     }
 
-    return this.create({ data, groups, filter: null, order: null });
+    return this.create({ data, names, groups, filter: null, order: null });
   }
 
   /**
