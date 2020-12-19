@@ -1,10 +1,11 @@
 import columnSet from '../table/column-set';
 
 export default function(table, others) {
-  if (others.length === 0) return table;
+  const trows = table.numRows();
+  const nrows = trows + others.reduce((n, t) => n + t.numRows(), 0);
+  if (trows === nrows) return table;
 
   const tables = [table, ...others];
-  const nrows = tables.reduce((n, t) => n + t.numRows(), 0);
   const cols = columnSet();
 
   table.columnNames().forEach(name => {
