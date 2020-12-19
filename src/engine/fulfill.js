@@ -41,7 +41,7 @@ export default function(table, keys, values) {
 
 function enumerate(data, groups, values, callback) {
   const offset = groups ? groups.get.length : 0;
-  const pad = (groups ? 1 : 0);
+  const pad = groups ? 1 : 0;
   const len = pad + values.length;
   const lens = new Int32Array(len);
   const idxs = new Int32Array(len);
@@ -72,6 +72,7 @@ function enumerate(data, groups, values, callback) {
   }
   callback(vec);
 
+  // enumerate all combinations of values
   for (let i = len - 1; i >= 0;) {
     const idx = ++idxs[i];
     if (idx < lens[i]) {
