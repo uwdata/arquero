@@ -1,6 +1,10 @@
 import functions from './functions';
 import Op from './op';
 
+export const any = (field) => Op('any', field);
+
+export const unique = (field) => Op('unique', field);
+
 /**
  * All table expression operations. including normal functions,
  * aggregate functions, and window functions.
@@ -19,7 +23,7 @@ export default {
    * @param {*} field The data field.
    * @return {*} An arbitrary observed value.
    */
-  any: (field) => Op('any', field),
+  any: any,
 
   /**
    * Aggregate function to collect an array of values.
@@ -56,7 +60,7 @@ export default {
    * @param {*} field The data field.
    * @return {Array} The array of unique values.
    */
-  unique: (field) => Op('unique', field),
+  unique,
 
   /**
    * Aggregate function to determine the mode (most frequent) value.

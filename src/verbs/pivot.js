@@ -1,4 +1,5 @@
 import _pivot from '../engine/pivot';
+import { any } from '../op/op-api';
 import parse from './expr/parse';
 
 // TODO: enforce aggregates only (no output changes) for values
@@ -11,10 +12,9 @@ export default function(table, on, values, options) {
   );
 }
 
+// map direct field reference to "any" aggregate
 function preparse(map) {
-  // map direct field reference to "any" aggregate
-  map.forEach((value, key) => value.field
-    ? map.set(key, `d => any(d[${JSON.stringify(value+'')}])`)
-    : 0
+  map.forEach((value, key) =>
+    value.field ? map.set(key, any(value + '')) : 0
   );
 }
