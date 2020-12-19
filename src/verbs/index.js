@@ -3,6 +3,7 @@ import __derive from './derive';
 import __except from './except';
 import __filter from './filter';
 import __fold from './fold';
+import __fulfill from './fulfill';
 import __intersect from './intersect';
 import __join from './join';
 import __semijoin from './join-filter';
@@ -51,6 +52,7 @@ Object.assign(ColumnTable.prototype, {
   __except,
   __filter,
   __fold,
+  __fulfill,
   __intersect,
   __join,
   __lookup,
