@@ -18,7 +18,7 @@ export default function(table, { names, exprs, ops }) {
   return table.create(cols.new());
 }
 
-function output(names, exprs, grouped, result, cols) {
+function output(names, exprs, grouped, result = [], cols) {
   const size = grouped ? result.length : 1;
   const n = names.length;
 

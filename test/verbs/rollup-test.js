@@ -63,6 +63,20 @@ tape('rollup handles empty tables', t => {
   t.end();
 });
 
+tape('rollup handles empty input', t => {
+  const dt = table({ x: ['a', 'b', 'c'] });
+
+  tableEqual(t, dt.rollup(), { }, 'rollup data, no groups');
+
+  tableEqual(t,
+    dt.groupby('x').rollup(),
+    { x: ['a', 'b', 'c'] },
+    'rollup data, groups'
+  );
+
+  t.end();
+});
+
 tape('rollup supports bigint values', t => {
   const data = {
     v: [1n, 2n, 3n, 4n, 5n]
