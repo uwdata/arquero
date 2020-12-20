@@ -23,8 +23,13 @@ class ColumnSet {
 
   new() {
     this.filter = null;
-    this.groups = null;
+    this.groups = this.groups || null;
     this.order = null;
+    return this;
+  }
+
+  groupby(groups) {
+    this.groups = groups;
     return this;
   }
 }
