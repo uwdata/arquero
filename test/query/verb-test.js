@@ -9,7 +9,7 @@ import { field, func } from './util';
 const {
   count, dedupe, derive, filter, groupby, orderby,
   reify, rollup, sample, select, ungroup, unorder,
-  relocate, pivot, unroll, join, concat
+  relocate, impute, pivot, unroll, join, concat
 } = Verbs;
 
 function test(t, verb, expect, msg) {
@@ -353,6 +353,29 @@ tape('unorder verb serializes to object', t => {
     unorder(),
     { verb: 'unorder' },
     'serialized unorder verb'
+  );
+
+  t.end();
+});
+
+tape('impute verb serializes to object', t => {
+  const verb = impute(
+    { v: () => 0 },
+    { expand: 'x' }
+  );
+
+  test(t,
+    verb,
+    {
+      verb: 'impute',
+      values: {
+        v: func('() => 0')
+      },
+      options: {
+        expand: 'x'
+      }
+    },
+    'serialized impute verb'
   );
 
   t.end();

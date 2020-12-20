@@ -11,7 +11,7 @@ import { field, func } from './util';
 const {
   count, dedupe, derive, filter, groupby, orderby,
   reify, rollup, select, sample, ungroup, unorder,
-  relocate, fold, pivot, spread, unroll,
+  relocate, impute, fold, pivot, spread, unroll,
   cross, join, semijoin, antijoin,
   concat, union, except, intersect
 } = Verbs;
@@ -510,11 +510,41 @@ tape('Query evaluates unorder verbs', t => {
   t.end();
 });
 
+tape('Query evaluates impute verbs', t => {
+  const dt = table({
+    x: [1, 2],
+    y: [3, 4],
+    z: [1, 1]
+  });
+
+  const imputed = {
+    x: [1, 2, 1, 2],
+    y: [3, 4, 4, 3],
+    z: [1, 1, 0, 0]
+  };
+
+  const verb = impute(
+    { z: () => 0 },
+    { expand: ['x', 'y'] }
+  );
+
+  tableEqual(
+    t,
+    Query.from(
+      new Query([verb]).toObject()
+    ).evaluate(dt),
+    imputed,
+    'impute query result'
+  );
+
+  t.end();
+});
+
 tape('Query evaluates fold verbs', t => {
   const dt = table({
     foo: [0, 1, 2, 3],
     bar: [1, 1, 0, 0]
-   });
+  });
 
   const folded =  {
     key: [ 'foo', 'bar', 'foo', 'bar', 'foo', 'bar', 'foo', 'bar' ],
@@ -559,7 +589,7 @@ tape('Query evaluates pivot verbs', t => {
   const dt = table({
     foo: [0, 1, 2, 3],
     bar: [1, 1, 0, 0]
-   });
+  });
 
   tableEqual(
     t,
