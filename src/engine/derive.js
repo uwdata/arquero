@@ -2,7 +2,6 @@ import { window } from './window/window';
 import { aggregate } from './reduce/util';
 import { isWindow } from '../op';
 import columnSet from '../table/column-set';
-import toArray from '../util/to-array';
 
 function isWindowed(op) {
   return isWindow(op.name) ||
@@ -24,7 +23,7 @@ export default function(table, { names, exprs, ops }, options = {}) {
 
   // perform table scans to generate output values
   winOps.length
-    ? window(table, data, exprs, toArray(result), winOps)
+    ? window(table, data, exprs, table.isGrouped() ? result : [result], winOps)
     : output(table, data, exprs, result);
 
   return table.create(cols);
@@ -33,10 +32,11 @@ export default function(table, { names, exprs, ops }, options = {}) {
 function segmentOps(ops) {
   const aggOps = [];
   const winOps = [];
+  const n = ops.length;
 
-  for (const key in ops) {
-    const op = ops[key];
-    op.id = key;
+  for (let i = 0; i < n; ++i) {
+    const op = ops[i];
+    op.id = i;
     (isWindowed(op) ? winOps : aggOps).push(op);
   }
 

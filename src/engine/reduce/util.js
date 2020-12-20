@@ -40,7 +40,7 @@ export function aggregate(table, ops) {
     return result;
   } else {
     // instantiate aggregate result object
-    const result = {};
+    const result = [];
 
     // compute aggregates, extract results
     aggrs.forEach(aggr => {
