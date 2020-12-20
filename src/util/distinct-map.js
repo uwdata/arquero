@@ -1,8 +1,4 @@
-import isDate from './is-date';
-
-function key(value) {
-  return isDate(value) ? '#date:' + +value : value;
-}
+import { key } from './key-function';
 
 export default function() {
   const map = new Map();

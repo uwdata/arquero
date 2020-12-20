@@ -3,7 +3,7 @@ import isDate from './is-date';
 import isRegExp from './is-regexp';
 import isTypedArray from './is-typed-array';
 
-function key(value) {
+export function key(value) {
   const type = typeof value;
   return type === 'string' ? `"${value}"`
     : type !== 'object' || !value ? value
