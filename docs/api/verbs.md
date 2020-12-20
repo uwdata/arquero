@@ -17,11 +17,12 @@ title: Verbs \| Arquero API Reference
 * [Join Verbs](#joins)
   * [join](#join), [join_left](#join_left), [join_right](#join_right), [join_full](#join_full), [cross](#cross), [lookup](#lookup)
   * [semijoin](#semijoin), [antijoin](#antijoin)
+* [Cleaning Verbs](#cleaning)
+  * [dedupe](#dedupe), [impute](#impute)
 * [Reshape Verbs](#reshape)
   * [fold](#fold), [pivot](#pivot)
   * [spread](#spread), [unroll](#unroll)
 * [Set Verbs](#sets)
-  * [dedupe](#dedupe)
   * [concat](#concat), [union](#union)
   * [intersect](#intersect), [except](#except)
 
@@ -458,6 +459,67 @@ table.antijoin(other, (a, b) => op.equal(a.keyL, b.keyR))
 
 <br/>
 
+## <a id="cleaning">Cleaning Verbs</a>
+
+<hr/><a id="dedupe" href="#dedupe">#</a>
+<em>table</em>.<b>dedupe</b>(<i>...keys</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+
+De-duplicate table rows by removing repeated row values.
+
+* *keys*: Key columns to check for duplicates. Two rows are considered duplicates if they have matching values for all keys. If keys are unspecified, all columns are used. Keys may be column name strings, column index numbers, or value objects with output column names for keys and table expressions for values.
+
+*Examples*
+
+```js
+// remove rows that duplicate all column values
+table.dedupe()
+```
+
+```js
+// remove rows that duplicate the 'a' and 'b' columns
+table.dedupe('a', 'b')
+```
+
+```js
+// remove rows that duplicate the absolute value of column 'a'
+table.dedupe({ abs: d => op.abs(d.a) })
+```
+
+
+<hr/><a id="impute" href="#impute">#</a>
+<em>table</em>.<b>impute</b>(<i>values</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+
+Impute missing values or rows. Any of `null`, `undefined`, or `NaN` are considered missing values.
+
+The *expand* option additionally imputes new rows for missing combinations of values. All combinations of expand values (the full cross product) are considered for each group (if specified by [groupby](#groupby)). New rows are added for any combination of expand and groupby values not already contained in the table; the additional columns are populated with imputed values (if specified in *values*) or are otherwise `undefined`.
+
+The output table persists a [groupby](#groupby) specification. If the *expand* option is specified, a reified table is returned without any [filter](#filter) or [orderby](#orderby) settings.
+
+* *values*: Object of name-value pairs for the column values to impute. The input object should have existing column names for keys and table expressions for values. The expressions will be evaluated to determine replacements for any missing values (`null`, `undefined`, or `NaN`).
+* *options*: An options object:
+  * *expand*: Impute new rows for any missing combinations of the provided expansion values. Accepts column names, column indices, or an object of name-expression pairs. Table expressions must be valid inputs to [rollup](#rollup). All combinations of values will be checked for each unique set of groupby values.
+
+*Examples*
+
+```js
+// replace missing values in column 'v' with zeros
+table.impute({ v: () => 0 })
+```
+
+```js
+// replace missing values in column 'v' with the mean of non-missing values
+table.impute({ v: d => op.mean(d.v) })
+```
+
+```js
+// replace missing values in column 'v' with zeros
+// impute rows based on all combinations of values in columns 'x' and 'y'
+table.impute({ v: () => 0 }, { expand: ['x', 'y'] })
+```
+
+
+<br/>
+
 ## <a id="reshape">Reshape Verbs</a>
 
 <hr/><a id="fold" href="#fold">#</a>
@@ -562,28 +624,6 @@ table.unroll('colA', { limit: 1000, index: 'idxnum' })
 <br/>
 
 ## <a id="sets">Set Verbs</a>
-
-<hr/><a id="dedupe" href="#dedupe">#</a>
-<em>table</em>.<b>dedupe</b>(<i>...keys</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
-
-De-duplicate table rows by removing repeated row values.
-
-* *keys*: Key columns to check for duplicates. Two rows are considered duplicates if they have matching values for all keys. If keys are unspecified, all columns are used. Keys may be column name strings, column index numbers, or value objects with output column names for keys and table expressions for values.
-
-*Examples*
-
-```js
-table.dedupe()
-```
-
-```js
-table.dedupe('a', 'b')
-```
-
-```js
-table.dedupe({ abs: d => op.abs(d.a) })
-```
-
 
 <hr/><a id="concat" href="#concat">#</a>
 <em>table</em>.<b>concat</b>(<i>...tables</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)

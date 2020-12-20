@@ -124,9 +124,6 @@ export const Verbs = {
   count:      createVerb('count', [
                 { name: 'options', type: Options }
               ]),
-  dedupe:     createVerb('dedupe', [
-                { name: 'keys', type: ExprList, default: [] }
-              ]),
   derive:     createVerb('derive', [
                 { name: 'values', type: ExprObject },
                 { name: 'options', type: Options,
@@ -161,6 +158,13 @@ export const Verbs = {
   ungroup:    createVerb('ungroup'),
   unorder:    createVerb('unorder'),
   reify:      createVerb('reify'),
+  dedupe:     createVerb('dedupe', [
+                { name: 'keys', type: ExprList, default: [] }
+              ]),
+  impute:     createVerb('impute', [
+                { name: 'values', type: ExprObject },
+                { name: 'options', type: Options, props: { expand: ExprList } }
+              ]),
   fold:       createVerb('fold', [
                 { name: 'values', type: ExprList },
                 { name: 'options', type: Options }
