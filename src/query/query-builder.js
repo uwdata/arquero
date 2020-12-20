@@ -146,7 +146,7 @@ export default class QueryBuilder extends Query {
    * @param {object} values Object of name-value pairs defining the
    *  columns to derive. The input object should have output column
    *  names for keys and table expressions for values.
-   * @param {DeriveOptions=} options Options for dropping or relocating
+   * @param {DeriveOptions} [options] Options for dropping or relocating
    *  derived columns. Use either a before or after property to indicate
    *  where to place derived columns. Specifying both before and after is an
    *  error. Unlike the relocate verb, this option affects only new columns;
@@ -291,7 +291,7 @@ export default class QueryBuilder extends Query {
    *  If number-valued, the same sample size is used for each group.
    *  If function-valued, the input should be an aggregate table
    *  expression compatible with {@link QueryBuilder#rollup}.
-   * @param {SampleOptions=} options Options for sampling.
+   * @param {SampleOptions} [options] Options for sampling.
    * @return {QueryBuilder} A new builder with "sample" verb appended.
    * @example query.sample(50)
    * @example query.sample(100, { replace: true })
@@ -361,7 +361,7 @@ export default class QueryBuilder extends Query {
    *  with column name strings, objects with output names as keys and current
    *  names as values (output names will be ignored), or the output of the
    *  selection helper functions {@link all}, {@link not}, or {@link range}.
-   * @param {FoldOptions=} options Options for folding.
+   * @param {FoldOptions} [options] Options for folding.
    * @return {QueryBuilder} A new builder with "fold" verb appended.
    * @example query.fold('colA')
    * @example query.fold(['colA', 'colB'])
@@ -397,7 +397,7 @@ export default class QueryBuilder extends Query {
    *  Column string names will be wrapped in any *any* aggregate.
    *  If object-valued, the input object should have output value
    *  names for keys and table expressions for values.
-   * @param {PivotOptions=} options Options for pivoting.
+   * @param {PivotOptions} [options] Options for pivoting.
    * @return {QueryBuilder} A new builder with "pivot" verb appended.
    * @example query.pivot('key', 'value')
    * @example query.pivot(['keyA', 'keyB'], ['valueA', 'valueB'])
@@ -422,7 +422,7 @@ export default class QueryBuilder extends Query {
    * Output columns are named based on the value key and array index.
    * @param {string|Array|object} values The columns to spread, as either
    *  an array of column names or a key-value object of table expressions.
-   * @param {SpreadOptions=} [options] Options for spreading.
+   * @param {SpreadOptions} [options] Options for spreading.
    * @return {QueryBuilder} A new builder with "spread" verb appended.
    * @example query.spread({ a: split(d.text, '') })
    * @example query.spread('arrayCol', { limit: 100 })
