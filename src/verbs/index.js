@@ -5,7 +5,7 @@ import __filter from './filter';
 import __fold from './fold';
 import __intersect from './intersect';
 import __join from './join';
-import __join_filter from './join-filter';
+import __semijoin from './join-filter';
 import __lookup from './lookup';
 import __pivot from './pivot';
 import __relocate from './relocate';
@@ -23,11 +23,29 @@ import __reduce from '../engine/reduce';
 import __ungroup from '../engine/ungroup';
 import __unorder from '../engine/unorder';
 
+import { count } from '../op/op-api';
 import ColumnTable from '../table/column-table';
 import mapObject from '../util/map-object';
 
+const __count = (table, options) => __rollup(table, {
+  [options && options.as || 'count']: count()
+});
+
+const __cross = (table, other, values, options) => __join(
+  table, other,
+  () => true,
+  values,
+  { ...options, left: true, right: true }
+);
+
+const __antijoin = (table, other, on) =>
+  __semijoin(table, other, on, { anti: true });
+
 Object.assign(ColumnTable.prototype, {
+  __antijoin,
+  __count,
   __concat,
+  __cross,
   __dedupe,
   __derive,
   __except,
@@ -35,13 +53,13 @@ Object.assign(ColumnTable.prototype, {
   __fold,
   __intersect,
   __join,
-  __join_filter,
   __lookup,
   __pivot,
   __relocate,
   __rollup,
   __sample,
   __select,
+  __semijoin,
   __spread,
   __union,
   __unroll,
