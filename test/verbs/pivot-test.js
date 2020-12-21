@@ -55,12 +55,12 @@ tape('pivot generates cross-tabulation for multiple values', t => {
   });
 
   tableEqual(t, ut, {
-    a_x: [ 1 ],
-    b_x: [ 4 ],
-    c_x: [ 3 ],
-    a_y: [ 9 ],
-    b_y: [ 4 ],
-    c_y: [ 7 ]
+    x_a: [ 1 ],
+    x_b: [ 4 ],
+    x_c: [ 3 ],
+    y_a: [ 9 ],
+    y_b: [ 4 ],
+    y_c: [ 7 ]
   }, 'pivot data');
 
   t.end();
@@ -81,10 +81,10 @@ tape('pivot respects input options', t => {
   });
 
   tableEqual(t, ut, {
-    'a/d:x': [ 1 ],
-    'b/e:x': [ 2 ],
-    'a/d:y': [ 9 ],
-    'b/e:y': [ 8 ]
+    'x:a/d': [ 1 ],
+    'x:b/e': [ 2 ],
+    'y:a/d': [ 9 ],
+    'y:b/e': [ 8 ]
   }, 'pivot data');
 
   t.end();
