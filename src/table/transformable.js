@@ -874,11 +874,14 @@ export default class Transformable {
 /**
  * Options for spread transformations.
  * @typedef {object} SpreadOptions
- * @property {number} [limit=Infinity] The maximum number of new columns to generate.
+ * @property {boolean} [drop=true] Flag indicating if input columns to the
+ *  spread operation should be dropped in the output table.
+ * @property {number} [limit=Infinity] The maximum number of new columns to
+ *  generate.
  * @property {string[]} [as] Output column names to use. This option only
  *  applies when a single column is spread. If the given array of names is
- *  shorter than the number of generated columns, the additional columns
- *  will be named using the standard naming convention.
+ *  shorter than the number of generated columns and no limit option is
+ *  specified, the additional generated columns will be dropped.
  */
 
 /**
