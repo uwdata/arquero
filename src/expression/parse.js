@@ -33,6 +33,21 @@ const DEFAULT_TUPLE_ID = 'd';
 const DEFAULT_TUPLE_ID1 = 'd1';
 const DEFAULT_TUPLE_ID2 = 'd2';
 
+const NO = msg => (node, ctx) => ctx.error(msg + ' not allowed', node);
+const ERROR_AGGREGATE = NO('Aggregate function');
+const ERROR_WINDOW = NO('Aggregate function');
+const ERROR_ARGUMENT = 'Invalid argument';
+const ERROR_COLUMN = 'Invalid column reference';
+const ERROR_AGGRONLY = ERROR_COLUMN + ' (must be input to an aggregate function)';
+const ERROR_FUNCTION = 'Invalid function call';
+const ERROR_MEMBER = 'Invalid member expression';
+const ERROR_OP_PARAMETER = 'Invalid operator parameter';
+const ERROR_PARAM = 'Invalid param reference';
+const ERROR_VARIABLE = 'Invalid variable reference';
+const ERROR_VARIABLE_OP = 'Variable not accessible in operator call';
+const ERROR_DECLARATION = 'Unsupported variable declaration';
+const ERROR_DESTRUCTURE = 'Unsupported destructuring pattern';
+
 const is = (type, node) => node && node.type === type;
 const isFunctionExpression = node =>
   is(FunctionExpression, node) ||
@@ -129,8 +144,6 @@ const functionName = (ctx, node) => is(Identifier, node) ? node.name
   : is(MemberExpression, node) ? node.property.name
   : null;
 
-const parseError = msg => (node, ctx) => ctx.error(msg, node);
-
 function handleIdentifier(node, ctx, parent) {
   const { name } = node;
 
@@ -151,20 +164,34 @@ function handleIdentifier(node, ctx, parent) {
   }
 }
 
-function updateColumnNode(node, key, ctx) {
-  const [name, index] = ctx.columnRef.get(key);
-
-  // check column validity if we have a backing table
+function checkColumn(node, name, index, ctx) {
+  // check column existence if we have a backing table
   const table = index === 0 ? ctx.table
     : index > 0 ? ctx.join[index - 1]
     : null;
   if (table && !table.column(name)) {
-    ctx.error(`Invalid column "${name}"`, ctx);
+    ctx.error(ERROR_COLUMN, node);
   }
+  // check if column reference is valid in current context
+  if (ctx.aggronly && !ctx.$op) {
+    if (!ctx.$op) {
+      ctx.error(ERROR_AGGRONLY, node);
+    }
+  }
+}
 
+function updateColumnNode(node, key, ctx) {
+  const [name, index] = ctx.columnRef.get(key);
+  checkColumn(node, name, index, ctx);
   node.type = Column;
   node.name = name;
   node.table = index;
+}
+
+function checkParam(node, name, index, ctx) {
+  if (ctx.params && !has(ctx.params, name)) {
+    ctx.error(ERROR_PARAM, node);
+  }
 }
 
 function updateParameterNode(node, name) {
@@ -186,23 +213,23 @@ function handleDeclaration(node, ctx) {
   } else if (is(ObjectPattern, node)) {
     node.properties.forEach(prop => handleDeclaration(prop.value, ctx));
   } else {
-    ctx.error('Unsupported variable declaration', node.id);
+    ctx.error(ERROR_DECLARATION, node.id);
   }
 }
 
 const visitors = {
-  FunctionDeclaration: parseError('Function definitions not allowed'),
-  ForStatement: parseError('For loops not allowed'),
-  ForOfStatement: parseError('For-of loops not allowed'),
-  ForInStatement: parseError('For-in loops not allowed'),
-  WhileStatement: parseError('While loops not allowed'),
-  DoWhileStatement: parseError('Do-while loops not allowed'),
-  AwaitExpression: parseError('Await expressions not allowed'),
-  ArrowFunctionExpression: parseError('Function definitions not allowed'),
-  AssignmentExpression: parseError('Assignments not allowed'),
-  FunctionExpression: parseError('Function definitions not allowed'),
-  NewExpression: parseError('Use of "new" not allowed'),
-  UpdateExpression: parseError('Updates not allowed'),
+  FunctionDeclaration: NO('Function definitions'),
+  ForStatement: NO('For loops'),
+  ForOfStatement: NO('For-of loops'),
+  ForInStatement: NO('For-in loops'),
+  WhileStatement: NO('While loops'),
+  DoWhileStatement: NO('Do-while loops'),
+  AwaitExpression: NO('Await expressions'),
+  ArrowFunctionExpression: NO('Function definitions'),
+  AssignmentExpression: NO('Assignments'),
+  FunctionExpression: NO('Function definitions'),
+  NewExpression: NO('Use of "new"'),
+  UpdateExpression: NO('Update expressions'),
 
   VariableDeclarator(node, ctx) {
     handleDeclaration(node.id, ctx);
@@ -211,7 +238,7 @@ const visitors = {
     if (handleIdentifier(node, ctx, parent) && !ctx.scope.has(node.name)) {
       // handle identifier passed responsibility here
       // raise error if identifier not defined in scope
-      ctx.error('Invalid variable name', node);
+      ctx.error(ERROR_VARIABLE, node);
     }
   },
   CallExpression(node, ctx) {
@@ -221,12 +248,13 @@ const visitors = {
     // parse operator and rewrite invocation
     if (def) {
       if ((ctx.join || ctx.aggregate === false) && isAggregate(def)) {
-        ctx.error('Aggregate function not allowed', node);
+        ERROR_AGGREGATE(node, ctx);
       }
       if ((ctx.join || ctx.window === false) && isWindow(def)) {
-        ctx.error('Window function not allowed', node);
+        ERROR_WINDOW(node, ctx);
       }
 
+      ctx.$op = 1;
       if (ctx.ast) {
         node.callee = { type: Function, name };
         node.arguments.forEach(arg => walk(arg, ctx, opVisitors));
@@ -239,11 +267,12 @@ const visitors = {
           property: { type: Literal, raw: op.id }
         });
       }
+      ctx.$op = 0;
       return false;
     } else if (getFunction(name)) {
       node.callee = { type: Function, name };
     } else {
-      ctx.error('Illegal function call', node);
+      ctx.error(ERROR_FUNCTION, node);
     }
   },
   MemberExpression(node, ctx) {
@@ -268,12 +297,10 @@ const visitors = {
 
     if (index >= 0) {
       // replace member expression with column ref
-      const table = index === 0 ? ctx.table : ctx.join[index - 1];
-      const names = table ? table.data() : null;
-      return spliceMember(node, { type: Column, table: index }, ctx, names);
+      return spliceMember(node, { type: Column, table: index }, ctx, checkColumn);
     } else if (name === ctx.$param) {
       // replace member expression with param ref
-      return spliceMember(node, { type: Parameter }, ctx, ctx.params);
+      return spliceMember(node, { type: Parameter }, ctx, checkParam);
     } else if (ctx.paramsRef.has(name)) {
       updateParameterNode(node, ctx.paramsRef.get(name));
     } else if (ctx.columnRef.has(name)) {
@@ -284,25 +311,23 @@ const visitors = {
   }
 };
 
-function spliceMember(node, props, ctx, values) {
+function spliceMember(node, props, ctx, check) {
   const { property } = node;
   const name = is(Identifier, property) ? { name: property.name }
     : is(Literal, property) ? { name: property.value, computed: true }
-    : ctx.error('Invalid member expression', node);
+    : ctx.error(ERROR_MEMBER, node);
 
-  if (values && !has(values, name.name)) {
-    ctx.error(`Invalid ${props.type.toLowerCase()} "${name.name}"`, node);
-  }
+  check(node, name.name, props.table, ctx);
   Object.assign(node, props, name);
   return false;
 }
 
 const opVisitors = {
   ...visitors,
-  VariableDeclarator: parseError('Variable declarations not allowed within operator call'),
+  VariableDeclarator: NO('Variable declaration in operator call'),
   Identifier(node, ctx, parent) {
     if (handleIdentifier(node, ctx, parent)) {
-      ctx.error('Variable not accessible within operator call', node);
+      ctx.error(ERROR_VARIABLE_OP, node);
     }
   },
   CallExpression(node, ctx) {
@@ -312,7 +337,7 @@ const opVisitors = {
     if (getFunction(name)) {
       node.callee = { type: Function, name };
     } else {
-      ctx.error('Illegal function call', node);
+      ctx.error(ERROR_FUNCTION, node);
     }
   }
 };
@@ -334,6 +359,7 @@ export function parseExpression(ctx, name, spec) {
   ctx.tuple1 = null;
   ctx.tuple2 = null;
   ctx.$param = null;
+  ctx.$op = 0;
   ctx.scope = new Set();
   ctx.paramsRef = new Map();
   ctx.columnRef = new Map();
@@ -359,8 +385,8 @@ export function parseExpression(ctx, name, spec) {
 }
 
 function parseFunction(node, ctx) {
-  if (node.generator) ctx.error('Generator functions not allowed', node);
-  if (node.async) ctx.error('Async functions not allowed', node);
+  if (node.generator) NO('Generator functions')(node, ctx);
+  if (node.async) NO('Async functions')(node, ctx);
 
   const { params } = node;
   const len = params.length;
@@ -389,9 +415,9 @@ function parseRef(ctx, node, refName, alias) {
     node.properties.forEach(p => {
       const key = is(Identifier, p.key) ? p.key.name
         : is(Literal, p.key) ? p.key.value
-        : ctx.error('Invalid argument', p);
+        : ctx.error(ERROR_ARGUMENT, p);
       if (!is(Identifier, p.value)) {
-        ctx.error('Unsupported destructuring pattern', p.value);
+        ctx.error(ERROR_DESTRUCTURE, p.value);
       }
       alias(p.value.name, key);
     });
@@ -412,7 +438,7 @@ function parseOperator(ctx, def, name, args) {
       walk(arg, ctx, opVisitors);
       params.push(ctx.param(arg));
     } else {
-      ctx.error('Illegal operator parameter', arg);
+      ctx.error(ERROR_OP_PARAMETER, arg);
     }
   });
 
