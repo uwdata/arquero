@@ -114,7 +114,6 @@ function parseValues(tableL, tableR, values, optParse, suffix = []) {
       rekey(vR.names, rename, suffix[1] || '_2');
     }
 
-
     return {
       names: vL.names.concat(vR.names, vJ.names),
       exprs: vL.exprs.concat(vR.exprs, vJ.exprs)
