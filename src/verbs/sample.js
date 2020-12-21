@@ -28,6 +28,6 @@ function parseWeight(table, w) {
   return get(
     isString(w)
       ? table.column(w)
-      : _derive(table, parse({ w }, { table })).column('w')
+      : _derive(table, parse({ w }, { table }), { drop: true }).column('w')
   );
 }
