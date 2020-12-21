@@ -7,7 +7,7 @@ export default function(table, on, values, options = {}) {
   const { keys, keyColumn } = pivotKeys(table, on, options);
   const vsep = opt(options.valueSeparator, '_');
   const namefn = values.names.length > 1
-    ? (i, name) => keys[i] + vsep + name
+    ? (i, name) => name + vsep + keys[i]
     : i => keys[i];
 
   // perform separate aggregate operations for each key
@@ -26,9 +26,7 @@ export default function(table, on, values, options = {}) {
     )
     .map(ops => aggregate(table, ops));
 
-  return table.create(
-    output(table, values, namefn, results)
-  );
+  return table.create(output(table, values, namefn, results));
 }
 
 function pivotKeys(table, on, options) {
