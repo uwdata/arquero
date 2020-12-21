@@ -562,40 +562,65 @@ Pivot columns into a cross-tabulation. The pivot transform is an inverse of the 
 *Examples*
 
 ```js
+// pivot the values in the 'key' column to be new column names
+// using the 'value' column as the new column values
+// the any() aggregate combines multiple values with the same key
 table.pivot('key', 'value')
 ```
 
 ```js
-table.pivot(['keyA', 'keyB'], ['valueA', 'valueB'])
+// pivot lowercase values of the 'key' column to be new column names
+// use the sum of corresponding 'value' entris as new column values
+table.pivot(
+  { key: d => op.lower(d.key) },
+  { value: d => op.sum(d.value) }
+)
 ```
 
 ```js
-table.pivot({ key: d => d.key }, { value: d => op.sum(d.value) })
+// pivot on key column 'type' and value columns ['x', 'y']
+// generates: { x_a: [0], x_b: [1], y_a: [3], y_b: [4] }
+aq.table({ type: ['a', 'b'], x: [1, 2], y: [3, 4 ]})
+  .pivot('type', ['x', 'y'])
 ```
 
+aq.table({ foo: ['a', 'b'], bar: ['u', 'v'], x: [1, 2], y: [3, 4 ]}).pivot(['foo', 'bar'], ['x', 'y'])
+
+aq.table({ keyA: [1, 2], keyB: [3, 4], valueA: [5, 6], valueB: [7, 8 ]})
 
 <hr/><a id="spread" href="#spread">#</a>
 <em>table</em>.<b>spread</b>(<i>values</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
-Spread array elements into a set of new columns. Output columns are named based on both the value key and array index.
+Spread array elements into a set of new columns. Output columns are named either according to the *as* option or using a combination of the input colum names and array index.
 
 * *values*: The columns to spread, as either an array of column names or a key-value object of table expressions.
 * *options*: An options object:
+  * *drop*: Boolean flag (default `true`) indicating if input columns to the spread operation should be dropped in the output table.
   * *limit*: The maximum number of new columns to generate (default `Infinity`).
-  * *as*: String array of output column names to use. This option only applies when a single column is spread. If the given array of names is shorter than the number of generated columns, the additional columns will be named using the standard naming convention.
+  * *as*: String array of output column names to use. This option only applies when a single column is spread. If the given array of names is shorter than the number of generated columns and no *limit* option is specified, the additional generated columns will be dropped (in other words, the length of the *as* array then serves as the limit value).
 
 *Examples*
 
 ```js
-table.spread({ a: d => op.split(d.text, '') })
+// generate new columns 'text_1', 'text_2', etc. by splitting on whitespace
+// the input column 'text' is dropped from the output
+table.spread({ text: d => op.split(d.text, ' ') })
 ```
 
 ```js
+// generate new columns 'text_1', 'text_2', etc. by splitting on whitespace
+// the input column 'text' is retained in the output
+table.spread({ text: d => op.split(d.text, ' ') }, { drop: false })
+```
+
+```js
+// spread the 'arrayCol' column across a maximum of 100 new columns
 table.spread('arrayCol', { limit: 100 })
 ```
 
 ```js
-table.spread('arrayCol', { limit: 2, as: ['value1', 'value2'] })
+// extract the first two 'arrayCol' entries into 'value1', 'value2' columns
+table.spread('arrayCol', { as: ['value1', 'value2'] })
 ```
 
 
