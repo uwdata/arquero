@@ -57,23 +57,6 @@ export default class Transformable {
   }
 
   /**
-   * De-duplicate table rows by removing repeated row values.
-   * @param {...ExprList} keys Key columns to check for duplicates.
-   *  Two rows are considered duplicates if they have matching values for
-   *  all keys. If keys are unspecified, all columns are used.
-   *  The keys may be specified using column name strings, column index
-   *  numbers, value objects with output column names for keys and table
-   *  expressions for values, or selection helper functions.
-   * @return {this} A new de-duplicated table.
-   * @example table.dedupe()
-   * @example table.dedupe('a', 'b')
-   * @example table.dedupe({ abs: d => op.abs(d.a) })
-   */
-  dedupe(...keys) {
-    return this.__dedupe(this, keys.flat());
-  }
-
-  /**
    * Derive new column values based on the provided expressions. By default,
    * new columns are added after (higher indices than) existing columns. Use
    * the before or after options to place new columns elsewhere.
@@ -244,6 +227,56 @@ export default class Transformable {
    */
   unorder() {
     return this.__unorder(this);
+  }
+
+  // -- Cleaning Verbs ------------------------------------------------------
+
+  /**
+   * De-duplicate table rows by removing repeated row values.
+   * @param {...ExprList} keys Key columns to check for duplicates.
+   *  Two rows are considered duplicates if they have matching values for
+   *  all keys. If keys are unspecified, all columns are used.
+   *  The keys may be specified using column name strings, column index
+   *  numbers, value objects with output column names for keys and table
+   *  expressions for values, or selection helper functions.
+   * @return {this} A new de-duplicated table.
+   * @example table.dedupe()
+   * @example table.dedupe('a', 'b')
+   * @example table.dedupe({ abs: d => op.abs(d.a) })
+   */
+  dedupe(...keys) {
+    return this.__dedupe(this, keys.flat());
+  }
+
+  /**
+   * Impute missing values or rows. Accepts a set of column-expression pairs
+   * and evaluates the expressions to replace any missing (null, undefined,
+   * or NaN) values in the original column.
+   * If the expand option is specified, imputes new rows for missing
+   * combinations of values. All combinations of key values (a full cross
+   * product) are considered for each level of grouping (specified by
+   * {@link Table#groupby}). New rows will be added for any combination of
+   * key and groupby values not already contained in the table. For all
+   * non-key and non-group columns the new rows are populated with imputation
+   * values (first argument) if specified, otherwise undefined.
+   * If the expand option is specified, any filter or orderby settings are
+   * removed from the output table, but groupby settings persist.
+   * @param {object} values Object of name-value pairs for the column values
+   *  to impute. The input object should have existing column names for keys
+   *  and table expressions for values. The expressions will be evaluated to
+   *  determine replacements for any missing values.
+   * @param {ImputeOptions} [options] Imputation options. The expand
+   *  property specifies a set of column values to consider for imputing
+   *  missing rows. All combinations of expanded values are considered, and
+   *  new rows are added for each combination that does not appear in the
+   *  input table.
+   * @return {Table} A new table with imputed values and/or rows.
+   * @example table.impute({ v: () => 0 })
+   * @example table.impute({ v: d => op.mean(d.v) })
+   * @example table.impute({ v: () => 0 }, { expand: ['x', 'y'] })
+   */
+  impute(values, options) {
+    return this.__impute(this, values, options);
   }
 
   // -- Reshaping Verbs -----------------------------------------------------
@@ -810,6 +843,16 @@ export default class Transformable {
  *  for sampling. Rows will be sampled with probability proportional to
  *  their relative weight. The input should be a column name string or
  *  a table expression compatible with {@link Transformable#derive}.
+ */
+
+/**
+ * Options for impute transformations.
+ * @typedef {object} ImputeOptions
+ * @property {any} [expand] Column values to combine to impute missing rows.
+ *  For columns names and indices, all unique column values are considered.
+ *  Otherwise, each entry should be an object of name-expresion pairs, with
+ *  valid table expressions for {@link Table#rollup}. All combinations of
+ *  values are checked for each set of unique groupby values.
  */
 
 /**
