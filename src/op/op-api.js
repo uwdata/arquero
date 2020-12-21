@@ -2,11 +2,12 @@ import functions from './functions';
 import Op from './op';
 
 export const any = (field) => Op('any', field);
-
+export const count = () => Op('count');
+export const row_number = () => Op('row_number');
 export const unique = (field) => Op('unique', field);
 
 /**
- * All table expression operations. including normal functions,
+ * All table expression operations including normal functions,
  * aggregate functions, and window functions.
  */
 export default {
@@ -16,14 +17,14 @@ export default {
    * Aggregate function to count the number of records (rows).
    * @returns {number} The count of records.
    */
-  count: () => Op('count'),
+  count,
 
   /**
    * Aggregate function returning an arbitrary observed value.
    * @param {*} field The data field.
    * @return {*} An arbitrary observed value.
    */
-  any: any,
+  any,
 
   /**
    * Aggregate function to collect an array of values.
@@ -199,7 +200,7 @@ export default {
    * Window function to assign consecutive row numbers, starting from 1.
    * @return {number} The row number value.
    */
-  row_number: () => Op('row_number'),
+  row_number,
 
   /**
    * Window function to assign a rank to each value in a group, starting
