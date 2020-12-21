@@ -7,7 +7,7 @@ export default function(table, on, values, options) {
   return _pivot(
     table,
     parse('fold', table, on),
-    parse('fold', table, values, { preparse }),
+    parse('fold', table, values, { preparse, aggronly: true }),
     options
   );
 }
