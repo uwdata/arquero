@@ -57,5 +57,5 @@ export default function(json, options = {}) {
     }
   }
 
-  return new ColumnTable(data, null, null, null, null, names);
+  return new ColumnTable(data, names);
 }

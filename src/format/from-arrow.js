@@ -39,7 +39,7 @@ export default function(arrowTable, options = {}) {
     ? collect(names, cols, !!options.unpack)
     : collectFiltered(arrowTable, names, cols, count);
 
-  return new ColumnTable(data, null, null, null, null, names);
+  return new ColumnTable(data, names);
 }
 
 function resolveColumns(arrowTable, selection) {
