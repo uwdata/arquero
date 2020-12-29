@@ -250,13 +250,28 @@ Format this table as an HTML table string.
 <hr/><a id="toJSON" href="#toJSON">#</a>
 <em>table</em>.<b>toJSON</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-json.js)
 
-Format this table as a JavaScript Object Notation (JSON) string.
+Format this table as a JavaScript Object Notation (JSON) string compatible with the [fromJSON](/#fromJSON) method.
 
 * *options*: A formatting options object:
   * *limit*: The maximum number of rows to print (default `Infinity`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
+  * *schema*: Boolean flag (default `true`) indicating if table schema metadata should be included in the JSON output. If `false`, only the data payload is included.
   * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings.
   * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions to invoke to transform column values prior to output. If specified, a formatting function overrides any automatically inferred options.
+
+*Examples*
+
+```js
+// serialize a table to a JSON string with schema metadata
+aq.table({ a: [1, 2, 3], b: [4, 5,6] }).toJSON()
+// '{"schema":{"fields":[{"name":"a"},{"name":"b"}]},"data":{"a":[1,2,3],"b":[4,5,6]}}'
+```
+
+```js
+// serialize a table to a JSON string without schema metadata
+aq.table({ a: [1, 2, 3], b: [4, 5,6] }).toJSON({ schema: false })
+// '{"a":[1,2,3],"b":[4,5,6]}'
+```
 
 <hr/><a id="toMarkdown" href="#toMarkdown">#</a>
 <em>table</em>.<b>toMarkdown</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-json.js)
