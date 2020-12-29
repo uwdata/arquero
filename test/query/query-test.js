@@ -1,9 +1,9 @@
 import tape from 'tape';
 import groupbyEqual from '../groupby-equal';
 import tableEqual from '../table-equal';
-import Query from '../../src/query/query';
-import QueryBuilder from '../../src/query/query-builder';
+import Query, { query } from '../../src/query/query';
 import { Verbs } from '../../src/query/verb';
+import isFunction from '../../src/util/is-function';
 import { seed } from '../../src/util/random';
 import { all, desc, not, op, range, rolling, table } from '../../src/verbs';
 import { field, func } from './util';
@@ -15,6 +15,117 @@ const {
   cross, join, semijoin, antijoin,
   concat, union, except, intersect
 } = Verbs;
+
+tape('Query builds single-table queries', t => {
+  const q = query()
+    .derive({ bar: d => d.foo + 1 })
+    .rollup({ count: op.count(), sum: op.sum('bar') })
+    .orderby('foo', desc('bar'), d => d.baz, desc(d => d.bop))
+    .groupby('foo', { baz: d => d.baz, bop: d => d.bop });
+
+  t.deepEqual(q.toObject(), {
+    verbs: [
+      {
+        verb: 'derive',
+        values: { bar: func('d => d.foo + 1') },
+        options: undefined
+      },
+      {
+        verb: 'rollup',
+        values: {
+          count: func('d => op.count()'),
+          sum: func('d => op.sum(d["bar"])')
+        }
+      },
+      {
+        verb: 'orderby',
+        keys: [
+          field('foo'),
+          field('bar', { desc: true }),
+          func('d => d.baz'),
+          func('d => d.bop', { desc: true })
+        ]
+      },
+      {
+        verb: 'groupby',
+        keys: [
+          'foo',
+          {
+            baz: func('d => d.baz'),
+            bop: func('d => d.bop')
+          }
+        ]
+      }
+    ]
+  }, 'serialized query from builder');
+
+  t.end();
+});
+
+tape('Query supports multi-table verbs', t => {
+  const q = query()
+    .concat('concat_table')
+    .join('join_table');
+
+  t.deepEqual(q.toObject(), {
+    verbs: [
+      {
+        verb: 'concat',
+        tables: ['concat_table']
+      },
+      {
+        verb: 'join',
+        table: 'join_table',
+        on: undefined,
+        values: undefined,
+        options: undefined
+      }
+    ]
+  }, 'serialized query from builder');
+
+  t.end();
+});
+
+tape('Query supports multi-table queries', t => {
+  const qc = query('concat_table')
+    .select(not('foo'));
+
+  const qj = query('join_table')
+    .select(not('bar'));
+
+  const q = query()
+    .concat(qc)
+    .join(qj);
+
+  t.deepEqual(q.toObject(), {
+    verbs: [
+      {
+        verb: 'concat',
+        tables: [ qc.toObject() ]
+      },
+      {
+        verb: 'join',
+        table: qj.toObject(),
+        on: undefined,
+        values: undefined,
+        options: undefined
+      }
+    ]
+  }, 'serialized query from builder');
+
+  t.end();
+});
+
+tape('Query supports all defined verbs', t => {
+  const verbs = Object.keys(Verbs);
+  const q = query();
+  t.equal(
+    verbs.filter(v => isFunction(q[v])).length,
+    verbs.length,
+    'query builder supports all verbs'
+  );
+  t.end();
+});
 
 tape('Query serializes to objects', t => {
   const q = new Query([
@@ -998,7 +1109,7 @@ tape('Query evaluates concat verbs with subqueries', t => {
 
   const catalog = name => name === 'other' ? rt : null;
 
-  const sub = new QueryBuilder('other')
+  const sub = query('other')
     .select({ a: 'x', b: 'y' });
 
   tableEqual(
