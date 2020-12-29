@@ -30,10 +30,10 @@ export default class ColumnTable extends Table {
    * @return {ColumnTable} A new ColumnTable instance.
    */
   static from(values, names) {
-    return new ColumnTable(columnsFrom(values, names));
+    return new ColumnTable(columnsFrom(values, names), names);
   }
 
-  constructor(columns, filter, group, order, params, names) {
+  constructor(columns, names, filter, group, order, params) {
     mapObject(columns, Column.from, columns);
     names = names || Object.keys(columns);
     const nrows = names.length ? columns[names[0]].length : 0;
@@ -47,11 +47,11 @@ export default class ColumnTable extends Table {
 
     return new ColumnTable(
       data || this._data,
+      names || (!data ? this._names : null),
       f,
       groups !== undefined ? groups : regroup(this._group, filter && f),
       order !== undefined ? order : this._order,
-      this._params,
-      names || (!data ? this._names : null)
+      this._params
     );
   }
 

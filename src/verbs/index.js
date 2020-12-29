@@ -92,10 +92,7 @@ export {
  * @example table({ colA: ['a', 'b', 'c'], colB: [3, 4, 5] })
  */
 export function table(columns, names) {
-  return new ColumnTable(
-    mapObject(columns, x => x),
-    null, null, null, null, names
-  );
+  return new ColumnTable(mapObject(columns, x => x), names);
 }
 
 /**

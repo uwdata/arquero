@@ -56,7 +56,7 @@ tape('toCSV formats delimited text with delimiter option', t => {
 
 tape('toCSV formats delimited text for filtered table', t => {
   const bs = new BitSet(3).not(); bs.clear(1);
-  const dt = new ColumnTable(data(), bs);
+  const dt = new ColumnTable(data(), null, bs);
   t.equal(
     toCSV(dt),
     [ ...text.slice(0, 2), ...text.slice(3) ].join('\n'),

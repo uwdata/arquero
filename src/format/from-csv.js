@@ -63,5 +63,5 @@ export default function(text, options = {}) {
 
   const columns = {};
   names.forEach((name, i) => columns[name] = values[i]);
-  return new ColumnTable(columns);
+  return new ColumnTable(columns, names);
 }
