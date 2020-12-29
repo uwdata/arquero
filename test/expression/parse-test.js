@@ -11,7 +11,7 @@ function test(t, input) {
   t.deepEqual(ops, [
     { name: 'mean', fields: ['data.a.get(row)'], params: [], id: 0 },
     { name: 'corr', fields: ['data.a.get(row)', 'data.b.get(row)'], params: [], id: 1},
-    { name: 'quantile', fields: ['(-data.bar.get(row))'], params: ['(0.5/2)'], id: 2},
+    { name: 'quantile', fields: ['(-data.bar.get(row))'], params: ['(0.5 / 2)'], id: 2},
     { name: 'lag', fields: ['data.value.get(row)'], params: [2], id: 3 },
     { name: 'mean', fields: ['data.value.get(row)'], params: [], frame: [-3, 3], peers: false, id: 4 },
     { name: 'count', fields: [], params: [], frame: [-3, 3], peers: true, id: 5 }
@@ -29,12 +29,12 @@ function test(t, input) {
   ], 'parsed output names');
 
   t.deepEqual(exprs, [
-    '(1+1)',
-    '(data.a.get(row)*data.b.get(row))',
+    '(1 + 1)',
+    '(data.a.get(row) * data.b.get(row))',
     'op[0]',
     'op[1]',
-    '(1+op[2])',
-    '(data.value.get(row)-op[3])',
+    '(1 + op[2])',
+    '(data.value.get(row) - op[3])',
     'op[4]',
     'op[5]'
   ], 'parsed output expressions');
@@ -226,7 +226,7 @@ tape('parse parses expressions with block statements', t => {
     parse(exprs, { compiler }),
     {
       names: [ 'val' ],
-      exprs: [ '{const s=op[0];return (s*s);}' ],
+      exprs: [ '{const s=op[0];return (s * s);}' ],
       ops: [
         { name: 'sum', fields: [ 'data.a.get(row)' ], params: [], id: 0 }
       ]
@@ -236,7 +236,7 @@ tape('parse parses expressions with block statements', t => {
 
   t.equal(
     parse(exprs).exprs[0] + '',
-    '(row,data,op)=>{const s=op[0];return (s*s);}',
+    '(row,data,op)=>{const s=op[0];return (s * s);}',
     'compiled block'
   );
 
@@ -261,8 +261,8 @@ tape('parse parses expressions with if statements', t => {
     {
       names: ['val1', 'val2'],
       exprs: [
-        '{const d=(3-2);if ((d<1)){return 1;} else {return 0;};}',
-        '{const d=(3-2);if ((d<1)){return 1;};return 0;}'
+        '{const d=(3 - 2);if ((d < 1)){return 1;} else {return 0;};}',
+        '{const d=(3 - 2);if ((d < 1)){return 1;};return 0;}'
       ],
       ops: []
     },
@@ -369,6 +369,12 @@ tape('parse throws on expressions with do-while loops', t => {
     }
   };
   t.throws(() => parse(exprs), 'no do-while loops');
+  t.end();
+});
+
+tape('parse throws on expressions with comma sequences', t => {
+  const exprs = { val: () => (1, 2) };
+  t.throws(() => parse(exprs), 'no comma sequences');
   t.end();
 });
 

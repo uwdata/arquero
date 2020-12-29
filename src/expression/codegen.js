@@ -1,9 +1,14 @@
+import error from '../util/error';
+
 const visit = (node, opt) => {
-  return visitors[node.type](node, opt);
+  const f = visitors[node.type];
+  return f
+    ? f(node, opt)
+    : error(`Unsupported expression construct: ${node.type}`);
 };
 
 const binary = (node, opt) => {
-  return '(' + visit(node.left, opt) + node.operator + visit(node.right, opt) + ')';
+  return '(' + visit(node.left, opt) + ' ' + node.operator + ' ' + visit(node.right, opt) + ')';
 };
 
 const func = (node, opt) => {
@@ -46,7 +51,7 @@ const visitors = {
   TemplateLiteral: (node, opt) => {
     const { quasis, expressions } = node;
     const n = expressions.length;
-    let t = quasis[0].value.raw ;
+    let t = quasis[0].value.raw;
     for (let i = 0; i < n;) {
       t += '${' + visit(expressions[i], opt) + '}' + quasis[++i].value.raw;
     }
