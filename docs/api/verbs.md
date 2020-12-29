@@ -408,8 +408,10 @@ table.lookup(other, ['key1', 'key2'], 'value1', 'value2')
 
 Perform a [semi-join](https://en.wikipedia.org/wiki/Relational_algebra#Semijoin), filtering the left table to only rows that match a row in the right table.
 
+Similar to the [filter](#filter) verb, the resulting table provides a filtered view over the original data; no data copy is made. To create a table that copies only semi-joined data to new data structures, call [reify](#reify) on the output table.
+
 * *other*: The other (right) table to join with.
-* *on* * *on*: The join criteria for matching table rows. If unspecified, the values of all columns with matching names are compared. If array-valued, a two-element array should be provided, containing the columns to compare for the left and right tables, respectively. If a one-element array or a string value is provided, the same column names will be drawn from both tables. If function-valued, should be a two-table table expression that returns a boolean value. When providing a custom predicate, note that join key values can be arrays or objects, and that normal join semantics do not consider null or undefined values to be equal (that is, `null !== null`). Use the [op.equal](op#equal) function to handle these cases.
+* *on*: The join criteria for matching table rows. If unspecified, the values of all columns with matching names are compared. If array-valued, a two-element array should be provided, containing the columns to compare for the left and right tables, respectively. If a one-element array or a string value is provided, the same column names will be drawn from both tables. If function-valued, should be a two-table table expression that returns a boolean value. When providing a custom predicate, note that join key values can be arrays or objects, and that normal join semantics do not consider null or undefined values to be equal (that is, `null !== null`). Use the [op.equal](op#equal) function to handle these cases.
 
 *Examples*
 
@@ -435,8 +437,10 @@ table.semijoin(other, (a, b) => op.equal(a.keyL, b.keyR))
 
 Perform an [anti-join](https://en.wikipedia.org/wiki/Relational_algebra#Antijoin), filtering the left table to only rows that do *not* match a row in the right table.
 
+Similar to the [filter](#filter) verb, the resulting table provides a filtered view over the original data; no data copy is made. To create a table that copies only anti-joined data to new data structures, call [reify](#reify) on the output table.
+
 * *other*: The other (right) table to join with.
-* *on* * *on*: The join criteria for matching table rows. If unspecified, the values of all columns with matching names are compared. If array-valued, a two-element array should be provided, containing the columns to compare for the left and right tables, respectively. If a one-element array or a string value is provided, the same column names will be drawn from both tables. If function-valued, should be a two-table table expression that returns a boolean value. When providing a custom predicate, note that join key values can be arrays or objects, and that normal join semantics do not consider null or undefined values to be equal (that is, `null !== null`). Use the [op.equal](op#equal) function to handle these cases.
+* *on*: The join criteria for matching table rows. If unspecified, the values of all columns with matching names are compared. If array-valued, a two-element array should be provided, containing the columns to compare for the left and right tables, respectively. If a one-element array or a string value is provided, the same column names will be drawn from both tables. If function-valued, should be a two-table table expression that returns a boolean value. When providing a custom predicate, note that join key values can be arrays or objects, and that normal join semantics do not consider null or undefined values to be equal (that is, `null !== null`). Use the [op.equal](op#equal) function to handle these cases.
 
 *Examples*
 
