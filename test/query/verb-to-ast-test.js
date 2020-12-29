@@ -1,5 +1,5 @@
 import tape from 'tape';
-import { query } from '../../src/query/query-builder';
+import { query } from '../../src/query/query';
 import { Verbs } from '../../src/query/verb';
 import {
   all, bin, desc, endswith, matches, not, op, range, rolling, startswith
