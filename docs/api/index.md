@@ -25,19 +25,27 @@ title: Arquero API Reference
 Methods for creating new table instances.
 
 <hr/><a id="table" href="#table">#</a>
-<em>aq</em>.<b>table</b>(<i>columns</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>aq</em>.<b>table</b>(<i>columns</i>[, <i>names</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
 
-Create a new <a href="table">table</a> for a set of named *columns*.
+Create a new <a href="table">table</a> for a set of named *columns*, optionally including an array of ordered column *names*.
+
+JavaScript objects have specific key ordering rules: keys are enumerated in the order they are assigned, except for integer keys, which are enumerated first and in sorted order. As a result, by default *columns* entries with integer keys are listed first regardless of their order in the object definition. Use the *names* argument to ensure proper column ordering is respected.
 
 This method can be used to create a new table that binds together columns from multiple input sources, so long as all provided columns have the same length. See the examples below for more.
 
-* *columns*: An object providing a named set of column arrays. Object keys are column names; the enumeration order of the keys determines the column indices. Object values must be arrays (or array-like values) of identical length.
+* *columns*: An object providing a named set of column arrays. Object keys are column names; the enumeration order of the keys determines the column indices if the *names* argument is not provided. Object values must be arrays (or array-like values) of identical length.
+* *names*: An array of column names, specifying the index order of columns in the table.
 
 *Examples*
 
 ```js
 // create a new table with 2 columns and 3 rows
 aq.table({ colA: ['a', 'b', 'c'], colB: [3, 4, 5] })
+```
+
+```js
+// create a new table, preserving column order for integer names
+aq.table({ key: ['a', 'b'], 1: [9, 8], 2: [7, 6] }, ['key', '1', '2'])
 ```
 
 ```js
@@ -139,9 +147,35 @@ aq.fromCSV(await fetch(url).text())
 <hr/><a id="fromJSON" href="#fromJSON">#</a>
 <em>aq</em>.<b>fromJSON</b>(<i>data</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-json.js)
 
-Parse JavaScript Object Notation (JSON) *data* into a <a href="table">table</a>. The expected JSON format is an object with column names for keys and column value arrays for values. If the input *data* is string-valued, parsed string values in JSON text that match the ISO standard date format are parsed into JavaScript Date objects. To disable this behavior, set *options.autoType* to `false`. To perform custom parsing of input column values (regardless of *data* input type), use *options.parse*.
+Parse JavaScript Object Notation (JSON) *data* into a <a href="table">table</a>. If the input *data* is string-valued, string values in JSON text that match the ISO standard date format are parsed into JavaScript Date objects. To disable this behavior, set *options.autoType* to `false`. To perform custom parsing of input column values (regardless of *data* input type), use *options.parse*.
 
-* *data*: A string in a JSON format, or a corresponding Object instance.
+The expected JSON data format is an object with column names for keys and column value arrays for values, like so:
+
+```json
+{
+  "colA": ["a", "b", "c"],
+  "colB": [1, 2, 3]
+}
+```
+
+The data payload can also be provided as the *data* property of an enclosing object, with an optional *schema* property containing table metadata such as a *fields* array of ordered column information:
+
+```json
+{
+  "schema": {
+    "fields": [
+      { "name": "colA" },
+      { "name": "colB" }
+    ]
+  },
+  "data": {
+    "colA": ["a", "b", "c"],
+    "colB": [1, 2, 3]
+  }
+}
+```
+
+* *data*: A string in a supported JSON format, or a corresponding Object instance.
 * *options*: A JSON format options object:
   * *autoType*: Boolean flag (default `true`) for automatic type inference. If `false`, automatic date parsing for input JSON strings is disabled.
   * *parse*: Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
@@ -152,6 +186,15 @@ Parse JavaScript Object Notation (JSON) *data* into a <a href="table">table</a>.
 // create table from an input JSON string
 // akin to table({ a: [1, 3], b: [2, 4] })
 aq.fromJSON('{"a":[1,3],"b":[2,4]}')
+```
+
+```js
+// create table from an input JSON string
+// akin to table({ a: [1, 3], b: [2, 4] }, ['a', 'b'])
+aq.fromJSON(`{
+  "schema":{"fields":[{"name":"a"},{"name":"b"}]},
+  "data":{"a":[1,3],"b":[2,4]}
+}`)
 ```
 
 ```js

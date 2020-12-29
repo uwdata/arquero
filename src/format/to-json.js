@@ -1,12 +1,17 @@
 import { columns } from './util';
 import { formatUTCDate } from '../util/format-date';
+import defaultTrue from '../util/default-true';
 import isDate from '../util/is-date';
 
 /**
  * Options for JSON formatting.
  * @typedef {object} JSONFormatOptions
  * @property {number} [limit=Infinity] The maximum number of rows to print.
- * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
+ * @property {number} [offset=0] The row offset indicating how many initial
+ *  rows to skip.
+ * @property {boolean} [schema=true] Flag indicating if table schema metadata
+ *  should be included in the JSON output. If false, only the data payload
+ *  is included.
  * @property {string[]|Function} [columns] Ordered list of column names
  *  to include. If function-valued, the function should accept a table as
  *  input and return an array of column name strings.
@@ -27,9 +32,16 @@ const defaultFormatter = value => isDate(value)
  * @return {string} A JSON string.
  */
 export default function(table, options = {}) {
+  const schema = defaultTrue(options.schema);
   const format = options.format || {};
   const names = columns(table, options.columns);
   let text = '{';
+
+  if (schema) {
+    text += '"schema":{"fields":'
+      + JSON.stringify(names.map(name => ({ name })))
+      + '},"data":{';
+  }
 
   names.forEach((name, i) => {
     text += (i ? ',' : '') + JSON.stringify(name) + ':[';
@@ -45,5 +57,5 @@ export default function(table, options = {}) {
     text += ']';
   });
 
-  return text + '}';
+  return text + '}' + (schema ? '}' : '');
 }
