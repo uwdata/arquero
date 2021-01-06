@@ -92,6 +92,21 @@ tape('ColumnTable scan supports filtering and ordering', t => {
   t.end();
 });
 
+tape('ColumnTable memoizes indices', t => {
+  const ut = new ColumnTable({ v: [1, 3, 2] });
+  const ui = ut.indices(false);
+  t.equal(ut.indices(), ui, 'memoize unordered');
+
+  const ot = ut.orderby('v');
+  const of = ot.indices(false);
+  const oi = ot.indices();
+  t.notEqual(of, oi, 'respect order flag');
+  t.equal(ot.indices(), oi, 'memoize ordered');
+  t.deepEqual(Array.from(oi), [0, 2, 1], 'indices ordered');
+
+  t.end();
+});
+
 tape('ColumnTable supports object output', t => {
   const output = [
     { u: 'a', v: 1 },
