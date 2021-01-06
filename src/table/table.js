@@ -259,17 +259,18 @@ export default class Table extends Transformable {
 
     let i = -1;
     const index = new Uint32Array(this.numRows());
+    const ordered = this.isOrdered();
     this.scan(row => index[++i] = row);
 
     // sort index vector
-    if (order && this.isOrdered()) {
+    if (order && ordered) {
       const compare = this._order;
       const data = this._data;
       index.sort((a, b) => compare(a, b, data));
     }
 
     // save indices if they reflect table metadata
-    if (!this.isOrdered || order) {
+    if (order || !ordered) {
       this._index = index;
     }
 
