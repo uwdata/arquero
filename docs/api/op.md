@@ -704,12 +704,36 @@ Determines whether a string *value* ends with the characters of a specified *sea
 * *length*: If provided, used as the length of *value* (default `value.length`).
 
 <hr/><a id="match" href="#match">#</a>
-<em>op</em>.<b>match</b>(<i>value</i>, <i>regexp</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
+<em>op</em>.<b>match</b>(<i>value</i>, <i>regexp</i>[, <i>index</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
 
-Retrieves the result of matching a string *value* against a regular expression *regexp*. Returns an array whose contents depend on the presence or absence of the regular expression global (`g`) flag, or `null` if no matches are found. If the `g` flag is used, all results matching the complete regular expression will be returned, but capturing groups will not. If the `g` flag is not used, only the first complete match and its related capturing groups are returned.
+Retrieves the result of matching a string *value* against a regular expression *regexp*. If no *index* is specified, returns an array whose contents depend on the presence or absence of the regular expression global (`g`) flag, or `null` if no matches are found. If the `g` flag is used, all results matching the complete regular expression will be returned, but capturing groups will not. If the `g` flag is not used, only the first complete match and its related capturing groups are returned.
+
+If specified, the *index* looks up a value of the resulting match. If *index* is a number, the corresponding index of the result array is returned. If *index* is a string, the value of the corresponding [named capture group](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Groups_and_Ranges) is returned, or `null` if there is no such group.
 
 * *value*: The input string value.
 * *regexp*: The [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) to match against.
+
+*Examples*
+
+```js
+// returns ['1', '2', '3']
+op.match('1 2 3', /\d+/g)
+```
+
+```js
+// returns '2' (index into match array)
+op.match('1 2 3', /\d+/g, 1)
+```
+
+```js
+// returns '3' (index of capture group)
+op.match('1 2 3', /\d+ \d+ (\d+)/, 1)
+```
+
+```js
+// returns '2' (named capture group)
+op.match('1 2 3', /\d+ (?<digit>\d+)/, 'digit')
+```
 
 <hr/><a id="normalize" href="#normalize">#</a>
 <em>op</em>.<b>normalize</b>(<i>value</i>[, <i>form</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/string.js)
