@@ -1,5 +1,5 @@
 import tape from 'tape';
-import fromArrow, { LIST, STRUCT } from '../../src/format/from-arrow';
+import fromArrow, { FIXED_SIZE_LIST, LIST, STRUCT } from '../../src/format/from-arrow';
 import { not } from '../../src/verbs';
 
 // test stubs for Arrow Column API
@@ -55,9 +55,9 @@ function arrowDictionary(data) {
   return column;
 }
 
-function arrowListColumn(data) {
+function arrowListColumn(data, typeId = LIST) {
   const column = arrowColumn(data.map(d => d ? arrowColumn(d) : null));
-  column.typeId = LIST;
+  column.typeId = typeId;
   column.numChildren = 1;
   return column;
 }
@@ -158,6 +158,16 @@ tape('fromArrow can select Apache Arrow columns', t => {
 tape('fromArrow can read Apache Arrow lists', t => {
   const d = [[1, 2, 3], null, [4, 5]];
   const l = arrowListColumn(d);
+  const at = arrowTable({ l });
+  const dt = fromArrow(at);
+
+  t.deepEqual(dt.column('l').data, d, 'extract Arrow list');
+  t.end();
+});
+
+tape('fromArrow can read Apache Arrow fixed-size lists', t => {
+  const d = [[1, 2], null, [4, 5]];
+  const l = arrowListColumn(d, FIXED_SIZE_LIST);
   const at = arrowTable({ l });
   const dt = fromArrow(at);
 
