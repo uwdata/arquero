@@ -1,11 +1,12 @@
 import ColumnTable from '../table/column-table';
 import defaultTrue from '../util/default-true';
 import isArrayType from '../util/is-array-type';
+import isDigitString from '../util/is-digit-string';
 import isObject from '../util/is-object';
 import parseIsoDate from '../util/parse-iso-date';
 
 function autoType(key, value) {
-  return typeof value === 'string'
+  return typeof value === 'string' && !isDigitString(value)
     ? parseIsoDate(value, d => new Date(d))
     : value;
 }
