@@ -129,3 +129,24 @@ tape('fromJSON parses JSON text with parse option as data only', t => {
   t.deepEqual(table.columnNames(), cols(), 'column names');
   t.end();
 });
+
+tape('fromJSON parses ISO date strings', t => {
+  const values = [
+    0, '', '2.1', '2000',
+    new Date(Date.UTC(2000, 0, 1)),
+    new Date(Date.UTC(2000, 0, 1)),
+    new Date(2021, 0, 6, 12),
+    new Date(2021, 0, 6, 4)
+  ];
+  const str = [
+    0, '', '2.1', '2000',
+    '2000-01',
+    '2000-01-01',
+    '2021-01-06T12:00:00.000',
+    '2021-01-06T12:00:00.000Z'
+  ];
+  const json = '{"v":' + JSON.stringify(str) + '}';
+  const table = fromJSON(json);
+  t.deepEqual(table.column('v').data, values, 'column values');
+  t.end();
+});
