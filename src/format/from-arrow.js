@@ -9,6 +9,15 @@ import resolve, { all } from '../verbs/expr/selection';
 // https://github.com/apache/arrow/blob/master/js/src/enum.ts
 export const LIST = 12;
 export const STRUCT = 13;
+export const FIXED_SIZE_LIST = 16;
+
+function isList(id) {
+  return id === LIST || id === FIXED_SIZE_LIST;
+}
+
+function isStruct(id) {
+  return id === STRUCT;
+}
 
 /**
  * Options for Apache Arrow import.
@@ -120,8 +129,8 @@ function extractFrom(vector, lookup) {
 
 // extraction function for nested column types
 function extractFromNested(vector) {
-  const extract = vector.typeId === LIST ? i => arrayExtractor(vector.get(i))
-    : vector.typeId === STRUCT ? structExtractor(vector)
+  const extract = isList(vector.typeId) ? i => arrayExtractor(vector.get(i))
+    : isStruct(vector.typeId) ? structExtractor(vector)
     : error(`Unsupported Arrow type: ${toString(vector.VectorName)}`);
   return idx => vector.isValid(idx) ? extract(idx) : null;
 }
