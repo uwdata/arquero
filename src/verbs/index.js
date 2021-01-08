@@ -86,8 +86,12 @@ export {
  * @param {object} columns
  *  The set of named column arrays.
  *  Object keys are the column names.
- *  The enumeration order of the keys determines the column indices.
+ *  The enumeration order of the keys determines the column indices,
+ *  unless the names parameter is specified.
  *  Object values must be arrays (or array-like values) of identical length.
+ * @param {string[]} [names] Ordered list of column names. If specified,
+ *  this array determines the column indices. If not specified, the
+ *  key enumeration order of the columns object is used.
  * @return {ColumnTable} the instantiated table
  * @example table({ colA: ['a', 'b', 'c'], colB: [3, 4, 5] })
  */
