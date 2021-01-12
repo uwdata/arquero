@@ -31,30 +31,102 @@ title: Table \| Arquero API Reference
 
 The number of columns in this table.
 
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .numCols() // 2
+```
+
 <hr/><a id="numRows" href="#numRows">#</a>
 <em>table</em>.<b>numRows</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
 The number of active (non-filtered) rows in this table. This number may be less than the [total rows](#totalRows) if the table has been filtered.
+
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .numRows() // 3
+```
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .filter(d => d.a > 2)
+  .numRows() // 1
+```
 
 <hr/><a id="totalRows" href="#totalRows">#</a>
 <em>table</em>.<b>totalRows</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
 The total number of rows in this table, including both filtered and unfiltered rows.
 
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .totalRows() // 3
+```
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .filter(d => d.a > 2)
+  .totalRows() // 3
+```
+
 <hr/><a id="isFiltered" href="#isFiltered">#</a>
 <em>table</em>.<b>isFiltered</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
 Indicates if the table has a filter applied.
+
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .isFiltered() // false
+```
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .filter(d => d.a > 2)
+  .isFiltered() // true
+```
 
 <hr/><a id="isGrouped" href="#isGrouped">#</a>
 <em>table</em>.<b>isGrouped</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
 Indicates if the table has a groupby specification.
 
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .isGrouped() // false
+```
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .groupby('a')
+  .isGrouped() // true
+```
+
 <hr/><a id="isOrdered" href="#isOrdered">#</a>
 <em>table</em>.<b>isOrdered</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
 Indicates if the table has a row order comparator.
+
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .isOrdered() // false
+```
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .orderby(aq.desc('b'))
+  .isOrdered() // true
+```
 
 <hr/><a id="comparator" href="#comparator">#</a>
 <em>table</em>.<b>comparator</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
@@ -97,12 +169,26 @@ Get the column instance with the given name, or `undefined` if does not exist. T
 
 * *name*: The column name.
 
+*Examples*
+
+```js
+const dt = aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+dt.column('b').get(1) // 5
+```
+
 <hr/><a id="columnAt" href="#columnAt">#</a>
 <em>table</em>.<b>columnAt</b>(<i>index</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
 
 Get the column instance at the given index position, or `undefined` if does not exist. The returned column object provides a lightweight abstraction over the column storage (such as a backing array), providing a *length* property and *get(row)* method.
 
 * *index*: The zero-based column index.
+
+*Examples*
+
+```js
+const dt = aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+dt.columnAt(1).get(1) // 5
+```
 
 <hr/><a id="columnIndex" href="#columnIndex">#</a>
 <em>table</em>.<b>columnIndex</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
@@ -111,12 +197,24 @@ The column index for the given name, or `-1` if the name is not found.
 
 * *name*: The column name.
 
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).columnIndex('b'); // 1
+```
+
 <hr/><a id="columnName" href="#columnName">#</a>
 <em>table</em>.<b>columnName</b>(<i>index</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
 The column name at the given index, or `undefined` if the index is out of range.
 
 * *index*: The column index.
+
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).columnName(1); // 'b'
+```
 
 <hr/><a id="columnNames" href="#columnNames">#</a>
 <em>table</em>.<b>columnNames</b>([<i>filter</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
@@ -128,6 +226,11 @@ Returns an array of table column names, optionally filtered.
   * *index*: The column index.
   * *array*: The backing array of names.
 
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).columnNames(); // [ 'a', 'b' ]
+```
 
 <br/>
 
@@ -146,10 +249,26 @@ Get the value for the given column and row. Row indices are relative to the [tot
 * *name*: The column name.
 * *row*: The row index.
 
+*Examples*
+
+```js
+const dt = aq.table({ a: [1, 2, 3], b: [4, 5, 6] });
+dt.get('a', 0) // 1
+dt.get('a', 2) // 3
+```
+
 <hr/><a id="getter" href="#getter">#</a>
 <em>table</em>.<b>getter</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
 
 Returns an accessor ("getter") function for a column. The returned function takes a row index as its single argument and returns the corresponding column value. Row indices are relative to the [total rows](#totalRows), not the number of [filtered rows](#numRows).
+
+*Examples*
+
+```js
+const get = aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).getter('a');
+get(0) // 1
+get(2) // 3
+```
 
 * *name*: The column name.
 
@@ -192,10 +311,18 @@ Returns an array of objects representing table rows. A new set of objects will b
   * *limit*: The maximum number of objects to create (default `Infinity`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
 
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).objects()
+// [ { a: 1, b: 4 }, { a: 2, b: 5 }, { a: 3, b: 6 } ]
+}
+```
+
 <hr/><a id="@@iterator" href="#@@iterator">#</a>
 <em>table</em>\[<b>Symbol.iterator</b>\]() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
 
-Returns an iterator over generated row objects. Similar to the [objects](#objects) method, this method generates new row object instances; however, rather than returning an array, this method provides an iterator over row objects for each active row in the table.
+Returns an iterator over generated row objects. Similar to the [objects](#objects) method, this method generates new row object instances; however, rather than returning an array, this method provides an iterator over row objects for each non-filtered row in the table.
 
 *Examples*
 
@@ -215,21 +342,42 @@ const objects = [...table];
 
 Print the contents of this table using the `console.table()` method.
 
-* *options*: Options for printing, typically an object value. If number-valued, the call is equivalent to `{ limit: value }`.
+* *options*: Options for printing. If number-valued, specifies the row limit (equivalent to `{ limit: value }`).
   * *limit*: The maximum number of rows to print (default `10`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
+
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).print()
+// ┌─────────┬───┬───┐
+// │ (index) │ a │ b │
+// ├─────────┼───┼───┤
+// │    0    │ 1 │ 4 │
+// │    1    │ 2 │ 5 │
+// │    2    │ 3 │ 6 │
+// └─────────┴───┴───┘
+```
 
 <hr/><a id="toCSV" href="#toCSV">#</a>
 <em>table</em>.<b>toCSV</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-csv.js)
 
-Format this table as a comma-separated values (CSV) string. Other delimiters, such as tabs or pipes ('\|'), can be specified using the options argument.
+Format this table as a comma-separated values (CSV) string. Other delimiters, such as tabs or pipes ('\|'), can be specified using the *options* argument.
 
 * *options*: A formatting options object:
   * *delimiter*: The delimiter between values (default `","`).
   * *limit*: The maximum number of rows to print (default `Infinity`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
-  * *columns*: Ordered list of column names to include. If function-valued, the function should accept a table as input and return an array of column name strings.
-  * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions to invoke to transform column values prior to output. If specified, a formatting function overrides any automatically inferred options.
+  * *columns*: Ordered list of column names to include. If function-valued, the function should accept a table as input and return an array of column name strings. Otherwise, should be an array of name strings.
+  * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions that transform column values prior to output. If specified, a formatting function overrides any automatically inferred options.
+
+*Examples*
+
+```js
+// serialize a table as CSV-formatted text
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toCSV()
+// 'a,b\n1,4\n2,5\n3,6'
+```
 
 <hr/><a id="toHTML" href="#toHTML">#</a>
 <em>table</em>.<b>toHTML</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-csv.js)
@@ -239,13 +387,21 @@ Format this table as an HTML table string.
 * *options*: A formatting options object:
   * *limit*: The maximum number of rows to print (default `Infinity`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
-  * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings.
+  * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings. Otherwise, should be an array of name strings.
   * *align*: Object of column alignment options. The object keys should be column names. The object values should be aligment strings, one of `'l'` (left), `'c'` (center), or `'r'` (right). If specified, these override any automatically inferred options.
-  * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions or objects with any of the following properties.If specified, these override any automatically inferred options:
-    * *date*: One of 'utc' or 'loc' (for UTC or local dates), or `null` for complete date time strings.
-    * *digits*: Number of significant digits to include for numbers.
+  * *format*: Object of column format options. If specified, these override any automatically inferred options. The object keys should be column names. The object values should either be formatting functions or objects with any of the following properties:
+    * *utc*: A boolean flag indicating if UTC date formatting should be used rather than the local time zone.
+    * *digits*: Number of fractional digits to include for numbers.
+  * *maxdigits*: The maximum number of fractional digits to include when inferring a number format (default `6`). This option is passed to the format inference method and is ignored when explicit format options are specified.
   * *null*: Optional format function for `null` and `undefined` values. If specified, this function be invoked with the `null` or `undefined` value as the sole input argument. The return value is then used as the HTML output for the input value.
-  * *style*: CSS styles to include in HTML output. The object keys can be HTML table tag names: `'table'`, `'thead'`, `'tbody'`, `'tr'`, `'th'`, or `'td'`. The object values should be strings of valid CSS style directives (such as `"font-weight: bold;"`) or functions that take a column name and row as inputs and return a CSS string.
+  * *style*: CSS styles to include in HTML output. The object keys can be HTML table tag names: `'table'`, `'thead'`, `'tbody'`, `'tr'`, `'th'`, or `'td'`. The object values should be strings of valid CSS style directives (such as `"font-weight: bold;"`) or functions that take a column name and row as input and return a CSS string.
+
+*Examples*
+
+```js
+// serialize a table as HTML-formatted text
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toHTML()
+```
 
 <hr/><a id="toJSON" href="#toJSON">#</a>
 <em>table</em>.<b>toJSON</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-json.js)
@@ -256,20 +412,20 @@ Format this table as a JavaScript Object Notation (JSON) string compatible with 
   * *limit*: The maximum number of rows to print (default `Infinity`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
   * *schema*: Boolean flag (default `true`) indicating if table schema metadata should be included in the JSON output. If `false`, only the data payload is included.
-  * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings.
-  * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions to invoke to transform column values prior to output. If specified, a formatting function overrides any automatically inferred options.
+  * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings. Otherwise, should be an array of name strings.
+  * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions that transform column values prior to output. If specified, a formatting function overrides any automatically inferred options.
 
 *Examples*
 
 ```js
-// serialize a table to a JSON string with schema metadata
-aq.table({ a: [1, 2, 3], b: [4, 5,6] }).toJSON()
+// serialize a table as a JSON string with schema metadata
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toJSON()
 // '{"schema":{"fields":[{"name":"a"},{"name":"b"}]},"data":{"a":[1,2,3],"b":[4,5,6]}}'
 ```
 
 ```js
-// serialize a table to a JSON string without schema metadata
-aq.table({ a: [1, 2, 3], b: [4, 5,6] }).toJSON({ schema: false })
+// serialize a table as a JSON string without schema metadata
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toJSON({ schema: false })
 // '{"a":[1,2,3],"b":[4,5,6]}'
 ```
 
@@ -281,8 +437,17 @@ Format this table as a [GitHub-Flavored Markdown table](https://github.github.co
 * *options*: A formatting options object:
   * *limit*: The maximum number of rows to print (default `Infinity`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
-  * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings.
+  * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings. Otherwise, should be an array of name strings.
   * *align*: Object of column alignment options. The object keys should be column names. The object values should be aligment strings, one of `'l'` (left), `'c'` (center), or `'r'` (right). If specified, these override any automatically inferred options.
-  * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions or objects with any of the following properties.If specified, these override any automatically inferred options:
-    * *date*: One of 'utc' or 'loc' (for UTC or local dates), or `null` for complete date time strings.
-    * *digits*: Number of significant digits to include for numbers.
+  * *format*: Object of column format options. If specified, these override any automatically inferred options. The object keys should be column names. The object values should either be formatting functions or objects with any of the following properties:
+    * *utc*: A boolean flag indicating if UTC date formatting should be used rather than the local time zone.
+    * *digits*: Number of fractional digits to include for numbers.
+  * *maxdigits*: The maximum number of fractional digits to include when inferring a number format (default `6`). This option is passed to the format inference method and is ignored when explicit format options are specified.
+
+*Examples*
+
+```js
+// serialize a table as Markdown-formatted text
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toMarkdown()
+// '|a|b|\n|-:|-:|\n|1|4|\n|2|5|\n|3|6|\n'
+```

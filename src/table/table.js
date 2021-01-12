@@ -206,8 +206,9 @@ export default class Table extends Transformable {
 
   /**
    * Print the contents of this table using the console.table() method.
-   * @param {ObjectsOptions} options The options for row object generation,
-   *  determining which rows and columns are printed.
+   * @param {ObjectsOptions|number} options The options for row object
+   *  generation, determining which rows and columns are printed. If
+   *  number-valued, specifies the row limit.
    */
   print(options = {}) {
     if (typeof options === 'number') {
