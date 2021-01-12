@@ -200,7 +200,8 @@ The column index for the given name, or `-1` if the name is not found.
 *Examples*
 
 ```js
-aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).columnIndex('b'); // 1
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .columnIndex('b'); // 1
 ```
 
 <hr/><a id="columnName" href="#columnName">#</a>
@@ -213,7 +214,8 @@ The column name at the given index, or `undefined` if the index is out of range.
 *Examples*
 
 ```js
-aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).columnName(1); // 'b'
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .columnName(1); // 'b'
 ```
 
 <hr/><a id="columnNames" href="#columnNames">#</a>
@@ -229,7 +231,8 @@ Returns an array of table column names, optionally filtered.
 *Examples*
 
 ```js
-aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).columnNames(); // [ 'a', 'b' ]
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .columnNames(); // [ 'a', 'b' ]
 ```
 
 <br/>
