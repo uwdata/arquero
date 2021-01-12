@@ -141,7 +141,7 @@ export default class ColumnTable extends Table {
     const create = rowObjectBuilder(this);
     const n = this.numRows();
 
-    if (this.isOrdered() || this.isFiltered) {
+    if (this.isOrdered() || this.isFiltered()) {
       const indices = this.indices();
       for (let i = 0; i < n; ++i) {
         yield create(indices[i]);
