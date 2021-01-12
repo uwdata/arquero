@@ -319,7 +319,6 @@ Returns an array of objects representing table rows. A new set of objects will b
 ```js
 aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).objects()
 // [ { a: 1, b: 4 }, { a: 2, b: 5 }, { a: 3, b: 6 } ]
-}
 ```
 
 <hr/><a id="@@iterator" href="#@@iterator">#</a>
