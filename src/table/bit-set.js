@@ -1,17 +1,32 @@
 const ONE = 0x80000000;
 const ALL = 0xFFFFFFFF;
 
+/**
+ * Represent an indexable set of bits.
+ */
 export default class BitSet {
+  /**
+   * Instantiate a new BitSet instance.
+   * @param {number} size The number of bits.
+   */
   constructor(size) {
     this._size = size;
     this._bits = new Uint32Array(Math.ceil(size / 32));
   }
 
+  /**
+   * The number of bits.
+   * @return {number}
+   */
   get length() {
     return this._size;
   }
 
-  // https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetKernighan
+  /**
+   * The number of bits set to one.
+   * https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetKernighan
+   * @return {number}
+   */
   count() {
     const n = this._bits.length;
     let count = 0;
@@ -23,24 +38,45 @@ export default class BitSet {
     return count;
   }
 
+  /**
+   * Get the bit at a given index.
+   * @param {number} i The bit index.
+   */
   get(i) {
     return this._bits[i >> 5] & (ONE >>> i);
   }
 
+  /**
+   * Set the bit at a given index to one.
+   * @param {number} i The bit index.
+   */
   set(i) {
     this._bits[i >> 5] |= (ONE >>> i);
   }
 
+  /**
+   * Clear the bit at a given index to zero.
+   * @param {number} i The bit index.
+   */
   clear(i) {
     this._bits[i >> 5] &= ~(ONE >>> i);
   }
 
+  /**
+   * Scan the bits, invoking a callback function with the index of
+   * each non-zero bit.
+   * @param {(i: number) => vois} fn A callback function.
+   */
   scan(fn) {
     for (let i = this.next(0); i >= 0; i = this.next(i + 1)) {
       fn(i);
     }
   }
 
+  /**
+   * Get the next non-zero bit starting from a given index.
+   * @param {number} i The bit index.
+   */
   next(i) {
     const bits = this._bits;
     const n = bits.length;
@@ -57,12 +93,22 @@ export default class BitSet {
     return -1;
   }
 
+  /**
+   * Return the index of the nth non-zero bit.
+   * @param {number} n The number of non-zero bits to advance.
+   * @return {number} The index of the nth non-zero bit.
+   */
   nth(n) {
     let i = this.next(0);
     while (n-- && i >= 0) i = this.next(i + 1);
     return i;
   }
 
+  /**
+   * Negate all bits in this bitset.
+   * Modifies this BitSet in place.
+   * @return {this}
+   */
   not() {
     const bits = this._bits;
     const n = bits.length;
@@ -81,6 +127,11 @@ export default class BitSet {
     return this;
   }
 
+  /**
+   * Return the logical AND of this BitSet and another.
+   * @param {BitSet} bitset The BitSet to combine with.
+   * @return {BitSet} The logical AND as a new BitSet.
+   */
   and(bitset) {
     const a = this._bits;
     const b = bitset._bits;
@@ -95,6 +146,11 @@ export default class BitSet {
     return s;
   }
 
+  /**
+   * Return the logical OR of this BitSet and another.
+   * @param {BitSet} bitset The BitSet to combine with.
+   * @return {BitSet} The logical OR as a new BitSet.
+   */
   or(bitset) {
     const a = this._bits;
     const b = bitset._bits;

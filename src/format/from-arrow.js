@@ -22,12 +22,11 @@ function isStruct(id) {
 /**
  * Options for Apache Arrow import.
  * @typedef {object} ArrowOptions
- * @property {string|string[]|number|number[]|object|Function} columns
- *  An ordered set of columns to import. The input may consist of:
- *  - column name strings,
- *  - column integer indices,
- *  - objects with current column names as keys and new column names as values (for renaming), or
- *  - selection helper functions such as {@link all}, {@link not}, or {@link range}.
+ * @property {import('../table/transformable').Select} columns
+ *  An ordered set of columns to import. The input may consist of column name
+ *  strings, column integer indices, objects with current column names as keys
+ *  and new column names as values (for renaming), or selection helper
+ *  functions such as {@link all}, {@link not}, or {@link range}.
  * @property {boolean} [unpack=false] Flag to unpack binary-encoded Arrow
  *  data to standard JavaScript values. Unpacking can incur an upfront time
  *  and memory cost to extract data to new arrays, but can speed up later

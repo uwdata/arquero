@@ -3,26 +3,26 @@ import { columns, formats, scan } from './util';
 
 /**
  * Options for Markdown formatting.
- * @typedef {object} MarkdownOptions
+ * @typedef {object} MarkdownFormatOptions
  * @property {number} [limit=Infinity] The maximum number of rows to print.
  * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
- * @property {string[]} [columns] Ordered list of column names to print.
- * @property {object} [align] Object of column alignment options.
- *  The object keys should be column names. The object values should be
- *  aligment strings, one of 'l' (left), 'c' (center), or 'r' (right).
- *  If specified, these override the automatically inferred options.
- * @property {object} [format] Object of column format options.
- *  The object keys should be column names. The object values should be
- *  formatting functions or objects with any of the following properties.
- *  If specified, these override the automatically inferred options.
- *  - {string} date One of 'utc' or 'loc' (for UTC or local dates), or null for full date times.
- *  - {number} digits Number of significant digits to include for numbers.
+ * @property {import('./util').ColumnSelectOptions} [columns] Ordered list
+ *  of column names to include. If function-valued, the function should
+ *  accept a table as input and return an array of column name strings.
+ * @property {import('./util').ColumnAlignOptions} [align] Object of column
+ *  alignment options. The object keys should be column names. The object
+ *  values should be aligment strings, one of 'l' (left), 'c' (center), or
+ *  'r' (right). If specified, these override automatically inferred options.
+ * @property {import('./util').ColumnFormatOptions} [format] Object of column
+ *  format options. The object keys should be column names. The object values
+ *  should be formatting functions or specification objects. If specified,
+ *  these override automatically inferred options.
  */
 
 /**
  * Format a table as a GitHub-Flavored Markdown table string.
  * @param {ColumnTable} table The table to format.
- * @param {MarkdownOptions} options The formatting options.
+ * @param {MarkdownFormatOptions} options The formatting options.
  * @return {string} A GitHub-Flavored Markdown table string.
  */
 export default function(table, options = {}) {

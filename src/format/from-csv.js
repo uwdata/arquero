@@ -15,9 +15,9 @@ const DEFAULT_COLUMN_NAME = 'col';
  *  If true, assumes the CSV contains a header row with column names.
  *  If false, indicates the CSV does not contain a header row, and the
  *  columns are given the names 'col1', 'col2', and so on.
- * @property {object} [parse] Object of column parsing options.
- *  The object keys should be column names. The object values should be
- *  parsing functions to invoke to transform values upon input.
+ * @property {Object.<string, (value: string) => any>} [parse] Object of
+ *  column parsing options. The object keys should be column names. The object
+ *  values should be parsing functions that transform values upon input.
  */
 
 /**

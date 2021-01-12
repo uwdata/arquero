@@ -5,6 +5,10 @@ import toArray from '../util/to-array';
  */
 export default class Transformable {
 
+  /**
+   * Instantiate a new Transformable instance.
+   * @param {Params} [params] The parameter values.
+   */
   constructor(params) {
     if (params) this._params = params;
   }
@@ -15,8 +19,8 @@ export default class Transformable {
    * as an object. Otherwise, adds the provided parameters to this
    * table's parameter set and returns the table. Any prior parameters
    * with names matching the input parameters are overridden.
-   * @param {object} values The parameter values.
-   * @return {this|object} The current parameters values (if called with
+   * @param {Params} [values] The parameter values.
+   * @return {this|Params} The current parameters values (if called with
    *  no arguments) or this table.
    */
   params(values) {
@@ -161,7 +165,7 @@ export default class Transformable {
    * Rollup a table to produce an aggregate summary.
    * Often used in conjunction with {@link Transformable#groupby}.
    * To produce counts only, {@link Transformable#count} is a shortcut.
-   * @param {ExprObject} values Object of name-value pairs defining aggregate
+   * @param {ExprObject} [values] Object of name-value pairs defining aggregate
    *  output columns. The input object should have output column names for
    *  keys and table expressions for values. The expressions must be valid
    *  aggregate expressions: window functions are not allowed and column
@@ -373,7 +377,7 @@ export default class Transformable {
    * Lookup is similar to {@link Transformable#join_left}, but with a simpler
    * syntax and the added constraint of allowing at most one match only.
    * @param {TableRef} other The secondary table to look up values from.
-   * @param {JoinKeys} on Lookup keys (column name strings or table
+   * @param {JoinKeys} [on] Lookup keys (column name strings or table
    *  expressions) for this table and the secondary table, respectively.
    * @param {...ExprList} values The column values to add from the
    *  secondary table. Can be column name strings or objects with column
@@ -686,18 +690,23 @@ export default class Transformable {
 // -- Parameter Types -------------------------------------------------------
 
 /**
+ * Table expression parameters.
+ * @typedef {Object.<string, *>} Params
+ */
+
+/**
  * A reference to a column by string name or integer index.
  * @typedef {string|number} ColumnRef
  */
 
 /**
  * A function defined over a table row.
- * @typedef {(d?: object, $?: object) => any} TableExpr
+ * @typedef {(d?: object, $?: Params) => any} TableExpr
  */
 
 /**
  * A function defined over rows from two tables.
- * @typedef {(a?: object, b?: object, $?: object) => any} TableExpr2
+ * @typedef {(a?: object, b?: object, $?: Params) => any} TableExpr2
  */
 
 /**
@@ -707,7 +716,7 @@ export default class Transformable {
 
 /**
  * A selection helper function.
- * @typedef {Function} SelectHelper
+ * @typedef {(table: any) => string[]} SelectHelper
  */
 
 /**

@@ -18,14 +18,11 @@ export default class ColumnTable extends Table {
 
   /**
    * Create a new ColumnTable from existing input data.
-   * @param {*} values The backing table data values.
+   * @param {object[]|Iterable<object>|object|Map} values The backing table data values.
    *  If array-valued, should be a list of JavaScript objects with
    *  key-value properties for each column value.
    *  If object- or Map-valued, a table with two columns (one for keys,
    *  one for values) will be created.
-   *  If the input adheres to an Apache Arrow table (providing a schema
-   *  property with named fields and a getColumn method), the columns
-   *  exported by that object will be used directly.
    * @param {string[]} [names] The named columns to include.
    * @return {ColumnTable} A new ColumnTable instance.
    */
@@ -33,6 +30,15 @@ export default class ColumnTable extends Table {
     return new ColumnTable(columnsFrom(values, names), names);
   }
 
+  /**
+   * Instantiate a new ColumnTable instance.
+   * @param {object} columns An object mapping column names to values.
+   * @param {string[]} [names] An ordered list of column names.
+   * @param {BitSet} [filter] A filtering BitSet.
+   * @param {GroupBySpec} [group] A groupby specification.
+   * @param {RowComparator} [order] A row comparator function.
+   * @param {Params} [params] An object mapping parameter names to values.
+   */
   constructor(columns, names, filter, group, order, params) {
     mapObject(columns, Column.from, columns);
     names = names || Object.keys(columns);
@@ -40,6 +46,14 @@ export default class ColumnTable extends Table {
     super(names, nrows, columns, filter, group, order, params);
   }
 
+  /**
+   * Create a new table with the same type as this table.
+   * The new table may have different data, filter, grouping, or ordering
+   * based on the values of the optional configuration argument. If a
+   * setting is not specified, it is inherited from the current table.
+   * @param {CreateOptions} [options] Creation options for the new table.
+   * @return {ColumnTable} A newly created table.
+   */
   create({ data, names, filter, groups, order }) {
     const f = filter
       ? (this._filter ? this._filter.and(filter) : filter)
@@ -108,7 +122,7 @@ export default class ColumnTable extends Table {
   /**
    * Returns an array of objects representing table rows.
    * @param {ObjectsOptions} [options] The options for row object generation.
-   * @return {Array} An array of row objects.
+   * @return {object[]} An array of row objects.
    */
   objects(options = {}) {
     const create = rowObjectBuilder(this);
@@ -121,7 +135,7 @@ export default class ColumnTable extends Table {
 
   /**
    * Returns an iterator over objects representing table rows.
-   * @return {Iterator} An iterator over row objects.
+   * @return {Iterator<object>} An iterator over row objects.
    */
   *[Symbol.iterator]() {
     const create = rowObjectBuilder(this);
@@ -145,7 +159,7 @@ export default class ColumnTable extends Table {
    * Instead, the backing data itself is filtered and ordered as needed.
    * @param {number[]} [indices] Ordered row indices to materialize.
    *  If unspecified, all rows passing the table filter are used.
-   * @return {Table} A reified table.
+   * @return {ColumnTable} A reified table.
    */
   reify(indices) {
     const nrows = indices ? indices.length : this.numRows();
@@ -185,7 +199,7 @@ export default class ColumnTable extends Table {
    * Format this table as a comma-separated values (CSV) string. Other
    * delimiters, such as tabs or pipes ('|'), can be specified using
    * the options argument.
-   * @param {CSVFormatOptions} options The formatting options.
+   * @param {CSVFormatOptions} [options] The formatting options.
    * @return {string} A delimited-value format string.
    */
   toCSV(options) {
@@ -194,7 +208,7 @@ export default class ColumnTable extends Table {
 
   /**
    * Format this table as an HTML table string.
-   * @param {HTMLOptions} options The formatting options.
+   * @param {HTMLFormatOptions} [options] The formatting options.
    * @return {string} An HTML table string.
    */
   toHTML(options) {
@@ -203,7 +217,7 @@ export default class ColumnTable extends Table {
 
   /**
    * Format this table as a JavaScript Object Notation (JSON) string.
-   * @param {JSONFormatOptions} options The formatting options.
+   * @param {JSONFormatOptions} [options] The formatting options.
    * @return {string} A JSON string.
    */
   toJSON(options) {
@@ -212,10 +226,50 @@ export default class ColumnTable extends Table {
 
   /**
    * Format this table as a GitHub-Flavored Markdown table string.
-   * @param {MarkdownOptions} options The formatting options.
+   * @param {MarkdownFormatOptions} [options] The formatting options.
    * @return {string} A GitHub-Flavored Markdown table string.
    */
   toMarkdown(options) {
     return toMarkdown(this, options);
   }
 }
+
+/**
+ * Proxy type for BitSet class.
+ * @typedef {import('./table').BitSet} BitSet
+ */
+
+/**
+ * Proxy type for GroupBySpec.
+ * @typedef {import('./table').GroupBySpec} GroupBySpec
+ */
+
+/**
+ * Proxy type for RowComparator.
+ * @typedef {import('./table').RowComparator} RowComparator
+ */
+
+/**
+ * Proxy type for Params.
+ * @typedef {import('./table').Params} Params
+ */
+
+/**
+ * Options for CSV formatting.
+ * @typedef {import('../format/to-csv').CSVFormatOptions} CSVFormatOptions
+ */
+
+/**
+ * Options for HTML formatting.
+ * @typedef {import('../format/to-html').HTMLFormatOptions} HTMLFormatOptions
+ */
+
+/**
+ * Options for JSON formatting.
+ * @typedef {import('../format/to-json').JSONFormatOptions} JSONFormatOptions
+ */
+
+/**
+ * Options for Markdown formatting.
+ * @typedef {import('../format/to-markdown').MarkdownFormatOptions} MarkdownFormatOptions
+ */

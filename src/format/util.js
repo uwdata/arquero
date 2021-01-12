@@ -1,6 +1,36 @@
 import inferFormat from './infer';
 import isFunction from '../util/is-function';
 
+/**
+ * Data table.
+ * @typedef {typeof import('../table/table')} Table
+ */
+
+/**
+ * Column selection function.
+ * @typedef {(table: Table) => string[]} ColumnSelectFunction
+ */
+
+/**
+ * Column selection options.
+ * @typedef {string[]|ColumnSelectFunction} ColumnSelectOptions
+ */
+
+/**
+ * Column format options. The object keys should be column names.
+ * The object values should be formatting functions or objects.
+ * If specified, these override any automatically inferred options.
+ * @typedef {Object.<string, import('./value').ValueFormatOptions} ColumnFormatOptions
+ */
+
+/**
+ * Column alignment options. The object keys should be column names.
+ * The object values should be aligment strings, one of 'l' (left),
+ * 'c' (center), or 'r' (right).
+ * If specified, these override any automatically inferred options.
+ * @typedef {Object.<string, 'l'|'c'|'r'>} ColumnAlignOptions
+ */
+
 export function columns(table, names) {
   return isFunction(names)
     ? names(table)

@@ -16,9 +16,9 @@ function autoType(key, value) {
  * @typedef {object} JSONParseOptions
  * @property {boolean} [autoType=true] Flag controlling automatic type
  *  inference. If false, date parsing for input JSON strings is disabled.
- * @property {object} [parse] Object of column parsing options.
- *  The object keys should be column names. The object values should be
- *  parsing functions to invoke to transform values upon input.
+ * @property {Object.<string, (value: any) => any>} [parse] Object of column
+ *  parsing options. The object keys should be column names. The object values
+ *  should be parsing functions that transform values upon input.
  */
 
 /**

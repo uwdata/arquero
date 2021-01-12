@@ -12,13 +12,13 @@ import isDate from '../util/is-date';
  * @property {boolean} [schema=true] Flag indicating if table schema metadata
  *  should be included in the JSON output. If false, only the data payload
  *  is included.
- * @property {string[]|Function} [columns] Ordered list of column names
- *  to include. If function-valued, the function should accept a table as
- *  input and return an array of column name strings.
- * @property {object} [format] Object of column format options. The object
- *  keys should be column names. The object values should be formatting
- *  functions to invoke to transform column values prior to output. If
- *  specified, these override any automatically inferred options.
+ * @property {import('./util').ColumnSelectOptions} [columns] Ordered list
+ *  of column names to include. If function-valued, the function should
+ *  accept a table as input and return an array of column name strings.
+ * @property {Object.<string, (value: any) => any>} [format] Object of column
+ *  format options. The object keys should be column names. The object values
+ *  should be formatting functions to invoke to transform column values prior
+ *  to output. If specified, these override automatically inferred options.
  */
 
 const defaultFormatter = value => isDate(value)

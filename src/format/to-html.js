@@ -4,26 +4,46 @@ import isFunction from '../util/is-function';
 import mapObject from '../util/map-object';
 
 /**
+ * Null format function.
+ * @callback NullFormat
+ * @param {null|undefined} [value] The value to format.
+ * @return {string} The formatted HTML string.
+ */
+
+/**
+ * CSS style function.
+ * @callback StyleFunction
+ * @param {string} name The column name.
+ * @param {number} row The table row index.
+ * @return {string} A CSS style string.
+ */
+
+/**
+ * CSS style options.
+ * @typedef {Object.<string, string | StyleFunction>} StyleOptions
+ */
+
+/**
  * Options for HTML formatting.
- * @typedef {object} HTMLOptions
+ * @typedef {object} HTMLFormatOptions
  * @property {number} [limit=Infinity] The maximum number of rows to print.
  * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
- * @property {string[]} [columns] Ordered list of column names to print.
- * @property {object} [align] Object of column alignment options.
- *  The object keys should be column names. The object values should be
- *  aligment strings, one of 'l' (left), 'c' (center), or 'r' (right).
- *  If specified, these override the automatically inferred options.
- * @property {object} [format] Object of column format options.
- *  The object keys should be column names. The object values should be
- *  formatting functions or objects with any of the following properties.
- *  If specified, these override the automatically inferred options.
- *  - {string} date One of 'utc' or 'loc' (for UTC or local dates), or null for full date times.
- *  - {number} digits Number of significant digits to include for numbers.
- * @property {Function} [null] Format function for null and undefined values.
+ * @property {import('./util').ColumnSelectOptions} [columns] Ordered list
+ *  of column names to include. If function-valued, the function should
+ *  accept a table as input and return an array of column name strings.
+ * @property {import('./util').ColumnAlignOptions} [align] Object of column
+ *  alignment options. The object keys should be column names. The object
+ *  values should be aligment strings, one of 'l' (left), 'c' (center), or
+ *  'r' (right). If specified, these override automatically inferred options.
+ * @property {import('./util').ColumnFormatOptions} [format] Object of column
+ *  format options. The object keys should be column names. The object values
+ *  should be formatting functions or specification objects. If specified,
+ *  these override automatically inferred options.
+ * @property {NullFormat} [null] Format function for null or undefined values.
  *  If specified, this function will be invoked with the null or undefined
  *  value as the sole input, and the return value will be used as the HTML
  *  output for the value.
- * @property {object} [style] CSS styles to include in HTML output.
+ * @property {StyleOptions} [style] CSS styles to include in HTML output.
  *  The object keys should be HTML table tag names: 'table', 'thead',
  *  'tbody', 'tr', 'th', or 'td'. The object values should be strings of
  *  valid CSS style directives (such as "font-weight: bold;") or functions
@@ -33,7 +53,7 @@ import mapObject from '../util/map-object';
 /**
  * Format a table as an HTML table string.
  * @param {ColumnTable} table The table to format.
- * @param {HTMLOptions} options The formatting options.
+ * @param {HTMLFormatOptions} options The formatting options.
  * @return {string} An HTML table string.
  */
 export default function(table, options = {}) {
