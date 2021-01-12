@@ -8,16 +8,14 @@ import repeat from '../util/repeat';
 export default class Table extends Transformable {
 
   /**
-   * Construct a new Table instance.
-   * @param {string[]} names - An array of column names.
-   * @param {number} nrows - The number of rows.
-   * @param {*} data - The backing data, which can vary by implementation.
-   * @param {BitSet} [filter] - A bit mask for which rows to include.
-   * @param {object} [groups] - Row grouping criteria.
-   * @param {string[]} [groups.names] - Output column names for grouping variables.
-   * @param {function[]} [groups.get] - Accessor functions for grouping variables.
-   * @param {function} [order] - A comparator function for sorting rows.
-   * @param {object} [params] - Parameter values for table expressions.
+   * Instantiate a new Table instance.
+   * @param {string[]} names An ordered list of column names.
+   * @param {number} nrows The number of rows.
+   * @param {TableData} data The backing data, which can vary by implementation.
+   * @param {BitSet} [filter] A bit mask for which rows to include.
+   * @param {GroupBySpec} [groups] A groupby specification for grouping ows.
+   * @param {RowComparator} [order] A comparator function for sorting rows.
+   * @param {Params} [params] Parameter values for table expressions.
    */
   constructor(names, nrows, data, filter, groups, order, params) {
     super(params);
@@ -31,6 +29,18 @@ export default class Table extends Transformable {
   }
 
   /**
+   * Create a new table with the same type as this table.
+   * The new table may have different data, filter, grouping, or ordering
+   * based on the values of the optional configuration argument. If a
+   * setting is not specified, it is inherited from the current table.
+   * @param {CreateOptions} [options] Creation options for the new table.
+   * @return {this} A newly created table.
+   */
+  create(options) { // eslint-disable-line no-unused-vars
+    error('Not implemented');
+  }
+
+  /**
    * Provide an informative object string tag.
    */
   get [Symbol.toStringTag]() {
@@ -41,23 +51,6 @@ export default class Table extends Transformable {
       + (this.isFiltered() ? ` (${this.totalRows()} backing)` : '')
       + (this.isGrouped() ? `, ${this._group.size} groups` : '')
       + (this.isOrdered() ? ', ordered' : '');
-  }
-
-  /**
-   * Create a new table with the same type as this table.
-   * The new table may have different data, filter, grouping, or ordering
-   * based on the values of the optional configuration argument. If a
-   * setting is not specified, it is inherited from the current table.
-   * @param {object} [config] Configuration settings for the new table:
-   *  - data: The data payload to use.
-   *  - names: An ordered list of column names.
-   *  - filter: An additional filter bitset to apply.
-   *  - groups: The groupby specification to use (null for no groups).
-   *  - order: The orderby comparator to use (null for no order).
-   *  - params: Table expression parameters.
-   * @return {Table} A newly created table.
-   */
-  create() {
   }
 
   /**
@@ -86,21 +79,11 @@ export default class Table extends Transformable {
 
   /**
    * Returns the internal table storage data structure.
-   * @return {*} The backing table storage data structure.
+   * @return {TableData} The backing table storage data structure.
    */
   data() {
     return this._data;
   }
-
-  /**
-   * A table groupby specification.
-   * @typedef {object} GroupBySpec
-   * @property {number} size - The number of groups.
-   * @property {string[]} names - Column names for each group.
-   * @property {Function[]} get - Value accessor functions for each group.
-   * @property {number[]} rows - Indices of an example table row for each group.
-   * @property {number[]} keys - Per-row group indices, length is total rows of table.
-   */
 
   /**
    * Returns the groupby specification, if defined.
@@ -112,7 +95,7 @@ export default class Table extends Transformable {
 
   /**
    * Returns the row order comparator function, if specified.
-   * @return {Function} The row order comparator function.
+   * @return {RowComparator} The row order comparator function.
    */
   comparator() {
     return this._order;
@@ -147,7 +130,7 @@ export default class Table extends Transformable {
 
   /**
    * Filter function invoked for each column name.
-   * @callback nameFilter
+   * @callback NameFilter
    * @param {string} name The column name.
    * @param {number} index The column index.
    * @param {string[]} array The array of names.
@@ -156,7 +139,7 @@ export default class Table extends Transformable {
 
   /**
    * The table column names, optionally filtered.
-   * @param {nameFilter} [filter] An optional filter function.
+   * @param {NameFilter} [filter] An optional filter function.
    *  If unspecified, all column names are returned.
    * @return {string[]} An array of matching column names.
    */
@@ -187,7 +170,7 @@ export default class Table extends Transformable {
    * Get the value for the given column and row.
    * @param {string} name The column name.
    * @param {number} row The row index.
-   * @return {*} The table value at (column, row).
+   * @return {TableValue} The table value at (column, row).
    */
   get(name, row) { // eslint-disable-line no-unused-vars
     error('Not implemented');
@@ -198,23 +181,16 @@ export default class Table extends Transformable {
    * function takes a row index as its single argument and returns the
    * corresponding column value.
    * @param {string} name The column name.
-   * @return {Function} The column getter function.
+   * @return {(row: number) => TableValue} The column getter function.
    */
   getter(name) { // eslint-disable-line no-unused-vars
     error('Not implemented');
   }
 
   /**
-   * Options for generating row objects.
-   * @typedef {object} ObjectsOptions
-   * @property {number} [limit=Infinity] The maximum number of objects to create.
-   * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
-   */
-
-  /**
    * Returns an array of objects representing table rows.
    * @param {ObjectsOptions} [options] The options for row object generation.
-   * @return {Array} An array of row objects.
+   * @return {RowObject[]} An array of row objects.
    */
   objects(options) { // eslint-disable-line no-unused-vars
     error('Not implemented');
@@ -222,7 +198,7 @@ export default class Table extends Transformable {
 
   /**
    * Returns an iterator over objects representing table rows.
-   * @return {Iterator} An iterator over row objects.
+   * @return {Iterator<object>} An iterator over row objects.
    */
   [Symbol.iterator]() {
     error('Not implemented');
@@ -230,8 +206,9 @@ export default class Table extends Transformable {
 
   /**
    * Print the contents of this table using the console.table() method.
-   * @param {ObjectsOptions} options The options for row object generation,
-   *  determining which rows and columns are printed.
+   * @param {ObjectsOptions|number} options The options for row object
+   *  generation, determining which rows and columns are printed. If
+   *  number-valued, specifies the row limit.
    */
   print(options = {}) {
     if (typeof options === 'number') {
@@ -324,18 +301,25 @@ export default class Table extends Transformable {
   }
 
   /**
+   * Callback function to cancel a table scan.
+   * @callback ScanStop
+   * @return {void}
+   */
+
+  /**
    * Callback function invoked for each row of a table scan.
-   * @callback scanVisitor
-   * @param {number} row The table row index.
-   * @param {object|Array} data The backing table data store.
-   * @param {Function} stop Function to stop the scan early.
+   * @callback ScanVisitor
+   * @param {number} [row] The table row index.
+   * @param {TableData} [data] The backing table data store.
+   * @param {ScanStop} [stop] Function to stop the scan early.
    *  Callees can invoke this function to prevent future calls.
+   * @return {void}
    */
 
   /**
    * Perform a table scan, visiting each row of the table.
    * If this table is filtered, only rows passing the filter are visited.
-   * @param {scanVisitor} fn Callback invoked for each row of the table.
+   * @param {ScanVisitor} fn Callback invoked for each row of the table.
    * @param {boolean} [order=false] Indicates if the table should be
    *  scanned in the order determined by {@link Table#orderby}. This
    *  argument has no effect if the table is unordered.
@@ -376,10 +360,80 @@ export default class Table extends Transformable {
    * To produce standard aggregate summaries, use {@link rollup}.
    * This method allows the use of custom reducer implementations,
    * for example to produce multiple rows for an aggregate.
-   * @param  {Reducer} reducer The reducer to apply.
+   * @param {Reducer} reducer The reducer to apply.
    * @return {Table} A new table of reducer outputs.
    */
   reduce(reducer) {
     return this.__reduce(this, reducer);
   }
 }
+
+/**
+ * Backing table data.
+ * @typedef {object|Array} TableData
+ */
+
+/**
+ * Table value.
+ * @typedef {*} TableValue
+ */
+
+/**
+ * Table row object.
+ * @typedef {Object.<string, TableValue>} RowObject
+ */
+
+/**
+ * Table expression parameters.
+ * @typedef {import('./transformable').Params} Params
+ */
+
+/**
+ * Proxy type for BitSet class.
+ * @typedef {typeof import('./bit-set')} BitSet
+ */
+
+/**
+ * A table groupby specification.
+ * @typedef {object} GroupBySpec
+ * @property {number} size The number of groups.
+ * @property {string[]} names Column names for each group.
+ * @property {RowExpression[]} get Value accessor functions for each group.
+ * @property {number[]} rows Indices of an example table row for each group.
+ * @property {number[]} keys Per-row group indices, length is total rows of table.
+ */
+
+/**
+ * An expression evaluated over a table row.
+ * @callback RowExpression
+ * @param {number} [row] The table row.
+ * @param {TableData} [data] The backing table data store.
+ * @return {TableValue}
+ */
+
+/**
+ * Comparator function for sorting table rows.
+ * @callback RowComparator
+ * @param {number} rowA The table row index for the first row.
+ * @param {number} rowB The table row index for the second row.
+ * @param {TableData} data The backing table data store.
+ * @return {number} Negative if rowA < rowB, positive if
+ *  rowA > rowB, otherwise zero.
+ */
+
+/**
+ * Options for derived table creation.
+ * @typedef {object} CreateOptions
+ * @property {TableData} [data] The backing column data.
+ * @property {string[]} [names] An ordered list of column names.
+ * @property {BitSet} [filter] An additional filter BitSet to apply.
+ * @property {GroupBySpec} [groups] The groupby specification to use, or null for no groups.
+ * @property {RowComparator} [order] The orderby comparator function to use, or null for no order.
+ */
+
+/**
+ * Options for generating row objects.
+ * @typedef {object} ObjectsOptions
+ * @property {number} [limit=Infinity] The maximum number of objects to create.
+ * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
+ */
