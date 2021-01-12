@@ -17,6 +17,9 @@ import { columns, formats, scan } from './util';
  *  format options. The object keys should be column names. The object values
  *  should be formatting functions or specification objects. If specified,
  *  these override automatically inferred options.
+ * @property {number} [maxdigits=6] The maximum number of fractional digits
+ *  to include when formatting numbers. This option is passed to the format
+ *  inference method and is overridden by any explicit format options.
  */
 
 /**

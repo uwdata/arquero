@@ -48,6 +48,9 @@ import mapObject from '../util/map-object';
  *  'tbody', 'tr', 'th', or 'td'. The object values should be strings of
  *  valid CSS style directives (such as "font-weight: bold;") or functions
  *  that take a column name and row as inputs and return a CSS string.
+ * @property {number} [maxdigits=6] The maximum number of fractional digits
+ *  to include when formatting numbers. This option is passed to the format
+ *  inference method and is overridden by any explicit format options.
  */
 
 /**
