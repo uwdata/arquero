@@ -312,13 +312,21 @@ const visitors = {
 };
 
 function spliceMember(node, props, ctx, check) {
-  const { property } = node;
-  const name = is(Identifier, property) ? { name: property.name }
-    : is(Literal, property) ? { name: property.value, computed: true }
-    : ctx.error(ERROR_MEMBER, node);
+  const { property, computed } = node;
+  let name;
 
-  check(node, name.name, props.table, ctx);
-  Object.assign(node, props, name);
+  if (!computed) {
+    name = property.name;
+  } else if (is(Literal, property)) {
+    name = property.value;
+  } else try {
+    name = ctx.param(property);
+  } catch (e) {
+    ctx.error(ERROR_MEMBER, node);
+  }
+
+  check(node, name, props.table, ctx);
+  Object.assign(node, props, { name, computed });
   return false;
 }
 
