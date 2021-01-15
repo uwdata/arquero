@@ -170,6 +170,47 @@ tape('parse parses column references with nested properties', t => {
   t.end();
 });
 
+tape('parse parses indirect column names', t => {
+  // direct expression
+  t.equal(
+    parse({ f: d => d['x' + 'y'] }).exprs[0] + '',
+    '(row,data,op)=>data["xy"].get(row)',
+    'parsed indirect member as expression'
+  );
+
+  // parameter reference
+  const opt = {
+    table: {
+      params: () => ({ col: 'a' }),
+      column: (name) => name == 'a' ? {} : null
+    }
+  };
+  t.equal(
+    parse({ f: (d, $) => d[$.col] }, opt).exprs[0] + '',
+    '(row,data,op)=>data["a"].get(row)',
+    'parsed indirect member as param'
+  );
+
+  // variable reference
+  t.throws(
+    () => parse({
+      f: d => {
+        const col = 'a';
+        return d[col];
+      }
+    }),
+    'throws on indirect variable'
+  );
+
+  // variable reference
+  t.throws(
+    () => parse({ f: d => d[d.foo] }),
+    'throws on nested column reference'
+  );
+
+  t.end();
+});
+
 tape('parse throws on invalid column names', t => {
   const opt = { table: { params: () => ({}), data: () => ({}) } };
   t.throws(() => parse({ f: d => d.foo }, opt));
