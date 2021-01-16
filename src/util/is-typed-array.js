@@ -1,4 +1,5 @@
+const TypedArray = Object.getPrototypeOf(Int8Array);
+
 export default function(value) {
-  // all typed arrays should share the same method prototype
-  return value && value.map === Int8Array.prototype.map;
+  return value instanceof TypedArray;
 }
