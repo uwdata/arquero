@@ -170,7 +170,7 @@ export default class Table extends Transformable {
    * Get the value for the given column and row.
    * @param {string} name The column name.
    * @param {number} row The row index.
-   * @return {TableValue} The table value at (column, row).
+   * @return {DataValue} The data value at (column, row).
    */
   get(name, row) { // eslint-disable-line no-unused-vars
     error('Not implemented');
@@ -181,7 +181,7 @@ export default class Table extends Transformable {
    * function takes a row index as its single argument and returns the
    * corresponding column value.
    * @param {string} name The column name.
-   * @return {(row: number) => TableValue} The column getter function.
+   * @return {ColumnGetter} The column getter function.
    */
   getter(name) { // eslint-disable-line no-unused-vars
     error('Not implemented');
@@ -375,12 +375,12 @@ export default class Table extends Transformable {
 
 /**
  * Table value.
- * @typedef {*} TableValue
+ * @typedef {*} DataValue
  */
 
 /**
  * Table row object.
- * @typedef {Object.<string, TableValue>} RowObject
+ * @typedef {Object.<string, DataValue>} RowObject
  */
 
 /**
@@ -404,11 +404,18 @@ export default class Table extends Transformable {
  */
 
 /**
+ * Column value accessor.
+ * @callback ColumnGetter
+ * @param {number} [row] The table row.
+ * @return {DataValue}
+ */
+
+/**
  * An expression evaluated over a table row.
  * @callback RowExpression
  * @param {number} [row] The table row.
  * @param {TableData} [data] The backing table data store.
- * @return {TableValue}
+ * @return {DataValue}
  */
 
 /**

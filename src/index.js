@@ -1,5 +1,6 @@
 // export internal class definitions
 import Table from './table/table';
+import { columnFactory } from './table/column';
 import ColumnTable from './table/column-table';
 import Reducer from './engine/reduce/reducer';
 import parse from './expression/parse';
@@ -13,6 +14,7 @@ export const internal = {
   Query,
   Reducer,
   Verbs,
+  columnFactory,
   parse,
   walk_ast
 };
