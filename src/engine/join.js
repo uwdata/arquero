@@ -1,11 +1,11 @@
 import columnSet from '../table/column-set';
 import concat from '../util/concat';
 import isArray from '../util/is-array';
-import unroll from '../util/unroll2';
+import unroll2 from '../util/unroll2';
 
 function emitter(columns, getters) {
   const args = ['i', 'a', 'j', 'b'];
-  return unroll(columns, getters, args,
+  return unroll2(columns, getters, args,
     '{' + concat(columns, (_, i) => `_${i}.push($${i}(${args}));`) + '}');
 }
 
