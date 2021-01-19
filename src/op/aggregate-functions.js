@@ -2,6 +2,7 @@ import bins from '../util/bins';
 import distinctMap from '../util/distinct-map';
 import isBigInt from '../util/is-bigint';
 import noop from '../util/no-op';
+import NULL from '../util/null';
 import product from '../util/product';
 
 /**
@@ -101,7 +102,7 @@ export default {
   any: {
     create: () => initOp({
       add: (s, v) => { if (s.any == null) s.any = v; },
-      value: s => s.valid ? s.any : undefined
+      value: s => s.valid ? s.any : NULL
     }),
     param: [1]
   },
@@ -146,7 +147,7 @@ export default {
   mode: {
     create: () => initOp({
       value: s => {
-        let mode = undefined;
+        let mode = NULL;
         let max = 0;
         s.distinct.forEach((value, count) => {
           if (count > max) {
@@ -165,7 +166,7 @@ export default {
   sum: {
     create: () => ({
       init:  s => s.sum = 0,
-      value: s => s.valid ? s.sum : undefined,
+      value: s => s.valid ? s.sum : NULL,
       add: (s, v) => isBigInt(v)
         ? (s.sum === 0 ? s.sum = v : s.sum += v)
         : s.sum += +v,
@@ -200,7 +201,7 @@ export default {
   mean: {
     create: () => ({
       init: s => s.mean = 0,
-      value: s => s.valid ? s.mean : undefined,
+      value: s => s.valid ? s.mean : NULL,
       add: (s, v) => {
         s.mean_d = v - s.mean;
         s.mean += s.mean_d / s.valid;
@@ -216,7 +217,7 @@ export default {
   /** @type {AggregateDef} */
   average: {
     create: () => initOp({
-      value: s => s.valid ? s.mean : undefined
+      value: s => s.valid ? s.mean : NULL
     }),
     param: [1],
     req: ['mean']
@@ -226,7 +227,7 @@ export default {
   variance: {
     create: () => ({
       init:  s => s.dev = 0,
-      value: s => s.valid > 1 ? s.dev / (s.valid - 1) : undefined,
+      value: s => s.valid > 1 ? s.dev / (s.valid - 1) : NULL,
       add: (s, v) => s.dev += s.mean_d * (v - s.mean),
       rem: (s, v) => s.dev -= s.mean_d * (v - s.mean)
     }),
@@ -237,7 +238,7 @@ export default {
   /** @type {AggregateDef} */
   variancep: {
     create: () => initOp({
-      value: s => s.valid > 1 ? s.dev / s.valid : undefined
+      value: s => s.valid > 1 ? s.dev / s.valid : NULL
     }),
     param: [1],
     req: ['variance']
@@ -246,7 +247,7 @@ export default {
   /** @type {AggregateDef} */
   stdev: {
     create: () => initOp({
-      value: s => s.valid > 1 ? Math.sqrt(s.dev / (s.valid - 1)) : undefined
+      value: s => s.valid > 1 ? Math.sqrt(s.dev / (s.valid - 1)) : NULL
     }),
     param: [1],
     req: ['variance']
@@ -255,7 +256,7 @@ export default {
   /** @type {AggregateDef} */
   stdevp: {
     create: () => initOp({
-      value: s => s.valid > 1 ? Math.sqrt(s.dev / s.valid) : undefined
+      value: s => s.valid > 1 ? Math.sqrt(s.dev / s.valid) : NULL
     }),
     param: [1],
     req: ['variance']
@@ -264,9 +265,9 @@ export default {
   /** @type {AggregateDef} */
   min: {
     create: () => ({
-      init:  s => s.min = undefined,
+      init:  s => s.min = NULL,
       value: s => s.min = (Number.isNaN(s.min) ? s.list.min() : s.min),
-      add: (s, v) => { if (v < s.min || s.min === undefined) s.min = v; },
+      add: (s, v) => { if (v < s.min || s.min === NULL) s.min = v; },
       rem: (s, v) => { if (v <= s.min) s.min = NaN; }
     }),
     param: [1],
@@ -276,9 +277,9 @@ export default {
   /** @type {AggregateDef} */
   max: {
     create: () => ({
-      init:  s => s.max = undefined,
+      init:  s => s.max = NULL,
       value: s => s.max = (Number.isNaN(s.max) ? s.list.max() : s.max),
-      add: (s, v) => { if (v > s.max || s.max === undefined) s.max = v; },
+      add: (s, v) => { if (v > s.max || s.max === NULL) s.max = v; },
       rem: (s, v) => { if (v >= s.max) s.max = NaN; }
     }),
     param: [1],
@@ -309,7 +310,7 @@ export default {
       init:  s => {
         s.cov = s.mean_x = s.mean_y = s.dev_x = s.dev_y = 0;
       },
-      value: s => s.valid > 1 ? s.cov / (s.valid - 1) : undefined,
+      value: s => s.valid > 1 ? s.cov / (s.valid - 1) : NULL,
       add: (s, x, y) => {
         const dx = x - s.mean_x;
         const dy = y - s.mean_y;
@@ -337,7 +338,7 @@ export default {
   /** @type {AggregateDef} */
   covariancep: {
     create: () => initOp({
-      value: s => s.valid > 1 ? s.cov / s.valid : undefined
+      value: s => s.valid > 1 ? s.cov / s.valid : NULL
     }),
     param: [2],
     req: ['covariance']
@@ -348,7 +349,7 @@ export default {
     create: () => initOp({
       value: s => s.valid > 1
         ? s.cov / (Math.sqrt(s.dev_x) * Math.sqrt(s.dev_y))
-        : undefined
+        : NULL
     }),
     param: [2],
     req: ['covariance']

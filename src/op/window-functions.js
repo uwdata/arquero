@@ -1,6 +1,7 @@
 import error from '../util/error';
 import isValid from '../util/is-valid';
 import noop from '../util/no-op';
+import NULL from '../util/null';
 
 /**
  * Initialize a window operator.
@@ -153,7 +154,7 @@ export default {
 
   /** @type {WindowDef} */
   lag: {
-    create(offset, defaultValue) {
+    create(offset, defaultValue = NULL) {
       offset = +offset || 1;
       return {
         init: noop,
@@ -168,7 +169,7 @@ export default {
 
   /** @type {WindowDef} */
   lead: {
-    create(offset, defaultValue) {
+    create(offset, defaultValue = NULL) {
       offset = +offset || 1;
       return {
         init: noop,
@@ -212,7 +213,7 @@ export default {
         init: noop,
         value: (w, f) => {
           const i = w.i0 + (nth - 1);
-          return i < w.i1 ? w.value(i, f) : undefined;
+          return i < w.i1 ? w.value(i, f) : NULL;
         }
       };
     },
@@ -221,7 +222,7 @@ export default {
 
   /** @type {WindowDef} */
   fill_down: {
-    create(defaultValue) {
+    create(defaultValue = NULL) {
       let value;
       return {
         init: () => value = defaultValue,
@@ -236,7 +237,7 @@ export default {
 
   /** @type {WindowDef} */
   fill_up: {
-    create(defaultValue) {
+    create(defaultValue = NULL) {
       let value, idx;
       return {
         init: () => (value = defaultValue, idx = -1),
