@@ -131,28 +131,3 @@ function enumerate(groups, values, callback) {
     }
   }
 }
-
-/*
-import { aggregateGet } from './reduce/util';
-import columnSet from '../table/column-set';
-import isValid from '../util/is-valid';
-
-export default function(table, { names, exprs, ops }) {
-  const rows = table.totalRows();
-  const gets = aggregateGet(table, ops, exprs);
-  const cols = columnSet(table);
-
-  names.forEach((name, i) => {
-    const col = table.column(name);
-    const out = cols.add(name, Array(rows));
-    const get = gets[i];
-
-    table.scan(idx => {
-      const v = col.get(idx);
-      out[idx] = isValid(v) ? get(idx) : v;
-    });
-  });
-
-  return table.create(cols);
-}
-*/
