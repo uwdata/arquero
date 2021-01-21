@@ -1,12 +1,15 @@
 import columnSet from '../table/column-set';
 import concat from '../util/concat';
 import isArray from '../util/is-array';
-import unroll2 from '../util/unroll2';
+import unroll from '../util/unroll';
 
 function emitter(columns, getters) {
   const args = ['i', 'a', 'j', 'b'];
-  return unroll2(columns, getters, args,
-    '{' + concat(columns, (_, i) => `_${i}.push($${i}(${args}));`) + '}');
+  return unroll(
+    args,
+    '{' + concat(columns, (_, i) => `_${i}.push($${i}(${args}));`) + '}',
+    columns, getters
+  );
 }
 
 export default function(tableL, tableR, predicate, { names, exprs }, options = {}) {

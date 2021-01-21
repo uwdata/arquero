@@ -83,6 +83,23 @@ tape('fromCSV parses delimited text', t => {
   t.end();
 });
 
+tape('fromCSV infers types', t => {
+  function check(msg, values, test) {
+    const d = fromCSV('col\n' + values.join('\n')).column('col').data;
+    t.ok(d.every(v => v == null || test(v)), msg);
+  }
+
+  check('boolean', [true, false, '', true], v => typeof v === 'boolean');
+  check('number', [1, Math.PI, '', 'NaN'], v => typeof v === 'number');
+  check('string', ['a', 1, '', 'c'], v => typeof v === 'string');
+  check('date', [
+    new Date().toISOString(), '',
+    new Date(2000, 0, 1).toISOString(),
+    new Date(1979, 3, 14, 3, 45).toISOString()
+  ], v => v instanceof Date);
+  t.end();
+});
+
 tape('fromCSV parses delimited text with delimiter', t => {
   const table = fromCSV(tabText.join('\n'), { delimiter: '\t' });
   t.equal(table.numRows(), 3, 'num rows');
@@ -91,7 +108,7 @@ tape('fromCSV parses delimited text with delimiter', t => {
   t.end();
 });
 
-tape('fromCSV parses delimited text with parse option', t => {
+tape('fromCSV parses delimited text with header option', t => {
   const table = fromCSV(text.slice(1).join('\n'), { header: false });
   const cols = data();
   const d = {
@@ -105,7 +122,7 @@ tape('fromCSV parses delimited text with parse option', t => {
   t.end();
 });
 
-tape('fromCSV parses delimited text with header option', t => {
+tape('fromCSV parses delimited text with parse option', t => {
   const table = fromCSV(text.join('\n'), { parse: { str: d => d + d } });
   const d = { ...data(), str: ['aa', 'bb', 'cc'] };
   tableEqual(t, table, d, 'csv parsed data with custom parse');
