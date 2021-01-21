@@ -109,7 +109,7 @@ export default class Transformable {
    * @example table.slice(1, -1)
    */
   slice(start, end) {
-    return this.__filter(this, slice(start, end)).reify();
+    return this.filter(slice(start, end)).reify();
   }
 
   /**
