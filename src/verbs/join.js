@@ -76,7 +76,7 @@ function inferValues(tableL, onL, onR, options) {
       tableL.columnNames().map(s => {
         const c = `[${toString(s)}]`;
         return shared.has(s)
-          ? { [s]: `(a, b) => a${c} === undefined ? b${c} : a${c}` }
+          ? { [s]: `(a, b) => a${c} == null ? b${c} : a${c}` }
           : s;
       }),
       vR

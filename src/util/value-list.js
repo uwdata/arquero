@@ -33,13 +33,13 @@ export default class ValueList {
   }
 
   min() {
-    return this._sorted
+    return this._sorted && this._sorted.length
       ? this._sorted[0]
       : min(this._values, this._start);
   }
 
   max() {
-    return this._sorted
+    return this._sorted && this._sorted.length
       ? this._sorted[this._sorted.length - 1]
       : max(this._values, this._start);
   }
