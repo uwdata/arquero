@@ -33,7 +33,7 @@ JavaScript objects have specific key ordering rules: keys are enumerated in the 
 
 This method can be used to create a new table that binds together columns from multiple input sources, so long as all provided columns have the same length. See the examples below for more.
 
-* *columns*: An object providing a named set of column arrays. Object keys are column names; the enumeration order of the keys determines the column indices if the *names* argument is not provided. Object values must be arrays (or array-like values) of identical length.
+* *columns*: An object or Map providing a named set of column arrays. Object keys are column names; the enumeration order of the keys determines the column indices if the *names* argument is not provided. Object values must be arrays (or array-like values) of identical length.
 * *names*: An array of column names, specifying the index order of columns in the table.
 
 *Examples*
@@ -119,9 +119,10 @@ Parse a comma-separated values (CSV) *text* string into a <a href="table">table<
 
 * *text*: A string in a delimited-value format.
 * *options*: A CSV format options object:
-  * *delimiter*: The delimiter string between column values.
+  * *delimiter*: A single-character delimiter string between column values.
   * *header*: Boolean flag (default `true`) to specify the presence of a  header row. If `true`, indicates the CSV contains a header row with column names. If `false`, indicates the CSV does not contain a header row and the columns are given the names `'col1'`, `'col2'`, and so on.
   * *autoType*: Boolean flag (default `true`) for automatic type inference.
+  * *autoMax*: Maximum number of initial rows (default `1000`) to use for type inference.
   * *parse*: Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
 
 *Examples*
