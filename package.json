@@ -26,6 +26,8 @@
     "prebuild": "rimraf dist && mkdir dist",
     "build": "rollup -c",
     "postbuild": "tsc",
+    "preperf": "yarn build",
+    "perf": "TZ=America/Los_Angeles tape 'perf/**/*-perf.js'",
     "lint": "yarn eslint src test --ext .js",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' --require esm",
     "prepublishOnly": "yarn test && yarn lint && yarn build"
