@@ -8,7 +8,7 @@ title: Arquero API Reference
 * [Table Constructors](#table-constructors)
   * [table](#table), [from](#from), [fromArrow](#fromArrow), [fromCSV](#fromCSV), [fromJSON](#fromJSON)
 * [Expression Helpers](#expression-helpers)
-  * [op](#op), [bin](#bin), [desc](#desc), [rolling](#rolling), [seed](#seed)
+  * [op](#op), [bin](#bin), [desc](#desc), [frac](#frac), [rolling](#rolling), [seed](#seed)
 * [Selection Helpers](#selection-helpers)
   * [all](#all), [not](#not), [range](#range)
   * [matches](#matches), [startswith](#startswith), [endswith](#endswith)
@@ -257,6 +257,19 @@ aq.desc('colA')
 // sort colA in descending order of lower case values
 aq.desc(d => op.lower(d.colA))
 ```
+
+<hr/><a id="frac" href="#frac">#</a>
+<em>aq</em>.<b>frac</b>(<i>fraction</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/frac.js)
+
+Generate a table expression that computes the number of rows corresponding to a given fraction for each group. The resulting string can be used as part of the input to the [sample](verbs/#sample) verb.
+
+* *fraction*: The fractional value.
+
+ *Examples*
+
+```js
+ aq.frac(0.5)
+ ```
 
 <a id="rolling" href="#rolling">#</a>
 <em>aq</em>.<b>rolling</b>(<i>expr</i>[, <i>frame</i>, <i>includePeers</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/rolling.js)
