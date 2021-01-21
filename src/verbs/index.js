@@ -26,7 +26,7 @@ import __unorder from '../engine/unorder';
 
 import { count } from '../op/op-api';
 import ColumnTable from '../table/column-table';
-import mapObject from '../util/map-object';
+import entries from '../util/entries';
 
 const __count = (table, options) => __rollup(table, {
   [options && options.as || 'count']: count()
@@ -83,12 +83,11 @@ export {
 
 /**
  * Create a new table for a set of named columns.
- * @param {object} columns
- *  The set of named column arrays.
- *  Object keys are the column names.
+ * @param {object|Map} columns
+ *  The set of named column arrays. Keys are column names.
  *  The enumeration order of the keys determines the column indices,
  *  unless the names parameter is specified.
- *  Object values must be arrays (or array-like values) of identical length.
+ *  Values must be arrays (or array-like values) of identical length.
  * @param {string[]} [names] Ordered list of column names. If specified,
  *  this array determines the column indices. If not specified, the
  *  key enumeration order of the columns object is used.
@@ -96,7 +95,11 @@ export {
  * @example table({ colA: ['a', 'b', 'c'], colB: [3, 4, 5] })
  */
 export function table(columns, names) {
-  return new ColumnTable(mapObject(columns, x => x), names);
+  const cols = entries(columns);
+  return new ColumnTable(
+    cols.reduce((obj, [k, v]) => (obj[k] = v, obj), {}),
+    names || cols.map(c => c[0])
+  );
 }
 
 /**

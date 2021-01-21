@@ -7,8 +7,9 @@ import unroll from '../../util/unroll';
 import ValueList from '../../util/value-list';
 
 const update = (ops, args, fn) => unroll(
-  ops, args,
-  '{' + concat(ops, (_, i) => `_${i}.${fn}(${args});`) + '}'
+  args,
+  '{' + concat(ops, (_, i) => `_${i}.${fn}(${args});`) + '}',
+  ops
 );
 
 export default function(oplist, stream) {

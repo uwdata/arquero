@@ -1,4 +1,5 @@
 import columnSet from '../table/column-set';
+import NULL from '../util/null';
 
 export default function(table, others) {
   const trows = table.numRows();
@@ -12,7 +13,7 @@ export default function(table, others) {
     const arr = Array(nrows);
     let row = 0;
     tables.forEach(table => {
-      const col = table.column(name) || { get: () => undefined };
+      const col = table.column(name) || { get: () => NULL };
       table.scan(trow => arr[row++] = col.get(trow));
     });
     cols.add(name, arr);

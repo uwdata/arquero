@@ -13,8 +13,9 @@ export default function(data, frame, adjust, ops, aggrs) {
 
   const evaluate = ops.length
     ? unroll(
-      ops, ['w', 'r'],
-        '{' + concat(ops, (_, i) => `r[_${i}.name]=_${i}.value(w,_${i}.get);`) + '}'
+        ['w', 'r'],
+        '{' + concat(ops, (_, i) => `r[_${i}.name]=_${i}.value(w,_${i}.get);`) + '}',
+        ops
       )
     : () => {};
 

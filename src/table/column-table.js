@@ -1,4 +1,4 @@
-import Column from './column';
+import { defaultColumnFactory } from './column';
 import columnsFrom from './columns-from';
 import Table from './table';
 import { regroup, reindex } from './regroup';
@@ -40,7 +40,7 @@ export default class ColumnTable extends Table {
    * @param {Params} [params] An object mapping parameter names to values.
    */
   constructor(columns, names, filter, group, order, params) {
-    mapObject(columns, Column.from, columns);
+    mapObject(columns, defaultColumnFactory, columns);
     names = names || Object.keys(columns);
     const nrows = names.length ? columns[names[0]].length : 0;
     super(names, nrows, columns, filter, group, order, params);
@@ -71,7 +71,7 @@ export default class ColumnTable extends Table {
 
   /**
    * Get the backing set of columns for this table.
-   * @return {object} Object of named column instances.
+   * @return {ColumnData} Object of named column instances.
    */
   columns() {
     return this._data;
@@ -80,7 +80,7 @@ export default class ColumnTable extends Table {
   /**
    * Get the column instance with the given name.
    * @param {string} name The column name.
-   * @return {Column} The named column, or undefined if does not exist.
+   * @return {ColumnType | undefined} The named column, or undefined if it does not exist.
    */
   column(name) {
     return this._data[name];
@@ -89,7 +89,7 @@ export default class ColumnTable extends Table {
   /**
    * Get the column instance at the given index position.
    * @param {number} index The zero-based column index.
-   * @return {Column} The column, or undefined if does not exist.
+   * @return {ColumnType | undefined} The column, or undefined if it does not exist.
    */
   columnAt(index) {
     return this._data[this._names[index]];
@@ -99,7 +99,7 @@ export default class ColumnTable extends Table {
    * Get the value for the given column and row.
    * @param {string} name The column name.
    * @param {number} row The row index.
-   * @return {*} The table value at (column, row).
+   * @return {import('./table').DataValue} The table value at (column, row).
    */
   get(name, row) {
     return this._data[name].get(row);
@@ -110,7 +110,7 @@ export default class ColumnTable extends Table {
    * function takes a row index as its single argument and returns the
    * corresponding column value.
    * @param {string} name The column name.
-   * @return {Function} The column getter function.
+   * @return {import('./table').ColumnGetter} The column getter function.
    */
   getter(name) {
     const column = this.column(name);
@@ -200,7 +200,7 @@ export default class ColumnTable extends Table {
    * delimiters, such as tabs or pipes ('|'), can be specified using
    * the options argument.
    * @param {CSVFormatOptions} [options] The formatting options.
-   * @return {string} A delimited-value format string.
+   * @return {string} A delimited value string.
    */
   toCSV(options) {
     return toCSV(this, options);
@@ -237,6 +237,16 @@ export default class ColumnTable extends Table {
 /**
  * Proxy type for BitSet class.
  * @typedef {import('./table').BitSet} BitSet
+ */
+
+/**
+ * Proxy type for ColumnType interface.
+ * @typedef {import('./column').ColumnType} ColumnType
+ */
+
+/**
+ * A named collection of columns.
+ * @typedef {{[key: string]: ColumnType}} ColumnData
  */
 
 /**
