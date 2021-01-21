@@ -1,4 +1,5 @@
 import toArray from '../util/to-array';
+import slice from '../verbs/expr/slice';
 
 /**
  * Abstract base class for transforming data.
@@ -93,6 +94,22 @@ export default class Transformable {
    */
   filter(criteria) {
     return this.__filter(this, criteria);
+  }
+
+  /**
+   * Extract rows with indices from start to end (end not included), where
+   * start and end represent per-group ordered row numbers in the table.
+   * @param {number} [start] Zero-based index at which to start extraction.
+   *  A negative index indicates an offset from the end of the group.
+   *  If start is undefined, slice starts from the index 0.
+   * @param {number} [end] Zero-based index before which to end extraction.
+   *  A negative index indicates an offset from the end of the group.
+   *  If end is omitted, slice extracts through the end of the group.
+   * @return {this} A new table with sliced rows.
+   * @example table.slice(1, -1)
+   */
+  slice(start, end) {
+    return this.__filter(this, slice(start, end)).reify();
   }
 
   /**

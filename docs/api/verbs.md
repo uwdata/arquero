@@ -7,7 +7,7 @@ title: Verbs \| Arquero API Reference
 
 * [Core Verbs](#verbs)
   * [derive](#derive)
-  * [filter](#filter)
+  * [filter](#filter), [slice](#slice)
   * [groupby](#groupby), [ungroup](#ungroup)
   * [orderby](#orderby), [unorder](#unorder)
   * [rollup](#rollup), [count](#count)
@@ -62,6 +62,26 @@ Filter a table to a subset of rows based on the input criteria. The resulting ta
 
 ```js
 table.filter(d => op.abs(d.value) < 5)
+```
+
+<hr/><a id="slice" href="#slice">#</a>
+<em>table</em>.<b>slice</b>([<i>start</i>, <i>end</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+
+Extract rows with indices from *start* to *end* (*end* not included), where *start* and *end* represent per-group ordered row numbers in the table. The table row indices are determined by the current [orderby](#orderby) settings. The *start* and *end* arguments are applied separately to each group, as determined by [groupby](#groupby).
+
+* *start*: Zero-based index at which to start extraction. A negative index indicates an offset from the end of the group. If start is undefined, slice starts from the index 0.
+* *end*: Zero-based index before which to end extraction. A negative index indicates an offset from the end of the group. If end is omitted, slice extracts through the end of the group.
+
+*Examples*
+
+```js
+// slice the table to include all rows except for the first and last
+table.slice(1, -1)
+```
+
+```js
+// extract (up to) the first two rows of each group
+table.groupby('colA').slice(0, 2)
 ```
 
 <hr/><a id="groupby" href="#groupby">#</a>
