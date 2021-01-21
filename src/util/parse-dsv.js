@@ -27,10 +27,9 @@ const RETURN = 13;
 // ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-export default function(text, delimCode, callback) {
+export default function(text, delimCode) {
   let N = text.length,
       I = 0, // current character index
-      n = 0, // current line number
       t, // current token
       eof = N <= 0, // current token followed by EOF?
       eol = false; // current token followed by EOL?
@@ -66,9 +65,13 @@ export default function(text, delimCode, callback) {
     return eof = true, text.slice(j, N);
   }
 
-  while ((t = token()) !== EOF) {
-    const row = [];
-    while (t !== EOL && t !== EOF) row.push(t), t = token();
-    if (callback(row, n++) == null) continue;
-  }
+  return {
+    next() {
+      if ((t = token()) !== EOF) {
+        const row = [];
+        while (t !== EOL && t !== EOF) row.push(t), t = token();
+        return row;
+      }
+    }
+  };
 }
