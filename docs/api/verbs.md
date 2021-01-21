@@ -190,7 +190,12 @@ table.sample(100, { replace: true })
 
 ```js
 // stratified sampling with dynamic sample size
-table.groupby('colA').sample(() => op.floor(0.5 * op.count()))
+table.groupby('colA').sample(aq.frac(0.5))
+```
+
+```js
+// sample twice the number of records in each group, with replacement
+table.groupby('colA').sample(aq.frac(2), { replace: true })
 ```
 
 <hr/><a id="select" href="#select">#</a>
