@@ -25,7 +25,7 @@ title: Arquero API Reference
 Methods for creating new table instances.
 
 <hr/><a id="table" href="#table">#</a>
-<em>aq</em>.<b>table</b>(<i>columns</i>[, <i>names</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>aq</em>.<b>table</b>(<i>columns</i>[, <i>names</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/index.js)
 
 Create a new <a href="table">table</a> for a set of named *columns*, optionally including an array of ordered column *names*.
 
@@ -60,7 +60,7 @@ aq.table({
 
 
 <hr/><a id="from" href="#from">#</a>
-<em>aq</em>.<b>from</b>(<i>values</i>[, <i>names</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>aq</em>.<b>from</b>(<i>values</i>[, <i>names</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/index.js)
 
 Create a new <a href="table">table</a> from an existing object, such as an array of objects or a set of key-value pairs.
 
@@ -222,7 +222,7 @@ Methods for invoking or modifying table expressions.
 All table expression operations, including standard functions, aggregate functions, and window functions. See the [Operations API Reference](op) for documentation of all available functions.
 
 <hr/><a id="bin" href="#bin">#</a>
-<em>aq</em>.<b>bin</b>(<i>name</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/bin.js)
+<em>aq</em>.<b>bin</b>(<i>name</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/bin.js)
 
 Generate a table expression that performs uniform binning of number values. The resulting string can be used as part of the input to table transformation verbs.
 
@@ -241,7 +241,7 @@ Generate a table expression that performs uniform binning of number values. The 
 
 
 <hr/><a id="desc" href="#desc">#</a>
-<em>aq</em>.<b>desc</b>(<i>expr</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/desc.js)
+<em>aq</em>.<b>desc</b>(<i>expr</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/desc.js)
 
 Annotate a table expression (*expr*) to indicate descending sort order.
 
@@ -260,7 +260,7 @@ aq.desc(d => op.lower(d.colA))
 ```
 
 <hr/><a id="frac" href="#frac">#</a>
-<em>aq</em>.<b>frac</b>(<i>fraction</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/frac.js)
+<em>aq</em>.<b>frac</b>(<i>fraction</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/frac.js)
 
 Generate a table expression that computes the number of rows corresponding to a given fraction for each group. The resulting string can be used as part of the input to the [sample](verbs/#sample) verb.
 
@@ -273,7 +273,7 @@ Generate a table expression that computes the number of rows corresponding to a 
  ```
 
 <a id="rolling" href="#rolling">#</a>
-<em>aq</em>.<b>rolling</b>(<i>expr</i>[, <i>frame</i>, <i>includePeers</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/rolling.js)
+<em>aq</em>.<b>rolling</b>(<i>expr</i>[, <i>frame</i>, <i>includePeers</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/rolling.js)
 
 Annotate a table expression to compute rolling aggregate or window functions within a sliding window frame. For example, to specify a rolling 7-day average centered on the current day, call *rolling* with a frame value of [-3, 3].
 
@@ -329,7 +329,7 @@ aq.seed(null)
 Methods for selecting columns. The result of these methods can be passed as arguments to [select](verbs/#select), [groupby](verbs/#groupby), [join](verbs/#join) and other transformation verbs.
 
 <hr/><a id="all" href="#all">#</a>
-<em>aq</em>.<b>all</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+<em>aq</em>.<b>all</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Select all columns in a table. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -341,7 +341,7 @@ aq.all()
 
 
 <hr/><a id="not" href="#not">#</a>
-<em>aq</em>.<b>not</b>(<i>selection</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+<em>aq</em>.<b>not</b>(<i>selection</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Negate a column *selection*, selecting all other columns in a table. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -359,7 +359,7 @@ aq.not(aq.range(2, 5))
 
 
 <hr/><a id="range" href="#range">#</a>
-<em>aq</em>.<b>range</b>(<i>start</i>, <i>stop</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+<em>aq</em>.<b>range</b>(<i>start</i>, <i>stop</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Select a contiguous range of columns. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -377,7 +377,7 @@ aq.range(2, 5)
 ```
 
 <hr/><a id="matches" href="#matches">#</a>
-<em>aq</em>.<b>matches</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+<em>aq</em>.<b>matches</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Select all columns whose names match a pattern. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -396,7 +396,7 @@ aq.matches(/^[abc]/i)
 ```
 
 <hr/><a id="startswith" href="#startswith">#</a>
-<em>aq</em>.<b>startswith</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+<em>aq</em>.<b>startswith</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Select all columns whose names start with a string. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -409,7 +409,7 @@ aq.startswith('prefix_')
 ```
 
 <hr/><a id="endswith" href="#endswith">#</a>
-<em>aq</em>.<b>endswith</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+<em>aq</em>.<b>endswith</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Select all columns whose names end with a string. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -495,7 +495,7 @@ Register a custom window function. Throws an error if a function with the same n
 Queries allow deferred processing. Rather than process a sequence of verbs immediately, they can be stored as a query. The query can then be *serialized* to be stored or transferred, or later *evaluated* against an Arquero table.
 
 <hr/><a id="query" href="#query">#</a>
-<em>aq</em>.<b>query</b>([<i>tableName</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/query/query-builder.js)
+<em>aq</em>.<b>query</b>([<i>tableName</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/query/query.js)
 
 Create a new query builder instance. The optional *tableName* string argument indicates the default name of a table the query should process, and is used only when evaluating a query against a catalog of tables. The resulting query builder includes the same [verb](verbs) methods as a normal Arquero table. However, rather than evaluating verbs immediately, they are stored as a list of verbs to be evaluated later.
 
@@ -525,7 +525,7 @@ aq.query()
 
 
 <hr/><a id="queryFrom" href="#queryFrom">#</a>
-<em>aq</em>.<b>queryFrom</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/query/query-builder.js)
+<em>aq</em>.<b>queryFrom</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/query/query.js)
 
 Parse a serialized query *object* and return a new query instance. The input *object* should be a serialized query representation, such as those generated by the query *toObject()* method.
 

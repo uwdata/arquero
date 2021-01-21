@@ -145,7 +145,7 @@ Returns the groupby specification, if defined. A groupby specification is an obj
 * *keys*: Per-row group indices for every row in the table.
 
 <hr/><a id="params" href="#params">#</a>
-<em>table</em>.<b>params</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>params</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/transformable.js)
 
 Get or set table expression parameter values. If called with no arguments, returns the current parameter values as an object. Otherwise, adds the provided parameters to this table's parameter set and returns the table. Any prior parameters with names matching the input parameters are overridden.
 
