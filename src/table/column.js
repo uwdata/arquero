@@ -29,6 +29,14 @@ export default class Column {
   get(row) {
     return this.data[row];
   }
+
+  /**
+   * Returns an iterator over the column values.
+   * @return {Iterator<object>} An iterator over column values.
+   */
+  [Symbol.iterator]() {
+    return this.data[Symbol.iterator]();
+  }
 }
 
 /**
