@@ -3,7 +3,7 @@ import { query } from '../../src/query/query';
 import { Verbs } from '../../src/query/verb';
 import {
   all, bin, desc, endswith, matches, not, op, range, rolling, startswith
-} from '../../src/verbs';
+} from '../../src';
 
 const {
   count, dedupe, derive, filter, groupby, orderby,

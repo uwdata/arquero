@@ -1,4 +1,7 @@
-import { all, desc, field, matches, not, range, rolling } from '../verbs';
+import desc from '../helpers/desc';
+import field from '../helpers/field';
+import rolling from '../helpers/rolling';
+import { all, matches, not, range } from '../helpers/selection';
 import Query from './query';
 import error from '../util/error';
 import isArray from '../util/is-array';

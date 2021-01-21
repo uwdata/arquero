@@ -1,5 +1,5 @@
 import tape from 'tape';
-import { frac, table } from '../../src/verbs';
+import { frac, table } from '../../src';
 
 function check(t, table, replace, prefix = '') {
   prefix = `${prefix}sample ${replace ? 'replace ' : ''}rows`;

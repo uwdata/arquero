@@ -1,6 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import { desc, op, table } from '../../src/verbs';
+import { desc, op, table } from '../../src';
 
 tape('orderby orders a table', t => {
   const data = {

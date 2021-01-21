@@ -1,8 +1,8 @@
+import resolve, { all } from '../helpers/selection';
 import ColumnTable from '../table/column-table';
 import error from '../util/error';
 import toString from '../util/to-string';
 import unroll from '../util/unroll';
-import resolve, { all } from '../verbs/expr/selection';
 
 // Hardwire Arrow type ids to avoid explicit dependency
 // https://github.com/apache/arrow/blob/master/js/src/enum.ts

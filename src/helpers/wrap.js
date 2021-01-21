@@ -1,4 +1,4 @@
-import isFunction from '../../util/is-function';
+import isFunction from '../util/is-function';
 
 /**
  * Annotate an expression in an object wrapper.

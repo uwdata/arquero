@@ -1,5 +1,5 @@
 import tape from 'tape';
-import { op } from '../../src/verbs';
+import { op } from '../../src';
 
 tape('op.match returns pattern matches', t => {
   t.deepEqual([

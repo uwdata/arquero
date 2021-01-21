@@ -1,7 +1,7 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
 import countPattern from '../../src/engine/reduce/count-pattern';
-import { table } from '../../src/verbs';
+import { table } from '../../src';
 
 tape('reduce produces multiple aggregates', t => {
   const data = {

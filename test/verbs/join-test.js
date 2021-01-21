@@ -1,6 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import { all, not, op, table } from '../../src/verbs';
+import { all, not, op, table } from '../../src';
 
 function joinTables() {
   return [

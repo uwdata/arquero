@@ -1,12 +1,12 @@
-import assign from '../../util/assign';
-import error from '../../util/error';
-import escapeRegExp from '../../util/escape-regexp';
-import isArray from '../../util/is-array';
-import isFunction from '../../util/is-function';
-import isObject from '../../util/is-object';
-import isNumber from '../../util/is-number';
-import isString from '../../util/is-string';
-import toString from '../../util/to-string';
+import assign from '../util/assign';
+import error from '../util/error';
+import escapeRegExp from '../util/escape-regexp';
+import isArray from '../util/is-array';
+import isFunction from '../util/is-function';
+import isNumber from '../util/is-number';
+import isObject from '../util/is-object';
+import isString from '../util/is-string';
+import toString from '../util/to-string';
 
 export default function resolve(table, sel, map = new Map()) {
   sel = isNumber(sel) ? table.columnName(sel) : sel;

@@ -1,6 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import { op, rolling, table } from '../../src/verbs';
+import { op, rolling, table } from '../../src';
 const { abs, lag, mean, median, rank, stdev } = op;
 
 tape('derive creates new columns', t => {

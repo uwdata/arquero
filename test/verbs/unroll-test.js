@@ -1,6 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import { not, op, table } from '../../src/verbs';
+import { not, op, table } from '../../src';
 
 tape('unroll generates rows for array values', t => {
   const data = {

@@ -1,5 +1,5 @@
 import toArray from '../util/to-array';
-import slice from '../verbs/expr/slice';
+import slice from '../helpers/slice';
 
 /**
  * Abstract base class for transforming data.

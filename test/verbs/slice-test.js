@@ -1,6 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import { table } from '../../src/verbs';
+import { table } from '../../src';
 
 tape('slice slices a table', t => {
   const dt = table({ v: [1, 2, 3, 4] });

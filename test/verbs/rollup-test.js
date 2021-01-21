@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import { bin, op, table } from '../../src/verbs';
+import { bin, op, table } from '../../src';
 
 tape('rollup produces flat aggregates', t => {
   const data = {

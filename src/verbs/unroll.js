@@ -1,5 +1,5 @@
 import _unroll from '../engine/unroll';
-import parse from './expr/parse';
+import parse from './util/parse';
 
 export default function(table, values, options) {
   return _unroll(

@@ -1,7 +1,7 @@
 import _join_filter from '../engine/join-filter';
-import { inferKeys } from './join';
-import parseKey from './expr/parse-key';
 import parse from '../expression/parse';
+import { inferKeys } from './join';
+import parseKey from './util/parse-key';
 import isArray from '../util/is-array';
 
 export default function(tableL, tableR, on, options) {

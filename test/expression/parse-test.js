@@ -1,6 +1,7 @@
 import tape from 'tape';
 import parse from '../../src/expression/parse';
-import { op, rolling } from '../../src/verbs';
+import op from '../../src/op/op-api';
+import rolling from '../../src/helpers/rolling';
 
 // pass code through for testing
 const compiler = { param: x => x, expr: x => x };
