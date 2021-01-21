@@ -2,7 +2,7 @@ import { aggregateGet } from './reduce/util';
 import columnSet from '../table/column-set';
 import isValid from '../util/is-valid';
 import keyFunction from '../util/key-function';
-import unroll2 from '../util/unroll2';
+import unroll from '../util/unroll';
 
 export default function(table, values, keys, arrays) {
   const write = keys && keys.length;
@@ -58,9 +58,10 @@ function expand(table, keys, values) {
 
   // enumerate expanded value sets and augment output table
   const keyEnum = keyFunction(keyGet.map((k, i) => a => a[i]));
-  const set = unroll2(
-    out, names.map(name => keyNames.indexOf(name)), 'v',
-    '{' + out.map((_, i) => `_${i}.push(v[$${i}]);`).join('') + '}'
+  const set = unroll(
+    'v',
+    '{' + out.map((_, i) => `_${i}.push(v[$${i}]);`).join('') + '}',
+    out, names.map(name => keyNames.indexOf(name))
   );
 
   if (groups) {

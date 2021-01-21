@@ -1,7 +1,11 @@
-export default function(list, args, code) {
-  return Function('_',
-    '"use strict"; const '
-    + list.map((_, i) => `_${i} = _[${i}]`).join(', ')
+export default function(args, code, ...lists) {
+  const v = ['_', '$'];
+  const a = v.slice(0, lists.length);
+  a.push('"use strict"; const '
+    + lists
+        .map((l, j) => l.map((_, i) => `${v[j]}${i} = ${v[j]}[${i}]`).join(', '))
+        .join(', ')
     + `; return (${args}) => ${code};`
-  )(list);
+  );
+  return Function(...a)(...lists);
 }
