@@ -356,6 +356,30 @@ export default class Table extends Transformable {
   }
 
   /**
+   * Extract rows with indices from start to end (end not included), where
+   * start and end represent per-group ordered row numbers in the table.
+   * @param {number} [start] Zero-based index at which to start extraction.
+   *  A negative index indicates an offset from the end of the group.
+   *  If start is undefined, slice starts from the index 0.
+   * @param {number} [end] Zero-based index before which to end extraction.
+   *  A negative index indicates an offset from the end of the group.
+   *  If end is omitted, slice extracts through the end of the group.
+   * @return {this} A new table with sliced rows.
+   * @example table.slice(1, -1)
+   */
+  slice(start = 0, end = Infinity) {
+    if (this.isGrouped()) return super.slice(start, end);
+
+    // if not grouped, scan table directly
+    const idx = [];
+    const nrows = this.numRows();
+    start = Math.max(0, start + (start < 0 ? nrows : 0));
+    end = Math.min(nrows, Math.max(0, end + (end < 0 ? nrows : 0)));
+    this.scan(row => idx.push(row), true, end - start, start);
+    return this.reify(idx);
+  }
+
+  /**
    * Reduce a table, processing all rows to produce a new table.
    * To produce standard aggregate summaries, use {@link rollup}.
    * This method allows the use of custom reducer implementations,
