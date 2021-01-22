@@ -2,17 +2,20 @@
 import Table from './table/table';
 import { columnFactory } from './table/column';
 import ColumnTable from './table/column-table';
+import Transformable from './table/transformable';
 import Reducer from './engine/reduce/reducer';
 import parse from './expression/parse';
 import walk_ast from './expression/ast/walk';
 import Query from './query/query';
-import { Verbs } from './query/verb';
+import { Verb, Verbs } from './query/verb';
 
 export const internal = {
   Table,
   ColumnTable,
+  Transformable,
   Query,
   Reducer,
+  Verb,
   Verbs,
   columnFactory,
   parse,
