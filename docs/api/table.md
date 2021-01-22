@@ -11,9 +11,9 @@ title: Table \| Arquero API Reference
   * [comparator](#foo), [groups](#groups)
   * [params](#params)
 * [Table Columns](#columns)
-  * [column](#column), [columnAt](#columnAt)
-  * [columnIndex](#columnIndex), [columnName](#columnName)
-  * [columnNames](#columnNames)
+  * [column](#column), [columnAt](#columnAt), [columnIndex](#columnIndex)
+  * [columnName](#columnName), [columnNames](#columnNames)
+  * [assign](#assign)
 * [Table Values](#values)
   * [data](#data), [get](#get), [getter](#getter)
   * [indices](#indices), [partitions](#partitions), [scan](#scan)
@@ -233,6 +233,21 @@ Returns an array of table column names, optionally filtered.
 ```js
 aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
   .columnNames(); // [ 'a', 'b' ]
+```
+
+<hr/><a id="assign" href="#assign">#</a>
+<em>table</em>.<b>assign</b>(<i>...tables</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+
+Create a new table with additional columns drawn from one or more input *tables*. All tables must have the same numer of rows and will be [reified](verbs/#reify) prior to assignment. In the case of repeated column names, input table columns overwrite existing columns.
+
+* *tables*: The input tables to merge.
+
+*Examples*
+
+```js
+const t1 = aq.table({ a: [1, 2], b: [3, 4] });
+const t2 = aq.table({ c: [5, 6], b: [7, 8] });
+t1.assign(t2); // { a: [1, 2], b: [7, 8], c: [5, 6] }
 ```
 
 <br/>

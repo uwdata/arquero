@@ -27,13 +27,13 @@ Methods for creating new table instances.
 <hr/><a id="table" href="#table">#</a>
 <em>aq</em>.<b>table</b>(<i>columns</i>[, <i>names</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/index.js)
 
-Create a new <a href="table">table</a> for a set of named *columns*, optionally including an array of ordered column *names*.
+Create a new <a href="table">table</a> for a set of named *columns*, optionally including an array of ordered column *names*. The *columns* input can be an object or Map with names for keys and columns for values, or an entry array of `[name, values]` tuples.
 
-JavaScript objects have specific key ordering rules: keys are enumerated in the order they are assigned, except for integer keys, which are enumerated first and in sorted order. As a result, by default *columns* entries with integer keys are listed first regardless of their order in the object definition. Use the *names* argument to ensure proper column ordering is respected.
+JavaScript objects have specific key ordering rules: keys are enumerated in the order they are assigned, except for integer keys, which are enumerated first in sorted order. As a result, when using a standard object any *columns* entries with integer keys are listed first regardless of their order in the object definition. Use the *names* argument to ensure proper column ordering is respected. Map and entry arrays will preserve name ordering, in which case the *names* argument is only needed if you wish to specify an ordering different from the *columns* input.
 
-This method can be used to create a new table that binds together columns from multiple input sources, so long as all provided columns have the same length. See the examples below for more.
+To bind together columns from multiple tables with the same number of rows, use the table [assign](table/#assign) method. To transform the table, use the various [verb](verbs) methods.
 
-* *columns*: An object or Map providing a named set of column arrays. Object keys are column names; the enumeration order of the keys determines the column indices if the *names* argument is not provided. Object values must be arrays (or array-like values) of identical length.
+* *columns*: An object or Map providing a named set of column arrays, or an entries array of the form `[[name, values], ...]`. Keys are column name strings; the enumeration order of the keys determines the column indices if the *names* argument is not provided. Column values should be arrays (or array-like values) of identical length.
 * *names*: An array of column names, specifying the index order of columns in the table.
 
 *Examples*
@@ -49,13 +49,11 @@ aq.table({ key: ['a', 'b'], 1: [9, 8], 2: [7, 6] }, ['key', '1', '2'])
 ```
 
 ```js
-// create a new table that binds columns from two input tables
-// later columns will override earlier columns with the same name
-// we call reify() to ensure all columns are dense and ordered
-aq.table({
-  ...table1.reify().columns(),
-  ...table2.reify().columns()
-})
+// create a new table from a Map instance
+const map = new Map()
+  .set('colA', ['a', 'b', 'c'])
+  .set('colB', [3, 4, 5]);
+aq.table(map)
 ```
 
 

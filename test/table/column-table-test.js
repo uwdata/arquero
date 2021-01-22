@@ -1,4 +1,5 @@
 import tape from 'tape';
+import tableEqual from '../table-equal';
 import BitSet from '../../src/table/bit-set';
 import ColumnTable from '../../src/table/column-table';
 
@@ -193,6 +194,30 @@ tape('ColumnTable toString shows table state', t => {
     dt.create({ filter, order, groups }).toString(),
     '[object Table: 2 cols x 3 rows (5 backing), 2 groups, ordered]',
     'filtered, grouped, ordered table toString'
+  );
+
+  t.end();
+});
+
+tape('ColumnTable assign merges tables', t => {
+  const t1 = new ColumnTable({ a: [1], b: [2], c: [3] });
+  const t2 = new ColumnTable({ b: [-2], d: [4] });
+  const t3 = new ColumnTable({ a: [-1], e: [5] });
+  const dt = t1.assign(t2, t3);
+
+  tableEqual(t, dt, {
+    a: [-1], b: [-2], c: [3], d: [4], e: [5]
+  }, 'assigned data');
+
+  t.deepEqual(
+    dt.columnNames(),
+    ['a', 'b', 'c', 'd', 'e'],
+    'assigned names'
+  );
+
+  t.throws(
+    () => t1.assign(new ColumnTable({ c: [1, 2, 3] })),
+    'throws on mismatched row counts'
   );
 
   t.end();

@@ -1,5 +1,6 @@
 import { defaultColumnFactory } from './column';
 import columnsFrom from './columns-from';
+import columnSet from './column-set';
 import Table from './table';
 import { regroup, reindex } from './regroup';
 import toCSV from '../format/to-csv';
@@ -67,6 +68,26 @@ export default class ColumnTable extends Table {
       order !== undefined ? order : this._order,
       this._params
     );
+  }
+
+  /**
+   * Create a new table with additional columns drawn from one or more input
+   * tables. All tables must have the same numer of rows and are reified
+   * prior to assignment. In the case of repeated column names, input table
+   * columns overwrite existing columns.
+   * @param {...ColumnTable} tables The tables to merge with this table.
+   * @return {ColumnTable} A new table with merged columns.
+   * @example table.assign(table1, table2)
+   */
+  assign(...tables) {
+    const nrows = this.numRows();
+    const cset = columnSet(this.reify());
+    tables.forEach(table => {
+      if (table.numRows() !== nrows) error('Assign row counts do not match');
+      table = table.reify();
+      table.columnNames(name => cset.add(name, table.column(name)));
+    });
+    return this.create(cset.new());
   }
 
   /**
