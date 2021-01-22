@@ -34,7 +34,7 @@ Standard library of table expression functions. The [`op` object](./#op) exports
 ### <a id="array-functions">Array Functions</a>
 
 <hr/><a id="concat" href="#concat">#</a>
-<em>op</em>.<b>concat</b>(<i>...values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/sequence.js)
+<em>op</em>.<b>concat</b>(<i>...values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
 
 Merges two or more arrays in sequence, returning a new array.
 
@@ -1041,14 +1041,14 @@ Window function to assign a percentage rank to each value in a group. The percen
 Window function to assign a cumulative distribution value between 0 and 1 to each value in a group.
 
 <hr/><a id="ntile" href="#ntile">#</a>
-<em>op</em>.<b>ntile</b>(<i>num</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>op</em>.<b>ntile</b>(<i>num</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/window-functions.js)
 
 Window function to assign a quantile (e.g., percentile) value to each value in a group. Accepts an integer parameter indicating the number of buckets to use (e.g., 100 for percentiles, 5 for quintiles).
 
 * *num*: The number of buckets for ntile calculation.
 
 <hr/><a id="lag" href="#lag">#</a>
-<em>op</em>.<b>lag</b>(<i>field</i>[, <i>offset</i>, <i>defaultValue</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>op</em>.<b>lag</b>(<i>field</i>[, <i>offset</i>, <i>defaultValue</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/window-functions.js)
 
 Window function to assign a value that precedes the current value by a specified number of positions. If no such value exists, returns a default value instead.
 
@@ -1057,7 +1057,7 @@ Window function to assign a value that precedes the current value by a specified
 * *defaultValue*: The default value (default `undefined`).
 
 <hr/><a id="lead" href="#lead">#</a>
-<em>op</em>.<b>lead</b>(<i>field</i>[, <i>offset</i>, <i>defaultValue</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>op</em>.<b>lead</b>(<i>field</i>[, <i>offset</i>, <i>defaultValue</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/window-functions.js)
 
 Window function to assign a value that follows the current value by a specified number of positions. If no such value exists, returns a default value instead.
 
@@ -1066,21 +1066,21 @@ Window function to assign a value that follows the current value by a specified 
 * *defaultValue*: The default value (default `undefined`).
 
 <hr/><a id="first_value" href="#first_value">#</a>
-<em>op</em>.<b>first_value</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>op</em>.<b>first_value</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/window-functions.js)
 
 Window function to assign the first value in a sliding window frame.
 
 * *field*: The data column or derived field.
 
 <hr/><a id="last_value" href="#last_value">#</a>
-<em>op</em>.<b>last_value</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>op</em>.<b>last_value</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/window-functions.js)
 
 Window function to assign the last value in a sliding window frame.
 
 * *field*: The data column or derived field.
 
 <hr/><a id="nth_value" href="#nth_value">#</a>
-<em>op</em>.<b>nth_value</b>(<i>field</i>[, <i>nth</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>op</em>.<b>nth_value</b>(<i>field</i>[, <i>nth</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/window-functions.js)
 
 Window function to assign the nth value in a sliding window frame (counting from 1), or `undefined` if no such value exists.
 
@@ -1088,7 +1088,7 @@ Window function to assign the nth value in a sliding window frame (counting from
 * *nth*: The nth position, starting from 1.
 
 <hr/><a id="fill_down" href="#fill_down">#</a>
-<em>op</em>.<b>fill_down</b>(<i>field</i>[, <i>defaultValue</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>op</em>.<b>fill_down</b>(<i>field</i>[, <i>defaultValue</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/window-functions.js)
 
 Window function to fill in missing values with preceding values. Returns the value at the current window position if it is valid (not `null`, `undefined`, or `NaN`), otherwise returns the first preceding valid value. If no such value exists, returns the default value.
 
@@ -1096,7 +1096,7 @@ Window function to fill in missing values with preceding values. Returns the val
 * *defaultValue*: The default value (default `undefined`).
 
 <hr/><a id="fill_up" href="#fill_up">#</a>
-<em>op</em>.<b>fill_up</b>(<i>field</i>[, <i>defaultValue</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>op</em>.<b>fill_up</b>(<i>field</i>[, <i>defaultValue</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/window-functions.js)
 
 Window function to fill in missing values with subsequent values. Returns the value at the current window position if it is valid (not `null`, `undefined`, or `NaN`), otherwise returns the first subsequent valid value. If no such value exists, returns the default value.
 

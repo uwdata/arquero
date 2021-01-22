@@ -397,7 +397,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toCSV()
 ```
 
 <hr/><a id="toHTML" href="#toHTML">#</a>
-<em>table</em>.<b>toHTML</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-csv.js)
+<em>table</em>.<b>toHTML</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-html.js)
 
 Format this table as an HTML table string.
 
@@ -447,7 +447,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toJSON({ schema: false })
 ```
 
 <hr/><a id="toMarkdown" href="#toMarkdown">#</a>
-<em>table</em>.<b>toMarkdown</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-json.js)
+<em>table</em>.<b>toMarkdown</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-markdown.js)
 
 Format this table as a [GitHub-Flavored Markdown table](https://github.github.com/gfm/#tables-extension-) string.
 

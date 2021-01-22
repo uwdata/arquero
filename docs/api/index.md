@@ -80,7 +80,7 @@ aq.from({ a: 1, b: 2, c: 3 })
 ```
 
 ```js
-// from a Map, create a new table with 'key' and 'value columns
+// from a Map, create a new table with 'key' and 'value' columns
 // akin to table({ key: ['d', 'e', 'f'], value: [4, 5, 6] })
 aq.from(new Map([ ['d', 4], ['e', 5], ['f', 6] ])
 ```
@@ -270,7 +270,7 @@ Generate a table expression that computes the number of rows corresponding to a 
  aq.frac(0.5)
  ```
 
-<a id="rolling" href="#rolling">#</a>
+<hr/><a id="rolling" href="#rolling">#</a>
 <em>aq</em>.<b>rolling</b>(<i>expr</i>[, <i>frame</i>, <i>includePeers</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/rolling.js)
 
 Annotate a table expression to compute rolling aggregate or window functions within a sliding window frame. For example, to specify a rolling 7-day average centered on the current day, call *rolling* with a frame value of [-3, 3].
