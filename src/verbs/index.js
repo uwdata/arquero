@@ -26,25 +26,16 @@ import __unorder from '../engine/unorder';
 
 import { count } from '../op/op-api';
 
-const __count = (table, options) => __rollup(table, {
-  [options && options.as || 'count']: count()
-});
-
-const __cross = (table, other, values, options) => __join(
-  table, other,
-  () => true,
-  values,
-  { ...options, left: true, right: true }
-);
-
-const __antijoin = (table, other, on) =>
-  __semijoin(table, other, on, { anti: true });
-
 export default {
-  __antijoin,
-  __count,
+  __antijoin: (table, other, on) =>
+    __semijoin(table, other, on, { anti: true }),
+  __count: (table, options = {}) =>
+    __rollup(table, { [options.as || 'count']: count() }),
+  __cross: (table, other, values, options) =>
+    __join(table, other, () => true, values, {
+      ...options, left: true, right: true
+    }),
   __concat,
-  __cross,
   __dedupe,
   __derive,
   __except,
