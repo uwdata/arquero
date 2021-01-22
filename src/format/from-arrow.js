@@ -1,9 +1,8 @@
+import resolve, { all } from '../helpers/selection';
 import ColumnTable from '../table/column-table';
 import error from '../util/error';
 import toString from '../util/to-string';
 import unroll from '../util/unroll';
-import unroll2 from '../util/unroll2';
-import resolve, { all } from '../verbs/expr/selection';
 
 // Hardwire Arrow type ids to avoid explicit dependency
 // https://github.com/apache/arrow/blob/master/js/src/enum.ts
@@ -93,11 +92,11 @@ function collectFiltered(input, names, cols, count) {
     idx => collect(++row, idx),
     () => {
       ++batch;
-      collect = unroll2(
-        out,
-        cols.map((col, i) => extractFrom(col.chunks[batch], lut[i])),
+      collect = unroll(
         ['row', 'idx'],
-        '{' + out.map((_, i) => `_${i}[row]=$${i}(idx)`).join(';') + ';}'
+        '{' + out.map((_, i) => `_${i}[row]=$${i}(idx)`).join(';') + ';}',
+        out,
+        cols.map((col, i) => extractFrom(col.chunks[batch], lut[i]))
       );
     }
   );
@@ -171,8 +170,9 @@ function structExtractor(vector) {
   const names = vector.type.children.map(field => field.name);
   const values = names.map((_, i) => arrayExtractor(vector.getChildAt(i)));
   return unroll(
-    values, 'i',
-    '({' + names.map((_, d) => `${toString(_)}:_${d}[i]`) + '})'
+    'i',
+    '({' + names.map((_, d) => `${toString(_)}:_${d}[i]`) + '})',
+    values
   );
 }
 

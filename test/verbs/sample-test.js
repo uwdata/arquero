@@ -1,5 +1,5 @@
 import tape from 'tape';
-import { op, table } from '../../src/verbs';
+import { frac, table } from '../../src';
 
 function check(t, table, replace, prefix = '') {
   prefix = `${prefix}sample ${replace ? 'replace ' : ''}rows`;
@@ -129,7 +129,7 @@ tape('sample supports dynamic sample size', t => {
     b: [2, 4, 6, 8]
   };
 
-  const ft = table(cols).sample(() => 0.5 * op.count());
+  const ft = table(cols).sample(frac(0.5));
 
   t.equal(ft.numRows(), 2, 'num rows');
   t.equal(ft.numCols(), 2, 'num cols');

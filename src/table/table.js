@@ -170,7 +170,7 @@ export default class Table extends Transformable {
    * Get the value for the given column and row.
    * @param {string} name The column name.
    * @param {number} row The row index.
-   * @return {TableValue} The table value at (column, row).
+   * @return {DataValue} The data value at (column, row).
    */
   get(name, row) { // eslint-disable-line no-unused-vars
     error('Not implemented');
@@ -181,7 +181,7 @@ export default class Table extends Transformable {
    * function takes a row index as its single argument and returns the
    * corresponding column value.
    * @param {string} name The column name.
-   * @return {(row: number) => TableValue} The column getter function.
+   * @return {ColumnGetter} The column getter function.
    */
   getter(name) { // eslint-disable-line no-unused-vars
     error('Not implemented');
@@ -356,6 +356,30 @@ export default class Table extends Transformable {
   }
 
   /**
+   * Extract rows with indices from start to end (end not included), where
+   * start and end represent per-group ordered row numbers in the table.
+   * @param {number} [start] Zero-based index at which to start extraction.
+   *  A negative index indicates an offset from the end of the group.
+   *  If start is undefined, slice starts from the index 0.
+   * @param {number} [end] Zero-based index before which to end extraction.
+   *  A negative index indicates an offset from the end of the group.
+   *  If end is omitted, slice extracts through the end of the group.
+   * @return {this} A new table with sliced rows.
+   * @example table.slice(1, -1)
+   */
+  slice(start = 0, end = Infinity) {
+    if (this.isGrouped()) return super.slice(start, end);
+
+    // if not grouped, scan table directly
+    const indices = [];
+    const nrows = this.numRows();
+    start = Math.max(0, start + (start < 0 ? nrows : 0));
+    end = Math.min(nrows, Math.max(0, end + (end < 0 ? nrows : 0)));
+    this.scan(row => indices.push(row), true, end - start, start);
+    return this.reify(indices);
+  }
+
+  /**
    * Reduce a table, processing all rows to produce a new table.
    * To produce standard aggregate summaries, use {@link rollup}.
    * This method allows the use of custom reducer implementations,
@@ -375,12 +399,12 @@ export default class Table extends Transformable {
 
 /**
  * Table value.
- * @typedef {*} TableValue
+ * @typedef {*} DataValue
  */
 
 /**
  * Table row object.
- * @typedef {Object.<string, TableValue>} RowObject
+ * @typedef {Object.<string, DataValue>} RowObject
  */
 
 /**
@@ -404,11 +428,18 @@ export default class Table extends Transformable {
  */
 
 /**
+ * Column value accessor.
+ * @callback ColumnGetter
+ * @param {number} [row] The table row.
+ * @return {DataValue}
+ */
+
+/**
  * An expression evaluated over a table row.
  * @callback RowExpression
  * @param {number} [row] The table row.
  * @param {TableData} [data] The backing table data store.
- * @return {TableValue}
+ * @return {DataValue}
  */
 
 /**

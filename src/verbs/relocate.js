@@ -1,5 +1,5 @@
 import _select from '../engine/select';
-import resolve from './expr/selection';
+import resolve from '../helpers/selection';
 import error from '../util/error';
 
 export default function(table, columns, { before, after } = {}) {

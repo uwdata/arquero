@@ -1,6 +1,6 @@
 import _pivot from '../engine/pivot';
 import { any } from '../op/op-api';
-import parse from './expr/parse';
+import parse from './util/parse';
 
 // TODO: enforce aggregates only (no output changes) for values
 export default function(table, on, values, options) {

@@ -25,28 +25,17 @@ import __ungroup from '../engine/ungroup';
 import __unorder from '../engine/unorder';
 
 import { count } from '../op/op-api';
-import ColumnTable from '../table/column-table';
-import mapObject from '../util/map-object';
 
-const __count = (table, options) => __rollup(table, {
-  [options && options.as || 'count']: count()
-});
-
-const __cross = (table, other, values, options) => __join(
-  table, other,
-  () => true,
-  values,
-  { ...options, left: true, right: true }
-);
-
-const __antijoin = (table, other, on) =>
-  __semijoin(table, other, on, { anti: true });
-
-Object.assign(ColumnTable.prototype, {
-  __antijoin,
-  __count,
+export default {
+  __antijoin: (table, other, on) =>
+    __semijoin(table, other, on, { anti: true }),
+  __count: (table, options = {}) =>
+    __rollup(table, { [options.as || 'count']: count() }),
+  __cross: (table, other, values, options) =>
+    __join(table, other, () => true, values, {
+      ...options, left: true, right: true
+    }),
   __concat,
-  __cross,
   __dedupe,
   __derive,
   __except,
@@ -70,49 +59,4 @@ Object.assign(ColumnTable.prototype, {
   __ungroup,
   __unorder,
   __reduce
-});
-
-export { default as op } from '../op/op-api';
-export { default as bin } from './expr/bin';
-export { default as desc } from './expr/desc';
-export { default as field } from './expr/field';
-export { default as rolling } from './expr/rolling';
-export {
-  all, endswith, matches, not, range, startswith
-} from './expr/selection';
-
-/**
- * Create a new table for a set of named columns.
- * @param {object} columns
- *  The set of named column arrays.
- *  Object keys are the column names.
- *  The enumeration order of the keys determines the column indices,
- *  unless the names parameter is specified.
- *  Object values must be arrays (or array-like values) of identical length.
- * @param {string[]} [names] Ordered list of column names. If specified,
- *  this array determines the column indices. If not specified, the
- *  key enumeration order of the columns object is used.
- * @return {ColumnTable} the instantiated table
- * @example table({ colA: ['a', 'b', 'c'], colB: [3, 4, 5] })
- */
-export function table(columns, names) {
-  return new ColumnTable(mapObject(columns, x => x), names);
-}
-
-/**
- * Create a new table from an existing object, such as an array of
- * objects or a set of key-value pairs.
- * @param {object|Array|Map} values Data values to populate the table.
- *  If array-valued or iterable, imports rows for each non-null value,
- *  using the provided column names as keys for each row object. If no
- *  names are provided, the first non-null object's own keys are used.
- *  If object- or Map-valued, create columns for the keys and values.
- * @param {string[]} [names] Column names to include.
- *  For object or Map values, specifies the key and value column names.
- *  Otherwise, specifies the keys to look up on each row object.
- * @return {ColumnTable} the instantiated table.
- * @example from([ { colA: 1, colB: 2 }, { colA: 3, colB: 4 } ])
- */
-export function from(values, names) {
-  return ColumnTable.from(values, names);
-}
+};

@@ -1,5 +1,6 @@
 import { aggregateGet } from './reduce/util';
 import columnSet from '../table/column-set';
+import NULL from '../util/null';
 import toArray from '../util/to-array';
 
 export default function(table, { names, exprs, ops = [] }, options = {}) {
@@ -47,7 +48,7 @@ function spread(table, get, limit) {
     const values = toArray(get(row, data));
     const n = Math.min(values.length, limit);
     for (let i = 0; i < n; ++i) {
-      const column = columns[i] || (columns[i] = Array(nrows).fill(undefined));
+      const column = columns[i] || (columns[i] = Array(nrows).fill(NULL));
       column[row] = values[i];
     }
   });

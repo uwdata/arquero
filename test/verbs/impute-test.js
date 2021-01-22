@@ -1,6 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import { op, table } from '../../src/verbs';
+import { op, table } from '../../src';
 
 const na = undefined;
 

@@ -2,7 +2,7 @@ import tape from 'tape';
 import tableEqual from '../table-equal';
 import {
   all, desc, endswith, matches, not, range, startswith, table
-} from '../../src/verbs';
+} from '../../src';
 
 tape('select selects a subset of columns', t => {
   const data = {

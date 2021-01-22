@@ -1,6 +1,6 @@
 import _orderby from '../engine/orderby';
-import field from './expr/field';
 import parse from '../expression/compare';
+import field from '../helpers/field';
 import error from '../util/error';
 import isFunction from '../util/is-function';
 import isObject from '../util/is-object';

@@ -8,7 +8,7 @@ title: Arquero API Reference
 * [Table Constructors](#table-constructors)
   * [table](#table), [from](#from), [fromArrow](#fromArrow), [fromCSV](#fromCSV), [fromJSON](#fromJSON)
 * [Expression Helpers](#expression-helpers)
-  * [op](#op), [bin](#bin), [desc](#desc), [rolling](#rolling), [seed](#seed)
+  * [op](#op), [bin](#bin), [desc](#desc), [frac](#frac), [rolling](#rolling), [seed](#seed)
 * [Selection Helpers](#selection-helpers)
   * [all](#all), [not](#not), [range](#range)
   * [matches](#matches), [startswith](#startswith), [endswith](#endswith)
@@ -25,15 +25,15 @@ title: Arquero API Reference
 Methods for creating new table instances.
 
 <hr/><a id="table" href="#table">#</a>
-<em>aq</em>.<b>table</b>(<i>columns</i>[, <i>names</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>aq</em>.<b>table</b>(<i>columns</i>[, <i>names</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/index.js)
 
-Create a new <a href="table">table</a> for a set of named *columns*, optionally including an array of ordered column *names*.
+Create a new <a href="table">table</a> for a set of named *columns*, optionally including an array of ordered column *names*. The *columns* input can be an object or Map with names for keys and columns for values, or an entry array of `[name, values]` tuples.
 
-JavaScript objects have specific key ordering rules: keys are enumerated in the order they are assigned, except for integer keys, which are enumerated first and in sorted order. As a result, by default *columns* entries with integer keys are listed first regardless of their order in the object definition. Use the *names* argument to ensure proper column ordering is respected.
+JavaScript objects have specific key ordering rules: keys are enumerated in the order they are assigned, except for integer keys, which are enumerated first in sorted order. As a result, when using a standard object any *columns* entries with integer keys are listed first regardless of their order in the object definition. Use the *names* argument to ensure proper column ordering is respected. Map and entry arrays will preserve name ordering, in which case the *names* argument is only needed if you wish to specify an ordering different from the *columns* input.
 
-This method can be used to create a new table that binds together columns from multiple input sources, so long as all provided columns have the same length. See the examples below for more.
+To bind together columns from multiple tables with the same number of rows, use the table [assign](table/#assign) method. To transform the table, use the various [verb](verbs) methods.
 
-* *columns*: An object providing a named set of column arrays. Object keys are column names; the enumeration order of the keys determines the column indices if the *names* argument is not provided. Object values must be arrays (or array-like values) of identical length.
+* *columns*: An object or Map providing a named set of column arrays, or an entries array of the form `[[name, values], ...]`. Keys are column name strings; the enumeration order of the keys determines the column indices if the *names* argument is not provided. Column values should be arrays (or array-like values) of identical length.
 * *names*: An array of column names, specifying the index order of columns in the table.
 
 *Examples*
@@ -49,18 +49,16 @@ aq.table({ key: ['a', 'b'], 1: [9, 8], 2: [7, 6] }, ['key', '1', '2'])
 ```
 
 ```js
-// create a new table that binds columns from two input tables
-// later columns will override earlier columns with the same name
-// we call reify() to ensure all columns are dense and ordered
-aq.table({
-  ...table1.reify().columns(),
-  ...table2.reify().columns()
-})
+// create a new table from a Map instance
+const map = new Map()
+  .set('colA', ['a', 'b', 'c'])
+  .set('colB', [3, 4, 5]);
+aq.table(map)
 ```
 
 
 <hr/><a id="from" href="#from">#</a>
-<em>aq</em>.<b>from</b>(<i>values</i>[, <i>names</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>aq</em>.<b>from</b>(<i>values</i>[, <i>names</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/index.js)
 
 Create a new <a href="table">table</a> from an existing object, such as an array of objects or a set of key-value pairs.
 
@@ -119,9 +117,10 @@ Parse a comma-separated values (CSV) *text* string into a <a href="table">table<
 
 * *text*: A string in a delimited-value format.
 * *options*: A CSV format options object:
-  * *delimiter*: The delimiter string between column values.
+  * *delimiter*: A single-character delimiter string between column values.
   * *header*: Boolean flag (default `true`) to specify the presence of a  header row. If `true`, indicates the CSV contains a header row with column names. If `false`, indicates the CSV does not contain a header row and the columns are given the names `'col1'`, `'col2'`, and so on.
   * *autoType*: Boolean flag (default `true`) for automatic type inference.
+  * *autoMax*: Maximum number of initial rows (default `1000`) to use for type inference.
   * *parse*: Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
 
 *Examples*
@@ -221,7 +220,7 @@ Methods for invoking or modifying table expressions.
 All table expression operations, including standard functions, aggregate functions, and window functions. See the [Operations API Reference](op) for documentation of all available functions.
 
 <hr/><a id="bin" href="#bin">#</a>
-<em>aq</em>.<b>bin</b>(<i>name</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/bin.js)
+<em>aq</em>.<b>bin</b>(<i>name</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/bin.js)
 
 Generate a table expression that performs uniform binning of number values. The resulting string can be used as part of the input to table transformation verbs.
 
@@ -240,7 +239,7 @@ Generate a table expression that performs uniform binning of number values. The 
 
 
 <hr/><a id="desc" href="#desc">#</a>
-<em>aq</em>.<b>desc</b>(<i>expr</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/desc.js)
+<em>aq</em>.<b>desc</b>(<i>expr</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/desc.js)
 
 Annotate a table expression (*expr*) to indicate descending sort order.
 
@@ -258,8 +257,21 @@ aq.desc('colA')
 aq.desc(d => op.lower(d.colA))
 ```
 
+<hr/><a id="frac" href="#frac">#</a>
+<em>aq</em>.<b>frac</b>(<i>fraction</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/frac.js)
+
+Generate a table expression that computes the number of rows corresponding to a given fraction for each group. The resulting string can be used as part of the input to the [sample](verbs/#sample) verb.
+
+* *fraction*: The fractional value.
+
+ *Examples*
+
+```js
+ aq.frac(0.5)
+ ```
+
 <a id="rolling" href="#rolling">#</a>
-<em>aq</em>.<b>rolling</b>(<i>expr</i>[, <i>frame</i>, <i>includePeers</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/rolling.js)
+<em>aq</em>.<b>rolling</b>(<i>expr</i>[, <i>frame</i>, <i>includePeers</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/rolling.js)
 
 Annotate a table expression to compute rolling aggregate or window functions within a sliding window frame. For example, to specify a rolling 7-day average centered on the current day, call *rolling* with a frame value of [-3, 3].
 
@@ -315,7 +327,7 @@ aq.seed(null)
 Methods for selecting columns. The result of these methods can be passed as arguments to [select](verbs/#select), [groupby](verbs/#groupby), [join](verbs/#join) and other transformation verbs.
 
 <hr/><a id="all" href="#all">#</a>
-<em>aq</em>.<b>all</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+<em>aq</em>.<b>all</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Select all columns in a table. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -327,7 +339,7 @@ aq.all()
 
 
 <hr/><a id="not" href="#not">#</a>
-<em>aq</em>.<b>not</b>(<i>selection</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+<em>aq</em>.<b>not</b>(<i>selection</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Negate a column *selection*, selecting all other columns in a table. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -345,7 +357,7 @@ aq.not(aq.range(2, 5))
 
 
 <hr/><a id="range" href="#range">#</a>
-<em>aq</em>.<b>range</b>(<i>start</i>, <i>stop</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+<em>aq</em>.<b>range</b>(<i>start</i>, <i>stop</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Select a contiguous range of columns. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -363,7 +375,7 @@ aq.range(2, 5)
 ```
 
 <hr/><a id="matches" href="#matches">#</a>
-<em>aq</em>.<b>matches</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+<em>aq</em>.<b>matches</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Select all columns whose names match a pattern. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -382,7 +394,7 @@ aq.matches(/^[abc]/i)
 ```
 
 <hr/><a id="startswith" href="#startswith">#</a>
-<em>aq</em>.<b>startswith</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+<em>aq</em>.<b>startswith</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Select all columns whose names start with a string. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -395,7 +407,7 @@ aq.startswith('prefix_')
 ```
 
 <hr/><a id="endswith" href="#endswith">#</a>
-<em>aq</em>.<b>endswith</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/expr/selection.js)
+<em>aq</em>.<b>endswith</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Select all columns whose names end with a string. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -481,7 +493,7 @@ Register a custom window function. Throws an error if a function with the same n
 Queries allow deferred processing. Rather than process a sequence of verbs immediately, they can be stored as a query. The query can then be *serialized* to be stored or transferred, or later *evaluated* against an Arquero table.
 
 <hr/><a id="query" href="#query">#</a>
-<em>aq</em>.<b>query</b>([<i>tableName</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/query/query-builder.js)
+<em>aq</em>.<b>query</b>([<i>tableName</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/query/query.js)
 
 Create a new query builder instance. The optional *tableName* string argument indicates the default name of a table the query should process, and is used only when evaluating a query against a catalog of tables. The resulting query builder includes the same [verb](verbs) methods as a normal Arquero table. However, rather than evaluating verbs immediately, they are stored as a list of verbs to be evaluated later.
 
@@ -511,7 +523,7 @@ aq.query()
 
 
 <hr/><a id="queryFrom" href="#queryFrom">#</a>
-<em>aq</em>.<b>queryFrom</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/query/query-builder.js)
+<em>aq</em>.<b>queryFrom</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/query/query.js)
 
 Parse a serialized query *object* and return a new query instance. The input *object* should be a serialized query representation, such as those generated by the query *toObject()* method.
 

@@ -2,7 +2,7 @@ import tape from 'tape';
 import tableEqual from '../table-equal';
 import { aggregateFunctions, functions, windowFunctions } from '../../src/op';
 import { addAggregateFunction, addFunction, addWindowFunction } from '../../src/op/register';
-import { op, table } from '../../src/verbs';
+import { op, table } from '../../src';
 
 tape('op includes all aggregate functions', t => {
   let pass = true;

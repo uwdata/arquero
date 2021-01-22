@@ -1,7 +1,7 @@
 import _impute from '../engine/impute';
 import _rollup from '../engine/rollup';
 import parse from '../expression/parse';
-import parseValues from './expr/parse';
+import parseValues from './util/parse';
 import { unique } from '../op/op-api';
 import error from '../util/error';
 import toString from '../util/to-string';

@@ -1,8 +1,8 @@
 import _join from '../engine/join';
-import parseKey from './expr/parse-key';
-import parseValue from './expr/parse';
-import { all, not } from './expr/selection';
+import parseKey from './util/parse-key';
+import parseValue from './util/parse';
 import parse from '../expression/parse';
+import { all, not } from '../helpers/selection';
 import error from '../util/error';
 import intersect from '../util/intersect';
 import isArray from '../util/is-array';
@@ -76,7 +76,7 @@ function inferValues(tableL, onL, onR, options) {
       tableL.columnNames().map(s => {
         const c = `[${toString(s)}]`;
         return shared.has(s)
-          ? { [s]: `(a, b) => a${c} === undefined ? b${c} : a${c}` }
+          ? { [s]: `(a, b) => a${c} == null ? b${c} : a${c}` }
           : s;
       }),
       vR

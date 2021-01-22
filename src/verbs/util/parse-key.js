@@ -1,5 +1,5 @@
-import field from './field';
 import parse from '../../expression/parse';
+import field from '../../helpers/field';
 import error from '../../util/error';
 import isFunction from '../../util/is-function';
 import isNumber from '../../util/is-number';

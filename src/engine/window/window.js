@@ -1,7 +1,7 @@
 import { reducers } from '../reduce/util';
 import { getWindow, isAggregate } from '../../op';
 import concat from '../../util/concat';
-import unroll2 from '../../util/unroll2';
+import unroll from '../../util/unroll';
 import windowState from './window-state';
 
 const frameValue = op =>
@@ -23,10 +23,10 @@ export function window(table, output, exprs, results = [], ops) {
   const states = windowStates(ops, input);
   const nstate = states.length;
 
-  const write = unroll2(
-    output, exprs,
-    ['r', 'input', 'result'],
-    '{' + concat(output, (_, i) => `_${i}[r] = $${i}(r, input, result);`) + '}'
+  const write = unroll(
+    ['r', 'd', 'res'],
+    '{' + concat(output, (_, i) => `_${i}[r] = $${i}(r, d, res);`) + '}',
+    output, exprs
   );
 
   // scan each ordered partition

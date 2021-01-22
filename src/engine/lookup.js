@@ -1,5 +1,6 @@
 import { aggregateGet } from './reduce/util';
 import columnSet from '../table/column-set';
+import NULL from '../util/null';
 
 export default function(tableL, tableR, [keyL, keyR], { names, exprs, ops }) {
   // instantiate output data
@@ -37,7 +38,7 @@ export default function(tableL, tableR, [keyL, keyR], { names, exprs, ops }) {
     const getter = get[i];
     for (let j = 0; j < m; ++j) {
       const rrow = rowR[j];
-      column[rowL[j]] = rrow >= 0 ? getter(rrow, dataR) : undefined;
+      column[rowL[j]] = rrow >= 0 ? getter(rrow, dataR) : NULL;
     }
   }
 

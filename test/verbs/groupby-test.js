@@ -1,5 +1,5 @@
 import tape from 'tape';
-import { desc, op, table } from '../../src/verbs';
+import { desc, op, table } from '../../src';
 
 tape('groupby computes groups based on field names', t => {
   const data = {

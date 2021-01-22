@@ -1,5 +1,5 @@
 import tape from 'tape';
-import { not, range, table } from '../../src/verbs';
+import { not, range, table } from '../../src';
 
 tape('relocate repositions columns', t => {
   const a = [1], b = [2], c = [3], d = [4];

@@ -1,6 +1,6 @@
 import tape from 'tape';
 import fromArrow, { FIXED_SIZE_LIST, LIST, STRUCT } from '../../src/format/from-arrow';
-import { not } from '../../src/verbs';
+import { not } from '../../src/helpers/selection';
 
 // test stubs for Arrow Column API
 function arrowColumn(data, nullCount = 0) {

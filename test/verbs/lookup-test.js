@@ -1,6 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import { op, table } from '../../src/verbs';
+import { op, table } from '../../src';
 
 tape('lookup retrieves values from lookup table with string values', t => {
   const right = table({

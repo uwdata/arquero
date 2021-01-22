@@ -1,6 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import { table } from '../../src/verbs';
+import { table } from '../../src';
 
 tape('dedupe de-duplicates table', t => {
   const dt = table({ a: [1, 2, 1, 2, 1], b: [3, 4, 3, 4, 5] })

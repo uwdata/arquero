@@ -4,8 +4,7 @@ import tableEqual from '../table-equal';
 import Query, { query } from '../../src/query/query';
 import { Verbs } from '../../src/query/verb';
 import isFunction from '../../src/util/is-function';
-import { seed } from '../../src/util/random';
-import { all, desc, not, op, range, rolling, table } from '../../src/verbs';
+import { all, desc, not, op, range, rolling, seed, table } from '../../src';
 import { field, func } from './util';
 
 const {
