@@ -371,12 +371,12 @@ export default class Table extends Transformable {
     if (this.isGrouped()) return super.slice(start, end);
 
     // if not grouped, scan table directly
-    const idx = [];
+    const indices = [];
     const nrows = this.numRows();
     start = Math.max(0, start + (start < 0 ? nrows : 0));
     end = Math.min(nrows, Math.max(0, end + (end < 0 ? nrows : 0)));
-    this.scan(row => idx.push(row), true, end - start, start);
-    return this.reify(idx);
+    this.scan(row => indices.push(row), true, end - start, start);
+    return this.reify(indices);
   }
 
   /**
