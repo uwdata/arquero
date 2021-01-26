@@ -31,8 +31,8 @@ const call = (node, ctx, visitors) => {
   list(node.arguments, ctx, visitors, node);
 };
 
-const list = (nodes, ctx, visitors) => {
-  nodes.forEach(node => walk(node, ctx, visitors, node));
+const list = (nodes, ctx, visitors, node) => {
+  nodes.forEach(item => walk(item, ctx, visitors, node));
 };
 
 const walkers = {
@@ -41,8 +41,8 @@ const walkers = {
     list(node.quasis, ctx, visitors, node);
   },
   MemberExpression: (node, ctx, visitors) => {
-    walk(node.object, ctx, visitors, node, 'object');
-    walk(node.property, ctx, visitors, node, 'property');
+    walk(node.object, ctx, visitors, node);
+    walk(node.property, ctx, visitors, node);
   },
   CallExpression: call,
   NewExpression: call,
