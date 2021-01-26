@@ -26,40 +26,6 @@ function run(N, nulls, msg) {
   const avg3 = { a: op.mean('a'), b: op.mean('b'), c: op.mean('c') };
 
   tape(`rollup: ${msg}`, t => {
-    // console.table([ // eslint-disable-line
-    //   {
-    //     type:  'flat cnt',
-    //     '1d':  time(() => dt.count())
-    //   },
-    //   {
-    //     type:  'flat sum',
-    //     '1d':  time(() => dt.rollup(sum1)),
-    //     '2d':  time(() => dt.rollup(sum2)),
-    //     '3d':  time(() => dt.rollup(sum3))
-    //   },
-    //   {
-    //     type:  'flat avg',
-    //     '1d':  time(() => dt.rollup(avg1)),
-    //     '2d':  time(() => dt.rollup(avg2)),
-    //     '3d':  time(() => dt.rollup(avg3))
-    //   },
-    //   {
-    //     type:  'group cnt',
-    //     '1d':  time(() => gt.count())
-    //   },
-    //   {
-    //     type:  'group sum',
-    //     '1d':  time(() => dt.rollup(sum1)),
-    //     '2d':  time(() => dt.rollup(sum2)),
-    //     '3d':  time(() => dt.rollup(sum3))
-    //   },
-    //   {
-    //     type:  'group avg',
-    //     '1d':  time(() => dt.rollup(avg1)),
-    //     '2d':  time(() => dt.rollup(avg2)),
-    //     '3d':  time(() => dt.rollup(avg3))
-    //   }
-    // ]);
     console.table([ // eslint-disable-line
       {
         op: 'sum',
