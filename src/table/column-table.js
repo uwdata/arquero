@@ -56,9 +56,7 @@ export default class ColumnTable extends Table {
    * @return {ColumnTable} A newly created table.
    */
   create({ data, names, filter, groups, order }) {
-    const f = filter
-      ? (this._filter ? this._filter.and(filter) : filter)
-      : filter !== undefined ? filter : this._filter;
+    const f = filter !== undefined ? filter : this._filter;
 
     return new ColumnTable(
       data || this._data,

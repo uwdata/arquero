@@ -86,6 +86,14 @@ export default class Table extends Transformable {
   }
 
   /**
+   * Returns the filter bitset mask, if defined.
+   * @return {BitSet} The filter bitset mask.
+   */
+  mask() {
+    return this._filter;
+  }
+
+  /**
    * Returns the groupby specification, if defined.
    * @return {GroupBySpec} The groupby specification.
    */
