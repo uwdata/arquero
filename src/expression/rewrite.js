@@ -10,6 +10,7 @@ const dictOps = {
 
 /**
  * Rewrite AST node to be a table column reference.
+ * Additionally optimizes dictionary column operations.
  * @param {object} ref AST node to rewrite to a column reference.
  * @param {object} op Parent AST node operating on the column reference.
  * @param {string} name The name of the column.
@@ -31,7 +32,7 @@ export default function(ref, op, name, index, col) {
     ? op.arguments[op.arguments[0] === ref ? 1 : 0]
     : null;
 
-  // rewrite as dictionary lookup is other arg is a literal
+  // rewrite as dictionary lookup if other arg is a literal
   if (lit && lit.type === Literal) {
     rewriteDictionary(op, ref, lit, col.keyFor(lit.value));
   }
@@ -39,15 +40,15 @@ export default function(ref, op, name, index, col) {
 
 function rewriteDictionary(op, ref, lit, key) {
   if (key < 0) {
-    // rewrite op to be a false literal
+    // value not in dictionary, rewrite op as false literal
     op.type = Literal;
     op.value = false;
     op.raw = 'false';
   } else {
-    // rewrite ref to be dict key access
+    // rewrite ref as dict key access
     ref.type = Dictionary;
 
-    // rewrite literal to be the target dict key
+    // rewrite literal as target dict key
     lit.value = key;
     lit.raw = key + '';
   }

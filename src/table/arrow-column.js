@@ -1,5 +1,8 @@
-import { op } from '..';
+import sequence from '../op/functions/sequence';
 
+/**
+ * Flatten Arrow column chunks into a single flat array.
+ */
 function flatten(chunks, length, type) {
   const array = new type.ArrayType(length);
   const n = chunks.length;
@@ -10,6 +13,11 @@ function flatten(chunks, length, type) {
   return array;
 }
 
+/**
+ * Encode null values as an additional dictionary key.
+ * Returns a new key array with null values added.
+ * TODO: safeguard against integer overflow.
+ */
 function nullKeys(chunks, keys, key) {
   // iterate over null bitmaps, encode null values as key
   keys = keys.slice();
@@ -37,6 +45,11 @@ function nullKeys(chunks, keys, key) {
   return keys;
 }
 
+/**
+ * Create a new Arquero column that proxies access to an
+ * Apace Arrow dictionary column.
+ * @param {object} arrow An Apache Arrow dictionary column.
+ */
 export function dictionaryColumn(arrow) {
   const length = arrow.length;
   const chunks = arrow.chunks;
@@ -85,7 +98,7 @@ export function dictionaryColumn(arrow) {
         keys: groupKeys || (groupKeys = nullKeys(chunks, keys, size)),
         get: [value],
         names,
-        rows: op.sequence(0, s),
+        rows: sequence(0, s),
         size: s
       };
     },
