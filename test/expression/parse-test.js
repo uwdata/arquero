@@ -630,3 +630,77 @@ tape('parse supports ast output option', t => {
 
   t.end();
 });
+
+tape('parse optimizes dictionary references', t => {
+  const cols = { v: { keyFor() { return 1; } } };
+  const dt = { column: name => cols[name] };
+
+  const optimized = {
+    l_eq2: d => d.v == 'a',
+    r_eq2: d => 'a' == d.v,
+    l_eq3: d => d.v === 'a',
+    r_eq3: d => 'a' === d.v,
+    l_ne2: d => d.v != 'a',
+    r_ne2: d => 'a' != d.v,
+    l_ne3: d => d.v !== 'a',
+    r_ne3: d => 'a' !== d.v,
+    l_eqo: d => op.equal(d.v, 'a'),
+    r_eqo: d => op.equal('a', d.v),
+    destr: ({ v }) => v === 'a'
+  };
+
+  t.deepEqual(
+    parse(optimized, { compiler, table: dt }),
+    {
+      names: [
+        'l_eq2', 'r_eq2',
+        'l_eq3', 'r_eq3',
+        'l_ne2', 'r_ne2',
+        'l_ne3', 'r_ne3',
+        'l_eqo', 'r_eqo',
+        'destr'
+      ],
+      exprs: [
+        '(data.v.key(row) == 1)',
+        '(1 == data.v.key(row))',
+        '(data.v.key(row) === 1)',
+        '(1 === data.v.key(row))',
+        '(data.v.key(row) != 1)',
+        '(1 != data.v.key(row))',
+        '(data.v.key(row) !== 1)',
+        '(1 !== data.v.key(row))',
+        'fn.equal(data.v.key(row),1)',
+        'fn.equal(1,data.v.key(row))',
+        '(data.v.key(row) === 1)'
+      ],
+      ops: []
+    },
+    'optimized references'
+  );
+
+  const unoptimized = {
+    ref: d => d.v,
+    nest: d => d.v.x === 'a',
+    destr: ({ v }) => v.x === 'a',
+    l_lte: d => d.v <= 'a',
+    r_lte: d => 'a' <= d.v
+  };
+
+  t.deepEqual(
+    parse(unoptimized, { compiler, table: dt }),
+    {
+      names: [ 'ref', 'nest', 'destr', 'l_lte', 'r_lte' ],
+      exprs: [
+        'data.v.get(row)',
+        "(data.v.get(row).x === 'a')",
+        "(data.v.get(row).x === 'a')",
+        "(data.v.get(row) <= 'a')",
+        "('a' <= data.v.get(row))"
+      ],
+      ops: []
+    },
+    'unoptimized references'
+  );
+
+  t.end();
+});

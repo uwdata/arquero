@@ -1,4 +1,5 @@
 import error from '../util/error';
+import toString from '../util/to-string';
 
 const visit = (node, opt) => {
   const f = visitors[node.type];
@@ -23,23 +24,21 @@ const list = (array, opt, delim=',') => {
   return array.map(node => visit(node, opt)).join(delim);
 };
 
+const name = node => node.computed
+  ? `[${toString(node.name)}]`
+  : `.${node.name}`;
+
+const ref = (node, opt, method) => {
+  const table = node.table || '';
+  return `data${table}${name(node)}.${method}(${opt.index}${table})`;
+};
+
 const visitors = {
-  Column: (node, opt) => {
-    const column = node.computed
-      ? `[${JSON.stringify(node.name)}]`
-      : `.${node.name}`;
-    const table = node.table || '';
-    const row = `.get(${opt.index}${table})`;
-    return `data${table}${column}${row}`;
-  },
   Constant: node => node.raw,
+  Column: (node, opt) => ref(node, opt, 'get'),
+  Dictionary: (node, opt) => ref(node, opt, 'key'),
   Function: node => `fn.${node.name}`,
-  Parameter: node => {
-    const param = node.computed
-      ? `[${JSON.stringify(node.name)}]`
-      : `.${node.name}`;
-    return `$${param}`;
-  },
+  Parameter: node => `$${name(node)}`,
   OpLookup: (node, opt) => {
     const d = !node.computed;
     const o = (opt.op || node.object.name) + (node.index || '');

@@ -1,4 +1,5 @@
 import resolve, { all } from '../helpers/selection';
+import { dictionaryColumn } from '../table/arrow-column';
 import ColumnTable from '../table/column-table';
 import error from '../util/error';
 import toString from '../util/to-string';
@@ -72,6 +73,7 @@ function collect(names, cols, unpack) {
 
   cols.forEach((col, idx) =>
     data[names[idx]] = col.numChildren ? arrayFromNested(col)
+      : col.dictionary ? dictionaryColumn(col)
       : unpack ? arrayFromVector(col)
       : col
   );
