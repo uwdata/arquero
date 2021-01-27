@@ -75,7 +75,21 @@ export function reduceFlat(table, reducer) {
   const cell = reducer.init();
 
   // compute aggregate values
-  table.scan((row, data) => reducer.add(cell, row, data));
+  // inline the following for performance:
+  // table.scan((row, data) => reducer.add(cell, row, data));
+  const n = table.totalRows();
+  const data = table.data();
+  const bits = table.mask();
+
+  if (bits) {
+    for (let i = bits.next(0); i >= 0; i = bits.next(i + 1)) {
+      reducer.add(cell, i, data);
+    }
+  } else {
+    for (let i = 0; i < n; ++i) {
+      reducer.add(cell, i, data);
+    }
+  }
 
   return cell;
 }
@@ -87,7 +101,21 @@ export function reduceGroups(table, reducer, groups) {
   const cells = repeat(size, () => reducer.init());
 
   // compute aggregate values
-  table.scan((row, data) => reducer.add(cells[keys[row]], row, data));
+  // inline the following for performance:
+  // table.scan((row, data) => reducer.add(cells[keys[row]], row, data));
+  const n = table.totalRows();
+  const data = table.data();
+  const bits = table.mask();
+
+  if (bits) {
+    for (let i = bits.next(0); i >= 0; i = bits.next(i + 1)) {
+      reducer.add(cells[keys[i]], i, data);
+    }
+  } else {
+    for (let i = 0; i < n; ++i) {
+      reducer.add(cells[keys[i]], i, data);
+    }
+  }
 
   return cells;
 }

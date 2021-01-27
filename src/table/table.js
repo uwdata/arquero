@@ -242,10 +242,23 @@ export default class Table extends Transformable {
   indices(order = true) {
     if (this._index) return this._index;
 
-    let i = -1;
-    const index = new Uint32Array(this.numRows());
+    const n = this.numRows();
+    const index = new Uint32Array(n);
     const ordered = this.isOrdered();
-    this.scan(row => index[++i] = row);
+    const bits = this.mask();
+    let row = -1;
+
+    // inline the following for performance:
+    // this.scan(row => index[++i] = row);
+    if (bits) {
+      for (let i = bits.next(0); i >= 0; i = bits.next(i + 1)) {
+        index[++row] = i;
+      }
+    } else {
+      for (let i = 0; i < n; ++i) {
+        index[++row] = i;
+      }
+    }
 
     // sort index vector
     if (order && ordered) {
@@ -288,8 +301,25 @@ export default class Table extends Transformable {
     const part = repeat(size, () => []);
 
     // populate partitions, don't sort if indices don't exist
-    const sort = !!this._index;
-    this.scan(row => part[keys[row]].push(row), sort);
+    // inline the following for performance:
+    // this.scan(row => part[keys[row]].push(row), sort);
+    const sort = this._index;
+    const bits = this.mask();
+    const n = this.numRows();
+    if (sort && this.isOrdered()) {
+      for (let i = 0, r; i < n; ++i) {
+        r = sort[i];
+        part[keys[r]].push(r);
+      }
+    } else if (bits) {
+      for (let i = bits.next(0); i >= 0; i = bits.next(i + 1)) {
+        part[keys[i]].push(i);
+      }
+    } else {
+      for (let i = 0; i < n; ++i) {
+        part[keys[i]].push(i);
+      }
+    }
 
     // if ordered but not yet sorted, sort partitions directly
     if (order && !sort && this.isOrdered()) {

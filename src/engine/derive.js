@@ -43,22 +43,47 @@ function segmentOps(ops) {
   return [aggOps, winOps];
 }
 
-function output(table, data, exprs, result = {}) {
+function output(table, cols, exprs, result = {}) {
   const groups = table.groups();
-  const n = data.length;
+  const bits = table.mask();
+  const data = table.data();
+  const n = table.totalRows();
+  const m = cols.length;
 
   if (groups) {
     const { keys } = groups;
-    for (let i = 0; i < n; ++i) {
-      const get = exprs[i];
-      const col = data[i];
-      table.scan((row, d) => col[row] = get(row, d, result[keys[row]]));
+    for (let j = 0; j < m; ++j) {
+      const get = exprs[j];
+      const col = cols[j];
+
+      // inline the following for performance:
+      // table.scan((row, d) => col[row] = get(row, d, result[keys[row]]));
+      if (bits) {
+        for (let i = bits.next(0); i >= 0; i = bits.next(i + 1)) {
+          col[i] = get(i, data, result[keys[i]]);
+        }
+      } else {
+        for (let i = 0; i < n; ++i) {
+          col[i] = get(i, data, result[keys[i]]);
+        }
+      }
     }
   } else {
-    for (let i = 0; i < n; ++i) {
-      const get = exprs[i];
-      const col = data[i];
-      table.scan((row, d) => col[row] = get(row, d, result));
+    for (let j = 0; j < m; ++j) {
+      const get = exprs[j];
+      const col = cols[j];
+
+      // inline the following for performance:
+      // table.scan((row, d) => col[row] = get(row, d, result));
+      if (bits) {
+        for (let i = bits.next(0); i >= 0; i = bits.next(i + 1)) {
+          col[i] = get(i, data, result);
+        }
+      } else {
+        for (let i = 0; i < n; ++i) {
+          col[i] = get(i, data, result);
+        }
+      }
     }
   }
 }

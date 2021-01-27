@@ -17,26 +17,26 @@ function run(N, nulls, msg) {
   });
 
   const gt = dt.groupby('k');
-  const sum = { s: 'd.a + d.b' };
-  const pdf = { p: 'distinct(d.c) / count()'};
-  const zsc = { z: '(d.a - mean(d.a)) / stdev(d.a) || 0' };
+  const sum2 = { s: 'd.a + d.b' };
+  const fill = { p: 'fill_down(d.c)' };
+  const zscr = { z: '(d.a - mean(d.a)) / stdev(d.a) || 0' };
 
   tape(`derive: ${msg}`, t => {
     console.table([ // eslint-disable-line
       {
-        op:   'sum',
-        flat:  time(() => dt.derive(sum)),
-        group: time(() => gt.derive(sum))
+        op:   'sum2',
+        flat:  time(() => dt.derive(sum2)),
+        group: time(() => gt.derive(sum2))
+      },
+      {
+        op:   'fill',
+        flat:  time(() => dt.derive(fill)),
+        group: time(() => gt.derive(fill))
       },
       {
         op:   'zscore',
-        flat:  time(() => dt.derive(zsc)),
-        group: time(() => gt.derive(zsc))
-      },
-      {
-        op:   'prob',
-        flat:  time(() => dt.derive(pdf)),
-        group: time(() => gt.derive(pdf))
+        flat:  time(() => dt.derive(zscr)),
+        group: time(() => gt.derive(zscr))
       }
     ]);
     t.end();
