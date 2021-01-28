@@ -27,7 +27,7 @@ export function aggregate(table, ops) {
     const { size } = groups;
 
     // instantiate aggregate result objects
-    const result = repeat(size, () => ({}));
+    const result = repeat(size, () => []);
 
     // compute aggregates, extract results
     aggrs.forEach(aggr => {
@@ -141,6 +141,7 @@ export function groupOutput(output, table, counts) {
     for (let i = 0, row = 0; i < size; ++i) {
       const value = getter(rows[i], data);
       const count = counts[i + 1];
+      // don't use fill here as array may be resized
       for (let j = 0; j < count; ++j) {
         column[row++] = value;
       }
