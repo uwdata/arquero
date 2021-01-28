@@ -13,7 +13,7 @@ function createGroups(table, { names = [], exprs = [], ops = [] }) {
 
   // check for optimized path when grouping by a single field
   // use pre-calculated groups if available
-  if (n === 1 && exprs[0].field) {
+  if (n === 1 && !table.isFiltered() && exprs[0].field) {
     const col = table.column(exprs[0].field);
     if (col.groups) return col.groups(names);
   }
