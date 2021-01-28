@@ -1,7 +1,7 @@
 import tape from 'tape';
 import { arrowDictionary } from '../arrow-stubs';
 import { desc, op, table } from '../../src';
-import { dictionaryColumn } from '../../src/table/arrow-column';
+import { dictionaryColumn } from '../../src/table/dictionary-column';
 
 tape('groupby computes groups based on field names', t => {
   const data = {

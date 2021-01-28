@@ -1,5 +1,5 @@
 import resolve, { all } from '../helpers/selection';
-import { dictionaryColumn } from '../table/arrow-column';
+import { dictionaryColumn } from '../table/dictionary-column';
 import ColumnTable from '../table/column-table';
 import error from '../util/error';
 import toString from '../util/to-string';
