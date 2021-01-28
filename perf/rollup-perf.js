@@ -1,12 +1,7 @@
 const tape = require('tape');
+const time = require('./time');
 const { floats, sample, strings } = require('./data-gen');
 const { table, op } = require('..');
-
-function time(fn, ...args) {
-  const t0 = Date.now();
-  fn(...args);
-  return Date.now() - t0;
-}
 
 function run(N, nulls, msg) {
   const dt = table({

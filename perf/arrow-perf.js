@@ -1,13 +1,8 @@
 const tape = require('tape');
+const time = require('./time');
 const { ints, sample, strings } = require('./data-gen');
 const { fromArrow } = require('..');
 const { Dictionary, Int32, Table, Utf8, Vector, predicate } = require('apache-arrow');
-
-function time(fn, ...args) {
-  const t0 = Date.now();
-  fn(...args);
-  return Date.now() - t0;
-}
 
 function run(N, nulls, msg) {
   const at = Table.new(
