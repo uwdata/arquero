@@ -32,12 +32,12 @@ function test(t, input) {
   t.deepEqual(exprs, [
     '(1 + 1)',
     '(data.a.get(row) * data.b.get(row))',
-    'op[0]',
-    'op[1]',
-    '(1 + op[2])',
-    '(data.value.get(row) - op[3])',
-    'op[4]',
-    'op[5]'
+    'op(0,row)',
+    'op(1,row)',
+    '(1 + op(2,row))',
+    '(data.value.get(row) - op(3,row))',
+    'op(4,row)',
+    'op(5,row)'
   ], 'parsed output expressions');
 }
 
@@ -268,7 +268,7 @@ tape('parse parses expressions with block statements', t => {
     parse(exprs, { compiler }),
     {
       names: [ 'val' ],
-      exprs: [ '{const s=op[0];return (s * s);}' ],
+      exprs: [ '{const s=op(0,row);return (s * s);}' ],
       ops: [
         { name: 'sum', fields: [ 'data.a.get(row)' ], params: [], id: 0 }
       ]
@@ -278,7 +278,7 @@ tape('parse parses expressions with block statements', t => {
 
   t.equal(
     parse(exprs).exprs[0] + '',
-    '(row,data,op)=>{const s=op[0];return (s * s);}',
+    '(row,data,op)=>{const s=op(0,row);return (s * s);}',
     'compiled block'
   );
 
@@ -356,9 +356,9 @@ tape('parse parses expressions with destructuring assignments', t => {
     {
       names: ['arr', 'obj', 'nest'],
       exprs: [
-        '{const [start,stop,step]=op[0];return fn.bin(\'value\',start,stop,step);}',
-        '{const {start:start,stop:stop,step:step}=op[0];return fn.bin(\'value\',start,stop,step);}',
-        '{const {start:[{baz:bop}],stop:stop,step:step}=op[0];return fn.bin(\'value\',bop,stop,step);}'
+        '{const [start,stop,step]=op(0,row);return fn.bin(\'value\',start,stop,step);}',
+        '{const {start:start,stop:stop,step:step}=op(0,row);return fn.bin(\'value\',start,stop,step);}',
+        '{const {start:[{baz:bop}],stop:stop,step:step}=op(0,row);return fn.bin(\'value\',bop,stop,step);}'
       ],
       ops: [
         { name: 'bins', fields: [ '\'value\'' ], params: [], id: 0 }

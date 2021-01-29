@@ -1,5 +1,3 @@
-import error from '../../util/error';
-
 /**
  * Abstract class for custom aggregation operations.
  */
@@ -28,11 +26,6 @@ export default class Reducer {
     // no-op, subclasses should override
   }
 
-  writeToArrays(/* state, values, index */) {
-    error('Unsupported operation');
-  }
-
-  writeToObject(/* state, object */) {
-    error('Unsupported operation');
+  write(/* state, values, index */) {
   }
 }

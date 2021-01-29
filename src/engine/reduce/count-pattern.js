@@ -48,7 +48,7 @@ export class CountPattern extends Reducer {
     });
   }
 
-  writeToArrays({ words, count }, values, index) {
+  write({ words, count }, values, index) {
     const n = words.length;
     const v0 = values[this._outputs[0]];
     const v1 = values[this._outputs[1]];

@@ -12,4 +12,4 @@ export const Constant = 'Constant';
 export const Dictionary = 'Dictionary';
 export const Function = 'Function';
 export const Parameter = 'Parameter';
-export const OpLookup = 'OpLookup';
+export const Op = 'Op';

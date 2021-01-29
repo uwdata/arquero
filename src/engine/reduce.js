@@ -1,39 +1,41 @@
-import { groupInit, groupOutput, reduceFlat, reduceGroups } from './reduce/util';
+import { reduceFlat, reduceGroups } from './reduce/util';
 import columnSet from '../table/column-set';
 
 export default function(table, reducer) {
   const cols = columnSet();
+  const groups = table.groups();
 
-  if (table.isGrouped()) {
-    const groups = table.groups();
-    const counts = groupInit(cols, table);
-    output(
-      reduceGroups(table, reducer, groups),
-      reducer, cols, counts
-    );
-    groupOutput(cols.data, table, counts);
-  } else {
-    output(
-      reduceFlat(table, reducer),
-      reducer, cols
-    );
+  // initialize groups
+  const { get, names = [], rows, size = 1 } = groups || {};
+  const counts = new Uint32Array(size + 1);
+  names.forEach(name => cols.add(name, null));
+
+  // compute reduced values
+  const cells = groups
+    ? reduceGroups(table, reducer, groups)
+    : [ reduceFlat(table, reducer) ];
+
+  // initialize output columns
+  reducer.outputs().map(name => cols.add(name, []));
+
+  // write reduced values to output columns
+  const n = counts.length - 1;
+  let len = 0;
+  for (let i = 0; i < n; ++i) {
+    len += counts[i + 1] = reducer.write(cells[i], cols.data, counts[i]);
+  }
+
+  // write group values to output columns
+  if (groups) {
+    const data = table.data();
+    names.forEach((name, index) => {
+      const column = cols.data[name] = Array(len);
+      const getter = get[index];
+      for (let i = 0, j = 0; i < size; ++i) {
+        column.fill(getter(rows[i], data), j, j += counts[i + 1]);
+      }
+    });
   }
 
   return table.create(cols.new());
-}
-
-function output(cells, reducer, cols, counts) {
-  // initialize output columns
-  reducer.outputs().map(name => cols.add(name, []));
-  const { data } = cols;
-
-  // write aggregate values to output columns
-  if (counts) {
-    const n = counts.length;
-    for (let i = 0; i < n - 1; ++i) {
-      counts[i + 1] = reducer.writeToArrays(cells[i], data, counts[i]);
-    }
-  } else {
-    reducer.writeToArrays(cells, data, 0);
-  }
 }

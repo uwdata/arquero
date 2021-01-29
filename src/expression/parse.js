@@ -11,7 +11,7 @@ import {
   Literal,
   MemberExpression,
   ObjectPattern,
-  OpLookup,
+  Op,
   Parameter,
   Property
 } from './ast/constants';
@@ -49,6 +49,8 @@ const ERROR_VARIABLE = 'Invalid variable reference';
 const ERROR_VARIABLE_OP = 'Variable not accessible in operator call';
 const ERROR_DECLARATION = 'Unsupported variable declaration';
 const ERROR_DESTRUCTURE = 'Unsupported destructuring pattern';
+
+const ANNOTATE = { [Column]: 1, [Op]: 1 };
 
 const is = (type, node) => node && node.type === type;
 const isFunctionExpression = node =>
@@ -89,9 +91,9 @@ export default function(input, opt = {}) {
       names.push(name);
       const e = opt.ast ? clean(node) : compileExpr(generate(node), params);
       exprs.push(e);
-      // annotate expression if it is a direct column access
+      // annotate expression if it is a direct column or op access
       // this permits downstream optimizations
-      if (node.type === Column && e !== node && isObject(e)) {
+      if (ANNOTATE[node.type] && e !== node && isObject(e)) {
         e.field = node.name;
       }
     },
@@ -271,12 +273,7 @@ const visitors = {
         node.arguments.forEach(arg => walk(arg, ctx, opVisitors));
       } else {
         const op = ctx.op(parseOperator(ctx, def, name, node.arguments));
-        Object.assign(node, {
-          type: OpLookup,
-          computed: true,
-          object: { type: Identifier, name: 'op' },
-          property: { type: Literal, raw: op.id }
-        });
+        Object.assign(node, { type: Op, name: op.id });
       }
       ctx.$op = 0;
       return false;

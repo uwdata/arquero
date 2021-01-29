@@ -39,12 +39,7 @@ const visitors = {
   Dictionary: (node, opt) => ref(node, opt, 'key'),
   Function: node => `fn.${node.name}`,
   Parameter: node => `$${name(node)}`,
-  OpLookup: (node, opt) => {
-    const d = !node.computed;
-    const o = (opt.op || node.object.name) + (node.index || '');
-    const p = visit(node.property, opt);
-    return o + (d ? '.' + p : '[' + p + ']');
-  },
+  Op: (node, opt) => `op(${toString(node.name)},${opt.op || opt.index})`,
   Literal: node => node.raw,
   Identifier: node => node.name,
   TemplateLiteral: (node, opt) => {

@@ -1,4 +1,4 @@
-import { aggregate, aggregateGet, groupInit, groupOutput } from './reduce/util';
+import { aggregate, aggregateGet, groupOutput } from './reduce/util';
 import columnSet from '../table/column-set';
 
 const opt = (value, defaultValue) => value != null ? value : defaultValue;
@@ -13,20 +13,18 @@ export default function(table, on, values, options = {}) {
   // perform separate aggregate operations for each key
   // if keys do not match, emit NaN so aggregate skips it
   // use custom toString method for proper field resolution
-  const results = keys
-    .map(
-      k => values.ops.map(op => {
-        const fields = op.fields.map(f => {
-          const fn = (r, d) => k === keyColumn[r] ? f(r, d) : NaN;
-          fn.toString = () => k + ':' + f + '';
-          return fn;
-        });
-        return { ...op, fields };
-      })
-    )
-    .map(ops => aggregate(table, ops));
+  const results = keys.map(
+    k => aggregate(table, values.ops.map(op => {
+      const fields = op.fields.map(f => {
+        const fn = (r, d) => k === keyColumn[r] ? f(r, d) : NaN;
+        fn.toString = () => k + ':' + f + '';
+        return fn;
+      });
+      return { ...op, fields };
+    }))
+  );
 
-  return table.create(output(table, values, namefn, results));
+  return table.create(output(values, namefn, table.groups(), results));
 }
 
 function pivotKeys(table, on, options) {
@@ -45,13 +43,13 @@ function pivotKeys(table, on, options) {
   table.scan((row, data) => kcol[row] = key(row, data));
 
   // collect unique key values
-  const aggr = aggregate(
+  const uniq = aggregate(
     table.ungroup(),
     [ { id: 0, name: 'unique', fields: [(row => kcol[row])], params: [] } ]
-  );
+  )[0][0];
 
   // get ordered set of unique key values
-  const keys = sort ? aggr[0].sort() : aggr[0];
+  const keys = sort ? uniq.sort() : uniq;
 
   // return key values
   return {
@@ -60,33 +58,40 @@ function pivotKeys(table, on, options) {
   };
 }
 
-function output(table, { names, exprs }, namefn, results) {
-  const n = names.length;
-  const m = results.length;
+function output({ names, exprs }, namefn, groups, results) {
+  const size = groups ? groups.size : 1;
   const cols = columnSet();
+  const m = results.length;
+  const n = names.length;
 
-  if (table.isGrouped()) {
-    // write groupby fields to output
-    groupOutput(cols.data, table, groupInit(cols, table).fill(1));
+  let result;
+  const op = (id, row) => result[id][row];
 
-    // write values to output
-    const size = results[0].length;
-    for (let i = 0; i < n; ++i) {
-      const get = exprs[i];
-      for (let i = 0; i < m; ++i) {
-        const result = results[i];
-        const col = cols.add(namefn(i, names[i]), Array(size));
-        for (let j = 0; j < size; ++j) {
-          col[j] = get(j, null, result[j]);
+  // write groupby fields to output
+  if (groups) groupOutput(cols, groups);
+
+  // write pivot values to output
+  for (let i = 0; i < n; ++i) {
+    const get = exprs[i];
+    if (get.field != null) {
+      // if expression is op only, use aggregates directly
+      for (let j = 0; j < m; ++j) {
+        cols.add(namefn(j, names[i]), results[j][get.field]);
+      }
+    } else if (size > 1) {
+      // if multiple groups, evaluate expression for each
+      for (let j = 0; j < m; ++j) {
+        result = results[j];
+        const col = cols.add(namefn(j, names[i]), Array(size));
+        for (let k = 0; k < size; ++k) {
+          col[k] = get(k, null, op);
         }
       }
-    }
-  } else {
-    // write values to output
-    for (let i = 0; i < n; ++i) {
-      const get = exprs[i];
+    } else {
+      // if only one group, no need to loop
       for (let j = 0; j < m; ++j) {
-        cols.add(namefn(j, names[i]), [ get(0, null, results[j]) ]);
+        result = results[j];
+        cols.add(namefn(j, names[i]), [ get(0, null, op) ]);
       }
     }
   }
