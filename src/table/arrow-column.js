@@ -15,8 +15,9 @@ const isStruct = id => id === STRUCT;
 /**
  * Create an Arquero column that proxies access to an Arrow column.
  * @param {object} arrow An Apache Arrow column.
+ * @return {import('./column').ColumnType} An Arquero-compatible column.
  */
-export default function arrowColumn(arrow) {
+export default function arrowColumn(arrow, nested) {
   if (arrow.dictionary) return dictionaryColumn(arrow);
 
   const { chunks } = arrow;
@@ -24,7 +25,8 @@ export default function arrowColumn(arrow) {
 
   if (vector.numChildren) {
     const { length } = vector;
-    const get = getNested(vector);
+    const extract = getNested(vector);
+    const get = nested ? extract : memoize(extract);
     return {
       vector, length, get,
       [Symbol.iterator]: () => iterator(length, get)
@@ -32,6 +34,14 @@ export default function arrowColumn(arrow) {
   }
 
   return vector;
+}
+
+function memoize(get) {
+  const values = [];
+  return row => {
+    const v = values[row];
+    return v !== undefined ? v : (values[row] = get(row));
+  };
 }
 
 function* iterator(n, get) {
@@ -57,7 +67,7 @@ function getStruct(vector) {
   const props = [];
   const code = [];
   vector.type.children.forEach((field, i) => {
-    props.push(arrowColumn(vector.getChildAt(i)));
+    props.push(arrowColumn(vector.getChildAt(i), true));
     code.push(`${toString(field.name)}:_${i}.get(row)`);
   });
   const get = unroll('row', '({' + code + '})', props);
