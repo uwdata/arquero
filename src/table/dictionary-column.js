@@ -8,7 +8,7 @@ import sequence from '../op/functions/sequence';
 export default function(vector) {
   const { chunks, dictionary, length, nullCount } = vector;
   const size = dictionary.length;
-  const keys = dictKeys(chunks, length, nullCount, size);
+  const keys = dictKeys(chunks || [vector], length, nullCount, size);
   const values = Array(size);
 
   const value = k => k == null || k < 0 || k >= size ? null
@@ -51,22 +51,22 @@ export default function(vector) {
  * @param {number} size The backing dictionary size
  */
 function dictKeys(chunks, length, nulls, size) {
-  const v = chunks.length === 1 && !nulls
-    ? chunks[0].values
-    : flatten(chunks, length, chunks[0].type.indices);
-
+  const v = chunks.length > 1 || nulls
+    ? flatten(chunks, length, chunks[0].type.indices)
+    : chunks[0].values;
   return nulls ? nullKeys(chunks, v, size) : v;
 }
 
 /**
- * Flatten Arrow column chunks into a single flat array.
+ * Flatten Arrow column chunks into a single array.
  */
 function flatten(chunks, length, type) {
   const array = new type.ArrayType(length);
   const n = chunks.length;
-  for (let i = 0, idx = 0; i < n; ++i) {
-    array.set(chunks[i].values, idx);
-    idx += chunks[i].length;
+  for (let i = 0, idx = 0, len; i < n; ++i) {
+    len = chunks[i].length;
+    array.set(chunks[i].values.subarray(0, len), idx);
+    idx += len;
   }
   return array;
 }
@@ -81,18 +81,19 @@ function nullKeys(chunks, keys, key) {
   const n = chunks.length;
   for (let i = 0, idx = 0, m, base, bits, byte; i < n; ++i) {
     bits = chunks[i].nullBitmap;
-    if (bits && (m = bits.length)) {
-      for (let j = 0; j < m; ++j) {
+    m = chunks[i].length >> 3;
+    if (bits && bits.length) {
+      for (let j = 0; j <= m; ++j) {
         if ((byte = bits[j]) !== 255) {
           base = idx + (j << 3);
-          if (byte & (1 << 0) === 0) keys[base + 0] = key;
-          if (byte & (1 << 1) === 0) keys[base + 1] = key;
-          if (byte & (1 << 2) === 0) keys[base + 2] = key;
-          if (byte & (1 << 3) === 0) keys[base + 3] = key;
-          if (byte & (1 << 4) === 0) keys[base + 4] = key;
-          if (byte & (1 << 5) === 0) keys[base + 5] = key;
-          if (byte & (1 << 6) === 0) keys[base + 6] = key;
-          if (byte & (1 << 7) === 0) keys[base + 7] = key;
+          if ((byte & (1 << 0)) === 0) keys[base + 0] = key;
+          if ((byte & (1 << 1)) === 0) keys[base + 1] = key;
+          if ((byte & (1 << 2)) === 0) keys[base + 2] = key;
+          if ((byte & (1 << 3)) === 0) keys[base + 3] = key;
+          if ((byte & (1 << 4)) === 0) keys[base + 4] = key;
+          if ((byte & (1 << 5)) === 0) keys[base + 5] = key;
+          if ((byte & (1 << 6)) === 0) keys[base + 6] = key;
+          if ((byte & (1 << 7)) === 0) keys[base + 7] = key;
         }
       }
     }

@@ -20,7 +20,7 @@ const isList = id => id === LIST || id === FIXED_SIZE_LIST;
 export default function arrowColumn(arrow, nested) {
   if (arrow.dictionary) return dictionaryColumn(arrow);
   const { typeId, chunks, length, numChildren } = arrow;
-  const vector = chunks.length === 1 ? chunks[0] : arrow;
+  const vector = chunks && chunks.length === 1 ? chunks[0] : arrow;
   const get = numChildren && nested ? getNested(vector)
     : numChildren ? memoize(getNested(vector))
     : typeId === UTF8 ? memoize(row => vector.get(row))
