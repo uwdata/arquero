@@ -6,11 +6,11 @@ import dictionaryColumn from './dictionary-column';
 
 // Hardwire Arrow type ids to avoid explicit dependency
 // https://github.com/apache/arrow/blob/master/js/src/enum.ts
-export const LIST = 12;
-export const STRUCT = 13;
-export const FIXED_SIZE_LIST = 16;
+const UTF8 = 5;
+const LIST = 12;
+const STRUCT = 13;
+const FIXED_SIZE_LIST = 16;
 const isList = id => id === LIST || id === FIXED_SIZE_LIST;
-const isStruct = id => id === STRUCT;
 
 /**
  * Create an Arquero column that proxies access to an Arrow column.
@@ -19,21 +19,16 @@ const isStruct = id => id === STRUCT;
  */
 export default function arrowColumn(arrow, nested) {
   if (arrow.dictionary) return dictionaryColumn(arrow);
-
-  const { chunks } = arrow;
+  const { typeId, chunks, length, numChildren } = arrow;
   const vector = chunks.length === 1 ? chunks[0] : arrow;
+  const get = numChildren && nested ? getNested(vector)
+    : numChildren ? memoize(getNested(vector))
+    : typeId === UTF8 ? memoize(row => vector.get(row))
+    : null;
 
-  if (vector.numChildren) {
-    const { length } = vector;
-    const extract = getNested(vector);
-    const get = nested ? extract : memoize(extract);
-    return {
-      vector, length, get,
-      [Symbol.iterator]: () => iterator(length, get)
-    };
-  }
-
-  return vector;
+  return get
+    ? { vector, length, get, [Symbol.iterator]: () => iterator(length, get) }
+    : vector;
 }
 
 function memoize(get) {
@@ -56,7 +51,7 @@ const arrayFrom = vector => vector.numChildren
   : vector.toArray();
 
 const getNested = vector => isList(vector.typeId) ? getList(vector)
-  : isStruct(vector.typeId) ? getStruct(vector)
+  : vector.typeId === STRUCT ? getStruct(vector)
   : error(`Unsupported Arrow type: ${toString(vector.VectorName)}`);
 
 const getList = vector => vector.nullCount

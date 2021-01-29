@@ -1,4 +1,8 @@
-import { FIXED_SIZE_LIST, LIST, STRUCT } from '../src/table/arrow-column';
+// Hardwire Arrow type ids
+// https://github.com/apache/arrow/blob/master/js/src/enum.ts
+const LIST = 12;
+const STRUCT = 13;
+const FIXED_SIZE_LIST = 16;
 
 // test stubs for Arrow Column API
 export function arrowColumn(data, nullCount = 0) {
