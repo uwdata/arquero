@@ -20,10 +20,10 @@ export default class Table extends Transformable {
   constructor(names, nrows, data, filter, groups, order, params) {
     super(params);
     this._names = Object.freeze(names);
+    this._data = data;
     this._total = nrows;
     this._nrows = filter ? filter.count() : nrows;
-    this._data = data;
-    this._filter = filter || null;
+    this._mask = (nrows !== this._nrows && filter) || null;
     this._group = groups || null;
     this._order = order || null;
   }
@@ -58,7 +58,7 @@ export default class Table extends Transformable {
    * @return {boolean} True if filtered, false otherwise.
    */
   isFiltered() {
-    return !!this._filter;
+    return !!this._mask;
   }
 
   /**
@@ -90,7 +90,7 @@ export default class Table extends Transformable {
    * @return {BitSet} The filter bitset mask.
    */
   mask() {
-    return this._filter;
+    return this._mask;
   }
 
   /**
@@ -365,7 +365,7 @@ export default class Table extends Transformable {
    * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
    */
   scan(fn, order, limit = Infinity, offset = 0) {
-    const filter = this._filter;
+    const filter = this._mask;
     const nrows = this._nrows;
     const data = this._data;
 
