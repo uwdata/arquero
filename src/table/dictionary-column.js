@@ -3,10 +3,10 @@ import sequence from '../op/functions/sequence';
 /**
  * Create a new Arquero column that proxies access to an
  * Apache Arrow dictionary column.
- * @param {object} arrow An Apache Arrow dictionary column.
+ * @param {object} vector An Apache Arrow dictionary column.
  */
-export function dictionaryColumn(arrow) {
-  const { chunks, dictionary, length, nullCount } = arrow;
+export default function(vector) {
+  const { chunks, dictionary, length, nullCount } = vector;
   const size = dictionary.length;
   const keys = dictKeys(chunks, length, nullCount, size);
   const values = Array(size);
@@ -16,7 +16,7 @@ export function dictionaryColumn(arrow) {
     : (values[k] = dictionary.get(k));
 
   return {
-    arrow,
+    vector,
     length,
 
     get: row => value(keys[row]),
@@ -38,7 +38,7 @@ export function dictionaryColumn(arrow) {
     },
 
     [Symbol.iterator]() {
-      return arrow[Symbol.iterator]();
+      return vector[Symbol.iterator]();
     }
   };
 }

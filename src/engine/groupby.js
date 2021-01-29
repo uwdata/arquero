@@ -20,19 +20,30 @@ function createGroups(table, { names = [], exprs = [], ops = [] }) {
 
   let get = aggregateGet(table, ops, exprs);
   const getKey = keyFunction(get);
-  const keys = new Uint32Array(table.totalRows());
+  const nrows = table.totalRows();
+  const keys = new Uint32Array(nrows);
   const index = {};
   const rows = [];
 
-  table.scan((row, data) => {
-    const key = getKey(row, data) + '';
-    const val = index[key];
-    keys[row] = val != null ? val : (index[key] = rows.push(row) - 1);
-  });
+  // inline table scan for performance
+  const data = table.data();
+  const bits = table.mask();
+  if (bits) {
+    for (let i = bits.next(0); i >= 0; i = bits.next(i + 1)) {
+      const key = getKey(i, data) + '';
+      const val = index[key];
+      keys[i] = val != null ? val : (index[key] = rows.push(i) - 1);
+    }
+  } else {
+    for (let i = 0; i < nrows; ++i) {
+      const key = getKey(i, data) + '';
+      const val = index[key];
+      keys[i] = val != null ? val : (index[key] = rows.push(i) - 1);
+    }
+  }
 
   if (!ops.length) {
     // capture data in closure, so no interaction with select
-    const data = table.data();
     get = get.map(f => row => f(row, data));
   }
 

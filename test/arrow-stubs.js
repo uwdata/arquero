@@ -1,4 +1,4 @@
-import { LIST, STRUCT } from '../src/format/from-arrow';
+import { FIXED_SIZE_LIST, LIST, STRUCT } from '../src/table/arrow-column';
 
 // test stubs for Arrow Column API
 export function arrowColumn(data, nullCount = 0) {
@@ -55,9 +55,12 @@ export function arrowDictionary(data) {
   return column;
 }
 
-export function arrowListColumn(data, typeId = LIST) {
-  const column = arrowColumn(data.map(d => d ? arrowColumn(d) : null));
-  column.typeId = typeId;
+export function arrowListColumn(data, len) {
+  const column = arrowColumn(
+    data.map(d => d ? arrowColumn(d) : null),
+    data.reduce((nc, d) => d ? nc : ++nc, 0)
+  );
+  column.typeId = len != null ? FIXED_SIZE_LIST : LIST;
   column.numChildren = 1;
   return column;
 }
@@ -67,6 +70,7 @@ export function arrowStructColumn(valid, names, children) {
     type: { children: names.map(name => ({ name })) },
     typeId: STRUCT,
     length: valid.length,
+    nullCount: valid.reduce((nc, d) => d ? nc : ++nc, 0),
     numChildren: names.length,
     getChildAt: i => children[i],
     isValid: row => !!valid[row]
@@ -81,7 +85,7 @@ export function arrowTable(columns, filter) {
   const names = Object.keys(columns);
   const length = columns[names[0]].length;
 
-  return {
+  const table = {
     getColumn: name => columns[name],
     length,
     schema: { fields: names.map(name => ({ name })) },
@@ -90,12 +94,15 @@ export function arrowTable(columns, filter) {
       : () => length,
     scan: filter
       ? (next, bind) => {
-          bind();
+          bind(table);
           for (let i = 0; i < length; ++i) (filter[i] ? next(i) : 0);
         }
       : (next, bind) => {
-          bind();
+          bind(table);
           for (let i = 0; i < length; ++i) next(i);
         }
   };
+
+  table.chunks = [ table ];
+  return table;
 }
