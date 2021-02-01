@@ -65,7 +65,7 @@ export default class BitSet {
   /**
    * Scan the bits, invoking a callback function with the index of
    * each non-zero bit.
-   * @param {(i: number) => vois} fn A callback function.
+   * @param {(i: number) => void} fn A callback function.
    */
   scan(fn) {
     for (let i = this.next(0); i >= 0; i = this.next(i + 1)) {
@@ -86,7 +86,7 @@ export default class BitSet {
 
     for (; index < n; curr = bits[++index]) {
       if (curr !== 0) {
-        return (index * 32) + Math.clz32(curr);
+        return (index << 5) + Math.clz32(curr);
       }
     }
 
@@ -128,40 +128,38 @@ export default class BitSet {
   }
 
   /**
-   * Return the logical AND of this BitSet and another.
+   * Compute the logical AND of this BitSet and another.
    * @param {BitSet} bitset The BitSet to combine with.
-   * @return {BitSet} The logical AND as a new BitSet.
+   * @return {BitSet} This BitSet updated with the logical AND.
    */
   and(bitset) {
-    const a = this._bits;
-    const b = bitset._bits;
-    const s = new BitSet(Math.min(this.length, bitset.length));
-    const c = s._bits;
-    const n = c.length;
+    if (bitset) {
+      const a = this._bits;
+      const b = bitset._bits;
+      const n = a.length;
 
-    for (let i = 0; i < n; ++i) {
-      c[i] = a[i] & b[i];
+      for (let i = 0; i < n; ++i) {
+        a[i] &= b[i];
+      }
     }
-
-    return s;
+    return this;
   }
 
   /**
-   * Return the logical OR of this BitSet and another.
+   * Compute the logical OR of this BitSet and another.
    * @param {BitSet} bitset The BitSet to combine with.
-   * @return {BitSet} The logical OR as a new BitSet.
+   * @return {BitSet} This BitSet updated with the logical OR.
    */
   or(bitset) {
-    const a = this._bits;
-    const b = bitset._bits;
-    const s = new BitSet(Math.max(this.length, bitset.length));
-    const c = s._bits;
-    const n = c.length;
+    if (bitset) {
+      const a = this._bits;
+      const b = bitset._bits;
+      const n = a.length;
 
-    for (let i = 0; i < n; ++i) {
-      c[i] = a[i] | b[i];
+      for (let i = 0; i < n; ++i) {
+        a[i] |= b[i];
+      }
     }
-
-    return s;
+    return this;
   }
 }

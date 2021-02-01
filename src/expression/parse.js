@@ -11,7 +11,7 @@ import {
   Literal,
   MemberExpression,
   ObjectPattern,
-  OpLookup,
+  Op,
   Parameter,
   Property
 } from './ast/constants';
@@ -21,11 +21,13 @@ import walk from './ast/walk';
 import codegen from './codegen';
 import compile from './compile';
 import constants from './constants';
+import rewrite from './rewrite';
 import { getAggregate, getFunction, getWindow, isAggregate, isWindow } from '../op';
 import entries from '../util/entries';
 import isFunction from '../util/is-function';
 import has from '../util/has';
 import error from '../util/error';
+import isObject from '../util/is-object';
 
 const PARSER_OPT = { ecmaVersion: 11 };
 const DEFAULT_PARAM_ID = '$';
@@ -47,6 +49,8 @@ const ERROR_VARIABLE = 'Invalid variable reference';
 const ERROR_VARIABLE_OP = 'Variable not accessible in operator call';
 const ERROR_DECLARATION = 'Unsupported variable declaration';
 const ERROR_DESTRUCTURE = 'Unsupported destructuring pattern';
+
+const ANNOTATE = { [Column]: 1, [Op]: 1 };
 
 const is = (type, node) => node && node.type === type;
 const isFunctionExpression = node =>
@@ -85,7 +89,13 @@ export default function(input, opt = {}) {
     },
     value(name, node) {
       names.push(name);
-      exprs.push(opt.ast ? clean(node) : compileExpr(generate(node), params));
+      const e = opt.ast ? clean(node) : compileExpr(generate(node), params);
+      exprs.push(e);
+      // annotate expression if it is a direct column or op access
+      // this permits downstream optimizations
+      if (ANNOTATE[node.type] && e !== node && isObject(e)) {
+        e.field = node.name;
+      }
     },
     error(msg, node) {
       // both expresions and fields are parsed
@@ -154,7 +164,7 @@ function handleIdentifier(node, ctx, parent) {
   } else if (ctx.paramsRef.has(name)) {
     updateParameterNode(node, ctx.paramsRef.get(name));
   } else if (ctx.columnRef.has(name)) {
-    updateColumnNode(node, name, ctx);
+    updateColumnNode(node, name, ctx, parent);
   } else if (has(ctx.params, name)) {
     updateParameterNode(node, name);
   } else if (has(constants, name)) {
@@ -164,34 +174,37 @@ function handleIdentifier(node, ctx, parent) {
   }
 }
 
-function checkColumn(node, name, index, ctx) {
+function checkColumn(node, name, index, ctx, parent) {
   // check column existence if we have a backing table
   const table = index === 0 ? ctx.table
     : index > 0 ? ctx.join[index - 1]
     : null;
-  if (table && !table.column(name)) {
+  const col = table && table.column(name);
+  if (table && !col) {
     ctx.error(ERROR_COLUMN, node);
   }
+
   // check if column reference is valid in current context
   if (ctx.aggronly && !ctx.$op) {
     if (!ctx.$op) {
       ctx.error(ERROR_AGGRONLY, node);
     }
   }
+
+  // rewrite ast node as a column access
+  rewrite(node, parent, name, index, col);
 }
 
-function updateColumnNode(node, key, ctx) {
+function updateColumnNode(node, key, ctx, parent) {
   const [name, index] = ctx.columnRef.get(key);
-  checkColumn(node, name, index, ctx);
-  node.type = Column;
-  node.name = name;
-  node.table = index;
+  checkColumn(node, name, index, ctx, parent);
 }
 
 function checkParam(node, name, index, ctx) {
   if (ctx.params && !has(ctx.params, name)) {
     ctx.error(ERROR_PARAM, node);
   }
+  updateParameterNode(node, name);
 }
 
 function updateParameterNode(node, name) {
@@ -260,12 +273,7 @@ const visitors = {
         node.arguments.forEach(arg => walk(arg, ctx, opVisitors));
       } else {
         const op = ctx.op(parseOperator(ctx, def, name, node.arguments));
-        Object.assign(node, {
-          type: OpLookup,
-          computed: true,
-          object: { type: Identifier, name: 'op' },
-          property: { type: Literal, raw: op.id }
-        });
+        Object.assign(node, { type: Op, name: op.id });
       }
       ctx.$op = 0;
       return false;
@@ -275,7 +283,7 @@ const visitors = {
       ctx.error(ERROR_FUNCTION, node);
     }
   },
-  MemberExpression(node, ctx) {
+  MemberExpression(node, ctx, parent) {
     const { object, property } = node;
 
     // bail if left head is not an identifier
@@ -297,21 +305,21 @@ const visitors = {
 
     if (index >= 0) {
       // replace member expression with column ref
-      return spliceMember(node, { type: Column, table: index }, ctx, checkColumn);
+      return spliceMember(node, index, ctx, checkColumn, parent);
     } else if (name === ctx.$param) {
       // replace member expression with param ref
-      return spliceMember(node, { type: Parameter }, ctx, checkParam);
+      return spliceMember(node, index, ctx, checkParam);
     } else if (ctx.paramsRef.has(name)) {
       updateParameterNode(node, ctx.paramsRef.get(name));
     } else if (ctx.columnRef.has(name)) {
-      updateColumnNode(object, name, ctx);
+      updateColumnNode(object, name, ctx, node);
     } else if (has(ctx.params, name)) {
       updateParameterNode(object, name);
     }
   }
 };
 
-function spliceMember(node, props, ctx, check) {
+function spliceMember(node, index, ctx, check, parent) {
   const { property, computed } = node;
   let name;
 
@@ -325,8 +333,7 @@ function spliceMember(node, props, ctx, check) {
     ctx.error(ERROR_MEMBER, node);
   }
 
-  check(node, name, props.table, ctx);
-  Object.assign(node, props, { name, computed });
+  check(node, name, index, ctx, parent);
   return false;
 }
 

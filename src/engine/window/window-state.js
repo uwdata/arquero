@@ -6,15 +6,15 @@ import unroll from '../../util/unroll';
 const bisect = bisector(ascending);
 
 export default function(data, frame, adjust, ops, aggrs) {
-  let rows, peer, cells, result;
+  let rows, peer, cells, result, key;
   const isPeer = index => peer[index - 1] === peer[index];
   const numOps = ops.length;
   const numAgg = aggrs.length;
 
   const evaluate = ops.length
     ? unroll(
-        ['w', 'r'],
-        '{' + concat(ops, (_, i) => `r[_${i}.name]=_${i}.value(w,_${i}.get);`) + '}',
+        ['w', 'r', 'k'],
+        '{' + concat(ops, (_, i) => `r[_${i}.id][k]=_${i}.value(w,_${i}.get);`) + '}',
         ops
       )
     : () => {};
@@ -26,12 +26,13 @@ export default function(data, frame, adjust, ops, aggrs) {
     size: 0,
     peer: isPeer,
 
-    init(partition, peers, tuple) {
+    init(partition, peers, results, group) {
       w.index = w.i0 = w.i1 = 0;
       w.size = peers.length;
       rows = partition;
       peer = peers;
-      result = tuple;
+      result = results;
+      key = group;
 
       // initialize aggregates
       cells = aggrs ? aggrs.map(aggr => aggr.init()) : null;
@@ -77,11 +78,11 @@ export default function(data, frame, adjust, ops, aggrs) {
         for (let j = p1; j < w.i1; ++j) {
           aggr.add(cell, rows[j], data);
         }
-        aggr.writeToObject(cell, result);
+        aggr.write(cell, result, key);
       }
 
       // evaluate window ops
-      evaluate(w, result);
+      evaluate(w, result, key);
 
       return result;
     }

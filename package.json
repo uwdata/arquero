@@ -38,6 +38,7 @@
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.1.1",
+    "apache-arrow": "3.0.0",
     "eslint": "^7.19.0",
     "esm": "^3.2.25",
     "rimraf": "^3.0.2",

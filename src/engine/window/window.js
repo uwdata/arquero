@@ -13,40 +13,40 @@ function windowOp(spec) {
   const { id, name, fields = [], params = [] } = spec;
   const op = getWindow(name).create(...params);
   if (fields.length) op.get = fields[0];
-  op.name = id;
+  op.id = id;
   return op;
 }
 
-export function window(table, output, exprs, results = [], ops) {
+export function window(table, cols, exprs, result = {}, ops) {
   // instantiate window states
-  const input = table.data();
-  const states = windowStates(ops, input);
+  const data = table.data();
+  const states = windowStates(ops, data);
   const nstate = states.length;
 
   const write = unroll(
-    ['r', 'd', 'res'],
-    '{' + concat(output, (_, i) => `_${i}[r] = $${i}(r, d, res);`) + '}',
-    output, exprs
+    ['r', 'd', 'op'],
+    '{' + concat(cols, (_, i) => `_${i}[r] = $${i}(r, d, op);`) + '}',
+    cols, exprs
   );
 
   // scan each ordered partition
-  table.partitions().forEach((rows, partitionIndex) => {
+  table.partitions().forEach((rows, key) => {
     const size = rows.length;
     const peers = windowPeers(table, rows);
-    const result = results[partitionIndex] || {};
 
     // initialize window states
     for (let i = 0; i < nstate; ++i) {
-      states[i].init(rows, peers, result);
+      states[i].init(rows, peers, result, key);
     }
 
     // calculate window values per-row
+    const op = id => result[id][key];
     for (let index = 0; index < size; ++index) {
       // advance window frame, updates result object
       for (let i = 0; i < nstate; ++i) {
         states[i].step(index);
       }
-      write(rows[index], input, result);
+      write(rows[index], data, op);
     }
   });
 }

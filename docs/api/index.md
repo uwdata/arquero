@@ -98,7 +98,7 @@ The *unpack* option determines if Arrow data should be "unpacked" from binary fo
 * *arrowTable*: An [Apache Arrow](https://arrow.apache.org/docs/js/) data table.
 * *options*: An Arrow import options object:
   * *columns*: An ordered set of columns to import. The input may consist of: column name strings, column integer indices, objects with current column names as keys and new column names as values (for renaming), or a selection helper function such as [all](#all), [not](#not), or [range](#range)).
-  * *unpack*: A boolean flag (default `false`) to unpack binary-encoded Arrow data to standard JavaScript values. Unpacking can incur an upfront time and memory cost to extract data to new arrays, but can speed up later query processing by enabling faster data access.
+  * *unpack*: _As of v2.3.0, this option is deprecated and ignored if specified. Instead, Arquero now efficiently handles Arrow columns internally._ A boolean flag (default `false`) to unpack binary-encoded Arrow data to standard JavaScript values. Unpacking can incur an upfront time and memory cost to extract data to new arrays, but can speed up later query processing by enabling faster data access.
 
 *Examples*
 

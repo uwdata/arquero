@@ -79,7 +79,7 @@ class FieldReducer extends Reducer {
     return state;
   }
 
-  writeToArrays(state, values, index) {
+  write(state, values, index) {
     const op = this._outputs;
     const n = op.length;
     for (let i = 0; i < n; ++i) {
@@ -88,16 +88,10 @@ class FieldReducer extends Reducer {
     return 1;
   }
 
-  writeToObject(state, object) {
-    const op = this._outputs;
-    const n = op.length;
-    for (let i = 0; i < n; ++i) {
-      object[op[i].output] = op[i].value(state);
-    }
-    return 1;
+  _add() {
   }
 
-  _add() {
+  _rem() {
   }
 
   add(state) {
