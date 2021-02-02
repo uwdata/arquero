@@ -3,7 +3,7 @@ title: Arquero API Reference
 ---
 # Arquero API Reference <a href="https://uwdata.github.io/arquero"><img align="right" src="../assets/logo.svg" height="38"/></a>
 
-[**Top-Level**](/arquero/api) | [Table](table) | [Verbs](verbs) | [Op Functions](op) | [Expressions](expressions)
+[**Top-Level**](/arquero/api) | [Table](table) | [Verbs](verbs) | [Op Functions](op) | [Expressions](expressions) | [Extensibility](extensibility)
 
 * [Table Constructors](#table-constructors)
   * [table](#table), [from](#from), [fromArrow](#fromArrow), [fromCSV](#fromCSV), [fromJSON](#fromJSON)
@@ -12,8 +12,6 @@ title: Arquero API Reference
 * [Selection Helpers](#selection-helpers)
   * [all](#all), [not](#not), [range](#range)
   * [matches](#matches), [startswith](#startswith), [endswith](#endswith)
-* [Extensibility](#extensibility)
-  * [addFunction](#addFunction), [addAggregateFunction](#addAggregateFunction), [addWindowFunction](#addWindowFunction)
 * [Queries](#queries)
   * [query](#query), [queryFrom](#queryFrom)
 
@@ -421,72 +419,6 @@ aq.endswith('_suffix')
 
 <br/>
 
-## <a id="extensibility">Extensibility</a>
-
-Methods for adding new functions for use in table expressions.
-
-<hr/><a id="addFunction" href="#addFunction">#</a>
-<em>aq</em>.<b>addFunction</b>([<i>name</i>,] <i>fn</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/register.js)
-
-Register a function for use within table expressions. If only a single argument is provided, it will be assumed to be a function and the system will try to extract its name. Throws an error if a function with the same name is already registered and the override option is not specified, or if no name is provided and the input function is anonymous. After registration, the function will be accessible via the [`op`](#op) object.
-
-* *name*: The name to use for the function.
-* *fn*: A standard JavaScript function.
-* *options*: Function registration options.
-  * *override*: Boolean flag (default `false`) indicating if the added function is allowed to override an existing function with the same name.
-
-*Examples*
-
-```js
-// add a function named square, which is then available as op.square()
-// if a 'square' function already exists, this results in an error
-aq.addFunction('square', x => x * x);
-```
-
-```js
-// add a function named square, override any previous 'square' definition
-aq.addFunction('square', x => x * x, { override: true });
-```
-
-```js
-// add a function using its existing name
-aq.addFunction(function square(x) { return x * x; });
-```
-
-
-<hr/><a id="addAggregateFunction" href="#addAggregateFunction">#</a>
-<em>aq</em>.<b>addAggregateFunction</b>(<i>name</i>, <i>def</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/register.js)
-
-Register a custom aggregate function. Throws an error if a function with the same name is already registered and the override option is not specified. After registration, the operator will be accessible via the [`op`](#op) object.
-
-* *name*: The name to use for the aggregate function.
-* *def*: An aggregate operator definition object:
-  * *create*: A creation function that takes non-field parameter values as input and returns a new aggregate operator instance. An aggregate operator instance should have four methods: *init(state)* to initialize any operator state, *add(state, value)* to add a value to the aggregate, *rem(state, value)* to remove a value from the aggregate, and *value(state)* to retrieve the current operator output value. The *state* parameter is a normal object for tracking all state information for a shared set of input field values.
-  * *param*: Two-element array containing the counts of input fields and additional parameters, respectively. If the *numFields* and *numParams* options are provided they override this property.
-  * *req*: Names of aggregate operators required by this one.
-  * *stream*: Names of operators required by this one for streaming operations (value removes), used during windowed aggregations.
-* *options*: Function registration options.
-  * *override*: Boolean flag (default `false`) indicating if the added function is allowed to override an existing function with the same name.
-  * *numFields*: The number of field (column) inputs to the operator (default `0`).
-  * *numParams*: The number of additional operator parameters (default `0`).
-
-
-<hr/><a id="addWindowFunction" href="#addWindowFunction">#</a>
-<em>aq</em>.<b>addWindowFunction</b>(<i>name</i>, <i>def</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/register.js)
-
-Register a custom window function. Throws an error if a function with the same name is already registered and the override option is not specified. After registration, the operator will be accessible via the [`op`](#op) object.
-
-* *name*: The name to use for the window function.
-* *def*: A window operator definition object:
-  * *create*: A creation function that takes non-field parameter values as input and returns a new window operator instance. A window operator instance should have two methods: *init(state)* to initialize any operator state, and *value(state)* to retrieve the current operator output value. The *state* parameter is a [window state](https://github.com/uwdata/arquero/blob/master/src/engine/window/window-state.js) instance that provides access to underlying values and the sliding window frame.
-  * *param*: Two-element array containing the counts of input fields and additional parameters, respectively. If the *numFields* and *numParams* options are provided they override this property.
-* *options*: Function registration options.
-  * *override*: Boolean flag (default `false`) indicating if the added function is allowed to override an existing function with the same name.
-  * *numFields*: The number of field (column) inputs to the operator (default `0`).
-  * *numParams*: The number of additional operator parameters (default `0`).
-
-
-<br/>
 
 ## <a id="queries">Queries</a>
 
