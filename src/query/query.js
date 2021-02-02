@@ -154,12 +154,24 @@ function serialize(query, method, props) {
   };
 }
 
-// Internal verb handlers
-for (const name in Verbs) {
-  const verb = Verbs[name];
-  Query.prototype['__' + name] = (qb, ...args) => new Query(
-    qb._verbs.concat(verb(...args)),
+function append(qb, verb) {
+  return new Query(
+    qb._verbs.concat(verb),
     qb._params,
     qb._table
   );
+}
+
+export function addQueryVerb(name, verb) {
+  Query.prototype[name] = function(...args) {
+    return append(this, verb(...args));
+  };
+}
+
+// Internal verb handlers
+for (const name in Verbs) {
+  const verb = Verbs[name];
+  Query.prototype['__' + name] = function(qb, ...args) {
+    return append(qb, verb(...args));
+  };
 }

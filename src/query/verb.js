@@ -110,7 +110,26 @@ export class Verb {
   }
 }
 
-function createVerb(name, schema) {
+/**
+ * Verb parameter type.
+ * @typedef {Expr|ExprList|ExprNumber|ExprObject|JoinKeys|JoinValues|Options|OrderbyKeys|SelectionList|TableRef|TableRefList} ParamType
+ */
+
+/**
+ * Verb parameter schema.
+ * @typedef {object} ParamDef
+ * @property {string} name The name of the parameter.
+ * @property {ParamType} type The type of the parameter.
+ * @property {{ [key: string]: ParamType }} [props] Types for non-literal properties.
+ */
+
+/**
+ * Create a new constructors.
+ * @param {string} name The name of the verb.
+ * @param {ParamDef[]} schema The verb parameter schema.
+ * @return {Function} A verb constructor function.
+ */
+export function createVerb(name, schema) {
   return Object.assign(
     (...params) => new Verb(name, schema, params),
     { schema }

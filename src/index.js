@@ -35,6 +35,6 @@ export { default as frac } from './helpers/frac';
 export { default as rolling } from './helpers/rolling';
 export { all, endswith, matches, not, range, startswith} from './helpers/selection';
 export { default as op } from './op/op-api';
-export * from './op/register';
 export { query, queryFrom } from './query/query';
+export * from './register';
 export * from './table';
