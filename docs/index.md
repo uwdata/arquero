@@ -111,4 +111,4 @@ To build and develop Arquero locally:
 
 - Clone [https://github.com/uwdata/arquero](https://github.com/uwdata/arquero).
 - Run `yarn` to install dependencies for all packages. If you don't have yarn installed, see [https://yarnpkg.com/en/docs/install](https://yarnpkg.com/en/docs/install).
-- Run `yarn test` to run test cases, and `yarn build` to build output files.
+- Run `yarn test` to run test cases, `yarn perf` to run performance benchmarks, and `yarn build` to build output files.
