@@ -19,6 +19,7 @@ Arquero is Spanish for "archer": if datasets are [arrows](https://arrow.apache.o
 * [Verbs](api/verbs) - Table transformation verbs.
 * [Op Functions](api/op) - All functions, including aggregate and window functions.
 * [Expressions](api/expressions) - Parsing and generation of table expressions.
+* [Extensibility](api/extensibility) - Extend Arquero with new expression functions or table verbs.
 
 ## Example
 
