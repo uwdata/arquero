@@ -199,7 +199,7 @@ export default {
    * Window function to assign consecutive row numbers, starting from 1.
    * @return {number} The row number value.
    */
-  row_number: Op('row_number'),
+  row_number: () => Op('row_number'),
 
   /**
    * Window function to assign a rank to each value in a group, starting

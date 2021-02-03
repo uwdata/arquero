@@ -3,53 +3,43 @@ import repeat from '../../util/repeat';
 
 export function aggregateGet(table, ops, get) {
   if (ops.length) {
-    const result = aggregate(table, ops);
-    const keys = table.isGrouped() ? table.groups().keys : null;
     const data = table.data();
-    get = keys
-      ? get.map(f => row => f(row, data, result[keys[row]]))
-      : get.map(f => row => f(row, data, result));
+    const { keys } = table.groups() || {};
+    const result = aggregate(table, ops);
+    const op = keys
+      ? (name, row) => result[name][keys[row]]
+      : name => result[name][0];
+    get = get.map(f => row => f(row, data, op));
   }
 
   return get;
 }
 
-export function aggregate(table, ops) {
-  if (!ops.length) {
-    return undefined;
-  }
+export function aggregate(table, ops, result) {
+  if (!ops.length) return result; // early exit
 
-  // instantiate aggregators
+  // instantiate aggregators and result store
   const aggrs = reducers(ops);
+  const groups = table.groups();
+  const size = groups ? groups.size : 1;
+  result = result || repeat(ops.length, () => Array(size));
 
-  if (table.isGrouped()) {
-    const groups = table.groups();
-    const { size } = groups;
-
-    // instantiate aggregate result objects
-    const result = repeat(size, () => ({}));
-
-    // compute aggregates, extract results
+  // compute aggregates, extract results
+  if (size > 1) {
     aggrs.forEach(aggr => {
       const cells = reduceGroups(table, aggr, groups);
       for (let i = 0; i < size; ++i) {
-        aggr.writeToObject(cells[i], result[i]);
+        aggr.write(cells[i], result, i);
       }
     });
-
-    return result;
   } else {
-    // instantiate aggregate result object
-    const result = [];
-
-    // compute aggregates, extract results
     aggrs.forEach(aggr => {
       const cell = reduceFlat(table, aggr);
-      aggr.writeToObject(cell, result);
+      aggr.write(cell, result, 0);
     });
-
-    return result;
   }
+
+  return result;
 }
 
 export function reducers(ops, stream) {
@@ -75,7 +65,21 @@ export function reduceFlat(table, reducer) {
   const cell = reducer.init();
 
   // compute aggregate values
-  table.scan((row, data) => reducer.add(cell, row, data));
+  // inline the following for performance:
+  // table.scan((row, data) => reducer.add(cell, row, data));
+  const n = table.totalRows();
+  const data = table.data();
+  const bits = table.mask();
+
+  if (bits) {
+    for (let i = bits.next(0); i >= 0; i = bits.next(i + 1)) {
+      reducer.add(cell, i, data);
+    }
+  } else {
+    for (let i = 0; i < n; ++i) {
+      reducer.add(cell, i, data);
+    }
+  }
 
   return cell;
 }
@@ -87,35 +91,35 @@ export function reduceGroups(table, reducer, groups) {
   const cells = repeat(size, () => reducer.init());
 
   // compute aggregate values
-  table.scan((row, data) => reducer.add(cells[keys[row]], row, data));
+  // inline the following for performance:
+  // table.scan((row, data) => reducer.add(cells[keys[row]], row, data));
+  const n = table.totalRows();
+  const data = table.data();
+  const bits = table.mask();
+
+  if (bits) {
+    for (let i = bits.next(0); i >= 0; i = bits.next(i + 1)) {
+      reducer.add(cells[keys[i]], i, data);
+    }
+  } else {
+    for (let i = 0; i < n; ++i) {
+      reducer.add(cells[keys[i]], i, data);
+    }
+  }
 
   return cells;
 }
 
-export function groupInit(cols, table) {
-  const { names, size } = table.groups();
-
-  // initialize group output columns
-  names.forEach(name => cols.add(name, Array(size)));
-
-  // return empty row count array
-  return new Uint32Array(size + 1);
-}
-
-export function groupOutput(output, table, counts) {
-  const { get, names, rows, size } = table.groups();
-  const data = table.data();
+export function groupOutput(cols, groups) {
+  const { get, names, rows, size } = groups;
 
   // write group values to output columns
-  names.forEach((name, index) => {
-    const column = output[name];
-    const getter = get[index];
-    for (let i = 0, row = 0; i < size; ++i) {
-      const value = getter(rows[i], data);
-      const count = counts[i + 1];
-      for (let j = 0; j < count; ++j) {
-        column[row++] = value;
-      }
+  const m = names.length;
+  for (let j = 0; j < m; ++j) {
+    const col = cols.add(names[j], Array(size));
+    const val = get[j];
+    for (let i = 0; i < size; ++i) {
+      col[i] = val(rows[i]);
     }
-  });
+  }
 }

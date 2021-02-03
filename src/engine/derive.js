@@ -2,6 +2,7 @@ import { window } from './window/window';
 import { aggregate } from './reduce/util';
 import { isWindow } from '../op';
 import columnSet from '../table/column-set';
+import repeat from '../util/repeat';
 
 function isWindowed(op) {
   return isWindow(op.name) ||
@@ -19,11 +20,16 @@ export default function(table, { names, exprs, ops }, options = {}) {
 
   // analyze operations, compute non-windowed aggregates
   const [ aggOps, winOps ] = segmentOps(ops);
-  const result = aggregate(table, aggOps);
+
+  const size = table.isGrouped() ? table.groups().size : 1;
+  const result = aggregate(
+    table, aggOps,
+    repeat(ops.length, () => Array(size))
+  );
 
   // perform table scans to generate output values
   winOps.length
-    ? window(table, data, exprs, table.isGrouped() ? result : [result], winOps)
+    ? window(table, data, exprs, result, winOps)
     : output(table, data, exprs, result);
 
   return table.create(cols);
@@ -43,22 +49,30 @@ function segmentOps(ops) {
   return [aggOps, winOps];
 }
 
-function output(table, data, exprs, result = {}) {
-  const groups = table.groups();
-  const n = data.length;
+function output(table, cols, exprs, result) {
+  const bits = table.mask();
+  const data = table.data();
+  const { keys } = table.groups() || {};
+  const op = keys
+    ? (id, row) => result[id][keys[row]]
+    : id => result[id][0];
 
-  if (groups) {
-    const { keys } = groups;
-    for (let i = 0; i < n; ++i) {
-      const get = exprs[i];
-      const col = data[i];
-      table.scan((row, d) => col[row] = get(row, d, result[keys[row]]));
-    }
-  } else {
-    for (let i = 0; i < n; ++i) {
-      const get = exprs[i];
-      const col = data[i];
-      table.scan((row, d) => col[row] = get(row, d, result));
+  const m = cols.length;
+  for (let j = 0; j < m; ++j) {
+    const get = exprs[j];
+    const col = cols[j];
+
+    // inline the following for performance:
+    // table.scan((i, data) => col[i] = get(i, data, op));
+    if (bits) {
+      for (let i = bits.next(0); i >= 0; i = bits.next(i + 1)) {
+        col[i] = get(i, data, op);
+      }
+    } else {
+      const n = table.totalRows();
+      for (let i = 0; i < n; ++i) {
+        col[i] = get(i, data, op);
+      }
     }
   }
 }

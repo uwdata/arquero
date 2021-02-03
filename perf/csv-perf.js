@@ -1,4 +1,5 @@
 const tape = require('tape');
+const time = require('./time');
 const { bools, dates, floats, ints, sample, strings } = require('./data-gen');
 const { fromCSV, table } = require('..');
 
@@ -8,9 +9,7 @@ function toCSV(...values) {
 }
 
 function parse(csv, opt) {
-  const t0 = Date.now();
-  const tt = (fromCSV(csv, opt), Date.now() - t0);
-  return tt;
+  return time(() => fromCSV(csv, opt));
 }
 
 function run(N, nulls, msg) {

@@ -3,12 +3,12 @@ title: Table \| Arquero API Reference
 ---
 # Arquero API Reference <a href="https://uwdata.github.io/arquero"><img align="right" src="../assets/logo.svg" height="38"/></a>
 
-[Top-Level](/arquero/api) | [**Table**](table) | [Verbs](verbs) | [Op Functions](op) | [Expressions](expressions)
+[Top-Level](/arquero/api) | [**Table**](table) | [Verbs](verbs) | [Op Functions](op) | [Expressions](expressions) | [Extensibility](extensibility)
 
 * [Table Metadata](#metadata)
   * [numCols](#numCols), [numRows](#numRows), [totalRows](#totalRows)
   * [isFiltered](#isFiltered), [isGrouped](#isGrouped), [isOrdered](#isOrdered)
-  * [comparator](#foo), [groups](#groups)
+  * [comparator](#foo), [groups](#groups), [mask](#mask)
   * [params](#params)
 * [Table Columns](#columns)
   * [column](#column), [columnAt](#columnAt), [columnIndex](#columnIndex)
@@ -143,6 +143,11 @@ Returns the groupby specification, if defined. A groupby specification is an obj
 * *rows*: Row indices of example table rows for each group.
 * *size*: The total number of groups.
 * *keys*: Per-row group indices for every row in the table.
+
+<hr/><a id="mask" href="#mask">#</a>
+<em>table</em>.<b>mask</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+
+Returns the bitset mask for filtered rows, or null if there is no filter.
 
 <hr/><a id="params" href="#params">#</a>
 <em>table</em>.<b>params</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/transformable.js)

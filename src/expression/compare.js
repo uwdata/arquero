@@ -13,13 +13,11 @@ export default function(table, fields) {
   // parse expressions, generate code for both a and b values
   const names = [];
   const exprs = [];
-  let opA = 'op';
-  let opB = 'op';
-  let keys = null;
+  let keys = null, opA = '0', opB = '0';
   if (table.isGrouped()) {
-    opA += '[ka]';
-    opB += '[kb]';
     keys = table.groups().keys;
+    opA = 'ka';
+    opB = 'kb';
   }
   const { ops } = parse(fields, {
     table,
@@ -34,21 +32,20 @@ export default function(table, fields) {
   });
 
   // calculate aggregate values if needed
-  const op = ops.length ? aggregate(table, ops) : null;
+  const result = aggregate(table, ops);
+  const op = (id, row) => result[id][row];
 
   // generate comparison code for each field
   const n = names.length;
-  let code = 'return (a, b) => {\n';
-  if (op && table.isGrouped()) {
-    code += '  const ka = keys[a], kb = keys[b];\n';
-  }
-  code += '  var u, v;\n  return ';
+  let code = 'return (a, b) => {'
+    + (op && table.isGrouped() ? 'const ka = keys[a], kb = keys[b];' : '')
+    + 'let u, v; return ';
   for (let i = 0; i < n; ++i) {
     const o = fields.get(names[i]).desc ? -1 : 1;
     const [u, v] = exprs[i];
     code += _compare(u, v, -o, o);
   }
-  code += '0;\n};';
+  code += '0;};';
 
   // instantiate and return comparator function
   return (Function('op', 'keys', 'data', code))(op, keys, table.data());

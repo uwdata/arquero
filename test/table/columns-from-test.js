@@ -32,12 +32,6 @@ tape('columnsFrom supports array input', t => {
     'from array, names partial'
   );
 
-  t.deepEqual(
-    columnsFrom([ null, {a: 1, b: 2}, undefined, {a: 3, b: 4}, null ]),
-    { a: [1, 3], b: [2, 4] },
-    'from array with nulls'
-  );
-
   t.end();
 });
 
