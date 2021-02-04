@@ -125,7 +125,7 @@ function verifyTableMethod(name, fn, options) {
   }
 
   // perform name checks
-  if (RESERVED[name]) onReserve(name);
+  if (RESERVED[name]) onReserve(name, type);
   if ((name + '')[0] === '_') onIllegal(name, type);
   check(name, options, proto, type);
 }
