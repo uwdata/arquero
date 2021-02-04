@@ -48,34 +48,34 @@ function run(N, nulls, msg) {
     const k = at.getColumn('k').get(50);
     console.table([ // eslint-disable-line
       {
-        op: 'table init',
-        arrow:   time(() => Table.new(vectors, ['k', 'v'])),
-        arquero: time(() => fromArrow(at))
+        operation: 'init table',
+        'arrow-js': time(() => Table.new(vectors, ['k', 'v'])),
+        arquero:    time(() => fromArrow(at))
       },
       {
-        op: 'count dict',
-        arrow:   time(() => at.countBy('k')),
-        arquero: time(() => dt.groupby('k').count())
+        operation: 'count dictionary',
+        'arrow-js': time(() => at.countBy('k')),
+        arquero:    time(() => dt.groupby('k').count())
       },
       {
-        op: 'filter dict',
-        arrow:   arrowFilterDict(k),
-        arquero: arqueroFilterDict(k)
+        operation: 'filter dictionary',
+        'arrow-js': arrowFilterDict(k),
+        arquero:    arqueroFilterDict(k)
       },
       {
-        op: 'filter value 0',
-        arrow:   arrowFilterValue(0),
-        arquero: arqueroFilterValue(0)
+        operation: 'filter numbers 0',
+        'arrow-js': arrowFilterValue(0),
+        arquero:    arqueroFilterValue(0)
       },
       {
-        op: 'filter value 1',
-        arrow:   arrowFilterValue(1),
-        arquero: arqueroFilterValue(1)
+        operation: 'filter numbers 1',
+        'arrow-js': arrowFilterValue(1),
+        arquero:    arqueroFilterValue(1)
       }
     ]);
     t.end();
   });
 }
 
-run(2e6, 0, '2M values');
-run(2e6, 0.05, '2M values, 5% nulls');
+run(5e6, 0, '5M values, 0% nulls');
+run(5e6, 0.05, '5M values, 5% nulls');
