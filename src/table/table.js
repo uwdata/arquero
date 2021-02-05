@@ -129,6 +129,16 @@ export default class Table extends Transformable {
   }
 
   /**
+   * The number of active rows in this table. This number may be
+   * less than the total rows if the table has been filtered.
+   * @see Table.totalRows
+   * @return {number} The number of rows.
+   */
+  get size() {
+    return this._nrows;
+  }
+
+  /**
    * The number of columns in this table.
    * @return {number} The number of columns.
    */
