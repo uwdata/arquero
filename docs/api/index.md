@@ -137,7 +137,7 @@ aq.fromCSV('a,b\n00152,2\n30219,4', { parse: { a: String } })
 
 ```js
 // create table from an input CSV loaded from 'url'
-aq.fromCSV(await fetch(url).text())
+aq.fromCSV(await fetch(url).then(res => res.text()))
 ```
 
 
@@ -196,13 +196,13 @@ aq.fromJSON(`{
 
 ```js
 // create table from an input JSON string loaded from 'url'
-aq.fromJSON(await fetch(url).text())
+aq.fromJSON(await fetch(url).then(res => res.text()))
 ```
 
 ```js
 // create table from an input JSON object loaded from 'url'
-// passing pre-parsed JSON bypasses autoType Date parsing
-aq.fromJSON(await fetch(url).json())
+// disable autoType Date parsing
+aq.fromJSON(await fetch(url).then(res => res.json()), { autoType: false })
 ```
 
 
