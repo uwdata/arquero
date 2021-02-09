@@ -4,7 +4,7 @@ export default function(compare) {
       if (lo == null) lo = 0;
       if (hi == null) hi = a.length;
       while (lo < hi) {
-        var mid = lo + hi >>> 1;
+        const mid = lo + hi >>> 1;
         if (compare(a[mid], x) < 0) lo = mid + 1;
         else hi = mid;
       }
@@ -14,7 +14,7 @@ export default function(compare) {
       if (lo == null) lo = 0;
       if (hi == null) hi = a.length;
       while (lo < hi) {
-        var mid = lo + hi >>> 1;
+        const mid = lo + hi >>> 1;
         if (compare(a[mid], x) > 0) hi = mid;
         else lo = mid + 1;
       }
