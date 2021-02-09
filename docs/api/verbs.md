@@ -613,9 +613,11 @@ aq.table({ type: ['a', 'b'], x: [1, 2], y: [3, 4 ]})
   .pivot('type', ['x', 'y'])
 ```
 
-aq.table({ foo: ['a', 'b'], bar: ['u', 'v'], x: [1, 2], y: [3, 4 ]}).pivot(['foo', 'bar'], ['x', 'y'])
-
-aq.table({ keyA: [1, 2], keyB: [3, 4], valueA: [5, 6], valueB: [7, 8 ]})
+```js
+// pivot on the combination of the keys 'foo' and 'bar' for the values of 'x' and 'y'
+aq.table({ foo: ['a', 'b'], bar: ['u', 'v'], x: [1, 2], y: [3, 4 ]})
+  .pivot(['foo', 'bar'], ['x', 'y'])
+```
 
 <hr/><a id="spread" href="#spread">#</a>
 <em>table</em>.<b>spread</b>(<i>values</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/spread.js)
