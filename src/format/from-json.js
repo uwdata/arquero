@@ -2,14 +2,9 @@ import ColumnTable from '../table/column-table';
 import defaultTrue from '../util/default-true';
 import isArrayType from '../util/is-array-type';
 import isDigitString from '../util/is-digit-string';
+import isISODateString from '../util/is-iso-date-string';
 import isObject from '../util/is-object';
-import parseIsoDate from '../util/parse-iso-date';
-
-function autoType(key, value) {
-  return typeof value === 'string' && !isDigitString(value)
-    ? parseIsoDate(value, d => new Date(d))
-    : value;
-}
+import isString from '../util/is-string';
 
 /**
  * Options for JSON parsing.
@@ -27,7 +22,8 @@ function autoType(key, value) {
  * and column value arrays for values. By default string values that match
  * the ISO standard date format are parsed into JavaScript Date objects.
  * To disable this behavior, set the autoType option to false. To perform
- * custom parsing of input column values, use the parse option.
+ * custom parsing of input column values, use the parse option. Auto-type
+ * parsing is not performed for columns with custom parse options.
  * The data payload can also be provided as the "data" property of an
  * enclosing object, with an optional "schema" property containing table
  * metadata such as a "fields" array of ordered column information.
@@ -36,13 +32,14 @@ function autoType(key, value) {
  * @param {ColumnTable} table A new table containing the parsed values.
  */
 export default function(json, options = {}) {
-  if (typeof json === 'string') {
-    json = JSON.parse(
-      json,
-      defaultTrue(options.autoType, autoType, null)
-    );
+  const autoType = defaultTrue(options.autoType);
+
+  // parse string input
+  if (isString(json)) {
+    json = JSON.parse(json);
   }
 
+  // separate schema and data, as needed
   let data = json.data, names;
   if (isObject(data) && !isArrayType(data)) {
     if (json.schema && json.schema.fields) {
@@ -52,9 +49,26 @@ export default function(json, options = {}) {
     data = json;
   }
 
-  if (options.parse) {
-    for (const name in options.parse) {
-      data[name] = data[name].map(options.parse[name]);
+  // parse values as necessary
+  if (autoType || options.parse) {
+    const parsers = options.parse || {};
+    for (const name in data) {
+      const col = data[name];
+      const len = col.length;
+      if (parsers[name]) {
+        // apply custom parser
+        for (let i = 0; i < len; ++i) {
+          col[i] = parsers[name](col[i]);
+        }
+      } else if (autoType) {
+        // apply autoType parser
+        for (let i = 0; i < len; ++i) {
+          const val = col[i];
+          if (isString(val) && isISODateString(val) && !isDigitString(val)) {
+            col[i] = new Date(val);
+          }
+        }
+      }
     }
   }
 

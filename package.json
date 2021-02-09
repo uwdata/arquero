@@ -33,7 +33,8 @@
     "prepublishOnly": "yarn test && yarn lint && yarn build"
   },
   "dependencies": {
-    "acorn": "^8.0.5"
+    "acorn": "^8.0.5",
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
