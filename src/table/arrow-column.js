@@ -7,10 +7,8 @@ import dictionaryColumn from './dictionary-column';
 // Hardwire Arrow type ids to avoid explicit dependency
 // https://github.com/apache/arrow/blob/master/js/src/enum.ts
 const UTF8 = 5;
-const LIST = 12;
 const STRUCT = 13;
-const FIXED_SIZE_LIST = 16;
-const isList = id => id === LIST || id === FIXED_SIZE_LIST;
+const isList = id => id === 12 || id === 16; // List or FixedSizeList
 
 /**
  * Create an Arquero column that proxies access to an Arrow column.
