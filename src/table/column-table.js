@@ -225,6 +225,15 @@ export default class ColumnTable extends Table {
   }
 
   /**
+   * Format this table as binary data in the Apache Arrow IPC format.
+   * @param {ArrowFormatOptions} [options] The formatting options.
+   * @return {Uint8Array} A new Uint8Array of Arrow-encoded binary data.
+   */
+  toArrowBuffer(options) {
+    return toArrow(this, options).serialize();
+  }
+
+  /**
    * Format this table as a comma-separated values (CSV) string. Other
    * delimiters, such as tabs or pipes ('|'), can be specified using
    * the options argument.
