@@ -2,7 +2,7 @@ import error from '../util/error';
 import repeat from '../util/repeat';
 import toString from '../util/to-string';
 import unroll from '../util/unroll';
-import dictionaryColumn from './dictionary-column';
+import arrowDictionary from './arrow-dictionary';
 
 // Hardwire Arrow type ids to avoid explicit dependency
 // https://github.com/apache/arrow/blob/master/js/src/enum.ts
@@ -16,7 +16,7 @@ const isList = id => id === 12 || id === 16; // List or FixedSizeList
  * @return {import('./column').ColumnType} An Arquero-compatible column.
  */
 export default function arrowColumn(arrow, nested) {
-  if (arrow.dictionary) return dictionaryColumn(arrow);
+  if (arrow.dictionary) return arrowDictionary(arrow);
   const { typeId, chunks, length, numChildren } = arrow;
   const vector = chunks && chunks.length === 1 ? chunks[0] : arrow;
   const get = numChildren && nested ? getNested(vector)

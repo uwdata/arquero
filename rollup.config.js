@@ -9,8 +9,12 @@ function onwarn(warning, defaultHandler) {
   }
 }
 
+const name = 'aq';
+const globals = { 'apache-arrow': 'Arrow' };
+
 export default {
   input: 'src/index.js',
+  external: ['apache-arrow'],
   plugins: [
     json(),
     bundleSize(),
@@ -20,19 +24,22 @@ export default {
   output: [
     {
       file: 'dist/arquero.js',
-      name: 'aq',
-      format: 'umd'
+      format: 'umd',
+      globals,
+      name
     },
     {
       file: 'dist/arquero.min.js',
-      name: 'aq',
       format: 'umd',
       sourcemap: true,
-      plugins: [ terser({ ecma: 2018 }) ]
+      plugins: [ terser({ ecma: 2018 }) ],
+      globals,
+      name
     },
     {
       file: 'dist/arquero.mjs',
-      format: 'es'
+      format: 'es',
+      globals
     }
   ]
 };

@@ -1,8 +1,6 @@
 import tape from 'tape';
-import tableEqual from '../table-equal';
 import BitSet from '../../src/table/bit-set';
 import ColumnTable from '../../src/table/column-table';
-import fromCSV from '../../src/format/from-csv';
 import toCSV from '../../src/format/to-csv';
 
 function data() {
@@ -72,59 +70,5 @@ tape('toCSV formats delimited text with format option', t => {
     ['str', 'a!', 'b!'].join('\n'),
     'csv text with custom format'
   );
-  t.end();
-});
-
-tape('fromCSV parses delimited text', t => {
-  const table = fromCSV(text.join('\n'));
-  t.equal(table.numRows(), 3, 'num rows');
-  t.equal(table.numCols(), 5, 'num cols');
-  tableEqual(t, table, data(), 'csv parsed data');
-  t.end();
-});
-
-tape('fromCSV infers types', t => {
-  function check(msg, values, test) {
-    const d = fromCSV('col\n' + values.join('\n')).column('col').data;
-    t.ok(d.every(v => v == null || test(v)), msg);
-  }
-
-  check('boolean', [true, false, '', true], v => typeof v === 'boolean');
-  check('number', [1, Math.PI, '', 'NaN'], v => typeof v === 'number');
-  check('string', ['a', 1, '', 'c'], v => typeof v === 'string');
-  check('date', [
-    new Date().toISOString(), '',
-    new Date(2000, 0, 1).toISOString(),
-    new Date(1979, 3, 14, 3, 45).toISOString()
-  ], v => v instanceof Date);
-  t.end();
-});
-
-tape('fromCSV parses delimited text with delimiter', t => {
-  const table = fromCSV(tabText.join('\n'), { delimiter: '\t' });
-  t.equal(table.numRows(), 3, 'num rows');
-  t.equal(table.numCols(), 5, 'num cols');
-  tableEqual(t, table, data(), 'csv parsed data with delimiter');
-  t.end();
-});
-
-tape('fromCSV parses delimited text with header option', t => {
-  const table = fromCSV(text.slice(1).join('\n'), { header: false });
-  const cols = data();
-  const d = {
-    col1: cols.str,
-    col2: cols.int,
-    col3: cols.num,
-    col4: cols.bool,
-    col5: cols.date
-  };
-  tableEqual(t, table, d, 'csv parsed data with no header');
-  t.end();
-});
-
-tape('fromCSV parses delimited text with parse option', t => {
-  const table = fromCSV(text.join('\n'), { parse: { str: d => d + d } });
-  const d = { ...data(), str: ['aa', 'bb', 'cc'] };
-  tableEqual(t, table, d, 'csv parsed data with custom parse');
   t.end();
 });
