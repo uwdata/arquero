@@ -1,10 +1,10 @@
 import dataFromObjects from './data-from-objects';
 import dataFromTable from './data-from-table';
 import { scanArray, scanTable } from './scan';
+import { table } from '../arrow-table';
 import error from '../../util/error';
 import isArray from '../../util/is-array';
 import isFunction from '../../util/is-function';
-import { arrowTable } from '../builder/util';
 
 /**
  * Options for Arrow encoding.
@@ -34,7 +34,7 @@ import { arrowTable } from '../builder/util';
 export default function(data, options = {}) {
   const { types = {} } = options;
   const { dataFrom, names, nrows, scan } = init(data, options);
-  return arrowTable(
+  return table().new(
     names.map(name => {
       const col = dataFrom(data, name, nrows, scan, types[name]);
       return col.length === nrows

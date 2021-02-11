@@ -47,20 +47,19 @@ function arrowVector(value) {
     : null;
 }
 
-const types = {
-  Float32Array:    Float32,
-  Float64Array:    Float64,
-  Int8Array:       Int8,
-  Int16Array:      Int16,
-  Int32Array:      Int32,
-  Uint8Array:      Uint8,
-  Uint16Array:     Uint16,
-  Uint32Array:     Uint32,
-  BigInt64Array:   Int64,
-  BigUint64Array:  Uint64
-};
-
 function typeFromArray(data) {
+  const types = {
+    Float32Array:    Float32,
+    Float64Array:    Float64,
+    Int8Array:       Int8,
+    Int16Array:      Int16,
+    Int32Array:      Int32,
+    Uint8Array:      Uint8,
+    Uint16Array:     Uint16,
+    Uint32Array:     Uint32,
+    BigInt64Array:   Int64,
+    BigUint64Array:  Uint64
+  };
   const Type = types[data.constructor.name];
   return Type ? new Type() : null;
 }

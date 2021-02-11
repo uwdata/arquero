@@ -1,4 +1,4 @@
-import { Data, Table, Vector } from 'apache-arrow';
+import { Data, Vector } from 'apache-arrow';
 
 export function ceil64Bytes(length, bpe = 1) {
   return ((((length * bpe) + 63) & ~63) || 64) / bpe;
@@ -16,10 +16,6 @@ export function arrowData(d) {
 
 export function arrowVector(data) {
   return Vector.new(arrowData(data));
-}
-
-export function arrowTable(data, names) {
-  return Table.new(data, names);
 }
 
 export const encoder = new TextEncoder();

@@ -1,4 +1,4 @@
-import arrowTableFrom from '../arrow/arrow-table';
+import { from } from '../arrow/arrow-table';
 import arrowColumn from '../arrow/arrow-column';
 import resolve, { all } from '../helpers/selection';
 import BitSet from '../table/bit-set';
@@ -22,7 +22,7 @@ import ColumnTable from '../table/column-table';
  * @param {ColumnTable} table A new table containing the imported values.
  */
 export default function(arrow, options = {}) {
-  arrow = arrowTableFrom(arrow);
+  arrow = from(arrow);
   const { chunks, length, schema } = arrow;
 
   // resolve column selection

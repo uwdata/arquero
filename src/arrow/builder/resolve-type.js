@@ -19,13 +19,13 @@ import {
   TimeMillisecond,
   TimeNanosecond,
   TimeSecond,
-  Type,
   Uint16,
   Uint32,
   Uint64,
   Uint8,
   Utf8
 } from 'apache-arrow';
+import Type from '../arrow-types';
 import error from '../../util/error';
 import toString from '../../util/to-string';
 

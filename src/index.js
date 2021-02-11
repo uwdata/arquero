@@ -24,8 +24,8 @@ export const internal = {
 
 // export public API
 export { version } from '../package.json';
-export { Type } from 'apache-arrow';
 export { seed } from './util/random';
+export { default as Type } from './arrow/arrow-types';
 export { default as fromArrow } from './format/from-arrow';
 export { default as fromCSV } from './format/from-csv';
 export { default as fromJSON } from './format/from-json';
