@@ -1,3 +1,4 @@
+import fromArrow from './from-arrow';
 import fromCSV from './from-csv';
 import fromJSON from './from-json';
 import { from } from '../table';
@@ -9,8 +10,8 @@ const _fetch = typeof fetch === 'function' ? fetch
   : error('No fetch implementation available');
 
 /**
- * Options for URL loading.
- * @typedef {object} URLLoadOptions
+ * Options for file loading.
+ * @typedef {object} LoadOptions
  * @property {'arrayBuffer'|'text'|'json'} [as='text'] A string indicating
  *  the data type of the file. One of 'arrayBuffer', 'json', or 'text'.
  * @property {Function} [using] A function that accepts a data payload
@@ -26,7 +27,7 @@ const _fetch = typeof fetch === 'function' ? fetch
  * otherwise CSV format is assumed. The options to this method are
  * passed as the second argument to the format parser.
  * @param {string} url The URL to load.
- * @param {URLLoadOptions} options The loading and formatting options.
+ * @param {LoadOptions} options The loading and formatting options.
  * @return {Promise<ColumnTable>} A Promise for an Arquero table.
  * @example aq.loadURL('data/table.csv')
  * @example aq.loadURL('data/table.json', { using: aq.fromJSON })
@@ -37,6 +38,17 @@ export function load(url, options = {}) {
   return _fetch(url, options.fetch)
     .then(res => res[options.as || 'text']())
     .then(data => parse(data, url, options));
+}
+
+/**
+ * Load an Arrow file from a URL and return a Promise for an Arquero table.
+ * @param {string} url The URL to load.
+ * @param {import('./from-arrow').ArrowOptions} options Arrow format options.
+ * @return {Promise<ColumnTable>} A Promise for an Arquero table.
+ * @example aq.loadArrow('data/table.arrow')
+ */
+export function loadArrow(url, options) {
+  return load(url, { ...options, as: 'arrayBuffer', using: fromArrow });
 }
 
 /**

@@ -7,8 +7,10 @@ title: Arquero API Reference
 
 * [Table Constructors](#table-constructors)
   * [table](#table), [from](#from), [fromArrow](#fromArrow), [fromCSV](#fromCSV), [fromJSON](#fromJSON)
-* [File Loaders](#loaders)
-  * [load](#load), [loadCSV](#loadCSV), [loadJSON](#loadJSON)
+* [Table Input](#input)
+  * [load](#load), [loadArrow](#loadArrow), [loadCSV](#loadCSV), [loadJSON](#loadJSON)
+* [Table Output](#output)
+  * [toArrow](#toArrow)
 * [Expression Helpers](#expression-helpers)
   * [op](#op), [bin](#bin), [desc](#desc), [frac](#frac), [rolling](#rolling), [seed](#seed)
 * [Selection Helpers](#selection-helpers)
@@ -89,13 +91,13 @@ aq.from(new Map([ ['d', 4], ['e', 5], ['f', 6] ])
 <hr/><a id="fromArrow" href="#fromArrow">#</a>
 <em>aq</em>.<b>fromArrow</b>(<i>arrowTable</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-arrow.js)
 
-Create a new <a href="table">table</a> backed by an [Apache Arrow](https://arrow.apache.org/docs/js/) table instance. Both standard and filtered tables are supported. If the input Arrow table is filtered, new column arrays are created and filled with unpacked, non-filtered values.
+Create a new <a href="table">table</a> backed by an [Apache Arrow](https://arrow.apache.org/docs/js/) table instance. The input *arrowTable* can either be an instantiated Arrow table instance or a byte array in the Arrow IPC format.
 
-For primitive data types, by default Arquero uses the binary-encoded Arrow columns as-is with zero data copying. Nested list or struct types are always unpacked into JavaScript array or object instances, respectively.
+For most data types, Arquero uses binary-encoded Arrow columns as-is with zero data copying. For columns containing string, list (array), or struct values, Arquero additionally memoizes value lookups to amortize access costs. For dictionary columns, Arquero unpacks columns with `null` entries or containing multiple record batches to optimize query performance.
 
-The *unpack* option determines if Arrow data should be "unpacked" from binary format to standard JavaScript values. By default, Arrow columns for non-nested data types are used directly. This avoids data copies, but can result in slower access paths, particularly for dictionary columns and strings that need to be extracted from a backing buffer. With *unpack* set to `true`, Arquero performs extraction up front, increasing initialization time and memory use, but enabling faster performance for subsequent queries.
+This method performs parsing only. To both load and parse an Arrow file, use [loadArrow](#loadArrow).
 
-* *arrowTable*: An [Apache Arrow](https://arrow.apache.org/docs/js/) data table.
+* *arrowTable*: An [Apache Arrow](https://arrow.apache.org/docs/js/) data table or a byte array (e.g., [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) or [Uint8Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)) in the Arrow IPC format.
 * *options*: An Arrow import options object:
   * *columns*: An ordered set of columns to import. The input may consist of: column name strings, column integer indices, objects with current column names as keys and new column names as values (for renaming), or a selection helper function such as [all](#all), [not](#not), or [range](#range)).
   * *unpack*: _As of v2.3.0, this option is deprecated and ignored if specified. Instead, Arquero now efficiently handles Arrow columns internally._ A boolean flag (default `false`) to unpack binary-encoded Arrow data to standard JavaScript values. Unpacking can incur an upfront time and memory cost to extract data to new arrays, but can speed up later query processing by enabling faster data access.
@@ -103,10 +105,17 @@ The *unpack* option determines if Arrow data should be "unpacked" from binary fo
 *Examples*
 
 ```js
-// requires that Apache Arrow has been imported as the 'arrow' variable
-// load an Arrow file from 'url' and create a corresponding Arquero table
-const arrow = require('apache-arrow');
-aq.fromArrow(await arrow.Table.from(fetch(url)))
+// encode input array-of-objects data as an Arrow table
+const arrowTable = aq.toArrow([
+  { x: 1, y: 3.4 },
+  { x: 2, y: 1.6 },
+  { x: 3, y: 5.4 },
+  { x: 4, y: 7.1 },
+  { x: 5, y: 2.9 }
+]);
+
+// now access the Arrow-encoded data as an Arquero table
+const dt = aq.fromArrow(arrowTable);
 ```
 
 
@@ -214,7 +223,7 @@ aq.fromJSON(await fetch(url).then(res => res.json()), { autoType: false })
 
 <br/>
 
-## <a id="loaders">File Loaders</a>
+## <a id="input">Table Input</a>
 
 Methods for loading files and creating new table instances.
 
@@ -223,7 +232,7 @@ Methods for loading files and creating new table instances.
 
 Load data from a *url* and return a Promise for a <a href="table">table</a>. A specific format parser can be provided with the *using* option, otherwise CSV format is assumed. This method's *options* are also passed as the second argument to the format parser.
 
-This method provides a generic base for file loading and parsing, and can be used to customize table parsing. To load CSV data, use the more specific [loadCSV](#loadCSV) method. Similarly,to load JSON data use [loadJSON](#loadJSON).
+This method provides a generic base for file loading and parsing, and can be used to customize table parsing. To load CSV data, use the more specific [loadCSV](#loadCSV) method. Similarly,to load JSON data use [loadJSON](#loadJSON) and to load Apache Arrow data use [loadArrow](#loadArrow).
 
 * *url*: The url to load.
 * *options*: File loading options.
@@ -249,6 +258,22 @@ const dt = await aq.load('data/table.json', { as: 'json', using: aq.from })
 ```
 
 
+<hr/><a id="loadArrow" href="#loadArrow">#</a>
+<em>aq</em>.<b>loadArrow</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load.js)
+
+Load a file in the [Apache Arrow](https://arrow.apache.org/docs/js/) IPC format. This method performs both loading and parsing, and is equivalent to `aq.load(url, { as: 'arrayBuffer', using: aq.fromArrow })`. To instead create an Arquero table for an Apache Arrow dataset that has already been loaded, use [fromArrow](#fromArrow).
+
+* *url*: The url to load.
+* *options*: File loading and Arrow formatting options. Accepts the options of both the [load](#load) and [fromArrow](#fromArrow) methods, but ignores any settings for the load *as* and *using* options.
+
+*Examples*
+
+```js
+// load table from an Apache Arrow file url
+const dt = await aq.loadArrow('data/table.arrow');
+```
+
+
 <hr/><a id="loadCSV" href="#loadCSV">#</a>
 <em>aq</em>.<b>loadCSV</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load.js)
 
@@ -257,7 +282,7 @@ Load a comma-separated values (CSV) file from a *url* and return a Promise for a
 This method performs both loading and parsing, and is equivalent to `aq.load(url, { using: aq.fromCSV })`. To instead parse a CSV string that has already been loaded, use [fromCSV](#fromCSV).
 
 * *url*: The url to load.
-* *options*: File loading and CSV formatting options. Accepts the options of both the [load](#load) and [fromCSV](#fromCSV) methods, but ignores any setting for the load *as* and *using* options.
+* *options*: File loading and CSV formatting options. Accepts the options of both the [load](#load) and [fromCSV](#fromCSV) methods, but ignores any settings for the load *as* and *using* options.
 
 *Examples*
 
@@ -282,7 +307,7 @@ This method performs both loading and parsing, similar to `aq.load(url, { as: 'j
 When parsing using [fromJSON](#fromJSON), string values in JSON column arrays that match the ISO standard date format are parsed into JavaScript Date objects. To disable this behavior, set *options.autoType* to `false`. To perform custom parsing of input column values, use *options.parse*. Auto-type Date parsing is not performed for columns with custom parse options.
 
 * *url*: The url to load.
-* *options*: File loading and JSON formatting options. Accepts the options of both the [load](#load) and [fromJSON](#fromJSON) methods, but ignores any setting for the load *as* and *using* options. Options for [fromJSON](#fromJSON) are ignored when [from](#from) is used for parsing.
+* *options*: File loading and JSON formatting options. Accepts the options of both the [load](#load) and [fromJSON](#fromJSON) methods, but ignores any settings for the load *as* and *using* options. Options for [fromJSON](#fromJSON) are ignored when [from](#from) is used for parsing.
 
 *Examples*
 
@@ -294,6 +319,80 @@ const dt = await aq.loadJSON('data/table.json');
 ```js
 // load table from a JSON file url, distable Date autoType
 const dt = await aq.loadJSON('data/table.json', { autoType: false })
+```
+
+
+<br/>
+
+## <a id="output">Table Output</a>
+
+<a id="toArrow" href="#toArrow">#</a>
+<em>aq</em>.<b>toArrow</b>(<i>data</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/encode/index.js)
+
+Create an [Apache Arrow](https://arrow.apache.org/docs/js/) table for the input *data*. The input data can be either an [Arquero table](#table) or an array of standard JavaScript objects. This method will throw an error if type inference fails or if the generated columns have differing lengths. For Arquero tables, this method can instead be invoked as [table.toArrow()](table#toArrow).
+
+* *data*: An input dataset to convert to Arrow format. If array-valued, the data should consist of an array of objects where each entry represents a row and named properties represent columns. Otherwise, the input data should be an [Arquero table](#table).
+* *options*: Options for Arrow encoding.
+  * *columns*: Ordered list of column names to include. If function-valued, the function should accept the input *data* as a single argument and return an array of column name strings.
+  * *limit*: The maximum number of rows to include (default `Infinity`).
+  * *offset*: The row offset indicating how many initial rows to skip (default `0`).
+  * *types*: An optional object indicating the [Arrow data type](https://arrow.apache.org/docs/js/enums/type.html) to use for named columns. If specified, the input should be an object with column names for keys and Arrow data types for values. If a column's data type is not explicitly provided, type inference will be performed.
+
+    Type values can either be instantiated Arrow [DataType](https://arrow.apache.org/docs/js/classes/datatype.html) instances (for example, `new Float64()`,`new DateMilliseconds()`, *etc.*) or type enum codes (`Type.Float64`, `Type.Date`, `Type.Dictionary`). For convenience, arquero re-exports the apache-arrow `Type` enum object (see examples below). High-level types map to specific data type instances as follows:
+
+    * `Type.Date` → `new DateMilliseconds()`
+    * `Type.Dictionary` → `new Dictionary(new Utf8(), new Int32())`
+    * `Type.Float` → `new Float64()`
+    * `Type.Int` → `new Int32()`
+    * `Type.Interval` → `new IntervalYearMonth()`
+    * `Type.Time` → `new TimeMillisecond()`
+
+    Types that require additional parameters (including `List`, `Struct`, and `Timestamp`) can not be specified using type codes. Instead, use data type constructors from apache-arrow, such as `new List(new Int32())`.
+
+*Examples*
+
+Encode Arrow data from an input Arquero table:
+
+```js
+const { table, toArrow, Type } = require('arquero');
+
+// create Arquero table
+const dt = table({
+  x: [1, 2, 3, 4, 5],
+  y: [3.4, 1.6, 5.4, 7.1, 2.9]
+});
+
+// encode as an Arrow table (infer data types)
+// here, infers Uint8 for 'x' and Float64 for 'y'
+// equivalent to dt.toArrow()
+const at1 = toArrow(dt);
+
+// encode into Arrow table (set explicit data types)
+// equivalent to dt.toArrow({ types: { ... } })
+const at2 = toArrow(dt, {
+  types: {
+    x: Type.Uint16,
+    y: Type.Float32
+  }
+});
+
+// serialize Arrow table to a transferable byte array
+const bytes = at1.serialize();
+```
+
+Encode Arrow data from an input object array:
+
+```js
+const { toArrow } = require('arquero-arrow');
+
+// encode object array as an Arrow table (infer data types)
+const at = toArrow([
+  { x: 1, y: 3.4 },
+  { x: 2, y: 1.6 },
+  { x: 3, y: 5.4 },
+  { x: 4, y: 7.1 },
+  { x: 5, y: 2.9 }
+]);
 ```
 
 

@@ -4,6 +4,7 @@
     "allowJs": true,
     "declaration": true,
     "emitDeclarationOnly": true,
-    "outDir": "dist/types"
+    "outDir": "dist/types",
+    "skipLibCheck": true
   }
 }
