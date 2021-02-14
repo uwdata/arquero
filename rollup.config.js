@@ -10,36 +10,49 @@ function onwarn(warning, defaultHandler) {
 }
 
 const name = 'aq';
+const external = [ 'apache-arrow' ];
 const globals = { 'apache-arrow': 'Arrow' };
+const plugins = [
+  json(),
+  bundleSize(),
+  nodeResolve({ modulesOnly: true })
+];
 
-export default {
-  input: 'src/index.js',
-  external: ['apache-arrow'],
-  plugins: [
-    json(),
-    bundleSize(),
-    nodeResolve({ modulesOnly: true })
-  ],
-  onwarn,
-  output: [
-    {
-      file: 'dist/arquero.js',
-      format: 'umd',
-      globals,
-      name
-    },
-    {
-      file: 'dist/arquero.min.js',
-      format: 'umd',
-      sourcemap: true,
-      plugins: [ terser({ ecma: 2018 }) ],
-      globals,
-      name
-    },
-    {
-      file: 'dist/arquero.mjs',
-      format: 'es',
-      globals
-    }
-  ]
-};
+export default [
+  {
+    input: 'src/index-node.js',
+    external,
+    plugins,
+    onwarn,
+    output: [
+      {
+        file: 'dist/arquero.node.js',
+        format: 'cjs',
+        globals,
+        name
+      }
+    ]
+  },
+  {
+    input: 'src/index.js',
+    external,
+    plugins,
+    onwarn,
+    output: [
+      {
+        file: 'dist/arquero.js',
+        format: 'umd',
+        globals,
+        name
+      },
+      {
+        file: 'dist/arquero.min.js',
+        format: 'umd',
+        sourcemap: true,
+        plugins: [ terser({ ecma: 2018 }) ],
+        globals,
+        name
+      }
+    ]
+  }
+];

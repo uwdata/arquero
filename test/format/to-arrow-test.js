@@ -95,7 +95,7 @@ tape('toArrow produces Arrow data for an input table', t => {
 });
 
 tape('toArrow produces Arrow data for an input CSV', async t => {
-  const dt = fromCSV(readFileSync('test/format/beers.csv', 'utf8'));
+  const dt = fromCSV(readFileSync('test/format/data/beers.csv', 'utf8'));
   const st = dt.derive({ name: d => d.name + '' });
   const at = dt.toArrow();
 
@@ -141,7 +141,7 @@ tape('toArrow handles ambiguously typed data', async t => {
 });
 
 tape('toArrow result produces serialized arrow data', t => {
-  const dt = fromCSV(readFileSync('test/format/beers.csv', 'utf8'))
+  const dt = fromCSV(readFileSync('test/format/data/beers.csv', 'utf8'))
     .derive({ name: d => d.name + '' });
 
   const json = dt.toJSON();
