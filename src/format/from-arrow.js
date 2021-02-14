@@ -1,5 +1,6 @@
+import { from } from '../arrow/arrow-table';
+import arrowColumn from '../arrow/arrow-column';
 import resolve, { all } from '../helpers/selection';
-import arrowColumn from '../table/arrow-column';
 import BitSet from '../table/bit-set';
 import columnSet from '../table/column-set';
 import ColumnTable from '../table/column-table';
@@ -16,11 +17,12 @@ import ColumnTable from '../table/column-table';
 
 /**
  * Create a new table backed by an Apache Arrow table instance.
- * @param {object} arrowTable An Apache Arrow data table.
+ * @param {object} arrow An Apache Arrow data table or byte buffer.
  * @param {ArrowOptions} options Options for Arrow import.
  * @param {ColumnTable} table A new table containing the imported values.
  */
 export default function(arrow, options = {}) {
+  arrow = from(arrow);
   const { chunks, length, schema } = arrow;
 
   // resolve column selection

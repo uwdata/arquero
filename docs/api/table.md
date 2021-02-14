@@ -19,7 +19,7 @@ title: Table \| Arquero API Reference
   * [indices](#indices), [partitions](#partitions), [scan](#scan)
 * [Table Output](#output)
   * [objects](#objects), [Symbol.iterator](#@@iterator), [print](#print)
-  * [toCSV](#toCSV), [toHTML](#toHTML), [toJSON](#toJSON), [toMarkdown](#toMarkdown)
+  * [toArrow](#toArrow), [toCSV](#toCSV), [toHTML](#toHTML), [toJSON](#toJSON), [toMarkdown](#toMarkdown)
 
 
 <br/>
@@ -379,6 +379,80 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).print()
 // │    1    │ 2 │ 5 │
 // │    2    │ 3 │ 6 │
 // └─────────┴───┴───┘
+```
+
+<a id="toArrow" href="#toArrow">#</a>
+<em>table</em>.<b>toArrow</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/encode/index.js)
+
+Format this table as an [Apache Arrow](https://arrow.apache.org/docs/js/) table instance. This method will throw an error if type inference fails or if the generated columns have differing lengths.
+
+* *options*: Options for Arrow encoding.
+  * *columns*: Ordered list of column names to include. If function-valued, the function should accept this table as a single argument and return an array of column name strings.
+  * *limit*: The maximum number of rows to include (default `Infinity`).
+  * *offset*: The row offset indicating how many initial rows to skip (default `0`).
+  * *types*: An optional object indicating the [Arrow data type](https://arrow.apache.org/docs/js/enums/type.html) to use for named columns. If specified, the input should be an object with column names for keys and Arrow data types for values. If a column's data type is not explicitly provided, type inference will be performed.
+
+    Type values can either be instantiated Arrow [DataType](https://arrow.apache.org/docs/js/classes/datatype.html) instances (for example, `new Float64()`,`new DateMilliseconds()`, *etc.*) or type enum codes (`Type.Float64`, `Type.Date`, `Type.Dictionary`). For convenience, arquero re-exports the apache-arrow `Type` enum object (see examples below). High-level types map to specific data type instances as follows:
+
+    * `Type.Date` → `new DateMilliseconds()`
+    * `Type.Dictionary` → `new Dictionary(new Utf8(), new Int32())`
+    * `Type.Float` → `new Float64()`
+    * `Type.Int` → `new Int32()`
+    * `Type.Interval` → `new IntervalYearMonth()`
+    * `Type.Time` → `new TimeMillisecond()`
+
+    Types that require additional parameters (including `List`, `Struct`, and `Timestamp`) can not be specified using type codes. Instead, use data type constructors from apache-arrow, such as `new List(new Int32())`.
+
+*Examples*
+
+Encode Arrow data from an input Arquero table:
+
+```js
+const { table, Type } = require('arquero');
+
+// create Arquero table
+const dt = table({
+  x: [1, 2, 3, 4, 5],
+  y: [3.4, 1.6, 5.4, 7.1, 2.9]
+});
+
+// encode as an Arrow table (infer data types)
+// here, infers Uint8 for 'x' and Float64 for 'y'
+const at1 = dt.toArrow();
+
+// encode into Arrow table (set explicit data types)
+const at2 = dt.toArrow({
+  types: {
+    x: Type.Uint16,
+    y: Type.Float32
+  }
+});
+```
+
+<a id="toArrowBuffer" href="#toArrow">#</a>
+<em>table</em>.<b>toArrowBuffer</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/encode/index.js)
+
+Format this table as binary data in the [Apache Arrow](https://arrow.apache.org/docs/js/) IPC format. The binary data may be saved to disk or passed between processes or tools. For example, when using [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers), the output of this method can be passed directly between threads (no data copy) as a [Transferable](https://developer.mozilla.org/en-US/docs/Web/API/Transferable) object. Additionally, Arrow binary data can be loaded in other language environments such as [Python](https://arrow.apache.org/docs/python/) or [R](https://arrow.apache.org/docs/r/).
+
+This method will throw an error if type inference fails or if the generated columns have differing lengths. This method is a shorthand for `table.toArrow().serialize()`.
+
+* *options*: Options for Arrow encoding, same as [toArrow](#toArrow).
+
+*Examples*
+
+Encode Arrow data from an input Arquero table:
+
+```js
+const { table } = require('arquero');
+
+const dt = table({
+  x: [1, 2, 3, 4, 5],
+  y: [3.4, 1.6, 5.4, 7.1, 2.9]
+});
+
+// encode table as a transferable Arrow byte buffer
+// here, infers Uint8 for 'x' and Float64 for 'y'
+const bytes = dt.toArrowBuffer();
 ```
 
 <hr/><a id="toCSV" href="#toCSV">#</a>

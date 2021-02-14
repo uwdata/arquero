@@ -1,10 +1,12 @@
 const tape = require('tape');
 const time = require('./time');
-const { ints, sample, strings } = require('./data-gen');
-const { fromArrow } = require('..');
-const { Dictionary, Int32, Table, Utf8, Vector, predicate } = require('apache-arrow');
+const { bools, floats, ints, sample, strings } = require('./data-gen');
+const { fromArrow, table } = require('..');
+const {
+  Bool, Dictionary, Float64, Int32, Table, Uint32, Utf8, Vector, predicate
+} = require('apache-arrow');
 
-function run(N, nulls, msg) {
+function process(N, nulls, msg) {
   const vectors = [
     Vector.from({
       type: new Dictionary(new Utf8(), new Int32()),
@@ -44,7 +46,7 @@ function run(N, nulls, msg) {
     dt.filter(`d.v >= ${val}`).numRows();
   });
 
-  tape(`arrow: ${msg}`, t => {
+  tape(`arrow processing: ${msg}`, t => {
     const k = at.getColumn('k').get(50);
     console.table([ // eslint-disable-line
       {
@@ -77,5 +79,60 @@ function run(N, nulls, msg) {
   });
 }
 
-run(5e6, 0, '5M values, 0% nulls');
-run(5e6, 0.05, '5M values, 5% nulls');
+function serialize(N, nulls, msg) {
+  tape(`arrow serialization: ${msg}`, t => {
+    console.table([ // eslint-disable-line
+      encode('boolean', new Bool(), bools(N, nulls)),
+      encode('integer', new Int32(), ints(N, -10000, 10000, nulls)),
+      encode('float', new Float64(), floats(N, -10000, 10000, nulls)),
+      encode('dictionary',
+        new Dictionary(new Utf8(), new Uint32(), 0),
+        sample(N, strings(100), nulls)
+      )
+    ]);
+    t.end();
+  });
+}
+
+function encode(name, type, values) {
+  const dt = table({ values });
+
+  // measure encoding times
+  const qt = time(() => dt.toArrow({ types: { values: type } }).serialize());
+  const at = time(() => Table.new(
+      [Vector.from({ type, values, highWaterMark: 1e12 })],
+      ['values']
+    ).serialize());
+  const jt = time(() => JSON.stringify(values));
+
+  // measure serialized byte size
+  const ab = Table.new(
+    [Vector.from({ type, values, highWaterMark: 1e12 })],
+    ['values']
+  ).serialize().length;
+  const qb = dt.toArrow({ types: { values: type }}).serialize().length;
+  const jb = (new TextEncoder().encode(JSON.stringify(values))).length;
+
+  // check that arrow and arquero produce the same result
+  if (qb !== ab) {
+    // eslint-disable-next-line
+    console.warn(`Arrow and Arquero bytes don't match: ${ab} vs. ${qb}`);
+  }
+
+  return {
+    'data type':  name,
+    'arrow-js':   at,
+    'arquero':    qt,
+    'json':       jt,
+    'size-arrow': ab,
+    'size-json':  jb
+  };
+}
+
+// run arrow processing benchmarks
+process(5e6, 0, '5M values, 0% nulls');
+process(5e6, 0.05, '5M values, 5% nulls');
+
+// run arrow serialization benchmarks
+serialize(1e6, 0, '1M values');
+serialize(1e6, 0.05, '1M values, 5% nulls');

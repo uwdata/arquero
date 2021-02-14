@@ -1,14 +1,11 @@
+import arrowDictionary from './arrow-dictionary';
+import Type from './arrow-types';
 import error from '../util/error';
 import repeat from '../util/repeat';
 import toString from '../util/to-string';
 import unroll from '../util/unroll';
-import dictionaryColumn from './dictionary-column';
 
-// Hardwire Arrow type ids to avoid explicit dependency
-// https://github.com/apache/arrow/blob/master/js/src/enum.ts
-const UTF8 = 5;
-const STRUCT = 13;
-const isList = id => id === 12 || id === 16; // List or FixedSizeList
+const isList = id => id === Type.List || id === Type.FixedSizeList;
 
 /**
  * Create an Arquero column that proxies access to an Arrow column.
@@ -16,12 +13,12 @@ const isList = id => id === 12 || id === 16; // List or FixedSizeList
  * @return {import('./column').ColumnType} An Arquero-compatible column.
  */
 export default function arrowColumn(arrow, nested) {
-  if (arrow.dictionary) return dictionaryColumn(arrow);
+  if (arrow.dictionary) return arrowDictionary(arrow);
   const { typeId, chunks, length, numChildren } = arrow;
   const vector = chunks && chunks.length === 1 ? chunks[0] : arrow;
   const get = numChildren && nested ? getNested(vector)
     : numChildren ? memoize(getNested(vector))
-    : typeId === UTF8 ? memoize(row => vector.get(row))
+    : typeId === Type.Utf8 ? memoize(row => vector.get(row))
     : null;
 
   return get
@@ -49,7 +46,7 @@ const arrayFrom = vector => vector.numChildren
   : vector.toArray();
 
 const getNested = vector => isList(vector.typeId) ? getList(vector)
-  : vector.typeId === STRUCT ? getStruct(vector)
+  : vector.typeId === Type.Struct ? getStruct(vector)
   : error(`Unsupported Arrow type: ${toString(vector.VectorName)}`);
 
 const getList = vector => vector.nullCount

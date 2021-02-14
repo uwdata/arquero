@@ -82,6 +82,13 @@ Arquero will be imported into the `aq` global object.
 
 Alternatively, you can build and import `arquero.min.js` from the `build` directory, or build your own application package.
 
+The default browser bundle does not include the [Apache Arrow](https://arrow.apache.org/) library. To perform Arrow encoding using [toArrow()](https://uwdata.github.io/arquero/api/#toArrow) or binary file loading using [loadArrow()](https://uwdata.github.io/arquero/api/#loadArrow), import Apache Arrow first:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/apache-arrow@3"></script>
+<script src="https://cdn.jsdelivr.net/npm/arquero@latest"></script>
+```
+
 Arquero uses modern JavaScript features, and so will not work with some outdated browsers. To use Arquero with older browsers including Internet Explorer, set up your project with a transpiler such as [Babel](https://babeljs.io/).
 
 ### In Node.js or Application Bundles

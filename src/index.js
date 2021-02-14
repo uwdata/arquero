@@ -25,10 +25,12 @@ export const internal = {
 // export public API
 export { version } from '../package.json';
 export { seed } from './util/random';
+export { default as Type } from './arrow/arrow-types';
 export { default as fromArrow } from './format/from-arrow';
 export { default as fromCSV } from './format/from-csv';
 export { default as fromJSON } from './format/from-json';
-export { load, loadCSV, loadJSON } from './format/load';
+export { load, loadArrow, loadCSV, loadJSON } from './format/load';
+export { default as toArrow } from './arrow/encode';
 export { default as bin } from './helpers/bin';
 export { default as desc } from './helpers/desc';
 export { default as field } from './helpers/field';

@@ -1,7 +1,6 @@
 import tape from 'tape';
-import { arrowDictionary } from '../arrow-stubs';
+import fromArrow from '../../src/format/from-arrow';
 import { desc, op, table } from '../../src';
-import dictionaryColumn from '../../src/table/dictionary-column';
 
 tape('groupby computes groups based on field names', t => {
   const data = {
@@ -156,10 +155,12 @@ tape('groupby persists after reify', t => {
 });
 
 tape('groupby optimizes Arrow dictionary columns', t => {
-  const dt = table({
-    d: dictionaryColumn(arrowDictionary(['a', 'a', 'b', 'b'])),
-    v: [1, 2, 3, 4]
-  });
+  const dt = fromArrow(
+    table({
+      d: ['a', 'a', 'b', 'b'],
+      v: [1, 2, 3, 4]
+    }).toArrow()
+  );
 
   const gt = dt.groupby('d');
   t.equal(
