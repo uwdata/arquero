@@ -24,17 +24,17 @@ import { readFile } from 'fs';
  * A specific format parser can be provided with the *using* option,
  * otherwise CSV format is assumed. The options to this method are
  * passed as the second argument to the format parser.
- * @param {string} url The URL or file path to load.
+ * @param {string} path The URL or file path to load.
  * @param {LoadOptions & object} options The loading and formatting options.
  * @return {Promise<ColumnTable>} A Promise for an Arquero table.
  * @example aq.load('data/table.csv')
  * @example aq.load('data/table.json', { using: aq.fromJSON })
  * @example aq.load('data/table.json', { using: aq.from })
  */
-export function load(url, options = {}) {
-  return (/^([A-Za-z]+:)?\/\//.test(url) && !url.startsWith('file://')
+export function load(path, options = {}) {
+  return (/^([A-Za-z]+:)?\/\//.test(path) && !path.startsWith('file://')
     ? loadURL
-    : loadFile)(url, options, options.using || fromCSV);
+    : loadFile)(path, options, options.using || fromCSV);
 }
 
 function loadURL(url, options, parse) {
@@ -62,25 +62,25 @@ function loadFile(file, options, parse) {
 
 /**
  * Load an Arrow file from a URL and return a Promise for an Arquero table.
- * @param {string} url The URL to load.
+ * @param {string} path The URL or file path to load.
  * @param {LoadOptions & import('./from-arrow').ArrowOptions} options Arrow format options.
  * @return {Promise<ColumnTable>} A Promise for an Arquero table.
  * @example aq.loadArrow('data/table.arrow')
  */
-export function loadArrow(url, options) {
-  return load(url, { ...options, as: 'arrayBuffer', using: fromArrow });
+export function loadArrow(path, options) {
+  return load(path, { ...options, as: 'arrayBuffer', using: fromArrow });
 }
 
 /**
  * Load a CSV file from a URL and return a Promise for an Arquero table.
- * @param {string} url The URL to load.
+ * @param {string} path The URL or file path to load.
  * @param {LoadOptions & import('./from-csv').CSVParseOptions} options CSV format options.
  * @return {Promise<ColumnTable>} A Promise for an Arquero table.
  * @example aq.loadCSV('data/table.csv')
  * @example aq.loadTSV('data/table.tsv', { delimiter: '\t' })
  */
-export function loadCSV(url, options) {
-  return load(url, { ...options, as: 'text', using: fromCSV });
+export function loadCSV(path, options) {
+  return load(path, { ...options, as: 'text', using: fromCSV });
 }
 
 /**
@@ -88,13 +88,13 @@ export function loadCSV(url, options) {
  * If the loaded JSON is array-valued, an array-of-objects format is assumed
  * and the aq.from method is used to construct the table. Otherwise, a
  * column object format is assumed and aq.fromJSON is applied.
- * @param {string} url The URL to load.
+ * @param {string} path The URL or file path to load.
  * @param {LoadOptions & import('./from-json').JSONParseOptions} options JSON format options.
  * @return {Promise<ColumnTable>} A Promise for an Arquero table.
  * @example aq.loadJSON('data/table.json')
  */
-export function loadJSON(url, options) {
-  return load(url, { ...options, as: 'json', using: parseJSON });
+export function loadJSON(path, options) {
+  return load(path, { ...options, as: 'json', using: parseJSON });
 }
 
 function parseJSON(data, options) {
