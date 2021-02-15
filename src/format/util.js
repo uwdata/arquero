@@ -58,12 +58,13 @@ function values(table, columnName) {
 }
 
 export function scan(table, names, limit, offset, ctx) {
+  const data = table.data();
   const n = names.length;
   table.scan(row => {
     ctx.row(row);
     for (let i = 0; i < n; ++i) {
       const name = names[i];
-      ctx.cell(table.get(name, row), name, i);
+      ctx.cell(data[names[i]].get(row), name, i);
     }
   }, true, limit, offset);
 }
