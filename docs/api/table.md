@@ -267,10 +267,10 @@ Returns the internal table storage data structure.
 <hr/><a id="get" href="#get">#</a>
 <em>table</em>.<b>get</b>(<i>name</i>, <i>row</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
 
-Get the value for the given column and row. Row indices are relative to the [total rows](#totalRows), not the number of [filtered rows](#numRows).
+Get the value for the given column and row. Row indices are relative to any filtering and ordering criteria, not the internal data layout.
 
 * *name*: The column name.
-* *row*: The row index.
+* *row*: The row index, relative to any filtering or ordering criteria.
 
 *Examples*
 
@@ -280,10 +280,17 @@ dt.get('a', 0) // 1
 dt.get('a', 2) // 3
 ```
 
+```js
+const dt = aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .orderby(aq.desc('b'));
+dt.get('a', 0) // 3
+dt.get('a', 2) // 1
+```
+
 <hr/><a id="getter" href="#getter">#</a>
 <em>table</em>.<b>getter</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
 
-Returns an accessor ("getter") function for a column. The returned function takes a row index as its single argument and returns the corresponding column value. Row indices are relative to the [total rows](#totalRows), not the number of [filtered rows](#numRows).
+Returns an accessor ("getter") function for a column. The returned function takes a row index as its single argument and returns the corresponding column value. Row indices are relative to any filtering and ordering criteria, not the internal data layout.
 
 *Examples*
 
@@ -291,6 +298,14 @@ Returns an accessor ("getter") function for a column. The returned function take
 const get = aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).getter('a');
 get(0) // 1
 get(2) // 3
+```
+
+```js
+const dt = aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .orderby(aq.desc('b'))
+  .getter('a');
+get(0) // 3
+get(2) // 1
 ```
 
 * *name*: The column name.
