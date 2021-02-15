@@ -122,7 +122,10 @@ export default class ColumnTable extends Table {
    * @return {import('./table').DataValue} The table value at (column, row).
    */
   get(name, row) {
-    return this._data[name].get(row);
+    const column = this.column(name);
+    return this.isFiltered() || this.isOrdered()
+      ? column.get(this.indices()[row])
+      : column.get(row);
   }
 
   /**
@@ -134,8 +137,9 @@ export default class ColumnTable extends Table {
    */
   getter(name) {
     const column = this.column(name);
-    return column
-      ? row => column.get(row)
+    const indices = this.isFiltered() || this.isOrdered() ? this.indices() : null;
+    return indices ? row => column.get(indices[row])
+      : column ? row => column.get(row)
       : error(`Unrecognized column: ${name}`);
   }
 
