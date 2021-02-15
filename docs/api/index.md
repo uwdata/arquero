@@ -230,11 +230,13 @@ Methods for loading files and creating new table instances.
 <hr/><a id="load" href="#load">#</a>
 <em>aq</em>.<b>load</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load.js)
 
-Load data from a *url* and return a Promise for a <a href="table">table</a>. A specific format parser can be provided with the *using* option, otherwise CSV format is assumed. This method's *options* are also passed as the second argument to the format parser.
+Load data from a *url* or file and return a Promise for a <a href="table">table</a>. A specific format parser can be provided with the *using* option, otherwise CSV format is assumed. This method's *options* are also passed as the second argument to the format parser.
+
+When invoked in the browser, the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) is used to load the *url*. When invoked in node.js, the *url* argument can also be a local file path. If the input *url* string has a network protocol at the beginning (e.g., `'http://'`, `'https://'`, *etc*.) it is treated as a URL and the [node-fetch](https://github.com/node-fetch/node-fetch) library is used. If the `'file://'` protocol is used, the rest of the string should be an absolute file path, from which a local file is loaded. Otherwise the input is treated as a path to a local file and loaded using the node.js `fs` module.
 
 This method provides a generic base for file loading and parsing, and can be used to customize table parsing. To load CSV data, use the more specific [loadCSV](#loadCSV) method. Similarly,to load JSON data use [loadJSON](#loadJSON) and to load Apache Arrow data use [loadArrow](#loadArrow).
 
-* *url*: The url to load.
+* *url*: The url or local file (node.js only) to load.
 * *options*: File loading options.
   * *using*: A function that accepts loaded data and an optional options object as input and returns an Arquero table.
   * *as*: A string indicating the data type of the file. One of `'arrayBuffer'`, `'json'`, or `'text'` (the default).
@@ -243,17 +245,17 @@ This method provides a generic base for file loading and parsing, and can be use
 *Examples*
 
 ```js
-// load table from a CSV file url
+// load table from a CSV file
 const dt = await aq.load('data/table.csv', { using: aq.fromCSV });
 ```
 
 ```js
-// load table from a JSON file url with column format
+// load table from a JSON file with column format
 const dt = await aq.load('data/table.json', { as: 'json', using: aq.fromJSON })
 ```
 
 ```js
-// load table from a JSON file url with array-of-objects format
+// load table from a JSON file with array-of-objects format
 const dt = await aq.load('data/table.json', { as: 'json', using: aq.from })
 ```
 
@@ -261,15 +263,19 @@ const dt = await aq.load('data/table.json', { as: 'json', using: aq.from })
 <hr/><a id="loadArrow" href="#loadArrow">#</a>
 <em>aq</em>.<b>loadArrow</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load.js)
 
-Load a file in the [Apache Arrow](https://arrow.apache.org/docs/js/) IPC format. This method performs both loading and parsing, and is equivalent to `aq.load(url, { as: 'arrayBuffer', using: aq.fromArrow })`. To instead create an Arquero table for an Apache Arrow dataset that has already been loaded, use [fromArrow](#fromArrow).
+Load a file in the [Apache Arrow](https://arrow.apache.org/docs/js/) IPC format from a *url* and return a Promise for a <a href="table">table</a>.
 
-* *url*: The url to load.
+This method performs both loading and parsing, and is equivalent to `aq.load(url, { as: 'arrayBuffer', using: aq.fromArrow })`. To instead create an Arquero table for an Apache Arrow dataset that has already been loaded, use [fromArrow](#fromArrow).
+
+When invoked in the browser, the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) is used to load the *url*. When invoked in node.js, the *url* argument can also be a local file path. If the input *url* string has a network protocol at the beginning (e.g., `'http://'`, `'https://'`, *etc*.) it is treated as a URL and the [node-fetch](https://github.com/node-fetch/node-fetch) library is used. If the `'file://'` protocol is used, the rest of the string should be an absolute file path, from which a local file is loaded. Otherwise the input is treated as a path to a local file and loaded using the node.js `fs` module.
+
+* *url*: The url or local file (node.js only) to load.
 * *options*: File loading and Arrow formatting options. Accepts the options of both the [load](#load) and [fromArrow](#fromArrow) methods, but ignores any settings for the load *as* and *using* options.
 
 *Examples*
 
 ```js
-// load table from an Apache Arrow file url
+// load table from an Apache Arrow file
 const dt = await aq.loadArrow('data/table.arrow');
 ```
 
@@ -281,18 +287,20 @@ Load a comma-separated values (CSV) file from a *url* and return a Promise for a
 
 This method performs both loading and parsing, and is equivalent to `aq.load(url, { using: aq.fromCSV })`. To instead parse a CSV string that has already been loaded, use [fromCSV](#fromCSV).
 
-* *url*: The url to load.
+When invoked in the browser, the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) is used to load the *url*. When invoked in node.js, the *url* argument can also be a local file path. If the input *url* string has a network protocol at the beginning (e.g., `'http://'`, `'https://'`, *etc*.) it is treated as a URL and the [node-fetch](https://github.com/node-fetch/node-fetch) library is used. If the `'file://'` protocol is used, the rest of the string should be an absolute file path, from which a local file is loaded. Otherwise the input is treated as a path to a local file and loaded using the node.js `fs` module.
+
+* *url*: The url or local file (node.js only) to load.
 * *options*: File loading and CSV formatting options. Accepts the options of both the [load](#load) and [fromCSV](#fromCSV) methods, but ignores any settings for the load *as* and *using* options.
 
 *Examples*
 
 ```js
-// load table from a CSV file url
+// load table from a CSV file
 const dt = await aq.loadCSV('data/table.csv');
 ```
 
 ```js
-// load table from a tab-delimited file url,
+// load table from a tab-delimited file
 const dt = await aq.loadCSV('data/table.tsv', { delimiter: '\t' })
 ```
 
@@ -306,18 +314,20 @@ This method performs both loading and parsing, similar to `aq.load(url, { as: 'j
 
 When parsing using [fromJSON](#fromJSON), string values in JSON column arrays that match the ISO standard date format are parsed into JavaScript Date objects. To disable this behavior, set *options.autoType* to `false`. To perform custom parsing of input column values, use *options.parse*. Auto-type Date parsing is not performed for columns with custom parse options.
 
-* *url*: The url to load.
+When invoked in the browser, the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) is used to load the *url*. When invoked in node.js, the *url* argument can also be a local file path. If the input *url* string has a network protocol at the beginning (e.g., `'http://'`, `'https://'`, *etc*.) it is treated as a URL and the [node-fetch](https://github.com/node-fetch/node-fetch) library is used. If the `'file://'` protocol is used, the rest of the string should be an absolute file path, from which a local file is loaded. Otherwise the input is treated as a path to a local file and loaded using the node.js `fs` module.
+
+* *url*: The url or local file (node.js only) to load.
 * *options*: File loading and JSON formatting options. Accepts the options of both the [load](#load) and [fromJSON](#fromJSON) methods, but ignores any settings for the load *as* and *using* options. Options for [fromJSON](#fromJSON) are ignored when [from](#from) is used for parsing.
 
 *Examples*
 
 ```js
-// load table from a JSON file url
+// load table from a JSON file
 const dt = await aq.loadJSON('data/table.json');
 ```
 
 ```js
-// load table from a JSON file url, distable Date autoType
+// load table from a JSON file, disable Date autoType
 const dt = await aq.loadJSON('data/table.json', { autoType: false })
 ```
 
