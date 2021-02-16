@@ -6,7 +6,7 @@ title: Table \| Arquero API Reference
 [Top-Level](/arquero/api) | [**Table**](table) | [Verbs](verbs) | [Op Functions](op) | [Expressions](expressions) | [Extensibility](extensibility)
 
 * [Table Metadata](#metadata)
-  * [numCols](#numCols), [numRows](#numRows), [totalRows](#totalRows)
+  * [numCols](#numCols), [numRows](#numRows), [size](#size), [totalRows](#totalRows)
   * [isFiltered](#isFiltered), [isGrouped](#isGrouped), [isOrdered](#isOrdered)
   * [comparator](#foo), [groups](#groups), [mask](#mask)
   * [params](#params)
@@ -54,6 +54,24 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
   .filter(d => d.a > 2)
   .numRows() // 1
+```
+
+<hr/><a id="size" href="#size">#</a>
+<em>table</em>.<b>size</b> · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+
+The number of active (non-filtered) rows in this table. This number is the same as [numRows()](#numRows), and may be less than the [total rows](#totalRows) if the table has been filtered.
+
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .size // 3
+```
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .filter(d => d.a > 2)
+  .size // 1
 ```
 
 <hr/><a id="totalRows" href="#totalRows">#</a>
