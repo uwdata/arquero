@@ -19,7 +19,7 @@ title: Table \| Arquero API Reference
   * [indices](#indices), [partitions](#partitions), [scan](#scan)
 * [Table Output](#output)
   * [objects](#objects), [Symbol.iterator](#@@iterator), [print](#print)
-  * [toArrow](#toArrow), [toCSV](#toCSV), [toHTML](#toHTML), [toJSON](#toJSON), [toMarkdown](#toMarkdown)
+  * [toArrow](#toArrow), [toArrowBuffer](#toArrowBuffer), [toCSV](#toCSV), [toHTML](#toHTML), [toJSON](#toJSON), [toMarkdown](#toMarkdown)
 
 
 <br/>
@@ -462,7 +462,7 @@ const at2 = dt.toArrow({
 });
 ```
 
-<a id="toArrowBuffer" href="#toArrow">#</a>
+<a id="toArrowBuffer" href="#toArrowBuffer">#</a>
 <em>table</em>.<b>toArrowBuffer</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/encode/index.js)
 
 Format this table as binary data in the [Apache Arrow](https://arrow.apache.org/docs/js/) IPC format. The binary data may be saved to disk or passed between processes or tools. For example, when using [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers), the output of this method can be passed directly between threads (no data copy) as a [Transferable](https://developer.mozilla.org/en-US/docs/Web/API/Transferable) object. Additionally, Arrow binary data can be loaded in other language environments such as [Python](https://arrow.apache.org/docs/python/) or [R](https://arrow.apache.org/docs/r/).
