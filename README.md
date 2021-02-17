@@ -85,7 +85,7 @@ Arquero will be imported into the `aq` global object. The default browser bundle
 <script src="https://cdn.jsdelivr.net/npm/arquero@latest"></script>
 ```
 
-Alternatively, you can build and import `arquero.min.js` from the `build` directory, or build your own application bundle. When building custom application bundles for the browser, the module bundler should draw from the `browser` property of Arquero's `package.json` file. For example, if using [rollup](https://rollupjs.org/), pass the `browser: true` option to the [node-resolve](https://github.com/rollup/plugins/tree/master/packages/node-resolve) plugin.
+Alternatively, you can build and import `arquero.min.js` from the `dist` directory, or build your own application bundle. When building custom application bundles for the browser, the module bundler should draw from the `browser` property of Arquero's `package.json` file. For example, if using [rollup](https://rollupjs.org/), pass the `browser: true` option to the [node-resolve](https://github.com/rollup/plugins/tree/master/packages/node-resolve) plugin.
 
 Arquero uses modern JavaScript features, and so will not work with some outdated browsers. To use Arquero with older browsers including Internet Explorer, set up your project with a transpiler such as [Babel](https://babeljs.io/).
 
