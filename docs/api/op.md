@@ -614,26 +614,33 @@ Compare two values for equality, using join semantics in which `null !== null`. 
 * *b*: The second input to compare.
 
 <hr/><a id="has" href="#has">#</a>
-<em>op</em>.<b>has</b>(<i>object</i>, <i>property</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
+<em>op</em>.<b>has</b>(<i>object</i>, <i>key</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
 
-Returns a boolean indicating whether the *object* has the specified *property* as its own property (as opposed to inheriting it).
+Returns a boolean indicating whether the *object* has the specified *key* as its own property (as opposed to inheriting it). If the *object* is a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) or [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) instance, the `has` method will be invoked directly on the object, otherwise `Object.hasOwnProperty` is used.
 
-* *object*: The object to test for property membership.
+* *object*: The object, Map, or Set to test for property membership.
 * *property*: The string property name to test for.
 
 <hr/><a id="keys" href="#keys">#</a>
 <em>op</em>.<b>keys</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
 
-Returns an array of a given *object*'s own enumerable property names.
+Returns an array of a given *object*'s own enumerable property names. If the *object* is a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) instance, the `keys` method will be invoked directly on the object, otherwise `Object.keys` is used.
 
-* *object*: The input object value.
+* *object*: The input object or Map value.
 
-<hr/><a id="values" href="#obj_values">#</a>
-<em>op</em>.<b>values</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
+<hr/><a id="vals" href="#vals">#</a>
+<em>op</em>.<b>vals</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
 
-Returns an array of a given *object*'s own enumerable property values.
+Returns an array of a given *object*'s own enumerable property values. If the *object* is a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) or [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) instance, the `values` method will be invoked directly on the object, otherwise `Object.values` is used.
 
-* *object*: The input object value.
+* *object*: The input object, Map, or Set value.
+
+<hr/><a id="entries" href="#entries">#</a>
+<em>op</em>.<b>entries</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
+
+Returns an array of a given *object*'s own enumerable string-keyed property `[key, value]` pairs. If the *object* is a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) or [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) instance, the `entries` method will be invoked directly on the object, otherwise `Object.entries` is used.
+
+* *object*: The input object, Map, or Set value.
 
 <hr/><a id="recode" href="#recode">#</a>
 <em>op</em>.<b>recode</b>(<i>value</i>, <i>map</i>[, <i>fallback</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/recode.js)
