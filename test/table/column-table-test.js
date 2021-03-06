@@ -45,6 +45,16 @@ tape('ColumnTable supports varied column types', t => {
   };
   t.deepEqual(getter, ref, 'extracted getter values match');
 
+  const arrays = ['int', 'num', 'str', 'chr', 'obj'].map(name => ct.columnArray(name));
+  const array = {
+    int: rows.map(row => arrays[0][row]),
+    num: rows.map(row => arrays[1][row]),
+    str: rows.map(row => arrays[2][row]),
+    chr: rows.map(row => arrays[3][row]),
+    obj: rows.map(row => arrays[4][row])
+  };
+  t.deepEqual(array, ref, 'extracted columnArray values match');
+
   const scanned = {
     int: [],
     num: [],
