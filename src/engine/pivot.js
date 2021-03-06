@@ -45,7 +45,11 @@ function pivotKeys(table, on, options) {
   // collect unique key values
   const uniq = aggregate(
     table.ungroup(),
-    [ { id: 0, name: 'unique', fields: [(row => kcol[row])], params: [] } ]
+    [ {
+      id: 0,
+      name: 'array_agg_distinct',
+      fields: [(row => kcol[row])], params: []
+    } ]
   )[0][0];
 
   // get ordered set of unique key values

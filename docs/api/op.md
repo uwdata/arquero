@@ -18,7 +18,7 @@ title: Operations \| Arquero API Reference
   * [mean](#mean), [average](#average), [mode](#mode), [median](#median), [quantile](#quantile)
   * [stdev](#stdev), [stdevp](#stdevp), [variance](#variance), [variancep](#variance)
   * [corr](#corr), [covariance](#covariance), [covariancep](#covariancep)
-  * [values](#values), [unique](#unique)
+  * [array_agg](#array_agg), [array_agg_distinct](#array_agg_distinct)
 * [Window Functions](#window-functions)
   * [row_number](#row_number), [rank](#rank), [avg_rank](#avg_rank), [dense_rank](#dense_rank)
   * [percent_rank](#percent_rank), [cume_dist](#cume_dist), [ntile](#ntile)
@@ -628,8 +628,8 @@ Returns an array of a given *object*'s own enumerable property names. If the *ob
 
 * *object*: The input object or Map value.
 
-<hr/><a id="vals" href="#vals">#</a>
-<em>op</em>.<b>vals</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
+<hr/><a id="values" href="#values">#</a>
+<em>op</em>.<b>values</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
 
 Returns an array of a given *object*'s own enumerable property values. If the *object* is a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) or [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) instance, the `values` method will be invoked directly on the object, otherwise `Object.values` is used.
 
@@ -997,17 +997,17 @@ Aggregate function for the population covariance between two variables.
 * *field1*: The first data column or derived field.
 * *field2*: The second data column or derived field.
 
-<hr/><a id="values" href="#values">#</a>
-<em>op</em>.<b>values</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+<hr/><a id="array_agg" href="#array_agg">#</a>
+<em>op</em>.<b>array_agg</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
 Aggregate function to collect an array of values. The resulting aggregate is an array containing all observed values.
 
 * *field*: The data column or derived field.
 
-<hr/><a id="unique" href="#unique">#</a>
-<em>op</em>.<b>unique</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+<hr/><a id="array_agg_distinct" href="#array_agg_distinct">#</a>
+<em>op</em>.<b>array_agg_distinct</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
-Aggregate function to collect an array of unique values. The resulting aggregate is an array containing all unique values.
+Aggregate function to collect an array of distinct (unique) values. The resulting aggregate is an array containing all unique values.
 
 * *field*: The data column or derived field.
 

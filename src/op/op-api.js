@@ -3,7 +3,7 @@ import Op from './op';
 
 export const any = (field) => Op('any', field);
 export const count = () => Op('count');
-export const unique = (field) => Op('unique', field);
+export const array_agg_distinct = (field) => Op('array_agg_distinct', field);
 
 /**
  * All table expression operations including normal functions,
@@ -30,7 +30,7 @@ export default {
    * @param {*} field The data field.
    * @return {number} The list of values.
    */
-  values: (field) => Op('values', field),
+  array_agg: (field) => Op('array_agg', field),
 
   /**
    * Aggregate function to count the number of valid values.
@@ -56,11 +56,11 @@ export default {
   distinct: (field) => Op('distinct', field),
 
   /**
-   * Aggregate function to collect an array of unique values.
+   * Aggregate function to collect an array of distinct (unique) values.
    * @param {*} field The data field.
    * @return {Array} The array of unique values.
    */
-  unique,
+  array_agg_distinct,
 
   /**
    * Aggregate function to determine the mode (most frequent) value.
