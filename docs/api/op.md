@@ -628,12 +628,12 @@ Returns an array of a given *object*'s own enumerable property names.
 
 * *object*: The input object value.
 
-<hr/><a id="values" href="#values">#</a>
+<hr/><a id="values" href="#obj_values">#</a>
 <em>op</em>.<b>values</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
 
 Returns an array of a given *object*'s own enumerable property values.
 
-* *values*: The input object value.
+* *object*: The input object value.
 
 <hr/><a id="recode" href="#recode">#</a>
 <em>op</em>.<b>recode</b>(<i>value</i>, <i>map</i>[, <i>fallback</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/recode.js)
