@@ -185,6 +185,16 @@ export default class Table extends Transformable {
   }
 
   /**
+   * Get an array of values contained in a column. The resulting array
+   * respects any table filter or orderby criteria.
+   * @param {string} name The column name.
+   * @return {DataValue[]} The array of column values.
+   */
+  columnArray(name) { // eslint-disable-line no-unused-vars
+    error('Not implemented');
+  }
+
+  /**
    * Get the value for the given column and row.
    * @param {string} name The column name.
    * @param {number} row The row index.

@@ -11,8 +11,8 @@ title: Table \| Arquero API Reference
   * [comparator](#foo), [groups](#groups), [mask](#mask)
   * [params](#params)
 * [Table Columns](#columns)
-  * [column](#column), [columnAt](#columnAt), [columnIndex](#columnIndex)
-  * [columnName](#columnName), [columnNames](#columnNames)
+  * [column](#column), [columnAt](#columnAt), [columnArray](#columnArray)
+  * [columnIndex](#columnIndex), [columnName](#columnName), [columnNames](#columnNames)
   * [assign](#assign)
 * [Table Values](#values)
   * [data](#data), [get](#get), [getter](#getter)
@@ -188,7 +188,7 @@ table.params({ hi: 5 }).filter((d, $) => abs(d.value) < $.hi)
 <hr/><a id="column" href="#column">#</a>
 <em>table</em>.<b>column</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
 
-Get the column instance with the given name, or `undefined` if does not exist. The returned column object provides a lightweight abstraction over the column storage (such as a backing array), providing a *length* property and *get(row)* method.
+Get the column instance with the given *name*, or `undefined` if does not exist. The returned column object provides a lightweight abstraction over the column storage (such as a backing array), providing a *length* property and *get(row)* method.
 
 * *name*: The column name.
 
@@ -211,6 +211,26 @@ Get the column instance at the given index position, or `undefined` if does not 
 ```js
 const dt = aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 dt.columnAt(1).get(1) // 5
+```
+
+<hr/><a id="columnArray" href="#columnArray">#</a>
+<em>table</em>.<b>columnArray</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+
+Get an array of values contained in the column with the given *name*. The resulting array respects any table filter or orderby criteria.
+
+* *name*: The column name.
+
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .columnArray('b'); // [ 4, 5, 6 ]
+```
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .filter(d => d.a > 1)
+  .columnArray('b'); // [ 5, 6 ]
 ```
 
 <hr/><a id="columnIndex" href="#columnIndex">#</a>
