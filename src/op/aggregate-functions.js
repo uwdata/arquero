@@ -90,7 +90,7 @@ export default {
   },
 
   /** @type {AggregateDef} */
-  values: {
+  array_agg: {
     create: () => initOp({
       init: s => s.values = true,
       value: s => s.list.values().slice()
@@ -135,7 +135,7 @@ export default {
   },
 
   /** @type {AggregateDef} */
-  unique: {
+  array_agg_distinct: {
     create: () => initOp({
       value: s => s.distinct.values()
     }),
@@ -194,7 +194,7 @@ export default {
         : s.product /= v
     }),
     param: [1],
-    stream: ['values']
+    stream: ['array_agg']
   },
 
   /** @type {AggregateDef} */
@@ -271,7 +271,7 @@ export default {
       rem: (s, v) => { if (v <= s.min) s.min = NaN; }
     }),
     param: [1],
-    stream: ['values']
+    stream: ['array_agg']
   },
 
   /** @type {AggregateDef} */
@@ -283,7 +283,7 @@ export default {
       rem: (s, v) => { if (v >= s.max) s.max = NaN; }
     }),
     param: [1],
-    stream: ['values']
+    stream: ['array_agg']
   },
 
   /** @type {AggregateDef} */
@@ -292,7 +292,7 @@ export default {
       value: s => s.list.quantile(p)
     }),
     param: [1, 1],
-    req: ['values']
+    req: ['array_agg']
   },
 
   /** @type {AggregateDef} */
@@ -301,7 +301,7 @@ export default {
       value: s => s.list.quantile(0.5)
     }),
     param: [1],
-    req: ['values']
+    req: ['array_agg']
   },
 
   /** @type {AggregateDef} */

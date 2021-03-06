@@ -2,7 +2,7 @@ import _impute from '../engine/impute';
 import _rollup from '../engine/rollup';
 import parse from '../expression/parse';
 import parseValues from './util/parse';
-import { unique } from '../op/op-api';
+import { array_agg_distinct } from '../op/op-api';
 import error from '../util/error';
 import toString from '../util/to-string';
 
@@ -28,6 +28,6 @@ export default function(table, values, options = {}) {
 // map direct field reference to "unique" aggregate
 function preparse(map) {
   map.forEach((value, key) =>
-    value.field ? map.set(key, unique(value + '')) : 0
+    value.field ? map.set(key, array_agg_distinct(value + '')) : 0
   );
 }

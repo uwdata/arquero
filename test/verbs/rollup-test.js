@@ -94,8 +94,8 @@ tape('rollup supports bigint values', t => {
       min:  op.min('v'),
       max:  op.max('v'),
       med:  op.median('v'),
-      vals: op.values('v'),
-      uniq: op.unique('v')
+      vals: op.array_agg('v'),
+      uniq: op.array_agg_distinct('v')
     });
 
   t.deepEqual(

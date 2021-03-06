@@ -9,6 +9,6 @@ function array(iter) {
 export default {
   has:     (obj, key) => isMapOrSet(obj) ? obj.has(key) : has(obj, key),
   keys:    (obj) => isMap(obj) ? array(obj.keys()) : Object.keys(obj),
-  vals:    (obj) => isMapOrSet(obj) ? array(obj.values()) : Object.values(obj),
+  values:  (obj) => isMapOrSet(obj) ? array(obj.values()) : Object.values(obj),
   entries: (obj) => isMapOrSet(obj) ? array(obj.entries()) : Object.entries(obj)
 };
