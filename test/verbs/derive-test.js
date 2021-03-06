@@ -206,7 +206,7 @@ tape('derive supports streaming value windows', t => {
       index: () => op.row_number() - 1
     })
     .derive({
-      frame: rolling(op.values('index'), [-2, 0])
+      frame: rolling(op.array_agg('index'), [-2, 0])
     });
 
   tableEqual(t, dt,
@@ -241,8 +241,8 @@ tape('derive supports bigint values', t => {
       min:  op.min('v'),
       max:  op.max('v'),
       med:  op.median('v'),
-      vals: op.values('v'),
-      uniq: op.unique('v')
+      vals: op.array_agg('v'),
+      uniq: op.array_agg_distinct('v')
     }));
 
   t.deepEqual(

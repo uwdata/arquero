@@ -126,7 +126,7 @@ tape('unroll can invert a rollup', t => {
 
   const ut = table(data)
     .groupby('k')
-    .rollup({ x: d => op.values(d.x) })
+    .rollup({ x: d => op.array_agg(d.x) })
     .unroll('x');
 
   tableEqual(t, ut, data, 'unroll rollup data');
