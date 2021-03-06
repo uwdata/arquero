@@ -12,6 +12,7 @@ tape('dedupe de-duplicates table', t => {
     a: [1, 2, 1],
     b: [3, 4, 5]
   }, 'dedupe data');
+  t.equal(dt.isGrouped(), false, 'dedupe not grouped');
   t.end();
 });
 
@@ -25,5 +26,6 @@ tape('dedupe de-duplicates table based on keys', t => {
     a: [1, 2],
     b: [3, 4]
   }, 'dedupe data');
+  t.equal(dt.isGrouped(), false, 'dedupe not grouped');
   t.end();
 });
