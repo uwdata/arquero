@@ -119,6 +119,28 @@ tape('rollup supports bigint values', t => {
   t.end();
 });
 
+tape('rollup supports object_agg function', t => {
+  const data = {
+    g: [0, 0, 1, 1, 1],
+    k: ['a', 'b', 'a', 'b', 'a'],
+    v: [1, 2, 3, 4, 5]
+  };
+
+  const dt = table(data)
+    .groupby('g')
+    .rollup({ o: op.object_agg('k', 'v') });
+
+  t.deepEqual(
+    dt.columnArray('o'),
+    [
+      { a: 1, b: 2 },
+      { a: 5, b: 4 }
+    ],
+    'rollup data'
+  );
+  t.end();
+});
+
 tape('rollup supports histogram', t => {
   const data = { x: [1, 1, 3, 4, 5, 6, 7, 8, 9, 10] };
   const result = {

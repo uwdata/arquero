@@ -99,6 +99,15 @@ export default {
   },
 
   /** @type {AggregateDef} */
+  object_agg: {
+    create: () => initOp({
+      init:  s => s.values = true,
+      value: s => Object.fromEntries(s.list.values())
+    }),
+    param: [2]
+  },
+
+  /** @type {AggregateDef} */
   any: {
     create: () => initOp({
       add: (s, v) => { if (s.any == null) s.any = v; },
