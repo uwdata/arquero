@@ -33,6 +33,19 @@ Standard library of table expression functions. The [`op` object](./#op) exports
 
 ### <a id="array-functions">Array Functions</a>
 
+<hr/><a id="compact" href="#compact">#</a>
+<em>op</em>.<b>compact</b>(<i>array</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
+
+Returns a new compacted array with invalid values (`null`, `undefined`, `NaN`) removed.
+
+* *array*: The array to compact.
+
+*Examples*
+
+```js
+op.compact([1, null, 2, undefined, NaN, 3]) // [ 1, 2, 3 ]
+```
+
 <hr/><a id="concat" href="#concat">#</a>
 <em>op</em>.<b>concat</b>(<i>...values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
 
