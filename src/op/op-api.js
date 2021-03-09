@@ -28,9 +28,24 @@ export default {
   /**
    * Aggregate function to collect an array of values.
    * @param {*} field The data field.
-   * @return {number} The list of values.
+   * @return {Array} The list of values.
    */
   array_agg: (field) => Op('array_agg', field),
+
+  /**
+   * Aggregate function to collect an array of distinct (unique) values.
+   * @param {*} field The data field.
+   * @return {Array} The array of unique values.
+   */
+  array_agg_distinct,
+
+  /**
+   * Aggregate function to create an object given input key and value fields.
+   * @param {*} key The object key field.
+   * @param {*} value The object value field.
+   * @return {object} The array of unique values.
+   */
+  object_agg: (key, value) => Op('object_agg', [key, value]),
 
   /**
    * Aggregate function to count the number of valid values.
@@ -54,13 +69,6 @@ export default {
    * @return {number} The count of distinct values.
    */
   distinct: (field) => Op('distinct', field),
-
-  /**
-   * Aggregate function to collect an array of distinct (unique) values.
-   * @param {*} field The data field.
-   * @return {Array} The array of unique values.
-   */
-  array_agg_distinct,
 
   /**
    * Aggregate function to determine the mode (most frequent) value.

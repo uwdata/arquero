@@ -18,7 +18,7 @@ title: Operations \| Arquero API Reference
   * [mean](#mean), [average](#average), [mode](#mode), [median](#median), [quantile](#quantile)
   * [stdev](#stdev), [stdevp](#stdevp), [variance](#variance), [variancep](#variance)
   * [corr](#corr), [covariance](#covariance), [covariancep](#covariancep)
-  * [array_agg](#array_agg), [array_agg_distinct](#array_agg_distinct)
+  * [array_agg](#array_agg), [array_agg_distinct](#array_agg_distinct), [object_agg](#object_agg)
 * [Window Functions](#window-functions)
   * [row_number](#row_number), [rank](#rank), [avg_rank](#avg_rank), [dense_rank](#dense_rank)
   * [percent_rank](#percent_rank), [cume_dist](#cume_dist), [ntile](#ntile)
@@ -1000,16 +1000,45 @@ Aggregate function for the population covariance between two variables.
 <hr/><a id="array_agg" href="#array_agg">#</a>
 <em>op</em>.<b>array_agg</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
-Aggregate function to collect an array of values. The resulting aggregate is an array containing all observed values.
+Aggregate function to collect an array of *field* values. The resulting aggregate is an array (one per group) containing all observed values.
 
 * *field*: The data column or derived field.
+
+*Examples*
+
+```js
+aq.table({ v: [1, 2, 3, 1] })
+  .rollup({ a: op.array_agg('v') }) // a: [ [1, 2, 3, 1] ]
+```
 
 <hr/><a id="array_agg_distinct" href="#array_agg_distinct">#</a>
 <em>op</em>.<b>array_agg_distinct</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
-Aggregate function to collect an array of distinct (unique) values. The resulting aggregate is an array containing all unique values.
+Aggregate function to collect an array of distinct (unique) *field* values. The resulting aggregate is an array (one per group) containing all unique values.
 
 * *field*: The data column or derived field.
+
+*Examples*
+
+```js
+aq.table({ v: [1, 2, 3, 1] })
+  .rollup({ a: op.array_agg_distinct('v') }) // a: [ [1, 2, 3] ]
+```
+
+<hr/><a id="object_agg" href="#object_agg">#</a>
+<em>op</em>.<b>object_agg</b>(<i>key</i>, <i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+
+Aggregate function to create an object given input *key* and *value* fields. The resulting aggregate is an object (one per group) with keys and values defined by the input fields. For any keys that occur multiple times in a group, the most recently observed value is used.
+
+* *key*: The object key field, should be a string or string-coercible value.
+* *value* The object value field.
+
+*Examples*
+
+```js
+aq.table({ k: ['a', 'b', 'a'], v: [1, 2, 3] })
+  .rollup({ o: op.object_agg('k', 'v') }) // o: [ { a: 3, b: 2 } ]
+```
 
 <br/>
 

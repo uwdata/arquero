@@ -128,7 +128,7 @@ class Field1Reducer extends FieldReducer {
     --state.count;
     if (isValid(value)) {
       --state.valid;
-      if (state.list) state.list.rem(value);
+      if (state.list) state.list.rem();
       this._rem(state, value);
     }
   }
@@ -150,6 +150,7 @@ class Field2Reducer extends FieldReducer {
     ++state.count;
     if (isValid(value1) && isValid(value2)) {
       ++state.valid;
+      if (state.list) state.list.add([value1, value2]);
       this._add(state, value1, value2);
     }
   }
@@ -160,6 +161,7 @@ class Field2Reducer extends FieldReducer {
     --state.count;
     if (isValid(value1) && isValid(value2)) {
       --state.valid;
+      if (state.list) state.list.rem();
       this._rem(state, value1, value2);
     }
   }
