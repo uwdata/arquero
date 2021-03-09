@@ -1,12 +1,13 @@
+import NULL from '../../util/null';
 import isArrayType from '../../util/is-array-type';
 import isString from '../../util/is-string';
 import isValid from '../../util/is-valid';
-import NULL from '../../util/null';
 
 const Arr = (seq) => isArrayType(seq) ? seq : null;
 const Seq = (seq) => (isArrayType(seq) || isString(seq)) ? seq : null;
 
 export default {
+  compact:     (array) => Arr(array).filter(v => isValid(v)),
   concat:      (...values) => [].concat(...values),
   includes:    (seq, value, index) => Seq(seq).includes(value, index),
   indexof:     (seq, value) => Seq(seq).indexOf(value),
