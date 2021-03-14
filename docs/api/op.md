@@ -357,124 +357,124 @@ Truncate a *value* to a bin boundary. Useful for creating equal-width histograms
 <hr/><a id="random" href="#random">#</a>
 <em>op</em>.<b>random</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/util/random.js)
 
-Return a random floating point number between 0 (inclusive) and 1 (exclusive). By default uses `Math.random`. Use the [seed](./#seed) method to instead use a seeded random number generator.
+Return a random floating point number between 0 (inclusive) and 1 (exclusive). By default uses [Math.random](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random). Use the [seed](./#seed) method to instead use a seeded random number generator.
 
 <hr/><a id="is_nan" href="#is_nan">#</a>
 <em>op</em>.<b>is_nan</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Tests if the input *value* is not a number (`NaN`).
+Tests if the input *value* is not a number (`NaN`); equivalent to [Number.isNaN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isNaN).
 
 * *value*: The value to test.
 
 <hr/><a id="is_finite" href="#is_finite">#</a>
 <em>op</em>.<b>is_finite</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Tests if the input *value* is finite.
+Tests if the input *value* is finite; equivalent to [Number.isFinite](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isFinite).
 
 * *value*: The value to test.
 
 <hr/><a id="abs" href="#abs">#</a>
 <em>op</em>.<b>abs</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the absolute value of the input *value*.
+Returns the absolute value of the input *value*; equivalent to [Math.abs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/abs).
 
 * *value*: The input number value.
 
 <hr/><a id="cbrt" href="#cbrt">#</a>
 <em>op</em>.<b>cbrt</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the cube root value of the input *value*.
+Returns the cube root value of the input *value*; equivalent to [Math.cbrt](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cbrt).
 
 * *value*: The input number value.
 
 <hr/><a id="ceil" href="#ceil">#</a>
 <em>op</em>.<b>ceil</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the ceiling of the input *value*, the nearest integer equal to or greater than the input.
+Returns the ceiling of the input *value*, the nearest integer equal to or greater than the input; equivalent to [Math.ceil](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/ceil).
 
 * *value*: The input number value.
 
 <hr/><a id="clz32" href="#clz32">#</a>
 <em>op</em>.<b>clz32</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the number of leading zero bits in the 32-bit binary representation of a number *value*.
+Returns the number of leading zero bits in the 32-bit binary representation of a number *value*; equivalent to [Math.clz32](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/clz32).
 
 * *value*: The input number value.
 
 <hr/><a id="exp" href="#exp">#</a>
 <em>op</em>.<b>exp</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns *e<sup>value</sup>*, where *e* is Euler's number, the base of the natural logarithm.
+Returns *e<sup>value</sup>*, where *e* is Euler's number, the base of the natural logarithm; equivalent to [Math.exp](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/exp).
 
 * *value*: The input number value.
 
-<hr/><a id="exp" href="#expm1">#</a>
+<hr/><a id="expm1" href="#expm1">#</a>
 <em>op</em>.<b>expm1</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns *e<sup>value</sup> - 1*, where *e* is Euler's number, the base of the natural logarithm.
+Returns *e<sup>value</sup> - 1*, where *e* is Euler's number, the base of the natural logarithm; equivalent to [Math.expm1](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/expm1).
 
 * *value*: The input number value.
 
 <hr/><a id="floor" href="#floor">#</a>
 <em>op</em>.<b>floor</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the floor of the input *value*, the nearest integer equal to or less than the input.
+Returns the floor of the input *value*, the nearest integer equal to or less than the input; equivalent to [Math.floor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/floor).
 
 * *value*: The input number value.
 
 <hr/><a id="fround" href="#fround">#</a>
 <em>op</em>.<b>fround</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the nearest 32-bit single precision float representation of the input number *value*. Useful for translating between 64-bit `Number` values and values from a `Float32Array`.
+Returns the nearest 32-bit single precision float representation of the input number *value*; equivalent to [Math.fround](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/fround). Useful for translating between 64-bit `Number` values and values from a `Float32Array`.
 
 * *value*: The input number value.
+
+<hr/><a id="greatest" href="#greatest">#</a>
+<em>op</em>.<b>greatest</b>(<i>...values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the greatest (maximum) value among the input *values*; equivalent to [Math.max](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max). This is _not_ an aggregate function, see [op.max](#max) to compute a maximum value across multiple rows.
+
+* *values*: Zero or more input values.
+
+<hr/><a id="least" href="#least">#</a>
+<em>op</em>.<b>least</b>(<i>...values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
+
+Returns the least (minimum) value among the input *values*; equivalent to [Math.min](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/min). This is _not_ an aggregate function, see [op.min](#min) to compute a minimum value across multiple rows.
+
+* *values*: Zero or more input values.
 
 <hr/><a id="log" href="#log">#</a>
 <em>op</em>.<b>log</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the natural logarithm (base *e*) of a number *value*.
+Returns the natural logarithm (base *e*) of a number *value*; equivalent to [Math.log](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log).
 
 * *value*: The input number value.
 
 <hr/><a id="log10" href="#log10">#</a>
 <em>op</em>.<b>log10</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the base 10 logarithm of a number *value*.
+Returns the base 10 logarithm of a number *value*; equivalent to [Math.log10](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log10).
 
 * *value*: The input number value.
 
 <hr/><a id="log1p" href="#log1p">#</a>
 <em>op</em>.<b>log1p</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the natural logarithm (base *e*) of 1 + a number *value*.
+Returns the natural logarithm (base *e*) of 1 + a number *value*; equivalent to [Math.log1p](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log1p).
 
 * *value*: The input number value.
 
 <hr/><a id="log2" href="#log2">#</a>
 <em>op</em>.<b>log2</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the base 2 logarithm of a number *value*.
+Returns the base 2 logarithm of a number *value*; equivalent to [Math.log2](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log2).
 
 * *value*: The input number value.
-
-<hr/><a id="max" href="#max">#</a>
-<em>op</em>.<b>max</b>(<i>...values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
-
-Returns the largest (maximum) value among the input *values*.
-
-* *values*: Zero or more input values.
-
-<hr/><a id="min" href="#min">#</a>
-<em>op</em>.<b>min</b>(<i>...values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
-
-Returns the smallest (minimum) value among the input *values*.
-
-* *values*: Zero or more input values.
 
 <hr/><a id="pow" href="#pow">#</a>
 <em>op</em>.<b>pow</b>(<i>base</i>, <i>exponent</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the *base* raised to the *exponent* power, that is, *base*<sup>*exponent*</sup>.
+Returns the *base* raised to the *exponent* power, that is, *base*<sup>*exponent*</sup>; equivalent to [Math.pow](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/pow).
 
 * *base*: The base number value.
 * *exponent*: The exponent number value.
@@ -482,28 +482,28 @@ Returns the *base* raised to the *exponent* power, that is, *base*<sup>*exponent
 <hr/><a id="round" href="#round">#</a>
 <em>op</em>.<b>round</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the value of a number rounded to the nearest integer.
+Returns the value of a number rounded to the nearest integer; ; equivalent to [Math.round](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round).
 
 * *value*: The input number value.
 
 <hr/><a id="sign" href="#sign">#</a>
 <em>op</em>.<b>sign</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns either a positive or negative +/- 1, indicating the sign of the input *value*.
+Returns either a positive or negative +/- 1, indicating the sign of the input *value*; equivalent to [Math.sign](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sign).
 
 * *value*: The input number value.
 
 <hr/><a id="sqrt" href="#sqrt">#</a>
 <em>op</em>.<b>sqrt</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the square root of the input *value*.
+Returns the square root of the input *value*; equivalent to [Math.sqrt](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sqrt).
 
 * *value*: The input number value.
 
 <hr/><a id="trunc" href="#trunc">#</a>
 <em>op</em>.<b>trunc</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the integer part of a number by removing any fractional digits.
+Returns the integer part of a number by removing any fractional digits; equivalent to [Math.trunc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/trunc).
 
 * *value*: The input number value.
 
@@ -524,42 +524,42 @@ Converts the input *degrees* value to radians.
 <hr/><a id="acos" href="#acos">#</a>
 <em>op</em>.<b>acos</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the arc-cosine (in radians) of a number *value*.
+Returns the arc-cosine (in radians) of a number *value*; equivalent to [Math.acos](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/acos).
 
 * *value*: The input number value.
 
 <hr/><a id="acosh" href="#acosh">#</a>
 <em>op</em>.<b>acosh</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the hyperbolic arc-cosine of a number *value*.
+Returns the hyperbolic arc-cosine of a number *value*; equivalent to [Math.acosh](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/acosh).
 
 * *value*: The input number value.
 
 <hr/><a id="asin" href="#asin">#</a>
 <em>op</em>.<b>asin</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the arc-sine (in radians) of a number *value*.
+Returns the arc-sine (in radians) of a number *value*; equivalent to [Math.asin](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/asin).
 
 * *value*: The input number value.
 
 <hr/><a id="asinh" href="#asinh">#</a>
 <em>op</em>.<b>asinh</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the hyperbolic arc-sine of a number *value*.
+Returns the hyperbolic arc-sine of a number *value*; equivalent to [Math.asinh](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/asinh).
 
 * *value*: The input number value.
 
 <hr/><a id="atan" href="#atan">#</a>
 <em>op</em>.<b>atan</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the arc-tangent (in radians) of a number *value*.
+Returns the arc-tangent (in radians) of a number *value*; equivalent to [Math.atan](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan).
 
 * *value*: The input number value.
 
 <hr/><a id="atan2" href="#atan2">#</a>
 <em>op</em>.<b>atan2</b>(<i>y</i>, <i>x</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the angle in the plane (in radians) between the positive x-axis and the ray from (0, 0) to the point (*x*, *y*).
+Returns the angle in the plane (in radians) between the positive x-axis and the ray from (0, 0) to the point (*x*, *y*); ; equivalent to [Math.atan2](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2).
 
 * *y*: The y coordinate of the point.
 * *x*: The x coordinate of the point.
@@ -567,49 +567,49 @@ Returns the angle in the plane (in radians) between the positive x-axis and the 
 <hr/><a id="atanh" href="#atanh">#</a>
 <em>op</em>.<b>atanh</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the hyperbolic arc-tangent of a number *value*.
+Returns the hyperbolic arc-tangent of a number *value*; equivalent to [Math.atanh](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atanh).
 
 * *value*: The input number value.
 
 <hr/><a id="cos" href="#cos">#</a>
 <em>op</em>.<b>cos</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the cosine (in radians) of a number *value*.
+Returns the cosine (in radians) of a number *value*; equivalent to [Math.cos](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cos).
 
 * *value*: The input number value.
 
 <hr/><a id="cosh" href="#cosh">#</a>
 <em>op</em>.<b>cosh</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the hyperbolic cosine of a number *value*.
+Returns the hyperbolic cosine of a number *value*; equivalent to [Math.cosh](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cosh).
 
 * *value*: The input number value.
 
 <hr/><a id="sin" href="#sin">#</a>
 <em>op</em>.<b>sin</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the sine (in radians) of a number *value*.
+Returns the sine (in radians) of a number *value*; equivalent to [Math.sin](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sin).
 
 * *value*: The input number value.
 
 <hr/><a id="sinh" href="#sinh">#</a>
 <em>op</em>.<b>sinh</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the hyperbolic sine of a number *value*.
+Returns the hyperbolic sine of a number *value*; equivalent to [Math.sinh](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sinh).
 
 * *value*: The input number value.
 
 <hr/><a id="tan" href="#tan">#</a>
 <em>op</em>.<b>tan</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the tangent (in radians) of a number *value*.
+Returns the tangent (in radians) of a number *value*; equivalent to [Math.tan](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/tan).
 
 * *value*: The input number value.
 
 <hr/><a id="tanh" href="#tanh">#</a>
 <em>op</em>.<b>tanh</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Returns the hyperbolic tangent of a number *value*.
+Returns the hyperbolic tangent of a number *value*; equivalent to [Math.tanh](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/tanh).
 
 * *value*: The input number value.
 
@@ -899,14 +899,14 @@ Aggregate function to count the number of invalid values. Invalid values are `nu
 <hr/><a id="max" href="#max">#</a>
 <em>op</em>.<b>max</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
-Aggregate function for the maximum value.
+Aggregate function for the maximum value. For a non-aggregate version, see [op.greatest](#greatest).
 
 * *field*: The data column or derived field.
 
 <hr/><a id="min" href="#min">#</a>
 <em>op</em>.<b>min</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
-Aggregate function for the minimum value.
+Aggregate function for the minimum value. For a non-aggregate version, see [op.least](#least).
 
 * *field*: The data column or derived field.
 
