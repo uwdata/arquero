@@ -90,6 +90,28 @@ tape('parse parses expressions with nested operator object', t => {
   t.end();
 });
 
+tape('parse parses expressions with Math object', t => {
+  t.equal(
+    parse({ f: d => Math.sqrt(d.x) }).exprs[0] + '',
+    '(row,data,op)=>fn.sqrt(data.x.get(row))',
+    'parse Math.sqrt'
+  );
+
+  t.equal(
+    parse({ f: d => Math.max(d.x) }).exprs[0] + '',
+    '(row,data,op)=>fn.greatest(data.x.get(row))',
+    'parse Math.max, rewrite as greatest'
+  );
+
+  t.equal(
+    parse({ f: d => Math.min(d.x) }).exprs[0] + '',
+    '(row,data,op)=>fn.least(data.x.get(row))',
+    'parse Math.min, rewrite as least'
+  );
+
+  t.end();
+});
+
 tape('parse parses expressions with constant values', t => {
   function constant(string, result) {
     const { exprs } = parse({ f: `d => ${string}` });

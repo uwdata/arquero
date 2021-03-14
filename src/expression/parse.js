@@ -150,9 +150,17 @@ const fieldRef = expr => {
   return !(expr.table || 0) ? `d=>d[${col}]` : `(a,b)=>b[${col}]`;
 };
 
+const isMath = node =>
+  is(Identifier, node.object) && node.object.name === 'Math';
+
+const rewriteMath = name => name === 'max' ? 'greatest'
+  : name === 'min' ? 'least'
+  : name;
+
 const functionName = (ctx, node) => is(Identifier, node) ? node.name
-  : is(MemberExpression, node) ? node.property.name
-  : null;
+  : !is(MemberExpression, node) ? null
+  : isMath(node) ? rewriteMath(node.property.name)
+  : node.property.name;
 
 function handleIdentifier(node, ctx, parent) {
   const { name } = node;
@@ -292,7 +300,7 @@ const visitors = {
     const { name } = object;
 
     // allow use of Math prefix to access constant values
-    if (name === 'Math' && is(Identifier, property)
+    if (isMath(node) && is(Identifier, property)
         && has(constants, property.name)) {
       updateConstantNode(node, property.name);
       return;
