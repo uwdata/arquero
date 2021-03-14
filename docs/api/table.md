@@ -190,6 +190,8 @@ table.params({ hi: 5 }).filter((d, $) => abs(d.value) < $.hi)
 
 Get the column instance with the given *name*, or `undefined` if does not exist. The returned column object provides a lightweight abstraction over the column storage (such as a backing array), providing a *length* property and *get(row)* method.
 
+A column instance may be used across multiple tables and so does _not_ track a table's filter or orderby critera. To access filtered or ordered values, use the table [get](#get), [getter](#getter), or [columnArray](#columnArray) methods.
+
 * *name*: The column name.
 
 *Examples*
@@ -216,7 +218,7 @@ dt.columnAt(1).get(1) // 5
 <hr/><a id="columnArray" href="#columnArray">#</a>
 <em>table</em>.<b>columnArray</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
 
-Get an array of values contained in the column with the given *name*. The resulting array respects any table filter or orderby criteria.
+Get an array of values contained in the column with the given *name*. Unlike direct access through the table [column](#column) method, the array returned by this method respects any table filter or orderby criteria.
 
 * *name*: The column name.
 
