@@ -362,9 +362,37 @@ Return a random floating point number between 0 (inclusive) and 1 (exclusive). B
 <hr/><a id="is_nan" href="#is_nan">#</a>
 <em>op</em>.<b>is_nan</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
 
-Tests if the input *value* is not a number (`NaN`); equivalent to [Number.isNaN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isNaN).
+Tests if the input *value* is not a number (`NaN`); equivalent to [Number.isNaN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isNaN). The method will return `true` only if the input *value* is an actual numeric `NaN` value; it will return `false` for other types (booleans, strings, _etc_.).
 
 * *value*: The value to test.
+
+*Examples*
+
+```js
+op.is_nan(NaN) // true
+op.is_nan(0/0) // true
+op.is_nan(op.sqrt(-1)) // true
+```
+
+```js
+op.is_nan('foo') // false
+op.is_nan(+'foo') // true, coerce to number first
+```
+
+```js
+op.is_nan(true) // false
+op.is_nan(+true) // false, booleans coerce to numbers
+```
+
+```js
+op.is_nan(undefined) // false
+op.is_nan(+undefined) // true, coerce to number first
+```
+
+```js
+op.is_nan(null) // false
+op.is_nan(+null) // false, null coerces to zero
+```
 
 <hr/><a id="is_finite" href="#is_finite">#</a>
 <em>op</em>.<b>is_finite</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/math.js)
