@@ -11,6 +11,7 @@ title: Expressions \| Arquero API Reference
   * [Aggregate &amp; Window Shorthands](#aggregate-window-shorthands)
 * [Two-Table Expressions](#two-table)
   * [Column Shorthands](#two-table-column-shorthands)
+* [Why are only `op` functions supported?](#why-op-functions-only)
 
 <br/>
 
@@ -45,7 +46,7 @@ Examples 1 through 5 are function definitions, while examples 6 and 7 are string
 
 ### <a id="limitations">Limitations</a>
 
-A number of JavaScript features are not allowed in table expressions, including internal function definitions, variable updates, and `for` loops. The *only* function calls allowed are those provided by the `op` object.
+A number of JavaScript features are not allowed in table expressions, including internal function definitions, variable updates, and `for` loops. The *only* function calls allowed are those provided by the `op` object. ([Why? Read below for more...](#why-op-functions-only))
 
 Most notably, **closures are not supported**. As a result, table expressions can not access variables defined in the enclosing scope. To define expression variables, use the [table `params` method](table#params) method to bind a parameter value to a table context. Parameters can then be accessed by including a second argument to a table expression; all bound parameters are available as properties of that argument (default name `$`):
 
@@ -123,3 +124,23 @@ table.join(other, ['x', 'u'], {
   v: (a, b) => b.v
 })
 ```
+
+## <a id="why-op-functions-only"></a>Why are only `op` functions supported?
+
+Any function that is callable within an Arquero table expression must be defined on the `op` object, either as a built-in function or added via the [extensibility API](extensibility). Why? Why can't one just use a function directly?
+
+As [described earlier](#table), Arquero table expressions can look like normal JavaScript functions, but are treated specially: their source code is parsed and new custom functions are generated to process data. This process prevents the use of [closures](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures), such as referencing functions or values defined externally to the expression.
+
+But why do we do this? Here are a few reasons:
+
+* **Performance**. After parsing an expression, Arquero performs code generation, often creating more performant code in the process. This level of indirection also allows us to generate optimized expressions for certain inputs, such as Apache Arrow data.
+
+* **Flexibility**. Providing our own parsing also allows us to introduce new kinds of backing data without changing the API. For example, we could add support for different underlying data formats and storage layouts.
+
+* **Portability**. While a common use case of Arquero is to query data directly in the same JavaScript runtime, Arquero verbs can also be [*serialized as queries*](./#queries): one can specify verbs in one environment, but then send them to another environment for processing. For example, the [arquero-worker](https://github.com/uwdata/arquero-worker) package sends queries to a worker thread, while the [arquero-sql](https://github.com/chanwutk/arquero-sql) package sends them to a backing database server. As custom methods may not be defined in those environments, Arquero is designed to make this translation between environments possible and easier to reason about.
+
+* **Safety**. Arquero table expressions do not let you call methods defined on input data values. For example, to trim a string you must call `op.trim(str)`, not `str.trim()`. Again, this aids portability: otherwise unsupported methods defined on input data elements might "sneak" in to the processing. Invoking arbitrary methods may also lead to security vulnerabilities when allowing untrusted third parties to submit queries into a system.
+
+* **Discoverability**. Defining all functions on a single object provides a single catalog of all available operations. In most IDEs, you can simply type `op.` (and perhaps hit the tab character) to the see a list of all available functions and benefit from auto-complete!
+
+Of course, one might wish to make different trade-offs. Arquero is designed to support common use cases while also being applicable to more complex production setups. This goal comes with the cost of more rigid management of functions. That said, Arquero can be extended with custom variables, functions, and even new table methods or verbs! As starting points, see the [params](table#params), [addFunction](extensibility#addFunction), and [addTableMethod](extensibility#addTableMethod) functions to introduce external variables, register new `op` functions, or extend tables with new methods.
