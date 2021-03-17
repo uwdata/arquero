@@ -18,7 +18,7 @@ export function makeMaps(obj) {
         if (isArray(obj[key])) {
             output.push([key, obj[key]]);
         } else {
-            output.push(new Map([[key, makeMap(obj[key])]]));
+            output.push(new Map([[key, makeMaps(obj[key])]]));
         }
     }
     if (isArray(output[0])) {
