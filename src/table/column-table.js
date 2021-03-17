@@ -12,6 +12,7 @@ import arrayType from '../util/array-type';
 import error from '../util/error';
 import mapObject from '../util/map-object';
 import rowObjectBuilder from '../util/row-object-builder';
+import { makeEntries, makeMaps } from "../util/tree-formats";
 
 /**
  * Class representing a table backed by a named set of columns.
@@ -165,10 +166,48 @@ export default class ColumnTable extends Table {
   objects(options = {}) {
     const create = rowObjectBuilder(this);
     const tuples = [];
+    const root = {};
+    const g = this._group;
+    const { preserveGroups } = options;
+    if (preserveGroups && !["entries", "objects", "maps"].includes(preserveGroups)) {
+      error("Invalid key: preserveGroups takes 'maps', 'entries', or 'objects'.");
+    }
+    if (preserveGroups && !g) {
+      error("Cannot group output when table is ungrouped.");
+    }
     this.scan(row => {
-      tuples.push(create(row));
+      const r = create(row);
+      if (preserveGroups) {
+        let node = root;
+        const { get } = g;
+        for (const [i,f] of Object.entries(get)) {
+          const key = f(row);
+          if (i < get.length - 1) {
+            if (!node[key]) {
+              node[key] = {};
+            }
+            node = node[key];
+          } else {
+            if (!node[key]) {
+              node[key] = [];
+            }
+            node[key].push(r);
+          }
+        }
+      } else {
+        tuples.push(r);
+      }
     }, true, options.limit, options.offset);
-    return tuples;
+    if (!preserveGroups) {
+      return tuples;
+    } else {
+      if (preserveGroups === "objects")
+        return root;
+      if (preserveGroups === "entries")
+        return makeEntries(root);
+      if (preserveGroups === "maps")
+        return makeMaps(root);
+    }
   }
 
   /**
