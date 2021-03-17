@@ -1,4 +1,4 @@
-import isArray from "./is-array";
+import isArray from './is-array';
 
 export function makeEntries(obj) {
     const output = [];
