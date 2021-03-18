@@ -132,10 +132,10 @@ export default class ColumnTable extends Table {
   /**
    * Get the value for the given column and row.
    * @param {string} name The column name.
-   * @param {number} row The row index.
+   * @param {number} [row=0] The row index, defaults to zero if not specified.
    * @return {import('./table').DataValue} The table value at (column, row).
    */
-  get(name, row) {
+  get(name, row = 0) {
     const column = this.column(name);
     return this.isFiltered() || this.isOrdered()
       ? column.get(this.indices()[row])

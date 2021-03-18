@@ -197,10 +197,10 @@ export default class Table extends Transformable {
   /**
    * Get the value for the given column and row.
    * @param {string} name The column name.
-   * @param {number} row The row index.
+   * @param {number} [row=0] The row index, defaults to zero if not specified.
    * @return {DataValue} The data value at (column, row).
    */
-  get(name, row) { // eslint-disable-line no-unused-vars
+  get(name, row = 0) { // eslint-disable-line no-unused-vars
     error('Not implemented');
   }
 
