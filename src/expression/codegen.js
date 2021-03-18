@@ -79,7 +79,8 @@ const visitors = {
     return '({' + list(node.properties, opt) + '})';
   },
   Property: (node, opt) => {
-    return visit(node.key, opt) + ':' + visit(node.value, opt);
+    const key = visit(node.key, opt);
+    return (node.computed ? `[${key}]` : key ) + ':' + visit(node.value, opt);
   },
 
   ArrowFunctionExpression: func,
