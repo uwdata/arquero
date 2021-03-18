@@ -271,6 +271,16 @@ tape('parse throws on invalid op parameter expressions', t => {
   t.end();
 });
 
+tape('parse parses computed object properties', t => {
+  const { exprs } = parse({ f: d => ({ [d.x]: d.y }) });
+  t.equal(
+    exprs[0] + '',
+    '(row,data,op)=>({[data.x.get(row)]:data.y.get(row)})',
+    'parsed computed object property'
+  );
+  t.end();
+});
+
 tape('parse parses template literals', t => {
   const { exprs } = parse({ f: d => `${d.x} + ${d.y}` });
   t.equal(
