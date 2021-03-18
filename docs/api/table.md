@@ -305,12 +305,12 @@ t1.assign(t2); // { a: [1, 2], b: [7, 8], c: [5, 6] }
 Returns the internal table storage data structure.
 
 <hr/><a id="get" href="#get">#</a>
-<em>table</em>.<b>get</b>(<i>name</i>, <i>row</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+<em>table</em>.<b>get</b>(<i>name</i>[, <i>row</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
 
 Get the value for the given column and row. Row indices are relative to any filtering and ordering criteria, not the internal data layout.
 
 * *name*: The column name.
-* *row*: The row index, relative to any filtering or ordering criteria.
+* *row*: The row index (default `0`), relative to any filtering or ordering criteria.
 
 *Examples*
 
