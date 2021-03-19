@@ -20,7 +20,7 @@ export default function(oplist, stream) {
     : n === 1 ? Field1Reducer
     : n === 2 ? Field2Reducer
     : error('Unsupported field count: ' + n);
-  return new cls(fields, ops, output);
+  return new cls(fields, ops, output, stream);
 }
 
 function expand(oplist, stream) {
@@ -37,7 +37,7 @@ function expand(oplist, stream) {
     const op = def.create(...params);
 
     // add required dependencies
-    if (stream && def.stream) {
+    if (stream < 0 && def.stream) {
       def.stream.forEach(name => add(name, []));
     }
     if (def.req) {
@@ -61,14 +61,15 @@ function expand(oplist, stream) {
 }
 
 class FieldReducer extends Reducer {
-  constructor(fields, ops, outputs) {
+  constructor(fields, ops, outputs, stream) {
     super(outputs);
     this._op = ops;
     this._fields = fields;
+    this._stream = !!stream;
   }
 
   init() {
-    const state = { count: 0, valid: 0 };
+    const state = { count: 0, valid: 0, stream: this._stream };
     this._op.forEach(op => op.init(state));
 
     // value list requested
@@ -104,8 +105,8 @@ class FieldReducer extends Reducer {
 }
 
 class Field1Reducer extends FieldReducer {
-  constructor(fields, ops, outputs) {
-    super(fields, ops, outputs);
+  constructor(fields, ops, outputs, stream) {
+    super(fields, ops, outputs, stream);
 
     // unroll op invocations for performance
     const args = ['state', 'v1', 'v2'];
@@ -135,8 +136,8 @@ class Field1Reducer extends FieldReducer {
 }
 
 class Field2Reducer extends FieldReducer {
-  constructor(fields, ops, outputs) {
-    super(fields, ops, outputs);
+  constructor(fields, ops, outputs, stream) {
+    super(fields, ops, outputs, stream);
 
     // unroll op invocations for performance
     const args = ['state', 'v1', 'v2'];
