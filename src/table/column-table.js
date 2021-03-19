@@ -12,7 +12,7 @@ import arrayType from '../util/array-type';
 import error from '../util/error';
 import mapObject from '../util/map-object';
 import rowObjectBuilder from '../util/row-object-builder';
-import { makeEntries, makeMaps } from '../util/tree-formats';
+import op from "../op/op-api";
 
 /**
  * Class representing a table backed by a named set of columns.
@@ -163,53 +163,41 @@ export default class ColumnTable extends Table {
    * @param {ObjectsOptions} [options] The options for row object generation.
    * @return {object[]} An array of row objects.
    */
-  objects(options = {}) {
+   objects(options = {}) {
     const create = rowObjectBuilder(this);
-    const tuples = [];
-    const root = {};
-    const g = this._group;
     const { preserveGroups } = options;
-    if (preserveGroups && !['entries', 'objects', 'maps'].includes(preserveGroups)) {
-      error('Invalid key: preserveGroups takes "maps", "entries", or "objects".');
-    }
-    if (preserveGroups && !g) {
-      error('Cannot group output when table is ungrouped.');
-    }
-    this.scan(row => {
-      const r = create(row);
-      if (preserveGroups) {
-        let node = root;
-        const { get } = g;
-        for (const [i,f] of Object.entries(get)) {
-          const key = f(row);
-          if (i < get.length - 1) {
-            if (!node[key]) {
-              node[key] = {};
-            }
-            node = node[key];
-          } else {
-            if (!node[key]) {
-              node[key] = [];
-            }
-            node[key].push(r);
-          }
-        }
-      } else {
-        tuples.push(r);
-      }
-    }, true, options.limit, options.offset);
-    if (!preserveGroups) {
+    if (!this.isGrouped() || !preserveGroups) {
+      const tuples = [];
+
+      this.scan(row => {
+          tuples.push(create(row));
+      }, true, options.limit, options.offset);
+
       return tuples;
     } else {
-      if (preserveGroups === 'objects')
-        return root;
-      if (preserveGroups === 'entries')
-        return makeEntries(root);
-      if (preserveGroups === 'maps')
-        return makeMaps(root);
+      const outputMethod = preserveGroups === "map" ?
+        op.map_agg : preserveGroups === "entries" ?
+        op.entries_agg : preserveGroups === "objects" ?
+        op.object_agg : null;
+
+      const { names } = this.groups();
+      const val = 'val'; // TODO: check for name conflicts
+
+      // TODO: get rid of reify for filtering
+      let ot = this.reify().create({
+        data: {
+          [val]: this.objects({ preserveGroups: false })
+        }
+      }).rollup({ [val]: op.array_agg(val)});
+
+      for (let i = names.length; --i >= 0;) {
+        ot = ot.groupby(names.slice(0, i))
+        .rollup({ [val]: outputMethod(names[i], val) });;
+      }
+
+      return ot.get(val, 0);
     }
   }
-
   /**
    * Returns an iterator over objects representing table rows.
    * @return {Iterator<object>} An iterator over row objects.
