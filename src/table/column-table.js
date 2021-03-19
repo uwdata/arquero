@@ -8,6 +8,7 @@ import toCSV from '../format/to-csv';
 import toHTML from '../format/to-html';
 import toJSON from '../format/to-json';
 import toMarkdown from '../format/to-markdown';
+import resolve, { all } from '../helpers/selection';
 import arrayType from '../util/array-type';
 import error from '../util/error';
 import mapObject from '../util/map-object';
@@ -163,7 +164,8 @@ export default class ColumnTable extends Table {
    * @return {object[]} An array of row objects.
    */
   objects(options = {}) {
-    const create = rowObjectBuilder(this);
+    const names = resolve(this, options.columns || all());
+    const create = rowObjectBuilder(this, names);
     const tuples = [];
     this.scan(row => {
       tuples.push(create(row));

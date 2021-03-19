@@ -388,6 +388,7 @@ Returns an array of objects representing table rows. A new set of objects will b
 * *options*: Options for row generation:
   * *limit*: The maximum number of objects to create (default `Infinity`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
+  * *columns*: An ordered set of columns to include. The input may consist of: column name strings, column integer indices, objects with current column names as keys and new column names as values (for renaming), or a selection helper function such as [all](#all), [not](#not), or [range](#range)).
 
 *Examples*
 
@@ -422,6 +423,7 @@ Print the contents of this table using the `console.table()` method.
 * *options*: Options for printing. If number-valued, specifies the row limit (equivalent to `{ limit: value }`).
   * *limit*: The maximum number of rows to print (default `10`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
+  * *columns*: An ordered set of columns to print. The input may consist of: column name strings, column integer indices, objects with current column names as keys and new column names as values (for renaming), or a selection helper function such as [all](#all), [not](#not), or [range](#range)).
 
 *Examples*
 

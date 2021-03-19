@@ -1,5 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
+import { not } from '../../src/helpers/selection';
 import BitSet from '../../src/table/bit-set';
 import ColumnTable from '../../src/table/column-table';
 
@@ -138,6 +139,18 @@ tape('ColumnTable supports object output', t => {
     dt.objects({ limit: 3 }),
     output.slice(0, 3),
     'object data with limit'
+  );
+
+  t.deepEqual(
+    dt.objects({ columns: not('v') }),
+    output.map(d => ({ u: d.u })),
+    'object data with column selection'
+  );
+
+  t.deepEqual(
+    dt.objects({ columns: { u: 'a', v: 'b'} }),
+    output.map(d => ({ a: d.u, b: d.v })),
+    'object data with renaming column selection'
   );
 
   t.end();
