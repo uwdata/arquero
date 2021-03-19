@@ -196,7 +196,7 @@ export default class ColumnTable extends Table {
 
       for (let i = names.length; --i >= 0;) {
         ot = ot.groupby(names.slice(0, i))
-        .rollup({ [val]: outputMethod(names[i], val) });;
+        .rollup({ [val]: outputMethod(names[i], val) });
       }
 
       return ot.get(val, 0);
