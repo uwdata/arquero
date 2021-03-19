@@ -108,6 +108,24 @@ export default {
   },
 
   /** @type {AggregateDef} */
+  map_agg: {
+    create: () => initOp({
+      init:  s => s.values = true,
+      value: s => new Map(s.list.values())
+    }),
+    param: [2]
+  },
+
+  /** @type {AggregateDef} */
+  entries_agg: {
+    create: () => initOp({
+      init:  s => s.values = true,
+      value: s => s.list.values(s.stream)
+    }),
+    param: [2]
+  },
+
+  /** @type {AggregateDef} */
   any: {
     create: () => initOp({
       add: (s, v) => { if (s.any == null) s.any = v; },

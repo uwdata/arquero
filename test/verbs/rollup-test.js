@@ -119,25 +119,45 @@ tape('rollup supports bigint values', t => {
   t.end();
 });
 
-tape('rollup supports object_agg function', t => {
+tape('rollup supports object_agg functions', t => {
   const data = {
     g: [0, 0, 1, 1, 1],
     k: ['a', 'b', 'a', 'b', 'a'],
     v: [1, 2, 3, 4, 5]
   };
 
-  const dt = table(data)
-    .groupby('g')
-    .rollup({ o: op.object_agg('k', 'v') });
+  const dt = table(data).groupby('g');
 
   t.deepEqual(
-    dt.columnArray('o'),
+    dt.rollup({ o: op.object_agg('k', 'v') })
+      .columnArray('o'),
     [
       { a: 1, b: 2 },
       { a: 5, b: 4 }
     ],
-    'rollup data'
+    'rollup data - object_agg'
   );
+
+  t.deepEqual(
+    dt.rollup({ o: op.entries_agg('k', 'v') })
+      .columnArray('o'),
+    [
+      [['a', 1], ['b', 2]],
+      [['a', 3], ['b', 4], ['a', 5]]
+    ],
+    'rollup data - entries_agg'
+  );
+
+  t.deepEqual(
+    dt.rollup({ o: op.map_agg('k', 'v') })
+      .columnArray('o'),
+    [
+      new Map([['a', 1], ['b', 2]]),
+      new Map([['a', 5], ['b', 4]])
+    ],
+    'rollup data - map_agg'
+  );
+
   t.end();
 });
 
