@@ -12,7 +12,7 @@ import arrayType from '../util/array-type';
 import error from '../util/error';
 import mapObject from '../util/map-object';
 import rowObjectBuilder from '../util/row-object-builder';
-import op from "../op/op-api";
+import op from '../op/op-api';
 
 /**
  * Class representing a table backed by a named set of columns.
