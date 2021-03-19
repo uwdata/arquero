@@ -93,7 +93,7 @@ export default {
   array_agg: {
     create: () => initOp({
       init: s => s.values = true,
-      value: s => s.list.values().slice()
+      value: s => s.list.values(s.stream)
     }),
     param: [1]
   },
