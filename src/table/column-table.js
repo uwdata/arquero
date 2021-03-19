@@ -175,10 +175,14 @@ export default class ColumnTable extends Table {
 
       return tuples;
     } else {
-      const outputMethod = preserveGroups === "map" ?
-        op.map_agg : preserveGroups === "entries" ?
-        op.entries_agg : preserveGroups === "objects" ?
+      const outputMethod = preserveGroups === 'map' ?
+        op.map_agg : preserveGroups === 'entries' ?
+        op.entries_agg : preserveGroups === 'object' ?
         op.object_agg : null;
+      
+      if (!outputMethod) {
+        error('preserveGroups must contain "entries", "map", or "object".');
+      }
 
       const { names } = this.groups();
       const val = 'val'; // TODO: check for name conflicts
