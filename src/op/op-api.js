@@ -43,9 +43,26 @@ export default {
    * Aggregate function to create an object given input key and value fields.
    * @param {*} key The object key field.
    * @param {*} value The object value field.
-   * @return {object} The array of unique values.
+   * @return {object} The object of key-value pairs.
    */
   object_agg: (key, value) => Op('object_agg', [key, value]),
+
+  /**
+   * Aggregate function to create a Map given input key and value fields.
+   * @param {*} key The object key field.
+   * @param {*} value The object value field.
+   * @return {Map} The Map of key-value pairs.
+   */
+  map_agg: (key, value) => Op('map_agg', [key, value]),
+
+  /**
+   * Aggregate function to create an array in the style of Object.entries()
+   * given input key and value fields.
+   * @param {*} key The object key field.
+   * @param {*} value The object value field.
+   * @return {Array} The array of [key, value] arrays.
+   */
+  entries_agg: (key, value) => Op('entries_agg', [key, value]),
 
   /**
    * Aggregate function to count the number of valid values.
