@@ -72,7 +72,7 @@ function windowStates(ops, data) {
 
   return Object.values(map).map(_ => windowState(
     data, _.frame, _.peers, _.winOps,
-    reducers(_.aggOps, _.frame[0] != null)
+    reducers(_.aggOps, _.frame[0] != null ? -1 : 1)
   ));
 }
 
