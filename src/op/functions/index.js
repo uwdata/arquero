@@ -2,6 +2,7 @@ import array from './array';
 import bin from './bin';
 import date from './date';
 import equal from './equal';
+import json from './json';
 import math from './math';
 import object from './object';
 import recode from './recode';
@@ -15,6 +16,7 @@ export default {
   sequence,
   ...array,
   ...date,
+  ...json,
   ...math,
   ...object,
   ...string

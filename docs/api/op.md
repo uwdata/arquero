@@ -8,6 +8,7 @@ title: Operations \| Arquero API Reference
 * [Standard Functions](#functions)
   * [Array Functions](#array-functions)
   * [Date Functions](#date-functions)
+  * [JSON Functions](#json-functions)
   * [Math Functions](#math-functions)
   * [Object Functions](#object-functions)
   * [String Functions](#string-functions)
@@ -338,6 +339,26 @@ Returns an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string f
 
 * *date*: The input Date or timestamp value.
 * *shorten*: A boolean flag (default `false`) indicating if the formatted string should be shortened if possible. For example, the UTC date `2001-01-01` will shorten from `"2001-01-01T00:00:00.000Z"` to `"2001-01-01"`.
+
+<br>
+
+### <a id="json-functions">JSON Functions</a>
+
+Functions for parsing and generating strings formatted using [JavaScript Object Notation (JSON)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON).
+
+<hr/><a id="parse_json" href="#parse_json">#</a>
+<em>op</em>.<b>parse_json</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/json.js)
+
+Parses a string *value* in [JSON](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON) format, constructing the JavaScript value or object described by the string.
+
+* *value*: The input string value.
+
+<hr/><a id="to_json" href="#to_json">#</a>
+<em>op</em>.<b>to_json</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/json.js)
+
+Converts a JavaScript object or value to a [JSON](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON) string.
+
+* *value*: The value to convert to a JSON string.
 
 <br>
 
