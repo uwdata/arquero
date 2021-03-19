@@ -525,4 +525,9 @@ export default class Table extends Transformable {
  * @typedef {object} ObjectsOptions
  * @property {number} [limit=Infinity] The maximum number of objects to create.
  * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
+ * @property {import('../table/transformable').Select} columns
+ *  An ordered set of columns to include. The input may consist of column name
+ *  strings, column integer indices, objects with current column names as keys
+ *  and new column names as values (for renaming), or selection helper
+ *  functions such as {@link all}, {@link not}, or {@link range}.
  */

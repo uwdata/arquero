@@ -19,11 +19,13 @@ Object.assign(ColumnTable.prototype, verbs);
  * @example table({ colA: ['a', 'b', 'c'], colB: [3, 4, 5] })
  */
 export function table(columns, names) {
-  const cols = entries(columns);
-  return new ColumnTable(
-    cols.reduce((obj, [k, v]) => (obj[k] = v, obj), {}),
-    names || cols.map(c => c[0])
-  );
+  const data = {};
+  const keys = [];
+  for (const [key, value] of entries(columns)) {
+    data[key] = value;
+    keys.push(key);
+  }
+  return new ColumnTable(data, names || keys);
 }
 
 /**
