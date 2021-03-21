@@ -179,8 +179,8 @@ tape('ColumnTable supports object output', t => {
       ]],
       ['b',[
         { u: 'b', v: 3},
-        { u: 'b', v: 5},
-      ]],
+        { u: 'b', v: 5}
+      ]]
     ],
     'grouped entries output'
   );
@@ -188,15 +188,15 @@ tape('ColumnTable supports object output', t => {
   t.deepEqual(
     dt.groupby('u').objects({ preserveGroups: 'map' }),
     new Map([
-      ["a",[
+      ['a',[
         { u: 'a', v: 1},
         { u: 'a', v: 2},
         { u: 'a', v: 4}
       ]],
-      ["b",[
+      ['b',[
         { u: 'b', v: 3},
-        { u: 'b', v: 5},
-      ]],
+        { u: 'b', v: 5}
+      ]]
     ]),
     'grouped map output'
   );
