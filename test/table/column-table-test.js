@@ -153,6 +153,106 @@ tape('ColumnTable supports object output', t => {
     'object data with renaming column selection'
   );
 
+  t.deepEqual(
+    dt.groupby('u').objects({ preserveGroups: 'object' }),
+    {
+      a: [
+        { u: 'a', v: 1},
+        { u: 'a', v: 2},
+        { u: 'a', v: 4}
+      ],
+      b: [
+        { u: 'b', v: 3},
+        { u: 'b', v: 5}
+      ]
+    },
+    'grouped object output'
+  );
+
+  t.deepEqual(
+    dt.groupby('u').objects({ preserveGroups: 'entries' }),
+    [
+      ['a',[
+        { u: 'a', v: 1},
+        { u: 'a', v: 2},
+        { u: 'a', v: 4}
+      ]],
+      ['b',[
+        { u: 'b', v: 3},
+        { u: 'b', v: 5},
+      ]],
+    ],
+    'grouped entries output'
+  );
+
+  t.deepEqual(
+    dt.groupby('u').objects({ preserveGroups: 'map' }),
+    new Map([
+      ["a",[
+        { u: 'a', v: 1},
+        { u: 'a', v: 2},
+        { u: 'a', v: 4}
+      ]],
+      ["b",[
+        { u: 'b', v: 3},
+        { u: 'b', v: 5},
+      ]],
+    ]),
+    'grouped map output'
+  );
+
+  const dt2 = new ColumnTable({
+      u: ['a', 'a', 'a', 'b', 'b'],
+      w: ['y', 'x', 'y', 'z', 'x'],
+      v: [2, 1, 4, 5, 3]
+    })
+    .orderby('v');
+
+  t.deepEqual(
+    dt2.groupby(['u', 'w']).objects({ preserveGroups: 'object' }),
+    {
+      a: {
+        x: [{ u: 'a', w: 'x', v: 1}],
+        y: [{ u: 'a', w: 'y', v: 2},{ u: 'a', w: 'y', v: 4}]
+      },
+      b: {
+        x: [{ u: 'b', w: 'x', v: 3}],
+        z: [{ u: 'b', w: 'z', v: 5}]
+      }
+    },
+    'grouped nested object output'
+  );
+
+  t.deepEqual(
+    dt2.groupby(['u', 'w']).objects({ preserveGroups: 'entries' }),
+    [
+      ['a', [
+        ['y', [{ u: 'a', w: 'y', v: 2}, { u: 'a', w: 'y', v: 4}]],
+        ['x', [{ u: 'a', w: 'x', v: 1}]]
+      ]],
+      ['b', [
+        ['z', [{ u: 'b', w: 'z', v: 5}]],
+        ['x', [{ u: 'b', w: 'x', v: 3}]]
+      ]]
+    ],
+    'grouped nested entries output'
+  );
+
+  t.deepEqual(
+    dt2.groupby(['u', 'w']).objects({ preserveGroups: 'map' }),
+    new Map([
+      ['a', new Map([
+        ['x', [{ u: 'a', w: 'x', v: 1}]],
+        ['y', [{ u: 'a', w: 'y', v: 2},{ u: 'a', w: 'y', v: 4}]]
+      ])],
+      ['b', new Map([
+        ['x', [{ u: 'b', w: 'x', v: 3}]],
+        ['z', [{ u: 'b', w: 'z', v: 5}]]
+      ])]
+    ]),
+    'grouped nested map output'
+  );
+
   t.end();
 });
 
