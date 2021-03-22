@@ -389,12 +389,23 @@ Returns an array of objects representing table rows. A new set of objects will b
   * *limit*: The maximum number of objects to create (default `Infinity`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
   * *columns*: An ordered set of columns to include. The input may consist of: column name strings, column integer indices, objects with current column names as keys and new column names as values (for renaming), or a selection helper function such as [all](#all), [not](#not), or [range](#range)).
+  * *grouped*: The export format for groups of rows. This option only applies to tables with groups set with the [groupby](verbs/#groupby) verb. The default (`false`) is to ignore groups, returning a flat array of objects. The valid values are `true` or `'map'` (for [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) instances), `'object'` (for standard [Objects](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)), or `'entries'` (for arrays in the style of [Object.entries](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries)). For the `'object'` format, groupby keys are coerced to strings to use as object property names; note that this can lead to undesirable behavior if the groupby keys are object values. The `'map'` and `'entries'` options preserve the groupby key values.
 
 *Examples*
 
 ```js
 aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).objects()
 // [ { a: 1, b: 4 }, { a: 2, b: 5 }, { a: 3, b: 6 } ]
+```
+
+```js
+aq.table({ k: ['a', 'b', 'a'], v: [1, 2, 3] })
+  .groupby('k')
+  .objects({ grouped: true })
+// new Map([
+//   [ 'a', [ { k: 'a', v: 1 }, { k: 'a', v: 3 } ] ],
+//   [ 'b', [ { k: 'b', v: 2 } ] ]
+// ])
 ```
 
 <hr/><a id="@@iterator" href="#@@iterator">#</a>

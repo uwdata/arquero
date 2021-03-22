@@ -153,52 +153,120 @@ tape('ColumnTable supports object output', t => {
     'object data with renaming column selection'
   );
 
+  t.end();
+});
+
+tape('ColumnTable supports grouped object output', t => {
+  const dt = new ColumnTable({
+      u: ['a', 'a', 'a', 'b', 'b'],
+      v: [2, 1, 4, 5, 3]
+    })
+    .orderby('v');
+
   t.deepEqual(
-    dt.groupby('u').objects({ preserveGroups: 'object' }),
+    dt.groupby('u').objects({ grouped: 'object' }),
     {
       a: [
-        { u: 'a', v: 1},
-        { u: 'a', v: 2},
-        { u: 'a', v: 4}
+        { u: 'a', v: 1 },
+        { u: 'a', v: 2 },
+        { u: 'a', v: 4 }
       ],
       b: [
-        { u: 'b', v: 3},
-        { u: 'b', v: 5}
+        { u: 'b', v: 3 },
+        { u: 'b', v: 5 }
       ]
     },
     'grouped object output'
   );
 
   t.deepEqual(
-    dt.groupby('u').objects({ preserveGroups: 'entries' }),
+    dt.groupby('u').objects({ grouped: 'entries' }),
     [
       ['a',[
-        { u: 'a', v: 1},
-        { u: 'a', v: 2},
-        { u: 'a', v: 4}
+        { u: 'a', v: 1 },
+        { u: 'a', v: 2 },
+        { u: 'a', v: 4 }
       ]],
       ['b',[
-        { u: 'b', v: 3},
-        { u: 'b', v: 5}
+        { u: 'b', v: 3 },
+        { u: 'b', v: 5 }
       ]]
     ],
     'grouped entries output'
   );
 
   t.deepEqual(
-    dt.groupby('u').objects({ preserveGroups: 'map' }),
+    dt.groupby('u').objects({ grouped: 'map' }),
     new Map([
       ['a',[
-        { u: 'a', v: 1},
-        { u: 'a', v: 2},
-        { u: 'a', v: 4}
+        { u: 'a', v: 1 },
+        { u: 'a', v: 2 },
+        { u: 'a', v: 4 }
       ]],
       ['b',[
-        { u: 'b', v: 3},
-        { u: 'b', v: 5}
+        { u: 'b', v: 3 },
+        { u: 'b', v: 5 }
       ]]
     ]),
     'grouped map output'
+  );
+
+  t.deepEqual(
+    dt.groupby('u').objects({ grouped: true }),
+    new Map([
+      ['a',[
+        { u: 'a', v: 1 },
+        { u: 'a', v: 2 },
+        { u: 'a', v: 4 }
+      ]],
+      ['b',[
+        { u: 'b', v: 3 },
+        { u: 'b', v: 5 }
+      ]]
+    ]),
+    'grouped map output, using true'
+  );
+
+  t.deepEqual(
+    dt.filter(d => d.v < 4).groupby('u').objects({ grouped: 'object' }),
+    {
+      a: [
+        { u: 'a', v: 1 },
+        { u: 'a', v: 2 }
+      ],
+      b: [
+        { u: 'b', v: 3 }
+      ]
+    },
+    'grouped object output, with filter'
+  );
+
+  t.deepEqual(
+    dt.groupby('u').objects({ limit: 3, grouped: 'object' }),
+    {
+      a: [
+        { u: 'a', v: 1 },
+        { u: 'a', v: 2 }
+      ],
+      b: [
+        { u: 'b', v: 3 }
+      ]
+    },
+    'grouped object output, with limit'
+  );
+
+  t.deepEqual(
+    dt.groupby('u').objects({ offset: 2, grouped: 'object' }),
+    {
+      a: [
+        { u: 'a', v: 4 }
+      ],
+      b: [
+        { u: 'b', v: 3 },
+        { u: 'b', v: 5 }
+      ]
+    },
+    'grouped object output, with offset'
   );
 
   const dt2 = new ColumnTable({
@@ -209,45 +277,45 @@ tape('ColumnTable supports object output', t => {
     .orderby('v');
 
   t.deepEqual(
-    dt2.groupby(['u', 'w']).objects({ preserveGroups: 'object' }),
+    dt2.groupby(['u', 'w']).objects({ grouped: 'object' }),
     {
       a: {
-        x: [{ u: 'a', w: 'x', v: 1}],
-        y: [{ u: 'a', w: 'y', v: 2},{ u: 'a', w: 'y', v: 4}]
+        x: [{ u: 'a', w: 'x', v: 1 }],
+        y: [{ u: 'a', w: 'y', v: 2 },{ u: 'a', w: 'y', v: 4 }]
       },
       b: {
-        x: [{ u: 'b', w: 'x', v: 3}],
-        z: [{ u: 'b', w: 'z', v: 5}]
+        x: [{ u: 'b', w: 'x', v: 3 }],
+        z: [{ u: 'b', w: 'z', v: 5 }]
       }
     },
     'grouped nested object output'
   );
 
   t.deepEqual(
-    dt2.groupby(['u', 'w']).objects({ preserveGroups: 'entries' }),
+    dt2.groupby(['u', 'w']).objects({ grouped: 'entries' }),
     [
       ['a', [
-        ['y', [{ u: 'a', w: 'y', v: 2}, { u: 'a', w: 'y', v: 4}]],
-        ['x', [{ u: 'a', w: 'x', v: 1}]]
+        ['y', [{ u: 'a', w: 'y', v: 2 }, { u: 'a', w: 'y', v: 4 }]],
+        ['x', [{ u: 'a', w: 'x', v: 1 }]]
       ]],
       ['b', [
-        ['z', [{ u: 'b', w: 'z', v: 5}]],
-        ['x', [{ u: 'b', w: 'x', v: 3}]]
+        ['z', [{ u: 'b', w: 'z', v: 5 }]],
+        ['x', [{ u: 'b', w: 'x', v: 3 }]]
       ]]
     ],
     'grouped nested entries output'
   );
 
   t.deepEqual(
-    dt2.groupby(['u', 'w']).objects({ preserveGroups: 'map' }),
+    dt2.groupby(['u', 'w']).objects({ grouped: 'map' }),
     new Map([
       ['a', new Map([
-        ['x', [{ u: 'a', w: 'x', v: 1}]],
-        ['y', [{ u: 'a', w: 'y', v: 2},{ u: 'a', w: 'y', v: 4}]]
+        ['x', [{ u: 'a', w: 'x', v: 1 }]],
+        ['y', [{ u: 'a', w: 'y', v: 2 },{ u: 'a', w: 'y', v: 4 }]]
       ])],
       ['b', new Map([
-        ['x', [{ u: 'b', w: 'x', v: 3}]],
-        ['z', [{ u: 'b', w: 'z', v: 5}]]
+        ['x', [{ u: 'b', w: 'x', v: 3 }]],
+        ['z', [{ u: 'b', w: 'z', v: 5 }]]
       ])]
     ]),
     'grouped nested map output'

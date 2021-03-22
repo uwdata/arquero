@@ -1,3 +1,7 @@
+import { array_agg, entries_agg, map_agg, object_agg } from '../op/op-api';
+import error from '../util/error';
+import uniqueName from '../util/unique-name';
+
 /**
  * Regroup table rows in response to a BitSet filter.
  * @param {GroupBySpec} groups The current groupby specification.
@@ -69,4 +73,32 @@ export function reindex(groups, scan, filter, nrows) {
   scan(fn);
 
   return { ...groups, keys: _keys, rows: _rows, size: _size };
+}
+
+export function nest(table, idx, obj, type) {
+  const agg = type === 'map' || type === true ? map_agg
+    : type === 'entries' ? entries_agg
+    : type === 'object' ? object_agg
+    : error('groups option must be "map", "entries", or "object".');
+
+  const { names } = table.groups();
+  const col = uniqueName(table.columnNames(), '_');
+
+  // create table with one column of row objects
+  // then aggregate into per-group arrays
+  let t = table
+    .select()
+    .reify(idx)
+    .create({ data: { [col]: obj } })
+    .rollup({ [col]: array_agg(col) });
+
+  // create nested structures for each level of grouping
+  for (let i = names.length; --i >= 0;) {
+    t = t
+      .groupby(names.slice(0, i))
+      .rollup({ [col]: agg(names[i], col) });
+  }
+
+  // return the final aggregated structure
+  return t.get(col);
 }
