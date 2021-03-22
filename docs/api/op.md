@@ -19,7 +19,7 @@ title: Operations \| Arquero API Reference
   * [mean](#mean), [average](#average), [mode](#mode), [median](#median), [quantile](#quantile)
   * [stdev](#stdev), [stdevp](#stdevp), [variance](#variance), [variancep](#variance)
   * [corr](#corr), [covariance](#covariance), [covariancep](#covariancep)
-  * [array_agg](#array_agg), [array_agg_distinct](#array_agg_distinct), [object_agg](#object_agg)
+  * [array_agg](#array_agg), [array_agg_distinct](#array_agg_distinct), [object_agg](#object_agg), [map_agg](#map_agg), [entries_agg](#entries_agg)
 * [Window Functions](#window-functions)
   * [row_number](#row_number), [rank](#rank), [avg_rank](#avg_rank), [dense_rank](#dense_rank)
   * [percent_rank](#percent_rank), [cume_dist](#cume_dist), [ntile](#ntile)
@@ -1100,6 +1100,36 @@ Aggregate function to create an object given input *key* and *value* fields. The
 ```js
 aq.table({ k: ['a', 'b', 'a'], v: [1, 2, 3] })
   .rollup({ o: op.object_agg('k', 'v') }) // o: [ { a: 3, b: 2 } ]
+```
+
+<hr/><a id="map_agg" href="#map_agg">#</a>
+<em>op</em>.<b>map_agg</b>(<i>key</i>, <i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+
+Aggregate function to create a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) given input *key* and *value* fields. The resulting aggregate is a Map (one per group) with keys and values defined by the input fields. For any keys that occur multiple times in a group, the most recently observed value is used.
+
+* *key*: The key field.
+* *value* The value field.
+
+*Examples*
+
+```js
+aq.table({ k: ['a', 'b', 'a'], v: [1, 2, 3] })
+  .rollup({ m: op.map_agg('k', 'v') }) // m: [ new Map([['a', 3], ['b', 2]]) ]
+```
+
+<hr/><a id="entries_agg" href="#entries_agg">#</a>
+<em>op</em>.<b>entries_agg</b>(<i>key</i>, <i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+
+Aggregate function to create an array in the style of [Object.entries](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries) given input *key* and *value* fields. The resulting aggregate is an array (one per group) with [key, value] arrays defined by the input fields.
+
+* *key*: The key field.
+* *value* The value field.
+
+*Examples*
+
+```js
+aq.table({ k: ['a', 'b', 'a'], v: [1, 2, 3] })
+  .rollup({ e: op.entries_agg('k', 'v') }) // e: [ [['a', 1], ['b', 2], ['a', 3]] ]
 ```
 
 <br/>
