@@ -865,6 +865,7 @@ export default class Transformable {
  * Options for sample transformations.
  * @typedef {object} SampleOptions
  * @property {boolean} [replace=false] Flag for sampling with replacement.
+ * @property {boolean} [shuffle=true] Flag to ensure randomly ordered rows.
  * @property {string|TableExpr} [weight] Column values to use as weights
  *  for sampling. Rows will be sampled with probability proportional to
  *  their relative weight. The input should be a column name string or
