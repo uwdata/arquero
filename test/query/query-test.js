@@ -521,7 +521,7 @@ tape('Query evaluates sample verbs', t => {
     Query.from(
       new Query([sample(2, { replace: true })]).toObject()
     ).evaluate(dt),
-    { foo: [ 2, 2 ], bar: [ 0, 0 ] },
+    { foo: [ 3, 0 ], bar: [ 0, 1 ] },
     'sample query result, replace'
   );
 
@@ -530,7 +530,7 @@ tape('Query evaluates sample verbs', t => {
     Query.from(
       new Query([sample(2, { weight: 'foo' })]).toObject()
     ).evaluate(dt),
-    { foo: [ 3, 2 ], bar: [ 0, 0 ] },
+    { foo: [ 2, 3 ], bar: [ 0, 0 ] },
     'sample query result, weight column name'
   );
 
@@ -539,7 +539,7 @@ tape('Query evaluates sample verbs', t => {
     Query.from(
       new Query([sample(2, { weight: d => d.foo })]).toObject()
     ).evaluate(dt),
-    { foo: [ 3, 1 ], bar: [ 0, 1 ] },
+    { foo: [ 3, 2 ], bar: [ 0, 0 ] },
     'sample query result, weight table expression'
   );
 

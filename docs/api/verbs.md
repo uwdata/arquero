@@ -194,6 +194,7 @@ Generate a table from a random sample of rows. If the table is grouped, perform 
 * *size*: The number of samples to draw per group. If number-valued, the same sample size is used for each group. If function-valued, the input should be an aggregate table expression compatible with [rollup](#rollup).
 * *options*: An options object:
   * *replace*: Boolean flag (default `false`) to sample with replacement.
+  * *shuffle*: Boolean flag (default `true`) to ensure randomly ordered rows.
   * *weight*: Column values to use as weights for sampling. Rows will be sampled with probability proportional to their relative weight. The input should be a column name string or a table expression compatible with [derive](#derive).
 
 *Examples*
