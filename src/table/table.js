@@ -234,7 +234,7 @@ export default class Table extends Transformable {
 
   /**
    * Print the contents of this table using the console.table() method.
-   * @param {ObjectsOptions|number} options The options for row object
+   * @param {PrintOptions|number} options The options for row object
    *  generation, determining which rows and columns are printed. If
    *  number-valued, specifies the row limit.
    */
@@ -245,7 +245,7 @@ export default class Table extends Transformable {
       options.limit = 10;
     }
 
-    const obj = this.objects(options);
+    const obj = this.objects({ ...options, grouped: false });
     const msg = `${this[Symbol.toStringTag]}. Showing ${obj.length} rows.`;
 
     console.log(msg);   // eslint-disable-line no-console
@@ -522,12 +522,32 @@ export default class Table extends Transformable {
 
 /**
  * Options for generating row objects.
- * @typedef {object} ObjectsOptions
+ * @typedef {object} PrintOptions
  * @property {number} [limit=Infinity] The maximum number of objects to create.
  * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
- * @property {import('../table/transformable').Select} columns
+ * @property {import('../table/transformable').Select} [columns]
  *  An ordered set of columns to include. The input may consist of column name
  *  strings, column integer indices, objects with current column names as keys
  *  and new column names as values (for renaming), or selection helper
  *  functions such as {@link all}, {@link not}, or {@link range}.
+ */
+
+/**
+ * Options for generating row objects.
+ * @typedef {object} ObjectsOptions
+ * @property {number} [limit=Infinity] The maximum number of objects to create.
+ * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
+ * @property {import('../table/transformable').Select} [columns]
+ *  An ordered set of columns to include. The input may consist of column name
+ *  strings, column integer indices, objects with current column names as keys
+ *  and new column names as values (for renaming), or selection helper
+ *  functions such as {@link all}, {@link not}, or {@link range}.
+ * @property {'map'|'entries'|'object'|boolean} [grouped=false]
+ *  The export format for groups of rows. The default (false) is to ignore
+ *  groups, returning a flat array of objects. The valid values are 'map' or
+ *  true (for Map instances), 'object' (for standard objects), or 'entries'
+ *  (for arrays in the style of Object.entries). For the 'object' format,
+ *  groupby keys are coerced to strings to use as object property names; note
+ *  that this can lead to undesirable behavior if the groupby keys are object
+ *  values. The 'map' and 'entries' options preserve the groupby key values.
  */

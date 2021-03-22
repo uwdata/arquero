@@ -3,7 +3,11 @@ import Op from './op';
 
 export const any = (field) => Op('any', field);
 export const count = () => Op('count');
+export const array_agg = (field) => Op('array_agg', field);
 export const array_agg_distinct = (field) => Op('array_agg_distinct', field);
+export const map_agg = (key, value) => Op('map_agg', [key, value]);
+export const object_agg = (key, value) => Op('object_agg', [key, value]);
+export const entries_agg = (key, value) => Op('entries_agg', [key, value]);
 
 /**
  * All table expression operations including normal functions,
@@ -30,7 +34,7 @@ export default {
    * @param {*} field The data field.
    * @return {Array} The list of values.
    */
-  array_agg: (field) => Op('array_agg', field),
+  array_agg,
 
   /**
    * Aggregate function to collect an array of distinct (unique) values.
@@ -45,7 +49,7 @@ export default {
    * @param {*} value The object value field.
    * @return {object} The object of key-value pairs.
    */
-  object_agg: (key, value) => Op('object_agg', [key, value]),
+  object_agg,
 
   /**
    * Aggregate function to create a Map given input key and value fields.
@@ -53,7 +57,7 @@ export default {
    * @param {*} value The object value field.
    * @return {Map} The Map of key-value pairs.
    */
-  map_agg: (key, value) => Op('map_agg', [key, value]),
+  map_agg,
 
   /**
    * Aggregate function to create an array in the style of Object.entries()
@@ -62,7 +66,7 @@ export default {
    * @param {*} value The object value field.
    * @return {Array} The array of [key, value] arrays.
    */
-  entries_agg: (key, value) => Op('entries_agg', [key, value]),
+  entries_agg,
 
   /**
    * Aggregate function to count the number of valid values.

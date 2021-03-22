@@ -2,7 +2,7 @@ import { defaultColumnFactory } from './column';
 import columnsFrom from './columns-from';
 import columnSet from './column-set';
 import Table from './table';
-import { regroup, reindex } from './regroup';
+import { nest, regroup, reindex } from './regroup';
 import toArrow from '../format/to-arrow';
 import toCSV from '../format/to-csv';
 import toHTML from '../format/to-html';
@@ -13,7 +13,6 @@ import arrayType from '../util/array-type';
 import error from '../util/error';
 import mapObject from '../util/map-object';
 import rowObjectBuilder from '../util/row-object-builder';
-import op from '../op/op-api';
 
 /**
  * Class representing a table backed by a named set of columns.
@@ -167,45 +166,16 @@ export default class ColumnTable extends Table {
   objects(options = {}) {
     const names = resolve(this, options.columns || all());
     const create = rowObjectBuilder(this, names);
-    const {preserveGroups} = options;
+    const { grouped, limit, offset } = options;
 
-    if (preserveGroups && !['map', 'object', 'entries'].includes(preserveGroups)) {
-      error('preserveGroups must be "map", "object", or "entries".');
-    }
-
-    if (!this.isGrouped() || !preserveGroups) {
-      const tuples = [];
-      this.scan(row => {
-        tuples.push(create(row));
-      }, true, options.limit, options.offset);
-      return tuples;
+    if (grouped && this.isGrouped()) {
+      const idx = [];
+      this.scan(row => idx.push(row), true, limit, offset);
+      return nest(this, idx, idx.map(create), grouped);
     } else {
-      const {names} = this.groups();
-      const val = 'val';
-      const obj = this.objects({ preserveGroups: false });
-
-      let ot = this
-        .reify()
-        .create({ data: {[val]: obj} })
-        .rollup({ [val]: op.array_agg(val)});
-
-
-      for (let i = names.length; --i >= 0;) {
-        if (preserveGroups == 'map') {
-          ot = ot.groupby(names.slice(0, i))
-            .rollup({ [val]: op.map_agg(names[i], val) });
-        }
-        if (preserveGroups == 'entries') {
-          ot = ot.groupby(names.slice(0, i))
-            .rollup({ [val]: op.entries_agg(names[i], val) });
-        }
-        if (preserveGroups == 'object') {
-          ot = ot.groupby(names.slice(0, i))
-            .rollup({ [val]: op.object_agg(names[i], val) });
-        }
-      }
-
-      return ot.get(val, 0);
+      const obj = [];
+      this.scan(row => obj.push(create(row)), true, limit, offset);
+      return obj;
     }
   }
 
