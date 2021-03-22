@@ -2,7 +2,7 @@ import { defaultColumnFactory } from './column';
 import columnsFrom from './columns-from';
 import columnSet from './column-set';
 import Table from './table';
-import { regroup, reindex } from './regroup';
+import { nest, regroup, reindex } from './regroup';
 import toArrow from '../format/to-arrow';
 import toCSV from '../format/to-csv';
 import toHTML from '../format/to-html';
@@ -166,11 +166,17 @@ export default class ColumnTable extends Table {
   objects(options = {}) {
     const names = resolve(this, options.columns || all());
     const create = rowObjectBuilder(this, names);
-    const tuples = [];
-    this.scan(row => {
-      tuples.push(create(row));
-    }, true, options.limit, options.offset);
-    return tuples;
+    const { grouped, limit, offset } = options;
+
+    if (grouped && this.isGrouped()) {
+      const idx = [];
+      this.scan(row => idx.push(row), true, limit, offset);
+      return nest(this, idx, idx.map(create), grouped);
+    } else {
+      const obj = [];
+      this.scan(row => obj.push(create(row)), true, limit, offset);
+      return obj;
+    }
   }
 
   /**
