@@ -15,7 +15,9 @@ title: Verbs \| Arquero API Reference
   * [select](#select), [relocate](#relocate)
   * [reify](#reify)
 * [Join Verbs](#joins)
-  * [join](#join), [join_left](#join_left), [join_right](#join_right), [join_full](#join_full), [cross](#cross), [lookup](#lookup)
+  * [cross](#cross)
+  * [join](#join), [join_left](#join_left), [join_right](#join_right), [join_full](#join_full)
+  * [lookup](#lookup)
   * [semijoin](#semijoin), [antijoin](#antijoin)
 * [Cleaning Verbs](#cleaning)
   * [dedupe](#dedupe), [impute](#impute)
@@ -290,6 +292,26 @@ table.reify()
 
 ## <a id="joins">Join Verbs</a>
 
+<hr/><a id="cross" href="#cross">#</a>
+<em>table</em>.<b>cross</b>(<i>other</i>[, <i>values</i>, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+
+Produce the [Cartesian cross product](https://en.wikipedia.org/wiki/Join_%28SQL%29#Cross_join) of two tables. The output table has one row for every pair of input table rows. Beware that outputs may be quite large, as the number of output rows is the product of the input row counts. This method is a convenient shorthand for a [join](#join) in which the join criteria is always true.
+
+* *other*: The other (right) table to join with.
+* *values*: The columns to include in the join output. If unspecified, all columns from both tables are included. If array-valued, a two element array should be provided, containing column selections to include from the left and right tables, respectively. Array input may consist of column name strings, objects with output names as keys and single-table table expressions as values, or the selection helper functions [all](./#all), [not](./#not), or [range](./#range). If object-valued, specifies the key-value pairs for each output, defined using two-table table expressions.
+* *options*: An options object:
+   * *suffix*: Column name suffixes to append, for the left and right tables, respectively, when two columns with the same name are produced by the join (default `['_1', '_2']`).
+
+*Examples*
+
+```js
+table.cross(other)
+```
+
+```js
+table.cross(other, [['leftKey', 'leftVal'], ['rightVal']])
+```
+
 <hr/><a id="join" href="#join">#</a>
 <em>table</em>.<b>join</b>(<i>other</i>[, <i>on</i>, <i>values</i>, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/join.js)
 
@@ -392,26 +414,6 @@ table.join_full(other, ['keyL', 'keyR'])
 
 ```js
 table.join_full(other, (a, b) => op.equal(a.keyL, b.keyR))
-```
-
-<hr/><a id="cross" href="#cross">#</a>
-<em>table</em>.<b>cross</b>(<i>other</i>[, <i>values</i>, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
-
-Produce the [Cartesian cross product](https://en.wikipedia.org/wiki/Join_%28SQL%29#Cross_join) of two tables. The output table has one row for every pair of input table rows. Beware that outputs may be quite large, as the number of output rows is the product of the input row counts. This method is a convenient shorthand for a [join](#join) in which the join criteria is always true.
-
-* *other*: The other (right) table to join with.
-* *values*: The columns to include in the join output. If unspecified, all columns from both tables are included. If array-valued, a two element array should be provided, containing column selections to include from the left and right tables, respectively. Array input may consist of column name strings, objects with output names as keys and single-table table expressions as values, or the selection helper functions [all](./#all), [not](./#not), or [range](./#range). If object-valued, specifies the key-value pairs for each output, defined using two-table table expressions.
-* *options*: An options object:
-   * *suffix*: Column name suffixes to append, for the left and right tables, respectively, when two columns with the same name are produced by the join (default `['_1', '_2']`).
-
-*Examples*
-
-```js
-table.cross(other)
-```
-
-```js
-table.cross(other, [['leftKey', 'leftVal'], ['rightVal']])
 ```
 
 <hr/><a id="lookup" href="#lookup">#</a>

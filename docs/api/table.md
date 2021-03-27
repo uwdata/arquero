@@ -18,8 +18,9 @@ title: Table \| Arquero API Reference
   * [data](#data), [get](#get), [getter](#getter)
   * [indices](#indices), [partitions](#partitions), [scan](#scan)
 * [Table Output](#output)
-  * [objects](#objects), [Symbol.iterator](#@@iterator), [print](#print)
-  * [toArrow](#toArrow), [toArrowBuffer](#toArrowBuffer), [toCSV](#toCSV), [toHTML](#toHTML), [toJSON](#toJSON), [toMarkdown](#toMarkdown)
+  * [objects](#objects), [Symbol.iterator](#@@iterator)
+  * [print](#print), [toHTML](#toHTML), [toMarkdown](#toMarkdown)
+  * [toArrow](#toArrow), [toArrowBuffer](#toArrowBuffer), [toCSV](#toCSV), [toJSON](#toJSON)
 
 
 <br/>
@@ -449,7 +450,54 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).print()
 // └─────────┴───┴───┘
 ```
 
-<a id="toArrow" href="#toArrow">#</a>
+<hr/><a id="toHTML" href="#toHTML">#</a>
+<em>table</em>.<b>toHTML</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-html.js)
+
+Format this table as an HTML table string.
+
+* *options*: A formatting options object:
+  * *limit*: The maximum number of rows to print (default `Infinity`).
+  * *offset*: The row offset indicating how many initial rows to skip (default `0`).
+  * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings. Otherwise, should be an array of name strings.
+  * *align*: Object of column alignment options. The object keys should be column names. The object values should be aligment strings, one of `'l'` (left), `'c'` (center), or `'r'` (right). If specified, these override any automatically inferred options.
+  * *format*: Object of column format options. If specified, these override any automatically inferred options. The object keys should be column names. The object values should either be formatting functions or objects with any of the following properties:
+    * *utc*: A boolean flag indicating if UTC date formatting should be used rather than the local time zone.
+    * *digits*: Number of fractional digits to include for numbers.
+  * *maxdigits*: The maximum number of fractional digits to include when inferring a number format (default `6`). This option is passed to the format inference method and is ignored when explicit format options are specified.
+  * *null*: Optional format function for `null` and `undefined` values. If specified, this function be invoked with the `null` or `undefined` value as the sole input argument. The return value is then used as the HTML output for the input value.
+  * *style*: CSS styles to include in HTML output. The object keys can be HTML table tag names: `'table'`, `'thead'`, `'tbody'`, `'tr'`, `'th'`, or `'td'`. The object values should be strings of valid CSS style directives (such as `"font-weight: bold;"`) or functions that take a column name and row as input and return a CSS string.
+
+*Examples*
+
+```js
+// serialize a table as HTML-formatted text
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toHTML()
+```
+
+<hr/><a id="toMarkdown" href="#toMarkdown">#</a>
+<em>table</em>.<b>toMarkdown</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-markdown.js)
+
+Format this table as a [GitHub-Flavored Markdown table](https://github.github.com/gfm/#tables-extension-) string.
+
+* *options*: A formatting options object:
+  * *limit*: The maximum number of rows to print (default `Infinity`).
+  * *offset*: The row offset indicating how many initial rows to skip (default `0`).
+  * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings. Otherwise, should be an array of name strings.
+  * *align*: Object of column alignment options. The object keys should be column names. The object values should be aligment strings, one of `'l'` (left), `'c'` (center), or `'r'` (right). If specified, these override any automatically inferred options.
+  * *format*: Object of column format options. If specified, these override any automatically inferred options. The object keys should be column names. The object values should either be formatting functions or objects with any of the following properties:
+    * *utc*: A boolean flag indicating if UTC date formatting should be used rather than the local time zone.
+    * *digits*: Number of fractional digits to include for numbers.
+  * *maxdigits*: The maximum number of fractional digits to include when inferring a number format (default `6`). This option is passed to the format inference method and is ignored when explicit format options are specified.
+
+*Examples*
+
+```js
+// serialize a table as Markdown-formatted text
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toMarkdown()
+// '|a|b|\n|-:|-:|\n|1|4|\n|2|5|\n|3|6|\n'
+```
+
+<hr/><a id="toArrow" href="#toArrow">#</a>
 <em>table</em>.<b>toArrow</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/encode/index.js)
 
 Format this table as an [Apache Arrow](https://arrow.apache.org/docs/js/) table instance. This method will throw an error if type inference fails or if the generated columns have differing lengths.
@@ -497,7 +545,7 @@ const at2 = dt.toArrow({
 });
 ```
 
-<a id="toArrowBuffer" href="#toArrowBuffer">#</a>
+<hr/><a id="toArrowBuffer" href="#toArrowBuffer">#</a>
 <em>table</em>.<b>toArrowBuffer</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/encode/index.js)
 
 Format this table as binary data in the [Apache Arrow](https://arrow.apache.org/docs/js/) IPC format. The binary data may be saved to disk or passed between processes or tools. For example, when using [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers), the output of this method can be passed directly between threads (no data copy) as a [Transferable](https://developer.mozilla.org/en-US/docs/Web/API/Transferable) object. Additionally, Arrow binary data can be loaded in other language environments such as [Python](https://arrow.apache.org/docs/python/) or [R](https://arrow.apache.org/docs/r/).
@@ -543,30 +591,6 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toCSV()
 // 'a,b\n1,4\n2,5\n3,6'
 ```
 
-<hr/><a id="toHTML" href="#toHTML">#</a>
-<em>table</em>.<b>toHTML</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-html.js)
-
-Format this table as an HTML table string.
-
-* *options*: A formatting options object:
-  * *limit*: The maximum number of rows to print (default `Infinity`).
-  * *offset*: The row offset indicating how many initial rows to skip (default `0`).
-  * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings. Otherwise, should be an array of name strings.
-  * *align*: Object of column alignment options. The object keys should be column names. The object values should be aligment strings, one of `'l'` (left), `'c'` (center), or `'r'` (right). If specified, these override any automatically inferred options.
-  * *format*: Object of column format options. If specified, these override any automatically inferred options. The object keys should be column names. The object values should either be formatting functions or objects with any of the following properties:
-    * *utc*: A boolean flag indicating if UTC date formatting should be used rather than the local time zone.
-    * *digits*: Number of fractional digits to include for numbers.
-  * *maxdigits*: The maximum number of fractional digits to include when inferring a number format (default `6`). This option is passed to the format inference method and is ignored when explicit format options are specified.
-  * *null*: Optional format function for `null` and `undefined` values. If specified, this function be invoked with the `null` or `undefined` value as the sole input argument. The return value is then used as the HTML output for the input value.
-  * *style*: CSS styles to include in HTML output. The object keys can be HTML table tag names: `'table'`, `'thead'`, `'tbody'`, `'tr'`, `'th'`, or `'td'`. The object values should be strings of valid CSS style directives (such as `"font-weight: bold;"`) or functions that take a column name and row as input and return a CSS string.
-
-*Examples*
-
-```js
-// serialize a table as HTML-formatted text
-aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toHTML()
-```
-
 <hr/><a id="toJSON" href="#toJSON">#</a>
 <em>table</em>.<b>toJSON</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-json.js)
 
@@ -591,27 +615,4 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toJSON()
 // serialize a table as a JSON string without schema metadata
 aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toJSON({ schema: false })
 // '{"a":[1,2,3],"b":[4,5,6]}'
-```
-
-<hr/><a id="toMarkdown" href="#toMarkdown">#</a>
-<em>table</em>.<b>toMarkdown</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-markdown.js)
-
-Format this table as a [GitHub-Flavored Markdown table](https://github.github.com/gfm/#tables-extension-) string.
-
-* *options*: A formatting options object:
-  * *limit*: The maximum number of rows to print (default `Infinity`).
-  * *offset*: The row offset indicating how many initial rows to skip (default `0`).
-  * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings. Otherwise, should be an array of name strings.
-  * *align*: Object of column alignment options. The object keys should be column names. The object values should be aligment strings, one of `'l'` (left), `'c'` (center), or `'r'` (right). If specified, these override any automatically inferred options.
-  * *format*: Object of column format options. If specified, these override any automatically inferred options. The object keys should be column names. The object values should either be formatting functions or objects with any of the following properties:
-    * *utc*: A boolean flag indicating if UTC date formatting should be used rather than the local time zone.
-    * *digits*: Number of fractional digits to include for numbers.
-  * *maxdigits*: The maximum number of fractional digits to include when inferring a number format (default `6`). This option is passed to the format inference method and is ignored when explicit format options are specified.
-
-*Examples*
-
-```js
-// serialize a table as Markdown-formatted text
-aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toMarkdown()
-// '|a|b|\n|-:|-:|\n|1|4|\n|2|5|\n|3|6|\n'
 ```

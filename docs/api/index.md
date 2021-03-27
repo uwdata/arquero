@@ -336,7 +336,9 @@ const dt = await aq.loadJSON('data/table.json', { autoType: false })
 
 ## <a id="output">Table Output</a>
 
-<a id="toArrow" href="#toArrow">#</a>
+Methods for writing table data to an output format. Most output methods are defined as [table methods](table#output), not in the top level namespace.
+
+<hr/><a id="toArrow" href="#toArrow">#</a>
 <em>aq</em>.<b>toArrow</b>(<i>data</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/encode/index.js)
 
 Create an [Apache Arrow](https://arrow.apache.org/docs/js/) table for the input *data*. The input data can be either an [Arquero table](#table) or an array of standard JavaScript objects. This method will throw an error if type inference fails or if the generated columns have differing lengths. For Arquero tables, this method can instead be invoked as [table.toArrow()](table#toArrow).
