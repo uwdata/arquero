@@ -260,6 +260,18 @@ tape('derive supports bigint values', t => {
   t.end();
 });
 
+tape('derive aggregates support ordered tables', t => {
+  const rt = table({ v: [3, 1, 4, 2] })
+    .orderby('v')
+    .derive({ a: op.array_agg('v') });
+
+  tableEqual(t, rt, {
+    v: [1, 2, 3, 4],
+    a: [[1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4]]
+  }, 'derive data');
+  t.end();
+});
+
 tape('derive supports recode function', t => {
   const dt = table({ x: ['foo', 'bar', 'baz'] });
 

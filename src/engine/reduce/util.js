@@ -71,7 +71,12 @@ export function reduceFlat(table, reducer) {
   const data = table.data();
   const bits = table.mask();
 
-  if (bits) {
+  if (table.isOrdered()) {
+    const idx = table.indices();
+    for (let i = 0; i < n; ++i) {
+      reducer.add(cell, idx[i], data);
+    }
+  } else if (bits) {
     for (let i = bits.next(0); i >= 0; i = bits.next(i + 1)) {
       reducer.add(cell, i, data);
     }
@@ -97,7 +102,13 @@ export function reduceGroups(table, reducer, groups) {
   const data = table.data();
   const bits = table.mask();
 
-  if (bits) {
+  if (table.isOrdered()) {
+    const idx = table.indices();
+    for (let i = 0; i < n; ++i) {
+      const row = idx[i];
+      reducer.add(cells[keys[row]], row, data);
+    }
+  } else if (bits) {
     for (let i = bits.next(0); i >= 0; i = bits.next(i + 1)) {
       reducer.add(cells[keys[i]], i, data);
     }

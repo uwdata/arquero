@@ -119,6 +119,15 @@ tape('rollup supports bigint values', t => {
   t.end();
 });
 
+tape('rollup supports ordered tables', t => {
+  const rt = table({ v: [3, 1, 4, 2] })
+    .orderby('v')
+    .rollup({ v: op.array_agg('v') });
+
+  tableEqual(t, rt, { v: [ [1, 2, 3, 4] ] }, 'rollup data');
+  t.end();
+});
+
 tape('rollup supports object_agg functions', t => {
   const data = {
     g: [0, 0, 1, 1, 1],

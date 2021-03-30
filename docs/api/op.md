@@ -1062,7 +1062,7 @@ Aggregate function for the population covariance between two variables.
 <hr/><a id="array_agg" href="#array_agg">#</a>
 <em>op</em>.<b>array_agg</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
-Aggregate function to collect an array of *field* values. The resulting aggregate is an array (one per group) containing all observed values.
+Aggregate function to collect an array of *field* values. The resulting aggregate is an array (one per group) containing all observed values. The order of values is sensitive to any [orderby](verbs#orderby) criteria.
 
 * *field*: The data column or derived field.
 
@@ -1076,7 +1076,7 @@ aq.table({ v: [1, 2, 3, 1] })
 <hr/><a id="array_agg_distinct" href="#array_agg_distinct">#</a>
 <em>op</em>.<b>array_agg_distinct</b>(<i>field</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
-Aggregate function to collect an array of distinct (unique) *field* values. The resulting aggregate is an array (one per group) containing all unique values.
+Aggregate function to collect an array of distinct (unique) *field* values. The resulting aggregate is an array (one per group) containing all unique values. The order of values is sensitive to any [orderby](verbs#orderby) criteria.
 
 * *field*: The data column or derived field.
 
@@ -1090,7 +1090,7 @@ aq.table({ v: [1, 2, 3, 1] })
 <hr/><a id="object_agg" href="#object_agg">#</a>
 <em>op</em>.<b>object_agg</b>(<i>key</i>, <i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
-Aggregate function to create an object given input *key* and *value* fields. The resulting aggregate is an object (one per group) with keys and values defined by the input fields. For any keys that occur multiple times in a group, the most recently observed value is used.
+Aggregate function to create an object given input *key* and *value* fields. The resulting aggregate is an object (one per group) with keys and values defined by the input fields. For any keys that occur multiple times in a group, the most recently observed value is used. The order in which keys and values are observed is sensitive to any [orderby](verbs#orderby) criteria.
 
 * *key*: The object key field, should be a string or string-coercible value.
 * *value* The object value field.
@@ -1105,7 +1105,7 @@ aq.table({ k: ['a', 'b', 'a'], v: [1, 2, 3] })
 <hr/><a id="map_agg" href="#map_agg">#</a>
 <em>op</em>.<b>map_agg</b>(<i>key</i>, <i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
-Aggregate function to create a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) given input *key* and *value* fields. The resulting aggregate is a Map (one per group) with keys and values defined by the input fields. For any keys that occur multiple times in a group, the most recently observed value is used.
+Aggregate function to create a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) given input *key* and *value* fields. The resulting aggregate is a Map (one per group) with keys and values defined by the input fields. For any keys that occur multiple times in a group, the most recently observed value is used. The order in which keys and values are observed is sensitive to any [orderby](verbs#orderby) criteria.
 
 * *key*: The key field.
 * *value* The value field.
@@ -1120,7 +1120,7 @@ aq.table({ k: ['a', 'b', 'a'], v: [1, 2, 3] })
 <hr/><a id="entries_agg" href="#entries_agg">#</a>
 <em>op</em>.<b>entries_agg</b>(<i>key</i>, <i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
-Aggregate function to create an array in the style of [Object.entries](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries) given input *key* and *value* fields. The resulting aggregate is an array (one per group) with [key, value] arrays defined by the input fields.
+Aggregate function to create an array in the style of [Object.entries](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries) given input *key* and *value* fields. The resulting aggregate is an array (one per group) with [key, value] arrays defined by the input fields, and may include duplicate keys. The order of entries is sensitive to any [orderby](verbs#orderby) criteria.
 
 * *key*: The key field.
 * *value* The value field.
