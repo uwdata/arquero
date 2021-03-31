@@ -98,21 +98,22 @@ export function reduceGroups(table, reducer, groups) {
   // compute aggregate values
   // inline the following for performance:
   // table.scan((row, data) => reducer.add(cells[keys[row]], row, data));
-  const n = table.totalRows();
   const data = table.data();
-  const bits = table.mask();
 
   if (table.isOrdered()) {
     const idx = table.indices();
-    for (let i = 0; i < n; ++i) {
+    const m = idx.length;
+    for (let i = 0; i < m; ++i) {
       const row = idx[i];
       reducer.add(cells[keys[row]], row, data);
     }
-  } else if (bits) {
+  } else if (table.isFiltered()) {
+    const bits = table.mask();
     for (let i = bits.next(0); i >= 0; i = bits.next(i + 1)) {
       reducer.add(cells[keys[i]], i, data);
     }
   } else {
+    const n = table.totalRows();
     for (let i = 0; i < n; ++i) {
       reducer.add(cells[keys[i]], i, data);
     }
