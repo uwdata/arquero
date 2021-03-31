@@ -108,3 +108,23 @@ tape('pivot correctly orders integer column names', t => {
   t.deepEqual(ut.columnNames(), ['g', '2002', '2001', '2000']);
   t.end();
 });
+
+tape('pivot handles filtered and ordered table', t => {
+  const dt = table({
+      country: ['France', 'France', 'France', 'Germany', 'Germany', 'Germany', 'Japan', 'Japan', 'Japan'],
+      year: [2017, 2018, 2019, 2017, 2018, 2019, 2017, 2018, 2019],
+      expenditure: ['NA', 51410, 52229, 45340, 46512, 51190, 46542, 46618, 46562]
+    })
+    .filter(d => d.year > 2017)
+    .orderby('country')
+    .groupby('country')
+    .pivot('year', 'expenditure');
+
+  tableEqual(t, dt, {
+    country: ['France', 'Germany', 'Japan'],
+    2018: [51410, 46512, 46618],
+    2019: [52229,51190,46562]
+  }, 'pivot data');
+
+  t.end();
+});
