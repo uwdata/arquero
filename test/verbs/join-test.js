@@ -124,7 +124,25 @@ tape('join handles filtered tables', t => {
     key: [ 1, 2, 5 ],
     value1: [ 1, 2, undefined ],
     value2: [ 1, 2, 5 ]
-  }, 'natural left join on filtered data');
+  }, 'natural right join on filtered data');
+
+  const dt = table({
+    year:  [2017, 2017, 2017, 2018, 2018, 2018],
+    month: ['01', '02', 'YR', '01', '02', 'YR'],
+    count: [6074, 7135, 220582, 5761, 6764, 222153]
+  });
+
+  const jt = dt
+    .filter(d => d.month === 'YR')
+    .select('year', {count: 'total'})
+    .join(dt.filter(d => d.month !== 'YR'));
+
+  tableEqual(t, jt, {
+    total: [ 220582, 220582, 222153, 222153 ],
+    year: [ 2017, 2017, 2018, 2018 ],
+    month: [ '01', '02', '01', '02' ],
+    count: [ 6074, 7135, 5761, 6764 ]
+  }, 'join of two filtered tables');
 
   t.end();
 });
