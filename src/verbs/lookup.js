@@ -1,5 +1,5 @@
 import _lookup from '../engine/lookup';
-import { inferKeys } from './join';
+import { inferKeys } from './util/join-keys';
 import parseKey from './util/parse-key';
 import parseValues from './util/parse';
 

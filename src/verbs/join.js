@@ -1,10 +1,8 @@
 import _join from '../engine/join';
-import parseKey from './util/parse-key';
+import { inferKeys, keyPredicate } from './util/join-keys';
 import parseValue from './util/parse';
 import parse from '../expression/parse';
 import { all, not } from '../helpers/selection';
-import error from '../util/error';
-import intersect from '../util/intersect';
 import isArray from '../util/is-array';
 import isString from '../util/is-string';
 import toArray from '../util/to-array';
@@ -20,14 +18,7 @@ export default function(tableL, tableR, on, values, options = {}) {
 
   if (isArray(on)) {
     const [onL, onR] = on.map(toArray);
-    if (onL.length !== onR.length) {
-      error('Mismatched number of join keys');
-    }
-
-    predicate = [
-      parseKey('join', tableL, onL),
-      parseKey('join', tableR, onR)
-    ];
+    predicate = keyPredicate(tableL, tableR, onL, onR);
 
     if (!values) {
       // infer output columns, suppress duplicated key columns
@@ -47,21 +38,6 @@ export default function(tableL, tableR, on, values, options = {}) {
     parseValues(tableL, tableR, values, optParse, options && options.suffix),
     options
   );
-}
-
-export function inferKeys(tableL, tableR, on) {
-  if (!on) {
-    // perform natural join if join condition not provided
-    const isect = intersect(tableL.columnNames(), tableR.columnNames());
-    if (!isect.length) error('Natural join requires shared column names.');
-    on = [isect, isect];
-  } else if (isString(on)) {
-    on = [on, on];
-  } else if (isArray(on) && on.length === 1) {
-    on = [on[0], on[0]];
-  }
-
-  return on;
 }
 
 function inferValues(tableL, onL, onR, options) {
