@@ -32,13 +32,23 @@ tape('semijoin uses natural join criteria', t => {
 
 tape('semijoin filters left table to matching rows', t => {
   const [tl, tr] = joinTables();
-  const tj = tl.semijoin(tr, (a, b) => a.k === b.u);
-
-  tableEqual(t, tj, {
+  const output = {
     k: [ 'a', 'b', 'b' ],
     x: [ 1, 2, 3 ],
     y: [ 9, 8, 7 ]
-  }, 'semijoin data');
+  };
+
+  tableEqual(t,
+    tl.semijoin(tr, ['k', 'u']),
+    output,
+    'semijoin data, with keys'
+  );
+
+  tableEqual(t,
+    tl.semijoin(tr, (a, b) => a.k === b.u),
+    output,
+    'semijoin data, with predicate'
+  );
 
   t.end();
 });
@@ -59,13 +69,23 @@ tape('antijoin uses natural join criteria', t => {
 
 tape('antijoin filters left table to non-matching rows', t => {
   const [tl, tr] = joinTables();
-  const tj = tl.antijoin(tr, ['k', 'u']);
-
-  tableEqual(t, tj, {
+  const output = {
     k: [ 'c' ],
     x: [ 4 ],
     y: [ 6 ]
-  }, 'antijoin data');
+  };
+
+  tableEqual(t,
+    tl.antijoin(tr, ['k', 'u']),
+    output,
+    'antijoin data, with keys'
+  );
+
+  tableEqual(t,
+    tl.antijoin(tr, (a, b) => a.k === b.u),
+    output,
+    'antijoin data, with predicate'
+  );
 
   t.end();
 });

@@ -1,3 +1,4 @@
+import { multiRowLookup } from './join/lookup';
 import columnSet from '../table/column-set';
 import concat from '../util/concat';
 import isArray from '../util/is-array';
@@ -76,30 +77,24 @@ function loopJoin(emit, predicate, dataL, dataR, idxL, idxR, hitL, hitR, nL, nR)
 
 function hashJoin(emit, [keyL, keyR], dataL, dataR, idxL, idxR, hitL, hitR, nL, nR) {
   // determine which table to hash
-  let dataScan, keyScan, hitScan, idxScan, nScan;
-  let dataHash, keyHash, hitHash, idxHash, nHash;
+  let dataScan, keyScan, hitScan, idxScan;
+  let dataHash, keyHash, hitHash, idxHash;
   let emitScan = emit;
   if (nL >= nR) {
-    dataScan = dataL; keyScan = keyL; hitScan = hitL; idxScan = idxL; nScan = nL;
-    dataHash = dataR; keyHash = keyR; hitHash = hitR; idxHash = idxR; nHash = nR;
+    dataScan = dataL; keyScan = keyL; hitScan = hitL; idxScan = idxL;
+    dataHash = dataR; keyHash = keyR; hitHash = hitR; idxHash = idxR;
   } else {
-    dataScan = dataR; keyScan = keyR; hitScan = hitR; idxScan = idxR; nScan = nR;
-    dataHash = dataL; keyHash = keyL; hitHash = hitL; idxHash = idxL; nHash = nL;
+    dataScan = dataR; keyScan = keyR; hitScan = hitR; idxScan = idxR;
+    dataHash = dataL; keyHash = keyL; hitHash = hitL; idxHash = idxL;
     emitScan = (i, a, j, b) => emit(j, b, i, a);
   }
 
   // build lookup table
-  const lut = new Map();
-  for (let i = 0; i < nHash; ++i) {
-    const key = keyHash(idxHash[i], dataHash);
-    if (key != null && key === key) {
-      if (!lut.has(key)) lut.set(key, []);
-      lut.get(key).push(i);
-    }
-  }
+  const lut = multiRowLookup(idxHash, dataHash, keyHash);
 
   // scan other table
-  for (let j = 0; j < nScan; ++j) {
+  const m = idxScan.length;
+  for (let j = 0; j < m; ++j) {
     const rowScan = idxScan[j];
     const list = lut.get(keyScan(rowScan, dataScan));
     if (list) {
