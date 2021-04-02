@@ -1,4 +1,4 @@
-import { multiRowLookup } from './join/lookup';
+import { indexLookup } from './join/lookup';
 import columnSet from '../table/column-set';
 import concat from '../util/concat';
 import isArray from '../util/is-array';
@@ -90,7 +90,7 @@ function hashJoin(emit, [keyL, keyR], dataL, dataR, idxL, idxR, hitL, hitR, nL, 
   }
 
   // build lookup table
-  const lut = multiRowLookup(idxHash, dataHash, keyHash);
+  const lut = indexLookup(idxHash, dataHash, keyHash);
 
   // scan other table
   const m = idxScan.length;

@@ -1,4 +1,4 @@
-export function singleRowLookup(table, hash) {
+export function rowLookup(table, hash) {
   const lut = new Map();
   table.scan((row, data) => {
     const key = hash(row, data);
@@ -9,7 +9,7 @@ export function singleRowLookup(table, hash) {
   return lut;
 }
 
-export function multiRowLookup(idx, data, hash) {
+export function indexLookup(idx, data, hash) {
   const lut = new Map();
   const n = idx.length;
   for (let i = 0; i < n; ++i) {
@@ -17,8 +17,8 @@ export function multiRowLookup(idx, data, hash) {
     const key = hash(row, data);
     if (key != null && key === key) {
       lut.has(key)
-        ? lut.get(key).push(row)
-        : lut.set(key, [row]);
+        ? lut.get(key).push(i)
+        : lut.set(key, [i]);
     }
   }
   return lut;

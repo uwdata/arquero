@@ -1,4 +1,4 @@
-import { singleRowLookup } from './join/lookup';
+import { rowLookup } from './join/lookup';
 import BitSet from '../table/bit-set';
 import isArray from '../util/is-array';
 
@@ -18,7 +18,7 @@ export default function(tableL, tableR, predicate, options = {}) {
 
 function hashSemiJoin(filter, tableL, tableR, [keyL, keyR]) {
   // build lookup table
-  const lut = singleRowLookup(tableR, keyR);
+  const lut = rowLookup(tableR, keyR);
 
   // scan table, update filter with matches
   tableL.scan((rowL, data) => {

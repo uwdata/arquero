@@ -1,4 +1,4 @@
-import { singleRowLookup } from './join/lookup';
+import { rowLookup } from './join/lookup';
 import { aggregateGet } from './reduce/util';
 import columnSet from '../table/column-set';
 import NULL from '../util/null';
@@ -12,7 +12,7 @@ export default function(tableL, tableR, [keyL, keyR], { names, exprs, ops }) {
   names.forEach(name => cols.add(name, Array(total).fill(NULL)));
 
   // build lookup table
-  const lut = singleRowLookup(tableR, keyR);
+  const lut = rowLookup(tableR, keyR);
 
   // generate setter function for lookup match
   const set = unroll(
