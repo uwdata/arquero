@@ -384,10 +384,10 @@ export default {
 
   /** @type {AggregateDef} */
   bins: {
-    create: (maxbins, nice, minstep) => initOp({
-      value: s => bins(s.min, s.max, maxbins, nice, minstep)
+    create: (maxbins, nice, minstep, step) => initOp({
+      value: s => bins(s.min, s.max, maxbins, nice, minstep, step)
     }),
-    param: [1, 3],
+    param: [1, 4],
     req: ['min', 'max']
   }
 };

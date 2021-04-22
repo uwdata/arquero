@@ -918,6 +918,7 @@ Aggregate function for calculating a binning scheme in terms of the minimum bin 
 * *maxbins*: The maximum number of allowed bins (default `15`).
 * *nice*: Boolean flag (default `true`) indicating if the bin min and max should snap to "nice" human-friendly values such as multiples of 10.
 * *minstep*: The minimum allowed step size between bins.
+* *step*: The exact step size to use between bins. If specified, the *maxbins* and *minstep* arguments are ignored.
 
 <hr/><a id="count" href="#count">#</a>
 <em>op</em>.<b>count</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
