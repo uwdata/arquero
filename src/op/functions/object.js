@@ -7,8 +7,16 @@ function array(iter) {
 }
 
 export default {
-  has:     (obj, key) => isMapOrSet(obj) ? obj.has(key) : has(obj, key),
-  keys:    (obj) => isMap(obj) ? array(obj.keys()) : Object.keys(obj),
-  values:  (obj) => isMapOrSet(obj) ? array(obj.values()) : Object.values(obj),
-  entries: (obj) => isMapOrSet(obj) ? array(obj.entries()) : Object.entries(obj)
+  has:      (obj, key) => isMapOrSet(obj) ? obj.has(key)
+              : obj != null ? has(obj, key)
+              : false,
+  keys:     (obj) => isMap(obj) ? array(obj.keys())
+              : obj != null ? Object.keys(obj)
+              : [],
+  values:   (obj) => isMapOrSet(obj) ? array(obj.values())
+              : obj != null ? Object.values(obj)
+              : [],
+  entries:  (obj) => isMapOrSet(obj) ? array(obj.entries())
+              : obj != null ? Object.entries(obj)
+              : []
 };
