@@ -910,7 +910,7 @@ Aggregate function returning an arbitrary observed value (typically the first en
 * *field*: The data column or derived field.
 
 <hr/><a id="bins" href="#bins">#</a>
-<em>op</em>.<b>bins</b>(<i>field</i>[, <i>maxbins</i>, <i>nice</i>, <i>minstep</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
+<em>op</em>.<b>bins</b>(<i>field</i>[, <i>maxbins</i>, <i>nice</i>, <i>minstep</i>, <i>step</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/aggregate-functions.js)
 
 Aggregate function for calculating a binning scheme in terms of the minimum bin boundary, maximum bin boundary, and step size.
 
