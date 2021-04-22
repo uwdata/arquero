@@ -3,18 +3,23 @@ import isArrayType from '../../util/is-array-type';
 import isString from '../../util/is-string';
 import isValid from '../../util/is-valid';
 
-const Arr = (seq) => isArrayType(seq) ? seq : null;
-const Seq = (seq) => (isArrayType(seq) || isString(seq)) ? seq : null;
+const isSeq = (seq) => isArrayType(seq) || isString(seq);
 
 export default {
-  compact:     (array) => Arr(array).filter(v => isValid(v)),
-  concat:      (...values) => [].concat(...values),
-  includes:    (seq, value, index) => Seq(seq).includes(value, index),
-  indexof:     (seq, value) => Seq(seq).indexOf(value),
-  join:        (array, delim) => Arr(array).join(delim),
-  lastindexof: (seq, value) => Seq(seq).lastIndexOf(value),
-  length:      (seq) => seq.length,
-  pluck:       (array, prop) => Arr(array).map(v => isValid(v) ? v[prop] : NULL),
-  reverse:     (array) => Arr(array).slice().reverse(),
-  slice:       (seq, start, end) => Seq(seq).slice(start, end)
+  compact:      (arr) => isArrayType(arr) ? arr.filter(v => isValid(v)) : arr,
+  concat:       (...values) => [].concat(...values),
+  includes:     (seq, value, index) => isSeq(seq)
+                  ? seq.includes(value, index)
+                  : false,
+  indexof:      (seq, value) => isSeq(seq) ? seq.indexOf(value) : -1,
+  join:         (arr, delim) => isArrayType(arr) ? arr.join(delim) : NULL,
+  lastindexof:  (seq, value) => isSeq(seq) ? seq.lastIndexOf(value) : -1,
+  length:       (seq) => isSeq(seq) ? seq.length : 0,
+  pluck:        (arr, prop) => isArrayType(arr)
+                  ? arr.map(v => isValid(v) ? v[prop] : NULL)
+                  : NULL,
+  reverse:      (seq) => isArrayType(seq) ? seq.slice().reverse()
+                  : isString(seq) ? seq.split('').reverse().join('')
+                  : NULL,
+  slice:        (seq, start, end) => isSeq(seq) ? seq.slice(start, end) : NULL
 };
