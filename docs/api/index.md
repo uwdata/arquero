@@ -430,6 +430,7 @@ Generate a table expression that performs uniform binning of number values. The 
   * *minstep*: The minimum step size between bins.
   * *nice*: Boolean flag (default `true`) indicating if bins should snap to "nice" human-friendly values such as multiples of ten.
   * *offset*: Step offset for bin boundaries. The default (`0`) floors to the lower bin boundary. A value of `1` snaps one step higher to the upper bin boundary, and so on.
+  * *step*: The exact step size to use between bins. If specified, the *maxbins* and *minstep* options are ignored.
 
  *Examples*
 

@@ -192,7 +192,15 @@ tape('rollup supports histogram', t => {
       b1: bin('x', { maxbins: 20, offset: 1 })
     })
     .count();
-  tableEqual(t,  ht, result, 'histogram from bin helper');
+  tableEqual(t,  ht, result, 'histogram from bin helper, maxbins');
+
+  const st = table(data)
+    .groupby({
+      b0: bin('x', { step: 0.5 }),
+      b1: bin('x', { step: 0.5, offset: 1 })
+    })
+    .count();
+  tableEqual(t,  st, result, 'histogram from bin helper, step');
 
   t.end();
 });

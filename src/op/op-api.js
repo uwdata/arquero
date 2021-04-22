@@ -219,6 +219,8 @@ export default {
    * @param {boolean} [nice=true] Flag indicating if the bin min and max
    *  should snap to "nice" human-friendly values.
    * @param {number} [minstep] The minimum allowed step size between bins.
+   * @param {number} [step] The exact step size to use between bins.
+   *  If specified, the maxbins and minstep arguments are ignored.
    * @return {[number, number, number]} The bin min, max, and step values.
    */
   bins: (field, maxbins, nice, minstep) =>
