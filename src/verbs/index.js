@@ -10,6 +10,7 @@ import __semijoin from './join-filter';
 import __lookup from './lookup';
 import __pivot from './pivot';
 import __relocate from './relocate';
+import __rename from './rename';
 import __rollup from './rollup';
 import __sample from './sample';
 import __select from './select';
@@ -47,6 +48,7 @@ export default {
   __lookup,
   __pivot,
   __relocate,
+  __rename,
   __rollup,
   __sample,
   __select,

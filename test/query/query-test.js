@@ -10,7 +10,7 @@ import { field, func } from './util';
 const {
   count, dedupe, derive, filter, groupby, orderby,
   reify, rollup, select, sample, ungroup, unorder,
-  relocate, impute, fold, pivot, spread, unroll,
+  relocate, rename, impute, fold, pivot, spread, unroll,
   cross, join, semijoin, antijoin,
   concat, union, except, intersect
 } = Verbs;
@@ -429,6 +429,24 @@ tape('Query evaluates orderby verbs', t => {
   t.end();
 });
 
+tape('Query evaluates reify verbs', t => {
+  const dt = table({
+    foo: [0, 1, 2, 3],
+    bar: [1, 1, 0, 0]
+   }).filter(d => d.foo < 1);
+
+  tableEqual(
+    t,
+    Query.from(
+      new Query([ reify() ]).toObject()
+    ).evaluate(dt),
+    { foo: [0], bar: [1] },
+    'reify query result'
+  );
+
+  t.end();
+});
+
 tape('Query evaluates relocate verbs', t => {
   const a = [1], b = [2], c = [3], d = [4];
   const dt = table({ a, b, c, d });
@@ -458,19 +476,19 @@ tape('Query evaluates relocate verbs', t => {
   t.end();
 });
 
-tape('Query evaluates reify verbs', t => {
-  const dt = table({
-    foo: [0, 1, 2, 3],
-    bar: [1, 1, 0, 0]
-   }).filter(d => d.foo < 1);
+tape('Query evaluates rename verbs', t => {
+  const a = [1], b = [2], c = [3], d = [4];
+  const dt = table({ a, b, c, d });
 
   tableEqual(
     t,
     Query.from(
-      new Query([ reify() ]).toObject()
+      new Query([
+        rename({ d: 'w', a: 'z' })
+      ]).toObject()
     ).evaluate(dt),
-    { foo: [0], bar: [1] },
-    'reify query result'
+    { z: a, b, c, w: d },
+    'rename query result'
   );
 
   t.end();

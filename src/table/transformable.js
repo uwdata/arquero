@@ -179,6 +179,18 @@ export default class Transformable {
   }
 
   /**
+   * Rename one or more columns, preserving column order.
+   * @param {...Select} columns One or more rename objects with current
+   *  column names as keys and new column names as values.
+   * @return {this} A new table with renamed columns.
+   * @example table.rename({ oldName: 'newName' })
+   * @example table.rename({ a: 'a2', b: 'b2' })
+   */
+  rename(...columns) {
+    return this.__rename(this, columns.flat());
+  }
+
+  /**
    * Rollup a table to produce an aggregate summary.
    * Often used in conjunction with {@link Transformable#groupby}.
    * To produce counts only, {@link Transformable#count} is a shortcut.

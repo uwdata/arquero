@@ -8,7 +8,7 @@ import {
 const {
   count, dedupe, derive, filter, groupby, orderby,
   reify, rollup, sample, select, ungroup, unorder,
-  relocate, impute, pivot, unroll, join, concat
+  relocate, rename, impute, pivot, unroll, join, concat
 } = Verbs;
 
 function toAST(verb) {
@@ -291,6 +291,35 @@ tape('relocate verb serializes to AST', t => {
       }
     },
     'ast relocate verb'
+  );
+
+  t.end();
+});
+
+tape('rename verb serializes to AST', t => {
+  t.deepEqual(
+    toAST(rename([{ foo: 'bar' }])),
+    {
+      type: 'Verb',
+      verb: 'rename',
+      columns: [
+        { type: 'Column', name: 'foo', as: 'bar' }
+      ]
+    },
+    'ast rename verb'
+  );
+
+  t.deepEqual(
+    toAST(rename([{ foo: 'bar' }, { baz: 'bop' }])),
+    {
+      type: 'Verb',
+      verb: 'rename',
+      columns: [
+        { type: 'Column', name: 'foo', as: 'bar' },
+        { type: 'Column', name: 'baz', as: 'bop' }
+      ]
+    },
+    'ast rename verb'
   );
 
   t.end();
