@@ -164,6 +164,9 @@ export const Verbs = {
                   props: { before: SelectionList, after: SelectionList }
                 }
               ]),
+  rename:     createVerb('rename', [
+                { name: 'columns', type: SelectionList }
+              ]),
   rollup:     createVerb('rollup', [
                 { name: 'values', type: ExprObject }
               ]),
