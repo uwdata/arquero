@@ -12,7 +12,7 @@ title: Verbs \| Arquero API Reference
   * [orderby](#orderby), [unorder](#unorder)
   * [rollup](#rollup), [count](#count)
   * [sample](#sample)
-  * [select](#select), [relocate](#relocate)
+  * [select](#select), [relocate](#relocate), [rename](#rename)
   * [reify](#reify)
 * [Join Verbs](#joins)
   * [cross](#cross)
@@ -272,6 +272,35 @@ table.relocate(not('colB', 'colC'), { before: 'colA' })
 table.relocate({ colA: 'newA', colB: 'newB' }, { after: 'colC' })
 ```
 
+
+<hr/><a id="rename" href="#rename">#</a>
+<em>table</em>.<b>rename</b>(<i>columns</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/rename.js)
+
+Rename one or more columns, preserving column order.
+
+* *columns*: One or more rename objects with current column names as keys and new column names as values.
+
+*Examples*
+
+```js
+// rename colA to colA2
+table.rename({ colA: 'colA2' })
+```
+
+```js
+// rename 'old col' to 'new col'
+table.rename({ 'old col': 'new col' })
+```
+
+```js
+// rename colA and colB
+table.rename({ colA: 'colA2', colB: 'colB2' })
+```
+
+```js
+// rename colA and colB, alternate syntax
+table.rename({ colA: 'colA2' }, { colB: 'colB2' })
+```
 
 <hr/><a id="reify" href="#reify">#</a>
 <em>table</em>.<b>reify</b>([<i>indices</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)

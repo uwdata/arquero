@@ -9,7 +9,7 @@ import { field, func } from './util';
 const {
   count, dedupe, derive, filter, groupby, orderby,
   reify, rollup, sample, select, ungroup, unorder,
-  relocate, impute, pivot, unroll, join, concat
+  relocate, rename, impute, pivot, unroll, join, concat
 } = Verbs;
 
 function test(t, verb, expect, msg) {
@@ -210,6 +210,28 @@ tape('relocate verb serializes to object', t => {
       options: { after: { range: ['a', 'b'] } }
     },
     'serialized relocate verb'
+  );
+
+  t.end();
+});
+
+tape('rename verb serializes to object', t => {
+  test(t,
+    rename([{ foo: 'bar' }]),
+    {
+      verb: 'rename',
+      columns: [{ foo: 'bar' }]
+    },
+    'serialized rename verb'
+  );
+
+  test(t,
+    rename([{ foo: 'bar' }, { baz: 'bop' }]),
+    {
+      verb: 'rename',
+      columns: [{ foo: 'bar' }, { baz: 'bop' }]
+    },
+    'serialized rename verb'
   );
 
   t.end();
