@@ -228,7 +228,7 @@ aq.fromJSON(await fetch(url).then(res => res.json()), { autoType: false })
 Methods for loading files and creating new table instances.
 
 <hr/><a id="load" href="#load">#</a>
-<em>aq</em>.<b>load</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load.js)
+<em>aq</em>.<b>load</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load-url.js)
 
 Load data from a *url* or file and return a Promise for a <a href="table">table</a>. A specific format parser can be provided with the *using* option, otherwise CSV format is assumed. This method's *options* are also passed as the second argument to the format parser.
 
@@ -261,7 +261,7 @@ const dt = await aq.load('data/table.json', { as: 'json', using: aq.from })
 
 
 <hr/><a id="loadArrow" href="#loadArrow">#</a>
-<em>aq</em>.<b>loadArrow</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load.js)
+<em>aq</em>.<b>loadArrow</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load-file.js)
 
 Load a file in the [Apache Arrow](https://arrow.apache.org/docs/js/) IPC format from a *url* and return a Promise for a <a href="table">table</a>.
 
@@ -281,7 +281,7 @@ const dt = await aq.loadArrow('data/table.arrow');
 
 
 <hr/><a id="loadCSV" href="#loadCSV">#</a>
-<em>aq</em>.<b>loadCSV</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load.js)
+<em>aq</em>.<b>loadCSV</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load-file.js)
 
 Load a comma-separated values (CSV) file from a *url* and return a Promise for a <a href="table">table</a>. Delimiters other than commas, such as tabs or pipes ('\|'), can be specified using the *options* argument. By default, automatic type inference is performed for input values; string values that match the ISO standard date format are parsed into JavaScript Date objects. To disable this behavior set *options.autoType* to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use *options.parse*.
 
@@ -306,7 +306,7 @@ const dt = await aq.loadCSV('data/table.tsv', { delimiter: '\t' })
 
 
 <hr/><a id="loadJSON" href="#loadJSON">#</a>
-<em>aq</em>.<b>loadJSON</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load.js)
+<em>aq</em>.<b>loadJSON</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load-file.js)
 
 Load a JavaScript Object Notation (JSON) file from a *url* and return a Promise for a <a href="table">table</a>. If the loaded JSON is array-valued, an array-of-objects format is assumed and the [from](#from) method is used to construct the table. Otherwise, a column object format (as produced by [toJSON](table/#toJSON)) is assumed and the [fromJSON](#fromJSON) method is applied.
 
