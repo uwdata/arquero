@@ -188,9 +188,11 @@ export default class Table extends Transformable {
    * Get an array of values contained in a column. The resulting array
    * respects any table filter or orderby criteria.
    * @param {string} name The column name.
-   * @return {DataValue[]} The array of column values.
+   * @param {ArrayConstructor|TypedArrayConstructor} [arrayConstructor=Array]
+   *  The array constructor for instantiating the output array.
+   * @return {DataValue[]|TypedArray} The array of column values.
    */
-  columnArray(name) { // eslint-disable-line no-unused-vars
+  columnArray(name, arrayConstructor) { // eslint-disable-line no-unused-vars
     error('Not implemented');
   }
 
@@ -449,6 +451,16 @@ export default class Table extends Transformable {
     return this.__reduce(this, reducer);
   }
 }
+
+/**
+ * A typed array constructor.
+ * @typedef {Uint8ArrayConstructor|Uint16ArrayConstructor|Uint32ArrayConstructor|BigUint64ArrayConstructor|Int8ArrayConstructor|Int16ArrayConstructor|Int32ArrayConstructor|BigInt64ArrayConstructor|Float32ArrayConstructor|Float64ArrayConstructor} TypedArrayConstructor
+ */
+
+/**
+ * A typed array instance.
+ * @typedef {Uint8Array|Uint16Array|Uint32Array|BigUint64Array|Int8Array|Int16Array|Int32Array|BigInt64Array|Float32Array|Float64Array} TypedArray
+ */
 
 /**
  * Backing table data.

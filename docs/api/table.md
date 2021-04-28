@@ -217,11 +217,12 @@ dt.columnAt(1).get(1) // 5
 ```
 
 <hr/><a id="columnArray" href="#columnArray">#</a>
-<em>table</em>.<b>columnArray</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+<em>table</em>.<b>columnArray</b>(<i>name</i>[, <i>arrayConstructor</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
 
-Get an array of values contained in the column with the given *name*. Unlike direct access through the table [column](#column) method, the array returned by this method respects any table filter or orderby criteria.
+Get an array of values contained in the column with the given *name*. Unlike direct access through the table [column](#column) method, the array returned by this method respects any table filter or orderby criteria. By default, a standard [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) is returned; use the *arrayConstructor* argument to specify a [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray).
 
 * *name*: The column name.
+* *arrayConstructor*: An optional array constructor (default [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Array)) to use to instantiate the output array. Note that errors or truncated values may occur when assigning to a typed array with an incompatible type.
 
 *Examples*
 
@@ -234,6 +235,11 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
   .filter(d => d.a > 1)
   .columnArray('b'); // [ 5, 6 ]
+```
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .columnArray('b', Int32Array); // Int32Array.of(4, 5, 6)
 ```
 
 <hr/><a id="columnIndex" href="#columnIndex">#</a>
