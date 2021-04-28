@@ -2,9 +2,11 @@ import tape from 'tape';
 import { profiler } from '../../src/arrow/encode/profiler';
 import {
   Float64, Int16, Int32, Int64, Int8,
-  Uint16, Uint32, Uint64, Uint8
+  Uint16, Uint32, Uint64, Uint8,
+  util
 } from 'apache-arrow';
-import { compareTypes } from 'apache-arrow/visitor/typecomparator';
+
+const { compareTypes } = util;
 
 function profile(array) {
   const p = profiler();
