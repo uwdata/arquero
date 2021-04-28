@@ -4,6 +4,7 @@ import {
   Float64, Int16, Int32, Int64, Int8,
   Uint16, Uint32, Uint64, Uint8
 } from 'apache-arrow';
+import { compareTypes } from 'apache-arrow/visitor/typecomparator';
 
 function profile(array) {
   const p = profiler();
@@ -32,20 +33,20 @@ tape('profiler infers integer types', t => {
 
   Object.keys(dt).forEach(name => {
     const type = profile(dt[name]).type();
-    t.ok(types[name].compareTo(type), `${name} type`);
+    t.ok(compareTypes(types[name], type), `${name} type`);
   });
 
   const float = new Float64();
   t.ok(
-    float.compareTo(profile([0, 1, 2 ** 32]).type()),
+    compareTypes(float, profile([0, 1, 2 ** 32]).type()),
     'overflow to float64 type'
   );
   t.ok(
-    float.compareTo(profile([(1 << 31), 0, 2 ** 32 - 1]).type()),
+    compareTypes(float, profile([(1 << 31), 0, 2 ** 32 - 1]).type()),
     'overflow to float64 type'
   );
   t.ok(
-    float.compareTo(profile([(1 << 31) - 1, 0, 1]).type()),
+    compareTypes(float, profile([(1 << 31) - 1, 0, 1]).type()),
     'underflow to float64 type'
   );
 
@@ -65,7 +66,7 @@ tape('profiler infers bigint types', t => {
 
   Object.keys(dt).forEach(name => {
     const type = profile(dt[name]).type();
-    t.ok(types[name].compareTo(type), `${name} type`);
+    t.ok(compareTypes(types[name], type), `${name} type`);
   });
 
   t.throws(
