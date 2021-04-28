@@ -120,11 +120,13 @@ export default class ColumnTable extends Table {
    * Get an array of values contained in a column. The resulting array
    * respects any table filter or orderby criteria.
    * @param {string} name The column name.
-   * @return {import('./table').DataValue[]} The array of column values.
+   * @param {ArrayConstructor|import('./table').TypedArrayConstructor} [arrayConstructor=Array]
+   *  The array constructor for instantiating the output array.
+   * @return {import('./table').DataValue[]|import('./table).TypedArray} The array of column values.
    */
-  columnArray(name) {
+  columnArray(name, arrayConstructor = Array) {
     const column = this.column(name);
-    const array = Array(this.numRows());
+    const array = new arrayConstructor(this.numRows());
     let idx = -1;
     this.scan(row => array[++idx] = column.get(row), true);
     return array;

@@ -156,6 +156,35 @@ tape('ColumnTable supports object output', t => {
   t.end();
 });
 
+tape('ColumnTable supports column array output', t => {
+  const dt = new ColumnTable({
+      u: ['a', 'a', 'a', 'b', 'b'],
+      v: [2, 1, 4, 5, 3]
+    })
+    .filter(d => d.v > 1)
+    .orderby('v');
+
+  t.deepEqual(
+    dt.columnArray('u'),
+    ['a', 'b', 'a', 'b'],
+    'column array, strings'
+  );
+
+  t.deepEqual(
+    dt.columnArray('v'),
+    [2, 3, 4, 5],
+    'column array, numbers'
+  );
+
+  t.deepEqual(
+    dt.columnArray('v', Int32Array),
+    Int32Array.of(2, 3, 4, 5),
+    'column array, typed array'
+  );
+
+  t.end();
+});
+
 tape('ColumnTable supports grouped object output', t => {
   const dt = new ColumnTable({
       u: ['a', 'a', 'a', 'b', 'b'],
