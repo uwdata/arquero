@@ -640,7 +640,7 @@ table.pivot(
 
 ```js
 // pivot on key column 'type' and value columns ['x', 'y']
-// generates: { x_a: [0], x_b: [1], y_a: [3], y_b: [4] }
+// generates: { x_a: [1], x_b: [2], y_a: [3], y_b: [4] }
 aq.table({ type: ['a', 'b'], x: [1, 2], y: [3, 4 ]})
   .pivot('type', ['x', 'y'])
 ```
