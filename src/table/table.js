@@ -227,6 +227,15 @@ export default class Table extends Transformable {
   }
 
   /**
+   * Returns an object representing a table row.
+   * @param {number} [row=0] The row index, defaults to zero if not specified.
+   * @return {object} A row object with named properties for each column.
+   */
+   object(row) { // eslint-disable-line no-unused-vars
+    error('Not implemented');
+  }
+
+  /**
    * Returns an iterator over objects representing table rows.
    * @return {Iterator<object>} An iterator over row objects.
    */

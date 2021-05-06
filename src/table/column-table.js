@@ -161,6 +161,15 @@ export default class ColumnTable extends Table {
   }
 
   /**
+   * Returns an object representing a table row.
+   * @param {number} [row=0] The row index, defaults to zero if not specified.
+   * @return {object} A row object with named properties for each column.
+   */
+  object(row = 0) {
+    return objectBuilder(this)(row);
+  }
+
+  /**
    * Returns an array of objects representing table rows.
    * @param {ObjectsOptions} [options] The options for row object generation.
    * @return {object[]} An array of row objects.
@@ -186,18 +195,10 @@ export default class ColumnTable extends Table {
    * @return {Iterator<object>} An iterator over row objects.
    */
   *[Symbol.iterator]() {
-    const create = rowObjectBuilder(this);
+    const create = objectBuilder(this);
     const n = this.numRows();
-
-    if (this.isOrdered() || this.isFiltered()) {
-      const indices = this.indices();
-      for (let i = 0; i < n; ++i) {
-        yield create(indices[i]);
-      }
-    } else {
-      for (let i = 0; i < n; ++i) {
-        yield create(i);
-      }
+    for (let i = 0; i < n; ++i) {
+      yield create(i);
     }
   }
 
@@ -298,6 +299,23 @@ export default class ColumnTable extends Table {
   toMarkdown(options) {
     return toMarkdown(this, options);
   }
+}
+
+function objectBuilder(table, names) {
+  let b = table._builder;
+
+  if (!b) {
+    const create = rowObjectBuilder(table, names);
+    if (table.isOrdered() || table.isFiltered()) {
+      const indices = table.indices();
+      b = row => create(indices[row]);
+    } else {
+      b = create;
+    }
+    table._builder = b;
+  }
+
+  return b;
 }
 
 /**
