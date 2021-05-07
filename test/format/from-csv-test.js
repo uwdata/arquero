@@ -74,3 +74,12 @@ tape('fromCSV parses delimited text with parse option', t => {
   tableEqual(t, table, d, 'csv parsed data with custom parse');
   t.end();
 });
+
+tape('fromCSV parses delimited text with decimal option', t => {
+  tableEqual(t,
+    fromCSV('a;b\nu;-1,23\nv;4,56e5\nw;', { delimiter: ';', decimal: ',' }),
+    { a: ['u', 'v', 'w'], b: [-1.23, 4.56e5, null] },
+    'csv parsed data with decimal option'
+  );
+  t.end();
+});

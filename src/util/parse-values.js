@@ -1,25 +1,33 @@
 import identity from './identity';
 import isISODateString from './is-iso-date-string';
 
-const TYPES = [
-  [ // boolean
-    v => (v === 'true') || (v === 'false'),
-    v => v === 'false' ? false : true
-  ],
-  [ // number
-    v => v === 'NaN' || (v = +v) === v,
-    v => +v
-  ],
-  [ // iso date
-    isISODateString,
-    v => new Date(Date.parse(v))
-  ]
+const parseBoolean = [ // boolean
+  v => (v === 'true') || (v === 'false'),
+  v => v === 'false' ? false : true
 ];
 
-export default function(values) {
-  const n = TYPES.length;
+const parseNumber = [ // number
+  v => v === 'NaN' || (v = +v) === v,
+  v => +v
+];
+
+const parseDate = [ // iso date
+  isISODateString,
+  v => new Date(Date.parse(v))
+];
+
+function numberParser(options) {
+  const { decimal } = options;
+  return decimal && decimal !== '.'
+    ? parseNumber.map(f => s => f(s && s.replace(decimal, '.')))
+    : parseNumber;
+}
+
+export default function(values, options) {
+  const types = [parseBoolean, numberParser(options), parseDate];
+  const n = types.length;
   for (let i = 0; i < n; ++i) {
-    const [test, parser] = TYPES[i];
+    const [test, parser] = types[i];
     if (check(values, test)) {
       return parser;
     }
