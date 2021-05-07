@@ -128,7 +128,8 @@ This method performs parsing only. To both load and parse a CSV file, use [loadC
 
 * *text*: A string in a delimited-value format.
 * *options*: A CSV format options object:
-  * *delimiter*: A single-character delimiter string between column values.
+  * *delimiter*: A single-character delimiter string between column values (default `','`).
+  * *decimal*: A single-character numeric decimal separator (default `'.'`).
   * *header*: Boolean flag (default `true`) to specify the presence of a  header row. If `true`, indicates the CSV contains a header row with column names. If `false`, indicates the CSV does not contain a header row and the columns are given the names `'col1'`, `'col2'`, and so on.
   * *autoType*: Boolean flag (default `true`) for automatic type inference.
   * *autoMax*: Maximum number of initial rows (default `1000`) to use for type inference.
@@ -149,7 +150,13 @@ aq.fromCSV('a,b\n00152,2\n30219,4', { parse: { a: String } })
 ```
 
 ```js
+// parse semi-colon delimited text with comma as decimal separator
+aq.fromCSV('a;b\nu;-1,23\nv;3,45e5', { delimiter: ';', decimal: ',' })
+```
+
+```js
 // create table from an input CSV loaded from 'url'
+// alternatively, use the loadCSV method
 aq.fromCSV(await fetch(url).then(res => res.text()))
 ```
 

@@ -12,6 +12,7 @@ const DEFAULT_NAME = 'col';
  * Options for CSV parsing.
  * @typedef {object} CSVParseOptions
  * @property {string} [delimiter=','] Single-character delimiter between values.
+ * @property {string} [decimal='.'] Single-character numeric decimal separator.
  * @property {boolean} [header=true] Flag to specify presence of header row.
  *  If true, assumes the CSV contains a header row with column names.
  *  If false, indicates the CSV does not contain a header row, and the
@@ -61,7 +62,7 @@ export default function(text, options = {}) {
   // initialize parsers
   const parsers = options.autoType === false
     ? Array(n).fill(identity)
-    : getParsers(names, values, options.parse);
+    : getParsers(names, values, options);
 
   // apply parsers
   parsers.forEach((parse, i) => {
@@ -84,8 +85,11 @@ export default function(text, options = {}) {
   return new ColumnTable(columns, names);
 }
 
-function getParsers(names, values, opt = {}) {
+function getParsers(names, values, options) {
+  const { parse = {} } = options;
   return names.map(
-    (name, i) => isFunction(opt[name]) ? opt[name] : valueParser(values[i])
+    (name, i) => isFunction(parse[name])
+      ? parse[name]
+      : valueParser(values[i], options)
   );
 }
