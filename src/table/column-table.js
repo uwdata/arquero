@@ -301,11 +301,11 @@ export default class ColumnTable extends Table {
   }
 }
 
-function objectBuilder(table, names) {
+function objectBuilder(table) {
   let b = table._builder;
 
   if (!b) {
-    const create = rowObjectBuilder(table, names);
+    const create = rowObjectBuilder(table);
     if (table.isOrdered() || table.isFiltered()) {
       const indices = table.indices();
       b = row => create(indices[row]);
