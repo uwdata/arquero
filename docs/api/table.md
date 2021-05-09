@@ -14,7 +14,7 @@ title: Table \| Arquero API Reference
   * [column](#column), [columnAt](#columnAt), [columnArray](#columnArray)
   * [columnIndex](#columnIndex), [columnName](#columnName), [columnNames](#columnNames)
   * [assign](#assign)
-* [Table Values](#values)
+* [Table Values](#table-values)
   * [data](#data), [get](#get), [getter](#getter), [values](#values)
   * [indices](#indices), [partitions](#partitions), [scan](#scan)
 * [Table Output](#output)
@@ -304,7 +304,7 @@ t1.assign(t2); // { a: [1, 2], b: [7, 8], c: [5, 6] }
 
 <br/>
 
-## <a id="values">Table Values</a>
+## <a id="table-values">Table Values</a>
 
 <hr/><a id="data" href="#data">#</a>
 <em>table</em>.<b>data</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
