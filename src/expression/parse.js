@@ -37,7 +37,7 @@ const DEFAULT_TUPLE_ID2 = 'd2';
 
 const NO = msg => (node, ctx) => ctx.error(msg + ' not allowed', node);
 const ERROR_AGGREGATE = NO('Aggregate function');
-const ERROR_WINDOW = NO('Aggregate function');
+const ERROR_WINDOW = NO('Window function');
 const ERROR_ARGUMENT = 'Invalid argument';
 const ERROR_COLUMN = 'Invalid column reference';
 const ERROR_AGGRONLY = ERROR_COLUMN + ' (must be input to an aggregate function)';
