@@ -14,7 +14,8 @@ title: Table \| Arquero API Reference
   * [column](#column), [columnAt](#columnAt), [columnArray](#columnArray)
   * [columnIndex](#columnIndex), [columnName](#columnName), [columnNames](#columnNames)
   * [assign](#assign)
-* [Table Values](#values)
+* [Table Values](#table-values)
+  * [array](#array), [values](#values)
   * [data](#data), [get](#get), [getter](#getter)
   * [indices](#indices), [partitions](#partitions), [scan](#scan)
 * [Table Output](#output)
@@ -217,30 +218,14 @@ dt.columnAt(1).get(1) // 5
 ```
 
 <hr/><a id="columnArray" href="#columnArray">#</a>
-<em>table</em>.<b>columnArray</b>(<i>name</i>[, <i>arrayConstructor</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+<em>table</em>.<b>columnArray</b>(<i>name</i>[, <i>constructor</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
-Get an array of values contained in the column with the given *name*. Unlike direct access through the table [column](#column) method, the array returned by this method respects any table filter or orderby criteria. By default, a standard [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) is returned; use the *arrayConstructor* argument to specify a [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray).
+_This method is a deprecated alias for the table [array()](#array) method. Please use [array()](#array) instead._
+
+Get an array of values contained in the column with the given *name*. Unlike direct access through the table [column](#column) method, the array returned by this method respects any table filter or orderby criteria. By default, a standard [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) is returned; use the *constructor* argument to specify a [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray).
 
 * *name*: The column name.
-* *arrayConstructor*: An optional array constructor (default [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Array)) to use to instantiate the output array. Note that errors or truncated values may occur when assigning to a typed array with an incompatible type.
-
-*Examples*
-
-```js
-aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
-  .columnArray('b'); // [ 4, 5, 6 ]
-```
-
-```js
-aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
-  .filter(d => d.a > 1)
-  .columnArray('b'); // [ 5, 6 ]
-```
-
-```js
-aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
-  .columnArray('b', Int32Array); // Int32Array.of(4, 5, 6)
-```
+* *constructor*: An optional array constructor (default [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Array)) to use to instantiate the output array. Note that errors or truncated values may occur when assigning to a typed array with an incompatible type.
 
 <hr/><a id="columnIndex" href="#columnIndex">#</a>
 <em>table</em>.<b>columnIndex</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
@@ -304,7 +289,53 @@ t1.assign(t2); // { a: [1, 2], b: [7, 8], c: [5, 6] }
 
 <br/>
 
-## <a id="values">Table Values</a>
+## <a id="table-values">Table Values</a>
+
+<hr/><a id="array" href="#array">#</a>
+<em>table</em>.<b>array</b>(<i>name</i>[, <i>constructor</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+
+Get an array of values contained in the column with the given *name*. Unlike direct access through the table [column](#column) method, the array returned by this method respects any table filter or orderby criteria. By default, a standard [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) is returned; use the *constructor* argument to specify a [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray).
+
+* *name*: The column name.
+* *constructor*: An optional array constructor (default [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Array)) to use to instantiate the output array. Note that errors or truncated values may occur when assigning to a typed array with an incompatible type.
+
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .array('b'); // [ 4, 5, 6 ]
+```
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .filter(d => d.a > 1)
+  .array('b'); // [ 5, 6 ]
+```
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
+  .array('b', Int32Array); // Int32Array.of(4, 5, 6)
+```
+
+<hr/><a id="values" href="#values">#</a>
+<em>table</em>.<b>values</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+
+Returns an iterator over values in the column with the given *name*. The iterator returned by this method respects any table filter or orderby criteria.
+
+* *name*: The column name.
+
+*Examples*
+
+```js
+for (const value of table.values('colA')) {
+  // do something with ordered values from column A
+}
+```
+
+```js
+// slightly less efficient version of table.columnArray('colA')
+const colValues = Array.from(table.values('colA'));
+```
 
 <hr/><a id="data" href="#data">#</a>
 <em>table</em>.<b>data</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
@@ -339,6 +370,8 @@ dt.get('a', 2) // 1
 
 Returns an accessor ("getter") function for a column. The returned function takes a row index as its single argument and returns the corresponding column value. Row indices are relative to any filtering and ordering criteria, not the internal data layout.
 
+* *name*: The column name.
+
 *Examples*
 
 ```js
@@ -354,8 +387,6 @@ const dt = aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 get(0) // 3
 get(2) // 1
 ```
-
-* *name*: The column name.
 
 <hr/><a id="indices" href="#indices">#</a>
 <em>table</em>.<b>indices</b>([<i>order</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)

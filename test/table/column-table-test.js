@@ -119,6 +119,64 @@ tape('ColumnTable memoizes indices', t => {
   t.end();
 });
 
+tape('ColumnTable supports column values output', t => {
+  const dt = new ColumnTable({
+      u: ['a', 'a', 'a', 'b', 'b'],
+      v: [2, 1, 4, 5, 3]
+    })
+    .filter(d => d.v > 1)
+    .orderby('v');
+
+  t.deepEqual(
+    Array.from(dt.values('u')),
+    ['a', 'b', 'a', 'b'],
+    'column values, strings'
+  );
+
+  t.deepEqual(
+    Array.from(dt.values('v')),
+    [2, 3, 4, 5],
+    'column values, numbers'
+  );
+
+  t.deepEqual(
+    Int32Array.from(dt.values('v')),
+    Int32Array.of(2, 3, 4, 5),
+    'column values, typed array'
+  );
+
+  t.end();
+});
+
+tape('ColumnTable supports column array output', t => {
+  const dt = new ColumnTable({
+      u: ['a', 'a', 'a', 'b', 'b'],
+      v: [2, 1, 4, 5, 3]
+    })
+    .filter(d => d.v > 1)
+    .orderby('v');
+
+  t.deepEqual(
+    dt.array('u'),
+    ['a', 'b', 'a', 'b'],
+    'column array, strings'
+  );
+
+  t.deepEqual(
+    dt.array('v'),
+    [2, 3, 4, 5],
+    'column array, numbers'
+  );
+
+  t.deepEqual(
+    dt.array('v', Int32Array),
+    Int32Array.of(2, 3, 4, 5),
+    'column array, typed array'
+  );
+
+  t.end();
+});
+
 tape('ColumnTable supports object output', t => {
   const output = [
     { u: 'a', v: 1 },
@@ -170,35 +228,6 @@ tape('ColumnTable supports object output', t => {
     dt.object(1),
     output[1],
     'single object, explicit row'
-  );
-
-  t.end();
-});
-
-tape('ColumnTable supports column array output', t => {
-  const dt = new ColumnTable({
-      u: ['a', 'a', 'a', 'b', 'b'],
-      v: [2, 1, 4, 5, 3]
-    })
-    .filter(d => d.v > 1)
-    .orderby('v');
-
-  t.deepEqual(
-    dt.columnArray('u'),
-    ['a', 'b', 'a', 'b'],
-    'column array, strings'
-  );
-
-  t.deepEqual(
-    dt.columnArray('v'),
-    [2, 3, 4, 5],
-    'column array, numbers'
-  );
-
-  t.deepEqual(
-    dt.columnArray('v', Int32Array),
-    Int32Array.of(2, 3, 4, 5),
-    'column array, typed array'
   );
 
   t.end();

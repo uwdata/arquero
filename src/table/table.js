@@ -185,15 +185,40 @@ export default class Table extends Transformable {
   }
 
   /**
-   * Get an array of values contained in a column. The resulting array
-   * respects any table filter or orderby criteria.
+   * Deprecated alias for the table array() method: use table.array()
+   * instead. Get an array of values contained in a column. The resulting
+   * array respects any table filter or orderby criteria.
    * @param {string} name The column name.
-   * @param {ArrayConstructor|TypedArrayConstructor} [arrayConstructor=Array]
+   * @param {ArrayConstructor|TypedArrayConstructor} [constructor=Array]
    *  The array constructor for instantiating the output array.
    * @return {DataValue[]|TypedArray} The array of column values.
    */
-  columnArray(name, arrayConstructor) { // eslint-disable-line no-unused-vars
+  columnArray(name, constructor) {
+    return this.array(name, constructor);
+  }
+
+  /**
+   * Get an array of values contained in a column. The resulting array
+   * respects any table filter or orderby criteria.
+   * @param {string} name The column name.
+   * @param {ArrayConstructor|TypedArrayConstructor} [constructor=Array]
+   *  The array constructor for instantiating the output array.
+   * @return {DataValue[]|TypedArray} The array of column values.
+   */
+  array(name, constructor) { // eslint-disable-line no-unused-vars
     error('Not implemented');
+  }
+
+  /**
+   * Returns an iterator over column values.
+   * @return {Iterator<object>} An iterator over row objects.
+   */
+  *values(name) {
+    const get = this.getter(name);
+    const n = this.numRows();
+    for (let i = 0; i < n; ++i) {
+      yield get(i);
+    }
   }
 
   /**
