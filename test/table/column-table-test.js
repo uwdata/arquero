@@ -119,7 +119,7 @@ tape('ColumnTable memoizes indices', t => {
   t.end();
 });
 
-tape('ColumnTable supports values output', t => {
+tape('ColumnTable supports column values output', t => {
   const dt = new ColumnTable({
       u: ['a', 'a', 'a', 'b', 'b'],
       v: [2, 1, 4, 5, 3]
@@ -130,19 +130,19 @@ tape('ColumnTable supports values output', t => {
   t.deepEqual(
     Array.from(dt.values('u')),
     ['a', 'b', 'a', 'b'],
-    'values, strings'
+    'column values, strings'
   );
 
   t.deepEqual(
     Array.from(dt.values('v')),
     [2, 3, 4, 5],
-    'values, numbers'
+    'column values, numbers'
   );
 
   t.deepEqual(
     Int32Array.from(dt.values('v')),
     Int32Array.of(2, 3, 4, 5),
-    'values, typed array'
+    'column values, typed array'
   );
 
   t.end();
@@ -157,19 +157,19 @@ tape('ColumnTable supports column array output', t => {
     .orderby('v');
 
   t.deepEqual(
-    dt.columnArray('u'),
+    dt.array('u'),
     ['a', 'b', 'a', 'b'],
     'column array, strings'
   );
 
   t.deepEqual(
-    dt.columnArray('v'),
+    dt.array('v'),
     [2, 3, 4, 5],
     'column array, numbers'
   );
 
   t.deepEqual(
-    dt.columnArray('v', Int32Array),
+    dt.array('v', Int32Array),
     Int32Array.of(2, 3, 4, 5),
     'column array, typed array'
   );
