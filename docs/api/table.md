@@ -18,7 +18,7 @@ title: Table \| Arquero API Reference
   * [data](#data), [get](#get), [getter](#getter)
   * [indices](#indices), [partitions](#partitions), [scan](#scan)
 * [Table Output](#output)
-  * [objects](#objects), [Symbol.iterator](#@@iterator)
+  * [objects](#objects), [object](#object), [Symbol.iterator](#@@iterator)
   * [print](#print), [toHTML](#toHTML), [toMarkdown](#toMarkdown)
   * [toArrow](#toArrow), [toArrowBuffer](#toArrowBuffer), [toCSV](#toCSV), [toJSON](#toJSON)
 
@@ -413,6 +413,23 @@ aq.table({ k: ['a', 'b', 'a'], v: [1, 2, 3] })
 //   [ 'a', [ { k: 'a', v: 1 }, { k: 'a', v: 3 } ] ],
 //   [ 'b', [ { k: 'b', v: 2 } ] ]
 // ])
+```
+
+<hr/><a id="object" href="#object">#</a>
+<em>table</em>.<b>object</b>([<i>row</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+
+Returns an object representing a single table row. The *row* index is relative to any filtering and ordering criteria, not the internal data layout. If the *row* index is not specified, the first row in the table (index `0`) is returned.
+
+*Examples*
+
+```js
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).object(1) // { a: 2, b : 5}
+```
+
+```js
+const { min, max } = aq.table({ v: [1, 2, 3] })
+  .rollup({ min: op.min('v'), max: op.max('v') })
+  .object(); // { min: 1, max: 3 }
 ```
 
 <hr/><a id="@@iterator" href="#@@iterator">#</a>

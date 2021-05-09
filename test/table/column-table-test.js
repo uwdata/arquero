@@ -135,6 +135,7 @@ tape('ColumnTable supports object output', t => {
     .orderby('v');
 
   t.deepEqual(dt.objects(), output, 'object data');
+
   t.deepEqual(
     dt.objects({ limit: 3 }),
     output.slice(0, 3),
@@ -151,6 +152,24 @@ tape('ColumnTable supports object output', t => {
     dt.objects({ columns: { u: 'a', v: 'b'} }),
     output.map(d => ({ a: d.u, b: d.v })),
     'object data with renaming column selection'
+  );
+
+  t.deepEqual(
+    dt.object(),
+    output[0],
+    'single object, implicit row'
+  );
+
+  t.deepEqual(
+    dt.object(0),
+    output[0],
+    'single object, explicit row'
+  );
+
+  t.deepEqual(
+    dt.object(1),
+    output[1],
+    'single object, explicit row'
   );
 
   t.end();
