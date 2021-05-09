@@ -35,9 +35,9 @@ const DEFAULT_TUPLE_ID = 'd';
 const DEFAULT_TUPLE_ID1 = 'd1';
 const DEFAULT_TUPLE_ID2 = 'd2';
 
-const NO = msg => (node, ctx) => ctx.error(msg + ' not allowed', node);
+const NO = msg => (node, ctx) => ctx.error(node, msg + ' not allowed');
 const ERROR_AGGREGATE = NO('Aggregate function');
-const ERROR_WINDOW = NO('Aggregate function');
+const ERROR_WINDOW = NO('Window function');
 const ERROR_ARGUMENT = 'Invalid argument';
 const ERROR_COLUMN = 'Invalid column reference';
 const ERROR_AGGRONLY = ERROR_COLUMN + ' (must be input to an aggregate function)';
@@ -49,6 +49,11 @@ const ERROR_VARIABLE = 'Invalid variable reference';
 const ERROR_VARIABLE_OP = 'Variable not accessible in operator call';
 const ERROR_DECLARATION = 'Unsupported variable declaration';
 const ERROR_DESTRUCTURE = 'Unsupported destructuring pattern';
+const ERROR_CLOSURE = 'Table expressions do not support closures';
+const ERROR_USE_PARAMS = 'Use table.params({ name: value }) to define dynamic parameters';
+const ERROR_ADD_FUNCTION = 'Use aq.addFunction(name, fn) to add new op functions';
+const ERROR_VARIABLE_NOTE = `\nNote: ${ERROR_CLOSURE}. ${ERROR_USE_PARAMS}.`;
+const ERROR_FUNCTION_NOTE = `\nNote: ${ERROR_CLOSURE}. ${ERROR_ADD_FUNCTION}.`;
 
 const ANNOTATE = { [Column]: 1, [Op]: 1 };
 
@@ -97,13 +102,13 @@ export default function(input, opt = {}) {
         e.field = node.name;
       }
     },
-    error(msg, node) {
+    error(node, msg, note = '') {
       // both expresions and fields are parsed
       // with added code prefixes of length 6!
       const i = node.start - 6;
       const j = node.end - 6;
       const snippet = String(ctx.spec).slice(i, j);
-      error(`${msg}: "${snippet}"`);
+      error(`${msg}: "${snippet}"${note}`);
     }
   };
 
@@ -189,13 +194,13 @@ function checkColumn(node, name, index, ctx, parent) {
     : null;
   const col = table && table.column(name);
   if (table && !col) {
-    ctx.error(ERROR_COLUMN, node);
+    ctx.error(node, ERROR_COLUMN);
   }
 
   // check if column reference is valid in current context
   if (ctx.aggronly && !ctx.$op) {
     if (!ctx.$op) {
-      ctx.error(ERROR_AGGRONLY, node);
+      ctx.error(node, ERROR_AGGRONLY);
     }
   }
 
@@ -210,7 +215,7 @@ function updateColumnNode(node, key, ctx, parent) {
 
 function checkParam(node, name, index, ctx) {
   if (ctx.params && !has(ctx.params, name)) {
-    ctx.error(ERROR_PARAM, node);
+    ctx.error(node, ERROR_PARAM);
   }
   updateParameterNode(node, name);
 }
@@ -234,7 +239,7 @@ function handleDeclaration(node, ctx) {
   } else if (is(ObjectPattern, node)) {
     node.properties.forEach(prop => handleDeclaration(prop.value, ctx));
   } else {
-    ctx.error(ERROR_DECLARATION, node.id);
+    ctx.error(node.id, ERROR_DECLARATION);
   }
 }
 
@@ -259,7 +264,7 @@ const visitors = {
     if (handleIdentifier(node, ctx, parent) && !ctx.scope.has(node.name)) {
       // handle identifier passed responsibility here
       // raise error if identifier not defined in scope
-      ctx.error(ERROR_VARIABLE, node);
+      ctx.error(node, ERROR_VARIABLE, ERROR_VARIABLE_NOTE);
     }
   },
   CallExpression(node, ctx) {
@@ -288,7 +293,7 @@ const visitors = {
     } else if (getFunction(name)) {
       node.callee = { type: Function, name };
     } else {
-      ctx.error(ERROR_FUNCTION, node);
+      ctx.error(node, ERROR_FUNCTION, ERROR_FUNCTION_NOTE);
     }
   },
   MemberExpression(node, ctx, parent) {
@@ -338,7 +343,7 @@ function spliceMember(node, index, ctx, check, parent) {
   } else try {
     name = ctx.param(property);
   } catch (e) {
-    ctx.error(ERROR_MEMBER, node);
+    ctx.error(node, ERROR_MEMBER);
   }
 
   check(node, name, index, ctx, parent);
@@ -350,7 +355,7 @@ const opVisitors = {
   VariableDeclarator: NO('Variable declaration in operator call'),
   Identifier(node, ctx, parent) {
     if (handleIdentifier(node, ctx, parent)) {
-      ctx.error(ERROR_VARIABLE_OP, node);
+      ctx.error(node, ERROR_VARIABLE_OP);
     }
   },
   CallExpression(node, ctx) {
@@ -360,7 +365,7 @@ const opVisitors = {
     if (getFunction(name)) {
       node.callee = { type: Function, name };
     } else {
-      ctx.error(ERROR_FUNCTION, node);
+      ctx.error(node, ERROR_FUNCTION, ERROR_FUNCTION_NOTE);
     }
   }
 };
@@ -438,9 +443,9 @@ function parseRef(ctx, node, refName, alias) {
     node.properties.forEach(p => {
       const key = is(Identifier, p.key) ? p.key.name
         : is(Literal, p.key) ? p.key.value
-        : ctx.error(ERROR_ARGUMENT, p);
+        : ctx.error(p, ERROR_ARGUMENT);
       if (!is(Identifier, p.value)) {
-        ctx.error(ERROR_DESTRUCTURE, p.value);
+        ctx.error(p.value, ERROR_DESTRUCTURE);
       }
       alias(p.value.name, key);
     });
@@ -461,7 +466,7 @@ function parseOperator(ctx, def, name, args) {
       walk(arg, ctx, opVisitors);
       params.push(ctx.param(arg));
     } else {
-      ctx.error(ERROR_OP_PARAMETER, arg);
+      ctx.error(arg, ERROR_OP_PARAMETER);
     }
   });
 
