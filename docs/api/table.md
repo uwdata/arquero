@@ -15,7 +15,7 @@ title: Table \| Arquero API Reference
   * [columnIndex](#columnIndex), [columnName](#columnName), [columnNames](#columnNames)
   * [assign](#assign)
 * [Table Values](#values)
-  * [data](#data), [get](#get), [getter](#getter)
+  * [data](#data), [get](#get), [getter](#getter), [values](#values)
   * [indices](#indices), [partitions](#partitions), [scan](#scan)
 * [Table Output](#output)
   * [objects](#objects), [object](#object), [Symbol.iterator](#@@iterator)
@@ -339,6 +339,8 @@ dt.get('a', 2) // 1
 
 Returns an accessor ("getter") function for a column. The returned function takes a row index as its single argument and returns the corresponding column value. Row indices are relative to any filtering and ordering criteria, not the internal data layout.
 
+* *name*: The column name.
+
 *Examples*
 
 ```js
@@ -355,7 +357,25 @@ get(0) // 3
 get(2) // 1
 ```
 
+<hr/><a id="values" href="#values">#</a>
+<em>table</em>.<b>values</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+
+Returns an iterator over values in the column with the given *name*. The iterator returned by this method respects any table filter or orderby criteria.
+
 * *name*: The column name.
+
+*Examples*
+
+```js
+for (const value of table.values('colA')) {
+  // do something with ordered values from column A
+}
+```
+
+```js
+// slightly less efficient version of table.columnArray('colA')
+const colValues = Array.from(table.values('colA'));
+```
 
 <hr/><a id="indices" href="#indices">#</a>
 <em>table</em>.<b>indices</b>([<i>order</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)

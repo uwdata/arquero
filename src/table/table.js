@@ -197,6 +197,18 @@ export default class Table extends Transformable {
   }
 
   /**
+   * Returns an iterator over column values.
+   * @return {Iterator<object>} An iterator over row objects.
+   */
+  *values(name) {
+    const get = this.getter(name);
+    const n = this.numRows();
+    for (let i = 0; i < n; ++i) {
+      yield get(i);
+    }
+  }
+
+  /**
    * Get the value for the given column and row.
    * @param {string} name The column name.
    * @param {number} [row=0] The row index, defaults to zero if not specified.
