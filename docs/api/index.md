@@ -131,6 +131,8 @@ This method performs parsing only. To both load and parse a CSV file, use [loadC
   * *delimiter*: A single-character delimiter string between column values (default `','`).
   * *decimal*: A single-character numeric decimal separator (default `'.'`).
   * *header*: Boolean flag (default `true`) to specify the presence of a  header row. If `true`, indicates the CSV contains a header row with column names. If `false`, indicates the CSV does not contain a header row and the columns are given the names `'col1'`, `'col2'`, and so on.
+  * *skip*: The number of lines to skip (default `0`) before reading data.
+  * *comment*: A string used to identify comment lines. Any lines that start with the comment pattern are skipped.
   * *autoType*: Boolean flag (default `true`) for automatic type inference.
   * *autoMax*: Maximum number of initial rows (default `1000`) to use for type inference.
   * *parse*: Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
@@ -141,6 +143,16 @@ This method performs parsing only. To both load and parse a CSV file, use [loadC
 // create table from an input CSV string
 // akin to table({ a: [1, 3], b: [2, 4] })
 aq.fromCSV('a,b\n1,2\n3,4')
+```
+
+```js
+// skip commented lines
+aq.fromCSV('# a comment\na,b\n1,2\n3,4', { comment: '#' })
+```
+
+```js
+// skip the first line
+aq.fromCSV('# a comment\na,b\n1,2\n3,4', { skip: 1 })
 ```
 
 ```js

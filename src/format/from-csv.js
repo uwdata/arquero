@@ -4,7 +4,6 @@ import identity from '../util/identity';
 import parseDSV from '../util/parse-dsv';
 import valueParser from '../util/parse-values';
 import repeat from '../util/repeat';
-import error from '../util/error';
 
 const DEFAULT_NAME = 'col';
 
@@ -17,6 +16,9 @@ const DEFAULT_NAME = 'col';
  *  If true, assumes the CSV contains a header row with column names.
  *  If false, indicates the CSV does not contain a header row, and the
  *  columns are given the names 'col1', 'col2', and so on.
+ * @property {number} [skip=0] The number of lines to skip before reading data.
+ * @property {string} [comment] A string used to identify comment lines. Any
+ *  lines that start with the comment pattern are skipped.
  * @property {boolean} [autoType=true] Flag for automatic type inference.
  * @property {number} [autoMax=1000] Maximum number of initial values to use
  *  for type inference.
@@ -38,12 +40,9 @@ const DEFAULT_NAME = 'col';
  * @param {ColumnTable} table A new table containing the parsed values.
  */
 export default function(text, options = {}) {
-  const delim = options.delimiter == null ? ',' : options.delimiter;
   const header = options.header !== false;
   const automax = +options.autoMax || 1000;
-
-  if (delim.length > 1) error('CSV delimiter should be a single character.');
-  const rows = parseDSV(text, (delim + '').charCodeAt(0));
+  const rows = parseDSV(text, options);
   let row = rows.next() || [];
 
   const n = row.length;

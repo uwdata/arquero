@@ -83,3 +83,22 @@ tape('fromCSV parses delimited text with decimal option', t => {
   );
   t.end();
 });
+
+tape('fromCSV parses delimited text with skip options', t => {
+  const text = '# line 1\n# line 2\na,b\n1,2\n3,4';
+  const data = { a: [1, 3], b: [2, 4] };
+
+  tableEqual(t, fromCSV(text, { skip: 2 }), data,
+    'csv parsed data with skip option'
+  );
+
+  tableEqual(t, fromCSV(text, { comment: '#' }), data,
+    'csv parsed data with comment option'
+  );
+
+  tableEqual(t, fromCSV(text, { skip: 1, comment: '#' }), data,
+    'csv parsed data with skip and comment options'
+  );
+
+  t.end();
+});
