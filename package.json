@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "acorn": "^8.2.4",
-    "apache-arrow": "^4.0.0",
+    "apache-arrow": "^3.0.0",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
