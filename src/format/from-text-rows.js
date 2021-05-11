@@ -4,14 +4,18 @@ import isFunction from '../util/is-function';
 import repeat from '../util/repeat';
 import valueParser from '../util/parse-values';
 
-const DEFAULT_NAME = 'col';
+function defaultNames(n, off = 0) {
+  return repeat(n - off, i => `col${i + off + 1}`);
+}
 
 export default function(next, names, options) {
   let row = next();
   const n = row.length;
   const automax = +options.autoMax || 1000;
   const values = repeat(n, () => []);
-  names = names || repeat(n, i => `${DEFAULT_NAME}${i + 1}`);
+  names = names
+    ? names.length < n ? [...names, defaultNames(n, names.length)] : names
+    : defaultNames(n);
 
   // read in initial rows to guess types
   let idx = 0;
