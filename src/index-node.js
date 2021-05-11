@@ -1,2 +1,2 @@
 export * from './index';
-export { load, loadArrow, loadCSV, loadJSON } from './format/load-file';
+export { load, loadArrow, loadCSV, loadFixed, loadJSON } from './format/load-file';

@@ -31,7 +31,7 @@ tape('fromCSV parses delimited text', t => {
 
 tape('fromCSV infers types', t => {
   function check(msg, values, test) {
-    const d = fromCSV('col\n' + values.join('\n')).column('col').data;
+    const d = fromCSV('col\n' + values.join('\n')).array('col');
     t.ok(d.every(v => v == null || test(v)), msg);
   }
 

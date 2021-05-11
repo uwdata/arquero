@@ -1,5 +1,6 @@
 import fromArrow from './from-arrow';
 import fromCSV from './from-csv';
+import fromFixed from './from-fixed';
 import fromJSON from './from-json';
 import { from } from '../table';
 import isArray from '../util/is-array';
@@ -56,6 +57,17 @@ export function loadArrow(url, options) {
  */
 export function loadCSV(url, options) {
   return load(url, { ...options, as: 'text', using: fromCSV });
+}
+
+/**
+ * Load a fixed width file from a URL and return a Promise for an Arquero table.
+ * @param {string} url The URL to load.
+ * @param {LoadOptions & import('./from-fixed').FixedParseOptions} options Fixed width format options.
+ * @return {Promise<ColumnTable>} A Promise for an Arquero table.
+ * @example aq.loadFixedWidth('data/table.txt', { names: ['name', 'city', state'], widths: [10, 20, 2] })
+ */
+ export function loadFixed(url, options) {
+  return load(url, { ...options, as: 'text', using: fromFixed });
 }
 
 /**
