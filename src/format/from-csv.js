@@ -7,9 +7,11 @@ import parseDelimited from './parse/parse-delimited';
  * @property {string} [delimiter=','] Single-character delimiter between values.
  * @property {string} [decimal='.'] Single-character numeric decimal separator.
  * @property {boolean} [header=true] Flag to specify presence of header row.
- *  If true, assumes the CSV contains a header row with column names.
- *  If false, indicates the CSV does not contain a header row, and the
- *  columns are given the names 'col1', 'col2', and so on.
+ *  If true, assumes the CSV contains a header row with column names. If false,
+ *  indicates the CSV does not contain a header row; columns are given the
+ *  names 'col1', 'col2', etc unless the *names* option is specified.
+ * @property {string[]} [names] An array of column names to use for header-less
+ *  CSV files. This option is ignored if the header option is true.
  * @property {number} [skip=0] The number of lines to skip before reading data.
  * @property {string} [comment] A string used to identify comment lines. Any
  *  lines that start with the comment pattern are skipped.
@@ -37,7 +39,7 @@ export default function(text, options = {}) {
   const next = parseDelimited(text, options);
   return fromTextRows(
     next,
-    options.header !== false ? next() : null,
+    options.header !== false ? next() : options.names,
     options
   );
 }
