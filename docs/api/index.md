@@ -6,9 +6,9 @@ title: Arquero API Reference
 [**Top-Level**](/arquero/api) | [Table](table) | [Verbs](verbs) | [Op Functions](op) | [Expressions](expressions) | [Extensibility](extensibility)
 
 * [Table Constructors](#table-constructors)
-  * [table](#table), [from](#from), [fromArrow](#fromArrow), [fromCSV](#fromCSV), [fromJSON](#fromJSON)
+  * [table](#table), [from](#from), [fromArrow](#fromArrow), [fromCSV](#fromCSV), [fromFixed](#fromFixed), [fromJSON](#fromJSON)
 * [Table Input](#input)
-  * [load](#load), [loadArrow](#loadArrow), [loadCSV](#loadCSV), [loadJSON](#loadJSON)
+  * [load](#load), [loadArrow](#loadArrow), [loadCSV](#loadCSV), [loadFixed](#loadFixed), [loadJSON](#loadJSON)
 * [Table Output](#output)
   * [toArrow](#toArrow)
 * [Expression Helpers](#expression-helpers)
@@ -173,6 +173,34 @@ aq.fromCSV(await fetch(url).then(res => res.text()))
 ```
 
 
+<hr/><a id="fromFixed" href="#fromFixed">#</a>
+<em>aq</em>.<b>fromFixed</b>(<i>text</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-fixed-width.js)
+
+Parse a fixed-width file *text* string into a <a href="table">table</a>. By default, automatic type inference is performed for input values; string values that match the ISO standard date format are parsed into JavaScript Date objects. To disable this behavior set *options.autoType* to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use *options.parse*.
+
+This method performs parsing only. To both load and parse a fixed-width file, use [loadFixed](#loadFixed).
+
+* *text*: A string in a fixed-width format.
+* *options*: A format options object:
+  * *positions*: Array of [start, end] indices for fixed-width columns.
+  * *widths*: Array of fixed column widths. This option is ignored if the *positions* property is specified.
+  * *names*: An array of column names. The array length should match the length of the *positions* or *widths* array. If not specified or shorter than the other array, default column names are generated.
+  * *decimal*: A single-character numeric decimal separator (default `'.'`).
+  * *skip*: The number of lines to skip (default `0`) before reading data.
+  * *comment*: A string used to identify comment lines. Any lines that start with the comment pattern are skipped.
+  * *autoType*: Boolean flag (default `true`) for automatic type inference.
+  * *autoMax*: Maximum number of initial rows (default `1000`) to use for type inference.
+  * *parse*: Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
+
+*Examples*
+
+```js
+// create table from an input fixed-width string
+// akin to table({ u: ['a', 'b'], v: [1, 2] })
+aq.fromFixed('a1\nb2', { widths: [1, 1], names: ['u', 'v'] })
+```
+
+
 <hr/><a id="fromJSON" href="#fromJSON">#</a>
 <em>aq</em>.<b>fromJSON</b>(<i>data</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-json.js)
 
@@ -321,6 +349,26 @@ const dt = await aq.loadCSV('data/table.csv');
 ```js
 // load table from a tab-delimited file
 const dt = await aq.loadCSV('data/table.tsv', { delimiter: '\t' })
+```
+
+
+<hr/><a id="loadFixed" href="#loadFixed">#</a>
+<em>aq</em>.<b>loadFixed</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load-file.js)
+
+Load a comma-separated values (CSV) file from a *url* and return a Promise for a <a href="table">table</a>. By default, automatic type inference is performed for input values; string values that match the ISO standard date format are parsed into JavaScript Date objects. To disable this behavior set *options.autoType* to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use *options.parse*.
+
+This method performs both loading and parsing, and is equivalent to `aq.load(url, { using: aq.fromFixed })`. To instead parse a fixed width string that has already been loaded, use [fromFixed](#fromFixed).
+
+When invoked in the browser, the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) is used to load the *url*. When invoked in node.js, the *url* argument can also be a local file path. If the input *url* string has a network protocol at the beginning (e.g., `'http://'`, `'https://'`, *etc*.) it is treated as a URL and the [node-fetch](https://github.com/node-fetch/node-fetch) library is used. If the `'file://'` protocol is used, the rest of the string should be an absolute file path, from which a local file is loaded. Otherwise the input is treated as a path to a local file and loaded using the node.js `fs` module.
+
+* *url*: The url or local file (node.js only) to load.
+* *options*: File loading and fixed-width formatting options. Accepts the options of both the [load](#load) and [fromFixed](#fromFixed) methods, but ignores any settings for the load *as* and *using* options.
+
+*Examples*
+
+```js
+// load table from a fixed-width file
+const dt = await aq.loadFixed('a1\nb2', { widths: [1, 1], names: ['u', 'v'] });
 ```
 
 
