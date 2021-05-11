@@ -1,3 +1,5 @@
+import error from './error';
+
 const EOL = {};
 const EOF = {};
 const QUOTE = 34;
@@ -27,12 +29,20 @@ const RETURN = 13;
 // ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-export default function(text, delimCode) {
-  let N = text.length,
-      I = 0, // current character index
-      t, // current token
-      eof = N <= 0, // current token followed by EOF?
-      eol = false; // current token followed by EOL?
+export default function(
+  text,
+  { delimiter = ',', comment, skip } = {}
+) {
+  if (delimiter.length !== 1) {
+    error(`Text delimiter should be a single character: "${delimiter}"`);
+  }
+  const delimCode = delimiter.charCodeAt(0);
+
+  let N = text.length;
+  let I = 0; // current character index
+  let t; // current token
+  let eof = N <= 0; // current token followed by EOF?
+  let eol = false; // current token followed by EOL?
 
   // Strip the trailing newline.
   if (text.charCodeAt(N - 1) === NEWLINE) --N;
@@ -65,11 +75,26 @@ export default function(text, delimCode) {
     return eof = true, text.slice(j, N);
   }
 
+  function line() {
+    if ((t = token()) !== EOF) {
+      const row = [];
+      while (t !== EOL && t !== EOF) row.push(t), t = token();
+      return row;
+    }
+  }
+
+  // skip initial lines, if requested
+  let s = +skip || 0;
+  while (--s >= 0) line();
+
   return {
     next() {
-      if ((t = token()) !== EOF) {
-        const row = [];
-        while (t !== EOL && t !== EOF) row.push(t), t = token();
+      let row;
+      while (t !== EOF) {
+        if (
+          (row = line()) &&
+          (comment && (row[0] || '').startsWith(comment))
+        ) continue;
         return row;
       }
     }
