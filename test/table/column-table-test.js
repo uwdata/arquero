@@ -488,5 +488,14 @@ tape('ColumnTable assign merges tables', t => {
     'throws on mismatched row counts'
   );
 
+  tableEqual(t, t1.assign({ b: [-2], d: [4] }), {
+    a: [1], b: [-2], c: [3], d: [4]
+  }, 'assigned data from object');
+
+  t.throws(
+    () => t1.assign({ c: [1, 2, 3] }),
+    'throws on mismatched row counts from object'
+  );
+
   t.end();
 });
