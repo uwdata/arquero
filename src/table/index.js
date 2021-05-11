@@ -1,5 +1,4 @@
 import ColumnTable from './column-table';
-import entries from '../util/entries';
 import verbs from '../verbs';
 
 // Add verb implementations to ColumnTable prototype
@@ -19,13 +18,7 @@ Object.assign(ColumnTable.prototype, verbs);
  * @example table({ colA: ['a', 'b', 'c'], colB: [3, 4, 5] })
  */
 export function table(columns, names) {
-  const data = {};
-  const keys = [];
-  for (const [key, value] of entries(columns)) {
-    data[key] = value;
-    keys.push(key);
-  }
-  return new ColumnTable(data, names || keys);
+  return ColumnTable.new(columns, names);
 }
 
 /**

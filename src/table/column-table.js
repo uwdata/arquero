@@ -10,6 +10,7 @@ import toJSON from '../format/to-json';
 import toMarkdown from '../format/to-markdown';
 import resolve, { all } from '../helpers/selection';
 import arrayType from '../util/array-type';
+import entries from '../util/entries';
 import error from '../util/error';
 import mapObject from '../util/map-object';
 import rowObjectBuilder from '../util/row-object-builder';
@@ -31,6 +32,29 @@ export default class ColumnTable extends Table {
    */
   static from(values, names) {
     return new ColumnTable(columnsFrom(values, names), names);
+  }
+
+  /**
+   * Create a new table for a set of named columns.
+   * @param {object|Map} columns
+   *  The set of named column arrays. Keys are column names.
+   *  The enumeration order of the keys determines the column indices,
+   *  unless the names parameter is specified.
+   *  Values must be arrays (or array-like values) of identical length.
+   * @param {string[]} [names] Ordered list of column names. If specified,
+   *  this array determines the column indices. If not specified, the
+   *  key enumeration order of the columns object is used.
+   * @return {ColumnTable} the instantiated ColumnTable instance.
+   */
+  static new(columns, names) {
+    if (columns instanceof ColumnTable) return columns;
+    const data = {};
+    const keys = [];
+    for (const [key, value] of entries(columns)) {
+      data[key] = value;
+      keys.push(key);
+    }
+    return new ColumnTable(data, names || keys);
   }
 
   /**
@@ -81,11 +105,13 @@ export default class ColumnTable extends Table {
    */
   assign(...tables) {
     const nrows = this.numRows();
-    const cset = columnSet(this.reify());
-    tables.forEach(table => {
-      if (table.numRows() !== nrows) error('Assign row counts do not match');
-      table = table.reify();
-      table.columnNames(name => cset.add(name, table.column(name)));
+    const base = this.reify();
+    const cset = columnSet(base).groupby(base.groups());
+    tables.forEach(input => {
+      input = ColumnTable.new(input);
+      if (input.numRows() !== nrows) error('Assign row counts do not match');
+      input = input.reify();
+      input.columnNames(name => cset.add(name, input.column(name)));
     });
     return this.create(cset.new());
   }
