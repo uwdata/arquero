@@ -81,7 +81,7 @@ To use in the browser, you can load Arquero from a content delivery network:
 Arquero will be imported into the `aq` global object. The default browser bundle does not include the [Apache Arrow](https://arrow.apache.org/) library. To perform Arrow encoding using [toArrow()](https://uwdata.github.io/arquero/api/#toArrow) or binary file loading using [loadArrow()](https://uwdata.github.io/arquero/api/#loadArrow), import Apache Arrow first:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/apache-arrow@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/apache-arrow@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/arquero@latest"></script>
 ```
 
