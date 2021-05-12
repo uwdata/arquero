@@ -10,7 +10,6 @@ import {
   Identifier,
   Literal,
   MemberExpression,
-  ObjectExpression,
   ObjectPattern,
   Op,
   Parameter,
@@ -23,6 +22,7 @@ import codegen from './codegen';
 import compile from './compile';
 import constants from './constants';
 import rewrite from './rewrite';
+import { ROW_OBJECT, rowObjectExpression } from './row-object';
 
 import {
   getAggregate, getWindow,
@@ -35,14 +35,12 @@ import has from '../util/has';
 import isFunction from '../util/is-function';
 import isNumber from '../util/is-number';
 import isObject from '../util/is-object';
-import toString from '../util/to-string';
 
 const PARSER_OPT = { ecmaVersion: 11 };
 const DEFAULT_PARAM_ID = '$';
 const DEFAULT_TUPLE_ID = 'd';
 const DEFAULT_TUPLE_ID1 = 'd1';
 const DEFAULT_TUPLE_ID2 = 'd2';
-const ROW_OBJECT = 'row_object';
 
 const NO = msg => (node, ctx) => ctx.error(node, msg + ' not allowed');
 const ERROR_AGGREGATE = NO('Aggregate function');
@@ -244,20 +242,14 @@ function updateFunctionNode(node, name, ctx) {
   if (name === ROW_OBJECT) {
     const t = ctx.table;
     if (!t) ctx.error(node, ERROR_ROW_OBJECT);
-
-    const names = node.arguments.length
-      ? node.arguments.map(node => {
-          const col = ctx.param(node);
-          return isNumber(col) ? t.columnName(col) : col;
-        })
-      : t.columnNames();
-
-    node.type = ObjectExpression;
-    node.properties = names.map(n => ({
-      type: Property,
-      key: { type: Literal, raw: toString(n) },
-      value: rewrite({ computed: true }, n)
-    }));
+    rowObjectExpression(node,
+      node.arguments.length
+        ? node.arguments.map(node => {
+            const col = ctx.param(node);
+            return isNumber(col) ? t.columnName(col) : col;
+          })
+        : t.columnNames()
+    );
   } else {
     node.callee = { type: Function, name };
   }

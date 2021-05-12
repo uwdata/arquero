@@ -3,6 +3,7 @@ import columnsFrom from './columns-from';
 import columnSet from './column-set';
 import Table from './table';
 import { nest, regroup, reindex } from './regroup';
+import { rowObjectBuilder } from '../expression/row-object';
 import toArrow from '../format/to-arrow';
 import toCSV from '../format/to-csv';
 import toHTML from '../format/to-html';
@@ -13,7 +14,6 @@ import arrayType from '../util/array-type';
 import entries from '../util/entries';
 import error from '../util/error';
 import mapObject from '../util/map-object';
-import rowObjectBuilder from '../util/row-object-builder';
 
 /**
  * Class representing a table backed by a named set of columns.
@@ -201,19 +201,25 @@ export default class ColumnTable extends Table {
    * @return {object[]} An array of row objects.
    */
   objects(options = {}) {
-    const names = resolve(this, options.columns || all());
-    const create = rowObjectBuilder(this, names);
     const { grouped, limit, offset } = options;
 
+    // generate array of row objects
+    const names = resolve(this, options.columns || all());
+    const create = rowObjectBuilder(names);
+    const obj = [];
+    this.scan(
+      (row, data) => obj.push(create(row, data)),
+      true, limit, offset
+    );
+
+    // produce nested output as requested
     if (grouped && this.isGrouped()) {
       const idx = [];
       this.scan(row => idx.push(row), true, limit, offset);
-      return nest(this, idx, idx.map(create), grouped);
-    } else {
-      const obj = [];
-      this.scan(row => obj.push(create(row)), true, limit, offset);
-      return obj;
+      return nest(this, idx, obj, grouped);
     }
+
+    return obj;
   }
 
   /**
@@ -331,12 +337,13 @@ function objectBuilder(table) {
   let b = table._builder;
 
   if (!b) {
-    const create = rowObjectBuilder(table);
+    const create = rowObjectBuilder(table.columnNames());
+    const data = table.data();
     if (table.isOrdered() || table.isFiltered()) {
       const indices = table.indices();
-      b = row => create(indices[row]);
+      b = row => create(indices[row], data);
     } else {
-      b = create;
+      b = row => create(row, data);
     }
     table._builder = b;
   }

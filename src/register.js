@@ -6,6 +6,7 @@ import op from './op/op';
 import ops from './op/op-api';
 import Query, { addQueryVerb } from './query/query';
 import { Verbs, createVerb } from './query/verb';
+import { ROW_OBJECT } from './expression/row-object';
 import error from './util/error';
 import has from './util/has';
 import toString from './util/to-string';
@@ -89,8 +90,8 @@ export function addFunction(name, fn, options = {}) {
     name = fn.name;
     if (name === '' || name === 'anonymous') {
       error('Anonymous function provided, please include a name argument.');
-    } else if (name === 'row_object') {
-      onReserve('row_object', 'function');
+    } else if (name === ROW_OBJECT) {
+      onReserve(ROW_OBJECT, 'function');
     }
   }
   if (verifyFunction(name, fn, functions, options)) return;
