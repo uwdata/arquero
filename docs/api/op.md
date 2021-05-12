@@ -704,6 +704,13 @@ Returns an array of a given *object*'s own enumerable string-keyed property `[ke
 
 * *object*: The input object, Map, or Set value.
 
+<hr/><a id="object" href="#object">#</a>
+<em>op</em>.<b>object</b>(<i>entries</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
+
+Returns a new object given an iterable *entries* argument of `[key, value]` pairs. This method is Arquero's version of the standard [Object.fromEntries](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries) method.
+
+* *entries*: An iterable collection of `[key, value]` pairs, such as an array of two-element arrays or a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map).
+
 <hr/><a id="recode" href="#recode">#</a>
 <em>op</em>.<b>recode</b>(<i>value</i>, <i>map</i>[, <i>fallback</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/recode.js)
 
