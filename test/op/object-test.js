@@ -73,3 +73,18 @@ tape('op.entries returns object/map/set entries', t => {
   );
   t.end();
 });
+
+tape('op.object constructs an object from iterable entries', t => {
+  t.deepEqual(
+    [
+      op.object([['a', 1]]),
+      op.object(new Map([['b', 2]])),
+      op.object(null),
+      op.object(undefined),
+      op.object(NaN)
+    ],
+    [ {a: 1}, {b: 2}, undefined, undefined, undefined ],
+    'object'
+  );
+  t.end();
+});

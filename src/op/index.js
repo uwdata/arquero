@@ -14,7 +14,7 @@ export {
  * @param {string} name The name of the aggregate function.
  * @return {boolean} True if found, false otherwise.
  */
-export function isAggregate(name) {
+export function hasAggregate(name) {
   return has(aggregateFunctions, name);
 }
 
@@ -23,8 +23,17 @@ export function isAggregate(name) {
  * @param {string} name The name of the window function.
  * @return {boolean} True if found, false otherwise.
  */
-export function isWindow(name) {
+export function hasWindow(name) {
   return has(windowFunctions, name);
+}
+
+/**
+ * Check if an expression function with the given name exists.
+ * @param {string} name The name of the function.
+ * @return {boolean} True if found, false otherwise.
+ */
+ export function hasFunction(name) {
+  return has(functions, name) || name === 'row_object';
 }
 
 /**
@@ -34,7 +43,7 @@ export function isWindow(name) {
  *  or undefined if not found.
  */
 export function getAggregate(name) {
-  return isAggregate(name) && aggregateFunctions[name];
+  return hasAggregate(name) && aggregateFunctions[name];
 }
 
 /**
@@ -44,7 +53,7 @@ export function getAggregate(name) {
  *  or undefined if not found.
  */
 export function getWindow(name) {
-  return isWindow(name) && windowFunctions[name];
+  return hasWindow(name) && windowFunctions[name];
 }
 
 /**
@@ -53,5 +62,5 @@ export function getWindow(name) {
  * @return {Function} The function instance, or undefined if not found.
  */
 export function getFunction(name) {
-  return has(functions, name) && functions[name];
+  return hasFunction(name) && functions[name];
 }

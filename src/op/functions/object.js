@@ -1,3 +1,4 @@
+import NULL from '../../util/null';
 import has from '../../util/has';
 import isMap from '../../util/is-map';
 import isMapOrSet from '../../util/is-map-or-set';
@@ -18,5 +19,6 @@ export default {
               : [],
   entries:  (obj) => isMapOrSet(obj) ? array(obj.entries())
               : obj != null ? Object.entries(obj)
-              : []
+              : [],
+  object:   (entries) => entries ? Object.fromEntries(entries) : NULL
 };

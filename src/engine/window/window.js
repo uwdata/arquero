@@ -1,5 +1,5 @@
 import { reducers } from '../reduce/util';
-import { getWindow, isAggregate } from '../../op';
+import { getWindow, hasAggregate } from '../../op';
 import concat from '../../util/concat';
 import unroll from '../../util/unroll';
 import windowState from './window-state';
@@ -65,7 +65,7 @@ function windowStates(ops, data) {
       aggOps: [],
       winOps: []
     });
-    isAggregate(op.name)
+    hasAggregate(op.name)
       ? aggOps.push(op)
       : winOps.push(windowOp(op));
   });

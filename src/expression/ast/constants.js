@@ -4,6 +4,7 @@ export const FunctionExpression = 'FunctionExpression';
 export const Identifier = 'Identifier';
 export const Literal = 'Literal';
 export const MemberExpression = 'MemberExpression';
+export const ObjectExpression = 'ObjectExpression';
 export const ObjectPattern = 'ObjectPattern';
 export const Property = 'Property';
 

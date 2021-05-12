@@ -704,6 +704,13 @@ Returns an array of a given *object*'s own enumerable string-keyed property `[ke
 
 * *object*: The input object, Map, or Set value.
 
+<hr/><a id="object" href="#object">#</a>
+<em>op</em>.<b>object</b>(<i>entries</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
+
+Returns a new object given an iterable *entries* argument of `[key, value]` pairs. This method is Arquero's version of the standard [Object.fromEntries](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries) method.
+
+* *entries*: An iterable collection of `[key, value]` pairs, such as an array of two-element arrays or a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map).
+
 <hr/><a id="recode" href="#recode">#</a>
 <em>op</em>.<b>recode</b>(<i>value</i>, <i>map</i>[, <i>fallback</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/recode.js)
 
@@ -736,6 +743,27 @@ table
   .derive({ val: (d, $) => op.recode(d.val, $.map, '?') })
 ```
 
+<hr/><a id="row_object" href="#row_object">#</a>
+<em>op</em>.<b>row_object</b>([<i>...columns</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/op-api.js)
+
+Generate a new object containing the data for the current table row. The new object maps from column name keys to table values for the current row. The optional *columns* list indicates which columns to include in the object; if unspecified, all columns are included by default.
+
+This method can only be invoked within a single-table expression. Calling this method in a multi-table expression (such as for a join) results in an error. An error will also result if any provided column names are specified using dynamic lookups of table column values.
+
+* *columns*: A list of column names or indices to include in the object.
+
+*Examples*
+
+```js
+aq.table({ a: [1, 3], b: [2, 4] })
+  .derive({ row: op.row_object() })
+  .get('row', 0); // { a: 1, b: 2 }
+```
+
+```js
+// rollup a table into an array of row objects
+table.rollup({ rows: d => op.array_agg(op.row_object()) })
+```
 
 <br>
 
