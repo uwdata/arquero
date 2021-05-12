@@ -1,11 +1,11 @@
 import { window } from './window/window';
 import { aggregate } from './reduce/util';
-import { isWindow } from '../op';
+import { hasWindow } from '../op';
 import columnSet from '../table/column-set';
 import repeat from '../util/repeat';
 
 function isWindowed(op) {
-  return isWindow(op.name) ||
+  return hasWindow(op.name) ||
     op.frame && (
       Number.isFinite(op.frame[0]) ||
       Number.isFinite(op.frame[1])

@@ -17,6 +17,14 @@ export default {
   ...functions,
 
   /**
+   * Generate an object representing the current table row.
+   * @param {...string} [names] The column names to include in the object.
+   *  If unspecified, all columns are included.
+   * @return {object} The generated row object.
+   */
+  row_object: (...names) => Op('row_object', null, names.flat()),
+
+  /**
    * Aggregate function to count the number of records (rows).
    * @returns {number} The count of records.
    */

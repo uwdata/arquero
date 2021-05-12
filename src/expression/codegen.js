@@ -20,7 +20,7 @@ const call = (node, opt) => {
   return visit(node.callee, opt) + '(' + list(node.arguments, opt) + ')';
 };
 
-const list = (array, opt, delim=',') => {
+const list = (array, opt, delim = ',') => {
   return array.map(node => visit(node, opt)).join(delim);
 };
 
@@ -80,7 +80,7 @@ const visitors = {
   },
   Property: (node, opt) => {
     const key = visit(node.key, opt);
-    return (node.computed ? `[${key}]` : key ) + ':' + visit(node.value, opt);
+    return (node.computed ? `[${key}]` : key) + ':' + visit(node.value, opt);
   },
 
   ArrowFunctionExpression: func,
