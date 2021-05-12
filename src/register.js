@@ -89,6 +89,8 @@ export function addFunction(name, fn, options = {}) {
     name = fn.name;
     if (name === '' || name === 'anonymous') {
       error('Anonymous function provided, please include a name argument.');
+    } else if (name === 'row_object') {
+      onReserve('row_object', 'function');
     }
   }
   if (verifyFunction(name, fn, functions, options)) return;

@@ -10,6 +10,7 @@ import {
   Identifier,
   Literal,
   MemberExpression,
+  ObjectExpression,
   ObjectPattern,
   Op,
   Parameter,
@@ -22,18 +23,26 @@ import codegen from './codegen';
 import compile from './compile';
 import constants from './constants';
 import rewrite from './rewrite';
-import { getAggregate, getFunction, getWindow, isAggregate, isWindow } from '../op';
+
+import {
+  getAggregate, getWindow,
+  hasAggregate, hasFunction, hasWindow
+} from '../op';
+
 import entries from '../util/entries';
-import isFunction from '../util/is-function';
-import has from '../util/has';
 import error from '../util/error';
+import has from '../util/has';
+import isFunction from '../util/is-function';
+import isNumber from '../util/is-number';
 import isObject from '../util/is-object';
+import toString from '../util/to-string';
 
 const PARSER_OPT = { ecmaVersion: 11 };
 const DEFAULT_PARAM_ID = '$';
 const DEFAULT_TUPLE_ID = 'd';
 const DEFAULT_TUPLE_ID1 = 'd1';
 const DEFAULT_TUPLE_ID2 = 'd2';
+const ROW_OBJECT = 'row_object';
 
 const NO = msg => (node, ctx) => ctx.error(node, msg + ' not allowed');
 const ERROR_AGGREGATE = NO('Aggregate function');
@@ -54,7 +63,7 @@ const ERROR_USE_PARAMS = 'Use table.params({ name: value }) to define dynamic pa
 const ERROR_ADD_FUNCTION = 'Use aq.addFunction(name, fn) to add new op functions';
 const ERROR_VARIABLE_NOTE = `\nNote: ${ERROR_CLOSURE}. ${ERROR_USE_PARAMS}.`;
 const ERROR_FUNCTION_NOTE = `\nNote: ${ERROR_CLOSURE}. ${ERROR_ADD_FUNCTION}.`;
-
+const ERROR_ROW_OBJECT = `The ${ROW_OBJECT} method is not valid in multi-table expressions.`;
 const ANNOTATE = { [Column]: 1, [Op]: 1 };
 
 const is = (type, node) => node && node.type === type;
@@ -205,7 +214,7 @@ function checkColumn(node, name, index, ctx, parent) {
   }
 
   // rewrite ast node as a column access
-  rewrite(node, parent, name, index, col);
+  rewrite(node, name, index, col, parent);
 }
 
 function updateColumnNode(node, key, ctx, parent) {
@@ -229,6 +238,29 @@ function updateConstantNode(node, name) {
   node.type = Constant;
   node.name = name;
   node.raw = constants[name];
+}
+
+function updateFunctionNode(node, name, ctx) {
+  if (name === ROW_OBJECT) {
+    const t = ctx.table;
+    if (!t) ctx.error(node, ERROR_ROW_OBJECT);
+
+    const names = node.arguments.length
+      ? node.arguments.map(node => {
+          const col = ctx.param(node);
+          return isNumber(col) ? t.columnName(col) : col;
+        })
+      : t.columnNames();
+
+    node.type = ObjectExpression;
+    node.properties = names.map(n => ({
+      type: Property,
+      key: { type: Literal, raw: toString(n) },
+      value: rewrite({ computed: true }, n)
+    }));
+  } else {
+    node.callee = { type: Function, name };
+  }
 }
 
 function handleDeclaration(node, ctx) {
@@ -273,16 +305,16 @@ const visitors = {
 
     // parse operator and rewrite invocation
     if (def) {
-      if ((ctx.join || ctx.aggregate === false) && isAggregate(def)) {
+      if ((ctx.join || ctx.aggregate === false) && hasAggregate(def)) {
         ERROR_AGGREGATE(node, ctx);
       }
-      if ((ctx.join || ctx.window === false) && isWindow(def)) {
+      if ((ctx.join || ctx.window === false) && hasWindow(def)) {
         ERROR_WINDOW(node, ctx);
       }
 
       ctx.$op = 1;
       if (ctx.ast) {
-        node.callee = { type: Function, name };
+        updateFunctionNode(node, name, ctx);
         node.arguments.forEach(arg => walk(arg, ctx, opVisitors));
       } else {
         const op = ctx.op(parseOperator(ctx, def, name, node.arguments));
@@ -290,8 +322,8 @@ const visitors = {
       }
       ctx.$op = 0;
       return false;
-    } else if (getFunction(name)) {
-      node.callee = { type: Function, name };
+    } else if (hasFunction(name)) {
+      updateFunctionNode(node, name, ctx);
     } else {
       ctx.error(node, ERROR_FUNCTION, ERROR_FUNCTION_NOTE);
     }
@@ -362,8 +394,8 @@ const opVisitors = {
     const name = functionName(ctx, node.callee);
 
     // rewrite if built-in function
-    if (getFunction(name)) {
-      node.callee = { type: Function, name };
+    if (hasFunction(name)) {
+      updateFunctionNode(node, name, ctx);
     } else {
       ctx.error(node, ERROR_FUNCTION, ERROR_FUNCTION_NOTE);
     }
