@@ -206,9 +206,7 @@ function checkColumn(node, name, index, ctx, parent) {
 
   // check if column reference is valid in current context
   if (ctx.aggronly && !ctx.$op) {
-    if (!ctx.$op) {
-      ctx.error(node, ERROR_AGGRONLY);
-    }
+    ctx.error(node, ERROR_AGGRONLY);
   }
 
   // rewrite ast node as a column access
@@ -246,7 +244,9 @@ function updateFunctionNode(node, name, ctx) {
       node.arguments.length
         ? node.arguments.map(node => {
             const col = ctx.param(node);
-            return isNumber(col) ? t.columnName(col) : col;
+            const name = isNumber(col) ? t.columnName(col) : col;
+            if (!t.column(name)) ctx.error(node, ERROR_COLUMN);
+            return name;
           })
         : t.columnNames()
     );
