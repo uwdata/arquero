@@ -12,7 +12,8 @@ title: Arquero API Reference
 * [Table Output](#output)
   * [toArrow](#toArrow)
 * [Expression Helpers](#expression-helpers)
-  * [op](#op), [bin](#bin), [desc](#desc), [frac](#frac), [rolling](#rolling), [seed](#seed)
+  * [op](#op), [agg](#agg)
+  * [bin](#bin), [desc](#desc), [frac](#frac), [rolling](#rolling), [seed](#seed)
 * [Selection Helpers](#selection-helpers)
   * [all](#all), [not](#not), [range](#range)
   * [matches](#matches), [startswith](#startswith), [endswith](#endswith)
@@ -486,6 +487,25 @@ Methods for invoking or modifying table expressions.
 <em>aq</em>.<b>op</b> · [Source](https://github.com/uwdata/arquero/blob/master/src/op/op-api.js)
 
 All table expression operations, including standard functions, aggregate functions, and window functions. See the [Operations API Reference](op) for documentation of all available functions.
+
+<hr/><a id="agg" href="#agg">#</a>
+<em>aq</em>.<b>agg</b>(<i>table</i>, <i>expression</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/helpers/agg.js)
+
+Compute a single aggregate value for a table. This method is a convenient shortcut for ungrouping a table, applying a [rollup](verbs/#rollup) verb for a single aggregate expression, and extracting the resulting aggregate value.
+
+* *table*: An Arquero table.
+* *expression*: An aggregate-valued table expression. Aggregate functions are permitted, and will take into account any [orderby](#orderby) settings. Window functions are not permitted and any [groupby](#groupby) settings will be ignored.
+
+*Examples*
+
+```js
+aq.agg(aq.table({ a: [1, 2, 3] }), op.max('a')) // 3
+```
+
+```js
+aq.agg(aq.table({ a: [1, 3, 5] }), d => [op.min(d.a), op.max('a')]) // [1, 5]
+```
+
 
 <hr/><a id="bin" href="#bin">#</a>
 <em>aq</em>.<b>bin</b>(<i>name</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/bin.js)
