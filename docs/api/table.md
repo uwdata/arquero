@@ -213,6 +213,8 @@ Apply a sequence of transformations to this table. The output of each transform 
 
 * *transforms*: Transformation functions to apply to the table in sequence. Each function should take a single table as input and return a table as output.
 
+*Examples*
+
 ```js
 aq.table({ a: [1, 2], b: [3, 4] })
   .transform(
