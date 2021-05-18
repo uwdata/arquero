@@ -277,6 +277,19 @@ export default class ColumnTable extends Table {
   }
 
   /**
+   * Apply a sequence of transformations to this table. The output
+   * of each transform is passed as input to the next transform, and
+   * the output of the last transform is then returned.
+   * @param {...(Transform|Transform[])} transforms Transformation
+   *  functions to apply to the table in sequence. Each function should
+   *  take a single table as input and return a table as output.
+   * @return {ColumnTable} The output of the last transform.
+   */
+  transform(...transforms) {
+    return transforms.flat().reduce((t, f) => f(t), this);
+  }
+
+  /**
    * Format this table as an Apache Arrow table.
    * @param {ArrowFormatOptions} [options] The formatting options.
    * @return {import('apache-arrow').Table} An Apache Arrow table.
@@ -350,6 +363,11 @@ function objectBuilder(table) {
 
   return b;
 }
+
+/**
+ * A table transformation.
+ * @typedef {(table: ColumnTable) => ColumnTable} Transform
+ */
 
 /**
  * Proxy type for BitSet class.
