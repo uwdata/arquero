@@ -499,3 +499,19 @@ tape('ColumnTable assign merges tables', t => {
 
   t.end();
 });
+
+tape('ColumnTable transform applies transformations', t => {
+  const dt = new ColumnTable({ a: [1, 2], b: [2, 3], c: [3, 4] });
+
+  tableEqual(t,
+    dt.transform(
+      t => t.filter(d => d.c > 3),
+      t => t.select('a', 'b'),
+      t => t.reify()
+    ),
+    { a: [2], b: [3] },
+    'transform pipeline'
+  );
+
+  t.end();
+});
