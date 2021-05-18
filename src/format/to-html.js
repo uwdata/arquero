@@ -77,8 +77,8 @@ export default function(table, options = {}) {
   let r = -1;
   let idx = -1;
 
-  const tag = (tag, name) => {
-    const a = idx >= 0 && name ? alignValue(align[name]) : '';
+  const tag = (tag, name, shouldAlign) => {
+    const a = shouldAlign ? alignValue(align[name]) : '';
     const s = style[tag] ? (style[tag](name, idx, r) || '') : '';
     const css = (a ? (`text-align: ${a};` + (s ? ' ' : '')) : '') + s;
     return `<${tag}${css ? ` style="${css}"` : ''}>`;
@@ -87,7 +87,7 @@ export default function(table, options = {}) {
   let text = tag('table')
     + tag('thead')
     + tag('tr', r)
-    + names.map(name => `${tag('th', name)}${name}</th>`).join('')
+    + names.map(name => `${tag('th', name, 1)}${name}</th>`).join('')
     + '</tr></thead>'
     + tag('tbody');
 
@@ -97,7 +97,7 @@ export default function(table, options = {}) {
       text += (++idx ? '</tr>' : '') + tag('tr');
     },
     cell(value, name) {
-      text += tag('td', name)
+      text += tag('td', name, 1)
         + formatter(value, format[name])
         + '</td>';
     }
