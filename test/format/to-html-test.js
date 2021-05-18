@@ -7,7 +7,7 @@ tape('toHTML formats html table text', t => {
   const r = 'style="text-align: right;"';
   const html = (u, v) => [
     '<table><thead>',
-    '<tr><th>u</th><th>v</th></tr>',
+    `<tr><th ${u}>u</th><th ${v}>v</th></tr>`,
     '</thead><tbody>',
     `<tr><td ${u}>a</td><td ${v}>1</td></tr>`,
     `<tr><td ${u}>a</td><td ${v}>2</td></tr>`,
@@ -39,7 +39,7 @@ tape('toHTML formats html table text with format option', t => {
   const r = 'style="text-align: right;"';
   const html = (u, v) => [
     '<table><thead>',
-    '<tr><th>u</th><th>v</th></tr>',
+    `<tr><th ${u}>u</th><th ${v}>v</th></tr>`,
     '</thead><tbody>',
     `<tr><td ${u}>aa</td><td ${v}>10</td></tr>`,
     `<tr><td ${u}>aa</td><td ${v}>20</td></tr>`,
@@ -70,11 +70,15 @@ tape('toHTML formats html table text with format option', t => {
 });
 
 tape('toHTML formats html table text with style option', t => {
-  const l = 'style="text-align: left; color: black;"';
-  const r = 'style="text-align: right; color: black;"';
+  const la = 'text-align: left;';
+  const ra = 'text-align: right;';
+  const cb = 'color: black;';
+  const l = `style="${la} ${cb}"`;
+  const r = `style="${ra} ${cb}"`;
   const html = (u, v) => [
     '<table><thead>',
-    '<tr style="row(-1,-1)"><th>u</th><th>v</th></tr>',
+    '<tr style="row(-1,-1)">',
+    `<th style="${la}">u</th><th style="${ra}">v</th></tr>`,
     '</thead><tbody>',
     `<tr style="row(0,1)"><td ${u}>a</td><td ${v}>1</td></tr>`,
     `<tr style="row(1,0)"><td ${u}>a</td><td ${v}>2</td></tr>`,
@@ -108,7 +112,7 @@ tape('toHTML formats html table text with null option', t => {
   const a = 'style="text-align: right;"';
   const html = (a) => [
     '<table><thead>',
-    '<tr><th>u</th></tr>',
+    `<tr><th ${a}>u</th></tr>`,
     '</thead><tbody>',
     `<tr><td ${a}>a</td></tr>`,
     `<tr><td ${a}>0</td></tr>`,
