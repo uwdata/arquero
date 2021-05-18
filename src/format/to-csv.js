@@ -39,7 +39,7 @@ export default function(table, options = {}) {
   const vals = names.map(formatValue);
   let text = '';
 
-  scan(table, names, options.limit, options.offset, {
+  scan(table, names, options.limit || Infinity, options.offset, {
     row() {
       text += vals.join(delim) + '\n';
     },

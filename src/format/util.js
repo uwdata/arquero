@@ -57,7 +57,7 @@ function values(table, columnName) {
   return fn => table.scan(row => fn(column.get(row)));
 }
 
-export function scan(table, names, limit, offset, ctx) {
+export function scan(table, names, limit = 100, offset, ctx) {
   const data = table.data();
   const n = names.length;
   table.scan(row => {
