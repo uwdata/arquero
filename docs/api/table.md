@@ -189,7 +189,7 @@ table.params({ hi: 5 }).filter((d, $) => abs(d.value) < $.hi)
 
 ## <a id="transformation">Table Transformation</a>
 
-For a variety of additional transformations, see the [verbs](verbs) API documentation.
+For a variety of additional transformations, see the [Verbs API Reference](verbs).
 
 <hr/><a id="assign" href="#assign">#</a>
 <em>table</em>.<b>assign</b>(<i>...tables</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
