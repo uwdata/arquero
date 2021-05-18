@@ -10,10 +10,12 @@ title: Table \| Arquero API Reference
   * [isFiltered](#isFiltered), [isGrouped](#isGrouped), [isOrdered](#isOrdered)
   * [comparator](#foo), [groups](#groups), [mask](#mask)
   * [params](#params)
+* [Table Transformation](#transformation)
+  * [assign](#assign)
+  * [transform](#transform)
 * [Table Columns](#columns)
   * [column](#column), [columnAt](#columnAt), [columnArray](#columnArray)
   * [columnIndex](#columnIndex), [columnName](#columnName), [columnNames](#columnNames)
-  * [assign](#assign)
 * [Table Values](#table-values)
   * [array](#array), [values](#values)
   * [data](#data), [get](#get), [getter](#getter)
@@ -185,6 +187,43 @@ table.params({ hi: 5 }).filter((d, $) => abs(d.value) < $.hi)
 
 <br/>
 
+## <a id="transformation">Table Transformation</a>
+
+For a variety of additional transformations, see the [verbs](verbs) API documentation.
+
+<hr/><a id="assign" href="#assign">#</a>
+<em>table</em>.<b>assign</b>(<i>...tables</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+
+Create a new table with additional columns drawn from one or more input *tables*. All tables must have the same numer of rows and will be [reified](verbs/#reify) prior to assignment. In the case of repeated column names, input table columns overwrite existing columns.
+
+* *tables*: The input tables to merge.
+
+*Examples*
+
+```js
+const t1 = aq.table({ a: [1, 2], b: [3, 4] });
+const t2 = aq.table({ c: [5, 6], b: [7, 8] });
+t1.assign(t2); // { a: [1, 2], b: [7, 8], c: [5, 6] }
+```
+
+<hr/><a id="transform" href="#transform">#</a>
+<em>table</em>.<b>transform</b>(<i>...transforms</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+
+Apply a sequence of transformations to this table. The output of each transform is passed as input to the next transform, and the output of the last transform is then returned. This method provides a lightweight mechanism for applying custom transformations to a table.
+
+* *transforms*: Transformation functions to apply to the table in sequence. Each function should take a single table as input and return a table as output.
+
+```js
+aq.table({ a: [1, 2], b: [3, 4] })
+  .transform(
+    table => table.filter(d => d.b > 3),
+    table => table.select('a')
+  ) // { a: [2] }
+```
+
+
+<br/>
+
 ## <a id="columns">Table Columns</a>
 
 <hr/><a id="column" href="#column">#</a>
@@ -272,20 +311,6 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
   .columnNames(); // [ 'a', 'b' ]
 ```
 
-<hr/><a id="assign" href="#assign">#</a>
-<em>table</em>.<b>assign</b>(<i>...tables</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
-
-Create a new table with additional columns drawn from one or more input *tables*. All tables must have the same numer of rows and will be [reified](verbs/#reify) prior to assignment. In the case of repeated column names, input table columns overwrite existing columns.
-
-* *tables*: The input tables to merge.
-
-*Examples*
-
-```js
-const t1 = aq.table({ a: [1, 2], b: [3, 4] });
-const t2 = aq.table({ c: [5, 6], b: [7, 8] });
-t1.assign(t2); // { a: [1, 2], b: [7, 8], c: [5, 6] }
-```
 
 <br/>
 
