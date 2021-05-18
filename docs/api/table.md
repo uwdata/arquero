@@ -510,7 +510,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).print()
 Format this table as an HTML table string.
 
 * *options*: A formatting options object:
-  * *limit*: The maximum number of rows to print (default `Infinity`).
+  * *limit*: The maximum number of rows to print (default `100`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
   * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings. Otherwise, should be an array of name strings.
   * *align*: Object of column alignment options. The object keys should be column names. The object values should be aligment strings, one of `'l'` (left), `'c'` (center), or `'r'` (right). If specified, these override any automatically inferred options.
@@ -534,7 +534,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toHTML()
 Format this table as a [GitHub-Flavored Markdown table](https://github.github.com/gfm/#tables-extension-) string.
 
 * *options*: A formatting options object:
-  * *limit*: The maximum number of rows to print (default `Infinity`).
+  * *limit*: The maximum number of rows to print (default `100`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
   * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings. Otherwise, should be an array of name strings.
   * *align*: Object of column alignment options. The object keys should be column names. The object values should be aligment strings, one of `'l'` (left), `'c'` (center), or `'r'` (right). If specified, these override any automatically inferred options.
