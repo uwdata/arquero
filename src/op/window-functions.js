@@ -26,7 +26,7 @@ import NULL from '../util/null';
 /**
  * Create a new window operator instance.
  * @callback WindowCreate
- * @param {...any} [params] The aggregate operator parameters.
+ * @param {...any} params The aggregate operator parameters.
  * @return {WindowOperator} The instantiated window operator.
  */
 

@@ -1,13 +1,18 @@
 import functions from './functions';
-import Op from './op';
+import op from './op';
 
-export const any = (field) => Op('any', field);
-export const count = () => Op('count');
-export const array_agg = (field) => Op('array_agg', field);
-export const array_agg_distinct = (field) => Op('array_agg_distinct', field);
-export const map_agg = (key, value) => Op('map_agg', [key, value]);
-export const object_agg = (key, value) => Op('object_agg', [key, value]);
-export const entries_agg = (key, value) => Op('entries_agg', [key, value]);
+/**
+ * Table expression operation.
+ * @typedef {import('./op').Op} Op
+ */
+
+export const any = (field) => op('any', field);
+export const count = () => op('count');
+export const array_agg = (field) => op('array_agg', field);
+export const array_agg_distinct = (field) => op('array_agg_distinct', field);
+export const map_agg = (key, value) => op('map_agg', [key, value]);
+export const object_agg = (key, value) => op('object_agg', [key, value]);
+export const entries_agg = (key, value) => op('entries_agg', [key, value]);
 
 /**
  * All table expression operations including normal functions,
@@ -18,36 +23,36 @@ export default {
 
   /**
    * Generate an object representing the current table row.
-   * @param {...string} [names] The column names to include in the object.
+   * @param {...string} names The column names to include in the object.
    *  If unspecified, all columns are included.
-   * @return {object} The generated row object.
+   * @return {Op} An operation for the generated row object.
    */
-  row_object: (...names) => Op('row_object', null, names.flat()),
+  row_object: (...names) => op('row_object', null, names.flat()),
 
   /**
    * Aggregate function to count the number of records (rows).
-   * @returns {number} The count of records.
+   * @returns {Op} An operation for the count of records.
    */
   count,
 
   /**
    * Aggregate function returning an arbitrary observed value.
    * @param {*} field The data field.
-   * @return {*} An arbitrary observed value.
+   * @return {Op} An operation for an arbitrary observed value.
    */
   any,
 
   /**
    * Aggregate function to collect an array of values.
    * @param {*} field The data field.
-   * @return {Array} The list of values.
+   * @return {Op} An operation for a list of values.
    */
   array_agg,
 
   /**
    * Aggregate function to collect an array of distinct (unique) values.
    * @param {*} field The data field.
-   * @return {Array} The array of unique values.
+   * @return {Op} An operation for an array of unique values.
    */
   array_agg_distinct,
 
@@ -55,7 +60,7 @@ export default {
    * Aggregate function to create an object given input key and value fields.
    * @param {*} key The object key field.
    * @param {*} value The object value field.
-   * @return {object} The object of key-value pairs.
+   * @return {Op} An operation for an object of key-value pairs.
    */
   object_agg,
 
@@ -63,7 +68,7 @@ export default {
    * Aggregate function to create a Map given input key and value fields.
    * @param {*} key The object key field.
    * @param {*} value The object value field.
-   * @return {Map} The Map of key-value pairs.
+   * @return {Op} An operation for a Map of key-value pairs.
    */
   map_agg,
 
@@ -72,7 +77,7 @@ export default {
    * given input key and value fields.
    * @param {*} key The object key field.
    * @param {*} value The object value field.
-   * @return {Array} The array of [key, value] arrays.
+   * @return {Op} An operation for an array of [key, value] arrays.
    */
   entries_agg,
 
@@ -80,134 +85,134 @@ export default {
    * Aggregate function to count the number of valid values.
    * Invalid values are null, undefined, or NaN.
    * @param {*} field The data field.
-   * @return {number} The count of valid values.
+   * @return {Op} An operation for the count of valid values.
    */
-  valid: (field) => Op('valid', field),
+  valid: (field) => op('valid', field),
 
   /**
    * Aggregate function to count the number of invalid values.
    * Invalid values are null, undefined, or NaN.
    * @param {*} field The data field.
-   * @return {number} The count of invalid values.
+   * @return {Op} An operation for the count of invalid values.
    */
-  invalid: (field) => Op('invalid', field),
+  invalid: (field) => op('invalid', field),
 
   /**
    * Aggregate function to count the number of distinct values.
    * @param {*} field The data field.
-   * @return {number} The count of distinct values.
+   * @return {Op} An operation for the count of distinct values.
    */
-  distinct: (field) => Op('distinct', field),
+  distinct: (field) => op('distinct', field),
 
   /**
    * Aggregate function to determine the mode (most frequent) value.
    * @param {*} field The data field.
-   * @return {number} The mode value.
+   * @return {Op} An operation for the mode value.
    */
-  mode: (field) => Op('mode', field),
+  mode: (field) => op('mode', field),
 
   /**
    * Aggregate function to sum values.
    * @param {*} field The data field.
-   * @return {number} The sum of the values.
+   * @return {Op} An operation for the sum of the values.
    */
-  sum: (field) => Op('sum', field),
+  sum: (field) => op('sum', field),
 
   /**
    * Aggregate function to multiply values.
    * @param {*} field The data field.
-   * @return {number} The product of the values.
+   * @return {Op} An operation for the product of the values.
    */
-  product: (field) => Op('product', field),
+  product: (field) => op('product', field),
 
   /**
    * Aggregate function for the mean (average) value.
    * @param {*} field The data field.
-   * @return {number} The mean (average) of the values.
+   * @return {Op} An operation for the mean (average) of the values.
    */
-  mean: (field) => Op('mean', field),
+  mean: (field) => op('mean', field),
 
   /**
    * Aggregate function for the average (mean) value.
    * @param {*} field The data field.
-   * @return {number} The average (mean) of the values.
+   * @return {Op} An operation for the average (mean) of the values.
    */
-  average: (field) => Op('average', field),
+  average: (field) => op('average', field),
 
   /**
    * Aggregate function for the sample variance.
    * @param {*} field The data field.
-   * @return {number} The sample variance of the values.
+   * @return {Op} An operation for the sample variance of the values.
    */
-  variance: (field) => Op('variance', field),
+  variance: (field) => op('variance', field),
 
   /**
    * Aggregate function for the population variance.
    * @param {*} field The data field.
-   * @return {number} The population variance of the values.
+   * @return {Op} An operation for the population variance of the values.
    */
-  variancep: (field) => Op('variancep', field),
+  variancep: (field) => op('variancep', field),
 
   /**
    * Aggregate function for the sample standard deviation.
    * @param {*} field The data field.
-   * @return {number} The sample standard deviation of the values.
+   * @return {Op} An operation for the sample standard deviation of the values.
    */
-  stdev: (field) => Op('stdev', field),
+  stdev: (field) => op('stdev', field),
 
   /**
    * Aggregate function for the population standard deviation.
    * @param {*} field The data field.
-   * @return {number} The population standard deviation of the values.
+   * @return {Op} An operation for the population standard deviation of the values.
    */
-  stdevp: (field) => Op('stdevp', field),
+  stdevp: (field) => op('stdevp', field),
 
   /**
    * Aggregate function for the minimum value.
    * @param {*} field The data field.
-   * @return {number} The minimum value.
+   * @return {Op} An operation for the minimum value.
    */
-  min: (field) => Op('min', field),
+  min: (field) => op('min', field),
 
   /**
    * Aggregate function for the maximum value.
    * @param {*} field The data field.
-   * @return {number} The maximum value.
+   * @return {Op} An operation for the maximum value.
    */
-  max: (field) => Op('max', field),
+  max: (field) => op('max', field),
 
   /**
    * Aggregate function to compute the quantile boundary
    * of a data field for a probability threshold.
    * @param {*} field The data field.
    * @param {number} p The probability threshold.
-   * @return {number} The quantile value.
+   * @return {Op} An operation for a quantile value.
    */
-  quantile: (field, p) => Op('quantile', field, p),
+  quantile: (field, p) => op('quantile', field, p),
 
   /**
    * Aggregate function for the median value.
    * This is a shorthand for the 0.5 quantile value.
    * @param {*} field The data field.
-   * @return {number} The median value.
+   * @return {Op} An operation for the median value.
    */
-  median: (field) => Op('median', field),
+  median: (field) => op('median', field),
 
   /**
    * Aggregate function for the sample covariance between two variables.
    * @param {*} field1 The first data field.
    * @param {*} field2 The second data field.
-   * @return {number} The sample covariance of the values.
+   * @return {Op} An operation for the sample covariance of the values.
    */
-  covariance: (field1, field2) => Op('covariance', [field1, field2]),
+  covariance: (field1, field2) => op('covariance', [field1, field2]),
 
   /**
    * Aggregate function for the population covariance between two variables.
    * @param {*} field1 The first data field.
    * @param {*} field2 The second data field.
-   * @return {number} The population covariance of the values.
+   * @return {Op} An operation for the population covariance of the values.
    */
-  covariancep: (field1, field2) => Op('covariancep', [field1, field2]),
+  covariancep: (field1, field2) => op('covariancep', [field1, field2]),
 
   /**
    * Aggregate function for the product-moment correlation between two variables.
@@ -215,9 +220,9 @@ export default {
    * variable and then apply this function to the result.
    * @param {*} field1 The first data field.
    * @param {*} field2 The second data field.
-   * @return {number} The correlation between the field values.
+   * @return {Op} An operation for the correlation between the field values.
    */
-  corr: (field1, field2) => Op('corr', [field1, field2]),
+  corr: (field1, field2) => op('corr', [field1, field2]),
 
   /**
    * Aggregate function for calculating a binning scheme in terms of
@@ -229,65 +234,65 @@ export default {
    * @param {number} [minstep] The minimum allowed step size between bins.
    * @param {number} [step] The exact step size to use between bins.
    *  If specified, the maxbins and minstep arguments are ignored.
-   * @return {[number, number, number]} The bin min, max, and step values.
+   * @return {Op} An operation for the bin [min, max, and step] values.
    */
   bins: (field, maxbins, nice, minstep) =>
-    Op('bins', field, [maxbins, nice, minstep]),
+    op('bins', field, [maxbins, nice, minstep]),
 
   /**
    * Window function to assign consecutive row numbers, starting from 1.
-   * @return {number} The row number value.
+   * @return {Op} An operation for the row number value.
    */
-  row_number: () => Op('row_number'),
+  row_number: () => op('row_number'),
 
   /**
    * Window function to assign a rank to each value in a group, starting
    * from 1. Peer values are assigned the same rank. Subsequent ranks
    * reflect the number of prior values: if the first two values tie for
    * rank 1, the third value is assigned rank 3.
-   * @return {number} The rank value.
+   * @return {Op} An operation for the rank value.
    */
-  rank: () => Op('rank'),
+  rank: () => op('rank'),
 
   /**
    * Window function to assign a fractional (average) rank to each value in
    * a group, starting from 1. Peer values are assigned the average of their
    * indices: if the first two values tie, both will be assigned rank 1.5.
-   * @return {number} The peer-averaged rank value.
+   * @return {Op} An operation for the peer-averaged rank value.
    */
-  avg_rank: () => Op('avg_rank'),
+  avg_rank: () => op('avg_rank'),
 
   /**
    * Window function to assign a dense rank to each value in a group,
    * starting from 1. Peer values are assigned the same rank. Subsequent
    * ranks do not reflect the number of prior values: if the first two
    * values tie for rank 1, the third value is assigned rank 2.
-   * @return {number} The dense rank value.
+   * @return {Op} An operation for the dense rank value.
    */
-  dense_rank: () => Op('dense_rank'),
+  dense_rank: () => op('dense_rank'),
 
   /**
    * Window function to assign a percentage rank to each value in a group.
    * The percent is calculated as (rank - 1) / (group_size - 1).
-   * @return {number} The percentage rank value.
+   * @return {Op} An operation for the percentage rank value.
    */
-  percent_rank: () => Op('percent_rank'),
+  percent_rank: () => op('percent_rank'),
 
   /**
    * Window function to assign a cumulative distribution value between 0 and 1
    * to each value in a group.
-   * @return {number} The cumulative distribution value.
+   * @return {Op} An operation for the cumulative distribution value.
    */
-  cume_dist: () => Op('cume_dist'),
+  cume_dist: () => op('cume_dist'),
 
   /**
    * Window function to assign a quantile (e.g., percentile) value to each
    * value in a group. Accepts an integer parameter indicating the number of
    * buckets to use (e.g., 100 for percentiles, 5 for quintiles).
    * @param {number} num The number of buckets for ntile calculation.
-   * @return {number} The quantile value.
+   * @return {Op} An operation for the quantile value.
    */
-  ntile: (num) => Op('ntile', null, num),
+  ntile: (num) => op('ntile', null, num),
 
   /**
    * Window function to assign a value that precedes the current value by
@@ -296,9 +301,9 @@ export default {
    * @param {*} field The data field.
    * @param {number} [offset=1] The lag offset from the current value.
    * @param {*} [defaultValue=undefined] The default value.
-   * @return {*} The lagging value.
+   * @return {Op} An operation for a lagging value.
    */
-  lag: (field, offset, defaultValue) => Op('lag', field, [offset, defaultValue]),
+  lag: (field, offset, defaultValue) => op('lag', field, [offset, defaultValue]),
 
   /**
    * Window function to assign a value that follows the current value by
@@ -307,48 +312,50 @@ export default {
    * @param {*} field The data field.
    * @param {number} [offset=1] The lead offset from the current value.
    * @param {*} [defaultValue=undefined] The default value.
-   * @return {*} The leading value.
+   * @return {Op} An operation for a leading value.
    */
-  lead: (field, offset, defaultValue) => Op('lead', field, [offset, defaultValue]),
+  lead: (field, offset, defaultValue) => op('lead', field, [offset, defaultValue]),
 
   /**
    * Window function to assign the first value in a sliding window frame.
    * @param {*} field The data field.
-   * @return {*} The first value in the current frame.
+   * @return {Op} An operation for the first value in the current frame.
    */
-  first_value: (field) => Op('first_value', field),
+  first_value: (field) => op('first_value', field),
 
   /**
    * Window function to assign the last value in a sliding window frame.
    * @param {*} field The data field.
-   * @return {*} The last value in the current frame.
+   * @return {Op} An operation for the last value in the current frame.
    */
-  last_value: (field) => Op('last_value', field),
+  last_value: (field) => op('last_value', field),
 
   /**
    * Window function to assign the nth value in a sliding window frame
    * (counting from 1), or undefined if no such value exists.
    * @param {*} field The data field.
    * @param {number} nth The nth position, starting from 1.
-   * @return {*} The nth value in the current frame.
+   * @return {Op} An operation for the nth value in the current frame.
    */
-  nth_value: (field, nth) => Op('nth_value', field, nth),
+  nth_value: (field, nth) => op('nth_value', field, nth),
 
   /**
    * Window function to fill in missing values with preceding values.
    * @param {*} field The data field.
    * @param {*} [defaultValue=undefined] The default value.
-   * @return {*} The current value if valid, otherwise the first preceding
-   *  valid value. If no such value exists, returns the default value.
+   * @return {Op} An operation for the current value if valid, otherwise
+   *  the first preceding valid value. If no such value exists, the
+   *  operation returns the default value.
    */
-  fill_down: (field, defaultValue) => Op('fill_down', field, defaultValue),
+  fill_down: (field, defaultValue) => op('fill_down', field, defaultValue),
 
   /**
    * Window function to fill in missing values with subsequent values.
    * @param {*} field The data field.
    * @param {*} [defaultValue=undefined] The default value.
-   * @return {*} The current value if valid, otherwise the first subsequent
-   *  valid value. If no such value exists, returns the default value.
+   * @return {Op} An operation for the current value if valid, otherwise
+   *  the first subsequent valid value. If no such value exists, the
+   *  operation returns the default value.
    */
-  fill_up: (field, defaultValue) => Op('fill_up', field, defaultValue)
+  fill_up: (field, defaultValue) => op('fill_up', field, defaultValue)
 };
