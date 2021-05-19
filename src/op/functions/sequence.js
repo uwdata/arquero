@@ -6,7 +6,7 @@
  * than stop. If the returned array would contain an infinite number of
  * values, an empty range is returned.
  * @param {number} [start=0] The starting value of the sequence.
- * @param {number} stop The stopping value of the sequence.
+ * @param {number} [stop] The stopping value of the sequence.
  *  The stop value is exclusive; it is not included in the result.
  * @param {number} [step=1] The step increment between sequence values.
  * @return {number[]} The generated sequence.

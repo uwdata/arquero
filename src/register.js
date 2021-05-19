@@ -77,7 +77,7 @@ export function addWindowFunction(name, def, options) {
  * Register a function for use within table expressions.
  * If only a single argument is provided, it will be assumed to be a
  * function and the system will try to extract its name.
- * @param {string} [name] The name to use for the function.
+ * @param {string} name The name to use for the function.
  * @param {Function} fn A standard JavaScript function.
  * @param {RegisterOptions} [options] Function registration options.
  * @throws If a function with the same name is already registered and

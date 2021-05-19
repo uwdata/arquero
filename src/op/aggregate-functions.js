@@ -62,7 +62,7 @@ function initProduct(s, value) {
 /**
  * Create a new aggregate operator instance.
  * @callback AggregateCreate
- * @param {...any} [params] The aggregate operator parameters.
+ * @param {...any} params The aggregate operator parameters.
  * @return {AggregateOperator} The instantiated aggregate operator.
  */
 

@@ -730,6 +730,17 @@ export default class Transformable {
 
 /**
  * A function defined over a table row.
+ * @typedef {object} Stringable
+ * @property {() => string} toString String coercion method.
+ */
+
+/**
+ * A table expression provided as a string or string-coercible object.
+ * @typedef {string|Stringable} TableExprString
+ */
+
+/**
+ * A function defined over a table row.
  * @typedef {(d?: object, $?: Params) => any} TableExpr
  */
 
@@ -764,12 +775,12 @@ export default class Transformable {
 
 /**
  * An object of column name / table expression pairs.
- * @typedef {{ [name: string]: (TableExpr | string) }} ExprObject
+ * @typedef {{ [name: string]: (TableExpr | TableExprString) }} ExprObject
  */
 
 /**
  * An object of column name / two-table expression pairs.
- * @typedef {{ [name: string]: (TableExpr2 | string) }} Expr2Object
+ * @typedef {{ [name: string]: (TableExpr2 | TableExprString) }} Expr2Object
  */
 
 /**
