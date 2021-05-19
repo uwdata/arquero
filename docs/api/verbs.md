@@ -782,7 +782,7 @@ table.intersect([other1, other2])
 <hr/><a id="except" href="#except">#</a>
 <em>table</em>.<b>except</b>(<i>...tables</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/except.js)
 
-Compute the [set difference](https://en.wikipedia.org/wiki/Set_operations_%28SQL%29#EXCEPT_operator) with multiple tables, keeping only rows in this table that whose values do not occur in the other tables. This transformation is similar to a series of one or more [antijoin](#antijoin) calls, but additionally suppresses duplicate rows.
+Compute the [set difference](https://en.wikipedia.org/wiki/Set_operations_%28SQL%29#EXCEPT_operator) with multiple tables, keeping only rows in this table whose values do not occur in the other tables. This transformation is similar to a series of one or more [antijoin](#antijoin) calls, but additionally suppresses duplicate rows.
 
 * *tables*: A list of tables to difference.
 
