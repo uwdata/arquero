@@ -26,9 +26,7 @@ export default function(next, names, options) {
   }
 
   // initialize parsers
-  const parsers = options.autoType === false
-    ? Array(n).fill(identity)
-    : getParsers(names, values, options);
+  const parsers = getParsers(names, values, options);
 
   // apply parsers
   parsers.forEach((parse, i) => {
@@ -53,9 +51,11 @@ export default function(next, names, options) {
 
 function getParsers(names, values, options) {
   const { parse = {} } = options;
+  const noParse = options.autoType === false;
+
   return names.map(
-    (name, i) => isFunction(parse[name])
-      ? parse[name]
+    (name, i) => isFunction(parse[name]) ? parse[name]
+      : noParse ? identity
       : valueParser(values[i], options)
   );
 }
