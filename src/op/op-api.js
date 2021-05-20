@@ -1,10 +1,5 @@
 import functions from './functions';
-import op from './op';
-
-/**
- * Table expression operation.
- * @typedef {import('./op').Op} Op
- */
+import op, { Op } from './op'; // eslint-disable-line no-unused-vars
 
 export const any = (field) => op('any', field);
 export const count = () => op('count');

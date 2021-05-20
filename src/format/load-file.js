@@ -1,3 +1,5 @@
+import ColumnTable from '../table/column-table'; // eslint-disable-line no-unused-vars
+
 import fromArrow from './from-arrow';
 import fromCSV from './from-csv';
 import fromFixed from './from-fixed';
@@ -112,8 +114,3 @@ export function loadJSON(path, options) {
 function parseJSON(data, options) {
   return isArray(data) ? from(data) : fromJSON(data, options);
 }
-
-/**
- * An Arquero Column Table
- * @typedef {import('../table/column-table')} ColumnTable
- */

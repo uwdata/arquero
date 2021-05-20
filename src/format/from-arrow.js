@@ -19,7 +19,7 @@ import ColumnTable from '../table/column-table';
  * Create a new table backed by an Apache Arrow table instance.
  * @param {object} arrow An Apache Arrow data table or byte buffer.
  * @param {ArrowOptions} options Options for Arrow import.
- * @param {ColumnTable} table A new table containing the imported values.
+ * @return {ColumnTable} A new table containing the imported values.
  */
 export default function(arrow, options = {}) {
   arrow = from(arrow);

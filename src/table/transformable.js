@@ -86,7 +86,7 @@ export default class Transformable {
    * The resulting table provides a filtered view over the original data; no
    * data copy is made. To create a table that copies only filtered data to
    * new data structures, call {@link Transformable#reify} on the output table.
-   * @param {TableExpr|string} criteria Filter criteria as a table expression.
+   * @param {TableExpr} criteria Filter criteria as a table expression.
    *  Both aggregate and window functions are permitted, taking into account
    *  {@link Transformable#groupby} or {@link Transformable#orderby} settings.
    * @return {this} A new table with filtered rows.
@@ -741,12 +741,22 @@ export default class Transformable {
 
 /**
  * A function defined over a table row.
- * @typedef {(d?: object, $?: Params) => any} TableExpr
+ * @typedef {(d?: object, $?: Params) => any} TableExprFunc
+ */
+
+/**
+ * A table expression defined over a single table.
+ * @typedef {TableExprFunc|TableExprString} TableExpr
  */
 
 /**
  * A function defined over rows from two tables.
- * @typedef {(a?: object, b?: object, $?: Params) => any} TableExpr2
+ * @typedef {(a?: object, b?: object, $?: Params) => any} TableFunc2
+ */
+
+/**
+ * A table expression defined over two tables.
+ * @typedef {TableExprFunc2|TableExprString} TableExpr2
  */
 
 /**
@@ -775,12 +785,12 @@ export default class Transformable {
 
 /**
  * An object of column name / table expression pairs.
- * @typedef {{ [name: string]: (TableExpr | TableExprString) }} ExprObject
+ * @typedef {{ [name: string]: TableExpr }} ExprObject
  */
 
 /**
  * An object of column name / two-table expression pairs.
- * @typedef {{ [name: string]: (TableExpr2 | TableExprString) }} Expr2Object
+ * @typedef {{ [name: string]: TableExpr2 }} Expr2Object
  */
 
 /**
@@ -820,7 +830,7 @@ export default class Transformable {
 
 /**
  * Column values to use as a join key.
- * @typedef {ColumnRef|TableExpr} JoinKey
+ * @typedef {ColumnRef|TableExprFunc} JoinKey
  */
 
 /**
@@ -830,7 +840,7 @@ export default class Transformable {
 
 /**
  * A predicate specification for joining two tables.
- * @typedef {JoinKeys|TableExpr2|null} JoinPredicate
+ * @typedef {JoinKeys|TableExprFunc2|null} JoinPredicate
  */
 
 /**
@@ -889,7 +899,7 @@ export default class Transformable {
  * @typedef {object} SampleOptions
  * @property {boolean} [replace=false] Flag for sampling with replacement.
  * @property {boolean} [shuffle=true] Flag to ensure randomly ordered rows.
- * @property {string|TableExpr} [weight] Column values to use as weights
+ * @property {string|TableExprFunc} [weight] Column values to use as weights
  *  for sampling. Rows will be sampled with probability proportional to
  *  their relative weight. The input should be a column name string or
  *  a table expression compatible with {@link Transformable#derive}.

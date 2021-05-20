@@ -1,3 +1,5 @@
+import ColumnTable from '../table/column-table'; // eslint-disable-line no-unused-vars
+
 import fromTextRows from './from-text-rows';
 import parseLines from './parse/parse-lines';
 import error from '../util/error';
@@ -32,7 +34,7 @@ import error from '../util/error';
  * parsing of input column values, use the parse option.
  * @param {string} text A string in a fixed-width file format.
  * @param {FixedParseOptions} options The formatting options.
- * @param {import('../table/column-table')} table A new table containing the parsed values.
+ * @return {ColumnTable} A new table containing the parsed values.
  */
 export default function(text, options = {}) {
   const read = parseLines(text, options);

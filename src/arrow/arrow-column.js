@@ -10,7 +10,7 @@ const isList = id => id === Type.List || id === Type.FixedSizeList;
 /**
  * Create an Arquero column that proxies access to an Arrow column.
  * @param {object} arrow An Apache Arrow column.
- * @return {import('./column').ColumnType} An Arquero-compatible column.
+ * @return {import('../table/column').ColumnType} An Arquero-compatible column.
  */
 export default function arrowColumn(arrow, nested) {
   if (arrow.dictionary) return arrowDictionary(arrow);

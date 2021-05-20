@@ -1,3 +1,5 @@
+import ColumnTable from '../table/column-table'; // eslint-disable-line no-unused-vars
+
 import formatValue from './value';
 import { columns, formats, scan } from './util';
 
