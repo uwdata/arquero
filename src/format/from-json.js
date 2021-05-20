@@ -29,7 +29,7 @@ import isString from '../util/is-string';
  * metadata such as a "fields" array of ordered column information.
  * @param {string|object} data A string in JSON format, or pre-parsed object.
  * @param {JSONParseOptions} options The formatting options.
- * @param {ColumnTable} table A new table containing the parsed values.
+ * @return {ColumnTable} A new table containing the parsed values.
  */
 export default function(json, options = {}) {
   const autoType = defaultTrue(options.autoType);

@@ -1,10 +1,7 @@
+import Table from '../table/table'; // eslint-disable-line no-unused-vars
+
 import inferFormat from './infer';
 import isFunction from '../util/is-function';
-
-/**
- * Data table.
- * @typedef {typeof import('../table/table')} Table
- */
 
 /**
  * Column selection function.

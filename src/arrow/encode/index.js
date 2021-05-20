@@ -1,3 +1,5 @@
+import { Table } from 'apache-arrow'; // eslint-disable-line no-unused-vars
+
 import dataFromObjects from './data-from-objects';
 import dataFromTable from './data-from-table';
 import { scanArray, scanTable } from './scan';

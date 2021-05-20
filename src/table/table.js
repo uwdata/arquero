@@ -518,7 +518,7 @@ export default class Table extends Transformable {
 
 /**
  * Proxy type for BitSet class.
- * @typedef {typeof import('./bit-set')} BitSet
+ * @typedef {import('./bit-set').default} BitSet
  */
 
 /**

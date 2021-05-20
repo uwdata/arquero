@@ -1,3 +1,5 @@
+import ColumnTable from '../table/column-table'; // eslint-disable-line no-unused-vars
+
 import { columns } from './util';
 import { formatUTCDate } from '../util/format-date';
 import defaultTrue from '../util/default-true';
