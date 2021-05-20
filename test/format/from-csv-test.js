@@ -102,3 +102,23 @@ tape('fromCSV parses delimited text with skip options', t => {
 
   t.end();
 });
+
+tape('fromCSV applies parsers regardless of autoType flag', t => {
+  const text = 'a,b\r\n00152,01/01/2021\r\n30219,01/01/2021';
+  const table = autoType => fromCSV(text, {
+    autoType,
+    parse: {
+      a: v => v,
+      b: v => v.split('/').reverse().join('-')
+    }
+  });
+  const data = {
+    a: ['00152', '30219'],
+    b: ['2021-01-01', '2021-01-01']
+  };
+
+  tableEqual(t, table(true), data, 'csv parsed data with autoType true');
+  tableEqual(t, table(false), data, 'csv parsed data with autoType false');
+
+  t.end();
+});
