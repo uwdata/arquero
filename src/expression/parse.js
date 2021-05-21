@@ -7,10 +7,9 @@ import entries from '../util/entries';
 import error from '../util/error';
 import isFunction from '../util/is-function';
 import isObject from '../util/is-object';
-import parseMapFunction from './parse-map-function';
+import parseEscape from './parse-escape';
 import parseExpression from './parse-expression';
 
-const ERROR_MAP_AST = 'Can not generate AST for map function.';
 const ANNOTATE = { [Column]: 1, [Op]: 1 };
 
 export default function(input, opt = {}) {
@@ -45,9 +44,9 @@ export default function(input, opt = {}) {
     },
     value(name, node) {
       names.push(name);
-      const e = node.expr
-        ? opt.ast ? error(ERROR_MAP_AST) : node.expr
-        : opt.ast ? clean(node) : compileExpr(generate(node), params);
+      const e = node.expr || (opt.ast
+        ? clean(node)
+        : compileExpr(generate(node), params));
       exprs.push(e);
       // annotate expression if it is a direct column or op access
       // this permits downstream optimizations
@@ -72,7 +71,9 @@ export default function(input, opt = {}) {
   for (const [name, value] of entries(input)) {
     ctx.value(
       name + '',
-      (value.map ? parseMapFunction : parseExpression)(ctx, value)
+      value.escape
+        ? parseEscape(ctx, value, params)
+        : parseExpression(ctx, value)
     );
   }
 

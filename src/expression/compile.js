@@ -1,13 +1,14 @@
-import { functions } from '../op';
+import { functions as fn } from '../op';
 
-function compile(code, params) {
+function compile(code, fn, params) {
   code = `"use strict"; return ${code};`;
-  return (Function('fn', '$', code))(functions, params);
+  return (Function('fn', '$', code))(fn, params);
 }
 
 export default {
-  expr:  (expr, params) => compile(`(row,data,op)=>${expr}`, params),
-  expr2: (expr, params) => compile(`(row0,data0,row,data)=>${expr}`, params),
-  join:  (expr, params) => compile(`(row1,data1,row2,data2)=>${expr}`, params),
-  param: (expr, params) => compile(expr, params)
+  escape: (code, func, params) => compile(code, func, params),
+  expr:   (code, params) => compile(`(row,data,op)=>${code}`, fn, params),
+  expr2:  (code, params) => compile(`(row0,data0,row,data)=>${code}`, fn, params),
+  join:   (code, params) => compile(`(row1,data1,row2,data2)=>${code}`, fn, params),
+  param:  (code, params) => compile(code, fn, params)
 };
