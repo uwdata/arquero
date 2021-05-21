@@ -46,14 +46,21 @@ Examples 1 through 5 are function definitions, while examples 6 and 7 are string
 
 ### <a id="limitations">Limitations</a>
 
-A number of JavaScript features are not allowed in table expressions, including internal function definitions, variable updates, and `for` loops. The *only* function calls allowed are those provided by the `op` object. ([Why? Read below for more...](#why-op-functions-only))
+A number of JavaScript features are not allowed in table expressions, including internal function definitions, variable updates, and `for` loops. The *only* function calls allowed are those provided by the `op` object. ([Why? Read below for more...](#why-op-functions-only)) Most notably, parsed table expressions **do not support closures**. As a result, table expressions can not access variables defined in the enclosing scope.
 
-Most notably, **closures are not supported**. As a result, table expressions can not access variables defined in the enclosing scope. To define expression variables, use the [table `params` method](table#params) method to bind a parameter value to a table context. Parameters can then be accessed by including a second argument to a table expression; all bound parameters are available as properties of that argument (default name `$`):
+To include external variables in a table expression, use the [`params()` method](table#params) method to bind a parameter value to a table context. Parameters can then be accessed by including a second argument to a table expression; all bound parameters are available as properties of that argument (default name `$`):
 
 ```js
 table
   .params({ threshold: 5 })
   .filter((d, $) => d.value < $.threshold)
+```
+
+To pass in a standard JavaScript function that will be called directly (rather than parsed and rewritten), use the [`map()` expression helper](/#map). Map functions *do* support closures and so can refer to variables defined in an enclosing scope. However, map functions do not support aggregate or window operations; they also sidestep internal optimizations and result in an error when attempting to serialize Arquero queries (for example, to pass transformations to a worker thread).
+
+```js
+const threshold = 5;
+table.filter(aq.map('value', v => v < threshold))
 ```
 
 Alternatively, for programmatic generation of table expressions one can fallback to a generating a string &ndash; rather than a proper function definition &ndash; and use that instead:
@@ -74,7 +81,7 @@ Some verbs &ndash; including [`groupby()`](verbs#groupby), [`orderby()`](verbs#o
 4. `table.groupby(aq.range(0, 1))` - Use a column [range](index#range) helper
 5. `table.groupby({ colA: d => d.colA, colB: d => d.colB })` - Explicit table expressions
 
-Underneath the hood, ultimately all of these variants are grounded down to table expressions.
+Underneath the hood, all of these variants are grounded down to table expressions.
 
 ### <a id="aggregate-window-shorthands">Aggregate &amp; Window Shorthands</a>
 
@@ -127,11 +134,11 @@ table.join(other, ['x', 'u'], {
 
 ## <a id="why-op-functions-only"></a>Why are only `op` functions supported?
 
-Any function that is callable within an Arquero table expression must be defined on the `op` object, either as a built-in function or added via the [extensibility API](extensibility). Why? Why can't one just use a function directly?
+Any function that is callable within an Arquero table expression must be defined on the `op` object, either as a built-in function or added via the [extensibility API](extensibility). Why is this the case?
 
 As [described earlier](#table), Arquero table expressions can look like normal JavaScript functions, but are treated specially: their source code is parsed and new custom functions are generated to process data. This process prevents the use of [closures](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures), such as referencing functions or values defined externally to the expression.
 
-But why do we do this? Here are a few reasons:
+So why do we do this? Here are a few reasons:
 
 * **Performance**. After parsing an expression, Arquero performs code generation, often creating more performant code in the process. This level of indirection also allows us to generate optimized expressions for certain inputs, such as Apache Arrow data.
 
@@ -143,4 +150,6 @@ But why do we do this? Here are a few reasons:
 
 * **Discoverability**. Defining all functions on a single object provides a single catalog of all available operations. In most IDEs, you can simply type `op.` (and perhaps hit the <kbd>tab</kbd> key) to the see a list of all available functions and benefit from auto-complete!
 
-Of course, one might wish to make different trade-offs. Arquero is designed to support common use cases while also being applicable to more complex production setups. This goal comes with the cost of more rigid management of functions. That said, Arquero can be extended with custom variables, functions, and even new table methods or verbs! As starting points, see the [params](table#params), [addFunction](extensibility#addFunction), and [addTableMethod](extensibility#addTableMethod) functions to introduce external variables, register new `op` functions, or extend tables with new methods.
+Of course, one might wish to make different trade-offs. Arquero is designed to support common use cases while also being applicable to more complex production setups. This goal comes with the cost of more rigid management of functions. However, Arquero can be extended with custom variables, functions, and even new table methods or verbs! As starting points, see the [params](table#params), [addFunction](extensibility#addFunction), and [addTableMethod](extensibility#addTableMethod) functions to introduce external variables, register new `op` functions, or extend tables with new methods.
+
+All that being said, not all use cases require portability, safety, etc. Sometimes you just want to call your helper methods without a registration step getting in the way. For such cases Arquero provides an escape hatch: use the [`map()` expression helper](/#map) to apply a standard JavaScript function to one or more column values *as-is*, skipping any internal parsing and code generation.

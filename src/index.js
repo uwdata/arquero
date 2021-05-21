@@ -36,6 +36,7 @@ export { default as bin } from './helpers/bin';
 export { default as desc } from './helpers/desc';
 export { default as field } from './helpers/field';
 export { default as frac } from './helpers/frac';
+export { default as map } from './helpers/map';
 export { default as rolling } from './helpers/rolling';
 export { all, endswith, matches, not, range, startswith } from './helpers/selection';
 export { default as agg } from './verbs/helpers/agg';

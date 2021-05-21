@@ -26,6 +26,8 @@ Add new functions for use in table expressions.
 
 Register a function for use within table expressions. If only a single argument is provided, it will be assumed to be a function and the system will try to extract its name. Throws an error if a function with the same name is already registered and the override option is not specified, or if no name is provided and the input function is anonymous. After registration, the function will be accessible via the [`op`](#op) object.
 
+Also see the [`map()` expression helper](/#map) for a lightweight alternative that allows access to functions defined in an enclosing scope.
+
 * *name*: The name to use for the function.
 * *fn*: A standard JavaScript function.
 * *options*: Function registration options.
