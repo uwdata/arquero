@@ -1,6 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import { map, op, table } from '../../src';
+import { op, table } from '../../src';
 
 tape('spread produces multiple columns from arrays', t => {
   const data = {
@@ -96,16 +96,5 @@ tape('spread ignores as option with multi column input', t => {
     b_1: [ 'baz', 'bar', 'foo', 'foo' ],
     b_2: [ 'bop', 'baz', undefined, 'bar' ]
   }, 'spread data with as');
-  t.end();
-});
-
-tape('spread supports map functions', t => {
-  const pair = x => [x, x * x + 1];
-
-  tableEqual(t,
-    table({ v: [3, 2, 1] }).spread({ v: map('v', pair) }, { as: ['a', 'b'] }),
-    { a: [3, 2, 1], b: [10, 5, 2] },
-    'spread data with map'
-  );
   t.end();
 });

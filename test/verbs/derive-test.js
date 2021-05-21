@@ -1,6 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import { all, map, op, rolling, table } from '../../src';
+import { op, rolling, table } from '../../src';
 const { abs, lag, mean, median, rank, stdev } = op;
 
 tape('derive creates new columns', t => {
@@ -332,38 +332,6 @@ tape('derive supports fill window functions', t => {
     t2.derive({ x: op.fill_up('x', '?') }),
     { x: ['a', 'a', '?'] },
     'derive data, fill_up with default'
-  );
-
-  t.end();
-});
-
-tape('derive supports map functions', t => {
-  const dt = table({ a: [1, 2], b: [3, 4] });
-  const sq = x => x * x;
-  const off = 1;
-
-  tableEqual(t,
-    dt.derive({ z: map('a', a => sq(a) + off) }),
-    { a: [1, 2], b: [3, 4], z: [2, 5] },
-    'derive data with map'
-  );
-
-  tableEqual(t,
-    dt.derive({ z: map(['a', 'b'], (a, b) => a * -b + off) }),
-    { a: [1, 2], b: [3, 4], z: [-2, -7] },
-    'derive data with map, two input columns'
-  );
-
-  tableEqual(t,
-    dt.derive({ z: map(['a', 'b'], (...v) => v[0] * -v[1] + off) }),
-    { a: [1, 2], b: [3, 4], z: [-2, -7] },
-    'derive data with map, rest arguments'
-  );
-
-  tableEqual(t,
-    dt.derive({ z: map(all(), (a, b) => a * -b + off) }),
-    { a: [1, 2], b: [3, 4], z: [-2, -7] },
-    'derive data with map, column selection'
   );
 
   t.end();
