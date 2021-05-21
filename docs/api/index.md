@@ -12,7 +12,7 @@ title: Arquero API Reference
 * [Table Output](#output)
   * [toArrow](#toArrow)
 * [Expression Helpers](#expression-helpers)
-  * [op](#op), [agg](#agg), [map](#map)
+  * [op](#op), [agg](#agg), [escape](#escape)
   * [bin](#bin), [desc](#desc), [frac](#frac), [rolling](#rolling), [seed](#seed)
 * [Selection Helpers](#selection-helpers)
   * [all](#all), [not](#not), [range](#range)
@@ -507,17 +507,14 @@ aq.agg(aq.table({ a: [1, 3, 5] }), d => [op.min(d.a), op.max('a')]) // [1, 5]
 ```
 
 
-<hr/><a id="map" href="#map">#</a>
-<em>aq</em>.<b>map</b>(<i>columns</i>, <i>mapFunction</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/map.js)
+<hr/><a id="escape" href="#escape">#</a>
+<em>aq</em>.<b>escape</b>(<i>func</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/escape.js)
 
-Prepares a JavaScript *mapFunction* to be applied to table rows, given values from the specified *columns* as arguments. Map functions enable the direct use of JavaScript functions to process column values: no internal parsing or code generation is performed, and so [closures](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures) and arbitrary function invocations are supported.
+Annotate a JavaScript function *func* to bypass Arquero's default table expression handling. Escaped functions enable the direct use of JavaScript functions to process row data: no internal parsing or code generation is performed, and so [closures](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures) and arbitrary function invocations are supported. Escaped functions provide a lightweight alternative to [table params](https://uwdata.github.io/arquero/api/table#params) and [function registration](https://uwdata.github.io/arquero/api/extensibility#addFunction) to access variables in enclosing scopes.
 
-Map functions provide a lightweight alternative to [table params](https://uwdata.github.io/arquero/api/table#params) and [function registration](https://uwdata.github.io/arquero/api/extensibility#addFunction) to access variables in enclosing scopes. Instead of using object access syntax, map functions accepts column values directly as arguments (similar to functions passed to JavaScript's [`Array.map()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map) method).
+An escaped function can be applied anywhere Arquero accepts [single-table table expressions](https://uwdata.github.io/arquero/api/expressions#table), including the [derive](verbs/#derive), [filter](verbs/#filter), and [spread](verbs/#spread) verbs. In addition, any of the [standard `op` functions](https://uwdata.github.io/arquero/api/op#functions) can be used. However, aggregate and window `op` functions are not supported. Also note that using escaped functions will break [serialization of Arquero queries to worker threads](https://github.com/uwdata/arquero-worker).
 
-A map function can be applied anywhere Arquero accepts [single-table table expressions](https://uwdata.github.io/arquero/api/expressions#table), including the [derive](verbs/#derive), [filter](verbs/#filter), and [spread](verbs/#spread) verbs. In addition, any of the [standard `op` functions](https://uwdata.github.io/arquero/api/op#functions) can be used. However, aggregate and window `op` functions are not supported. Also note that using map functions will break [serialization of Arquero queries to worker threads](https://github.com/uwdata/arquero-worker).
-
-* *columns*: An ordered set of columns whose values should be passed to the map function. The input may consist of: column name strings, column integer indices, objects with current column names as keys (object values will be ignored), or functions that take a table as input and return a valid selection parameter (such as the output of the selection helper functions [all](./#all), [not](./#not), or [range](./#range)).
-* *mapFunction*: A function that takes column values as input, to be invoked per table row. Aggregate and window `op` functions are not permitted.
+* *func*: A function that takes a row object as input. Aggregate and window `op` functions are not permitted.
 
 *Examples*
 
@@ -525,7 +522,7 @@ A map function can be applied anywhere Arquero accepts [single-table table expre
 // filter based on a variable defined in the enclosing scope
 const thresh = 5;
 aq.table({ a: [1, 4, 9], b: [1, 2, 3] })
-  .filter(aq.map('a', a => a < thresh))
+  .filter(aq.escape(d => d.a < thresh))
   // { a: [1, 4], b: [1, 2] }
 ```
 
@@ -533,31 +530,16 @@ aq.table({ a: [1, 4, 9], b: [1, 2, 3] })
 // apply a parsing function defined in the enclosing scope
 const parseMDY = d3.timeParse('%m/%d/%Y');
 aq.table({ date: ['1/1/2000', '06/01/2010', '12/10/2020'] })
-  .derive({ date: aq.map('date', parseMDY) })
+  .derive({ date: aq.escape(d => parseMDY(d.date)) })
   // { date: [new Date(2000,0,1), new Date(2010,5,1), new Date(2020,11,10)] }
 ```
 
 ```js
-// map function with two column values as input
-const offset = 1;
-aq.table({ a: [1, 4, 9], b: [1, 2, 3] })
-  .derive({ d: aq.map(['a', 'b'], (a, b) => offset + a - b) })
-  // { a: [1, 4, 9], b: [1, 2, 3], d: [1, 3, 7] }
-```
-
-```js
-// map function with an arbitrary number of column values as input
-aq.table({ a: [1, 4, 9], b: [1, 2, 3] })
-  .derive({ s: aq.map(aq.all(), (...values) => d3.sum(values)) })
-  // { a: [1, 4, 9], b: [1, 2, 3], s: [2, 6, 12] }
-```
-
-```js
-// spread results from a map function that returns an array
+// spread results from an escaped function that returns an array
 const denom = 4;
 aq.table({ a: [1, 4, 9] })
   .spread(
-    { a: aq.map('a', a => [Math.floor(a / denon), a % denom]) },
+    { a: aq.escape(d => [Math.floor(d.a / denom), d.a % denom]) },
     { as: ['div', 'mod'] }
   )
   // { div: [0, 1, 2], mod: [1, 0, 1] }
