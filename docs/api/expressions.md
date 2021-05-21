@@ -56,11 +56,11 @@ table
   .filter((d, $) => d.value < $.threshold)
 ```
 
-To pass in a standard JavaScript function that will be called directly (rather than parsed and rewritten), use the [`map()` expression helper](/#map). Map functions *do* support closures and so can refer to variables defined in an enclosing scope. However, map functions do not support aggregate or window operations; they also sidestep internal optimizations and result in an error when attempting to serialize Arquero queries (for example, to pass transformations to a worker thread).
+To pass in a standard JavaScript function that will be called directly (rather than parsed and rewritten), use the [`escape()` expression helper](/#escape). Escaped functions *do* support closures and so can refer to variables defined in an enclosing scope. However, escaped functions do not support aggregate or window operations; they also sidestep internal optimizations and result in an error when attempting to serialize Arquero queries (for example, to pass transformations to a worker thread).
 
 ```js
 const threshold = 5;
-table.filter(aq.map('value', v => v < threshold))
+table.filter(aq.escape(d => d.value < threshold))
 ```
 
 Alternatively, for programmatic generation of table expressions one can fallback to a generating a string &ndash; rather than a proper function definition &ndash; and use that instead:
@@ -152,4 +152,4 @@ So why do we do this? Here are a few reasons:
 
 Of course, one might wish to make different trade-offs. Arquero is designed to support common use cases while also being applicable to more complex production setups. This goal comes with the cost of more rigid management of functions. However, Arquero can be extended with custom variables, functions, and even new table methods or verbs! As starting points, see the [params](table#params), [addFunction](extensibility#addFunction), and [addTableMethod](extensibility#addTableMethod) functions to introduce external variables, register new `op` functions, or extend tables with new methods.
 
-All that being said, not all use cases require portability, safety, etc. Sometimes you just want to call your helper methods without a registration step getting in the way. For such cases Arquero provides an escape hatch: use the [`map()` expression helper](/#map) to apply a standard JavaScript function to one or more column values *as-is*, skipping any internal parsing and code generation.
+All that being said, not all use cases require portability, safety, etc. For such cases Arquero provides an escape hatch: use the [`escape()` expression helper](/#escape) to apply a standard JavaScript function *as-is*, skipping any internal parsing and code generation.
