@@ -1,4 +1,5 @@
 import wrap from './wrap';
+import error from '../util/error';
 
 /**
  * Specify a map function that applies a function directly (with
@@ -14,5 +15,9 @@ import wrap from './wrap';
  * @example map(['colA', 'colB'], (a, b) => a * -b)
  */
 export default function(columns, mapfn) {
-  return wrap(mapfn, { columns, map: true });
+  return wrap(mapfn, {
+    map: true,
+    columns,
+    toString() { error('Map functions can not be serialized.'); }
+  });
 }
