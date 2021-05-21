@@ -13,6 +13,7 @@ export default function(table, fields) {
   // parse expressions, generate code for both a and b values
   const names = [];
   const exprs = [];
+  const fn = [];
   let keys = null, opA = '0', opB = '0';
   if (table.isGrouped()) {
     keys = table.groups().keys;
@@ -23,10 +24,18 @@ export default function(table, fields) {
     table,
     value: (name, node) => {
       names.push(name);
-      exprs.push([
-        codegen(node, { index: 'a', op: opA }),
-        codegen(node, { index: 'b', op: opB })
-      ]);
+      if (node.expr) {
+        // if an escaped function, invoke it directly
+        const f = i => `fn[${fn.length}](${i}, data)`;
+        exprs.push([f('a'), f('b')]);
+        fn.push(node.expr);
+      } else {
+        // generate code to extract values to compare
+        exprs.push([
+          codegen(node, { index: 'a', op: opA }),
+          codegen(node, { index: 'b', op: opB })
+        ]);
+      }
     },
     window: false
   });
@@ -48,5 +57,5 @@ export default function(table, fields) {
   code += '0;};';
 
   // instantiate and return comparator function
-  return (Function('op', 'keys', 'data', code))(op, keys, table.data());
+  return Function('op', 'keys', 'fn', 'data', code)(op, keys, fn, table.data());
 }
