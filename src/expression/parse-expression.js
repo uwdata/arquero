@@ -45,10 +45,11 @@ const ERROR_VARIABLE_OP = 'Variable not accessible in operator call';
 const ERROR_DECLARATION = 'Unsupported variable declaration';
 const ERROR_DESTRUCTURE = 'Unsupported destructuring pattern';
 const ERROR_CLOSURE = 'Table expressions do not support closures';
-const ERROR_USE_PARAMS = 'Use table.params({ name: value }) to define dynamic parameters';
-const ERROR_ADD_FUNCTION = 'Use aq.addFunction(name, fn) to add new op functions';
-const ERROR_VARIABLE_NOTE = `\nNote: ${ERROR_CLOSURE}. ${ERROR_USE_PARAMS}.`;
-const ERROR_FUNCTION_NOTE = `\nNote: ${ERROR_CLOSURE}. ${ERROR_ADD_FUNCTION}.`;
+const ERROR_ESCAPE = 'Use aq.escape(fn) to use a function as-is (including closures)';
+const ERROR_USE_PARAMS = 'use table.params({ name: value }) to define dynamic parameters';
+const ERROR_ADD_FUNCTION = 'use aq.addFunction(name, fn) to add new op functions';
+const ERROR_VARIABLE_NOTE = `\nNote: ${ERROR_CLOSURE}. ${ERROR_ESCAPE}, or ${ERROR_USE_PARAMS}.`;
+const ERROR_FUNCTION_NOTE = `\nNote: ${ERROR_CLOSURE}. ${ERROR_ESCAPE}, or ${ERROR_ADD_FUNCTION}.`;
 const ERROR_ROW_OBJECT = `The ${ROW_OBJECT} method is not valid in multi-table expressions.`;
 
 export default function parseExpression(ctx, spec) {

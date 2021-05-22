@@ -1,16 +1,16 @@
 import compile from './compile';
-import concat from '../util/concat';
-import toString from '../util/to-string';
+import { rowObjectCode } from './row-object';
+import error from '../util/error';
+
+const ERROR_ESC_AGGRONLY = 'Escaped functions are not valid as rollup or pivot values.';
 
 export default function(ctx, spec, params) {
-  // TODO: support additional argument to select columns?
-  const cols = ctx.table.columnNames();
+  if (ctx.aggronly) error(ERROR_ESC_AGGRONLY);
 
   // generate escaped function invocation code
-  // TODO move row object generation to utility
   const code = '(row,data)=>fn('
-    + '{' + concat(cols, x => `${toString(x)}:data[${toString(x)}].get(row)`, ',') + '}'
+    + rowObjectCode(ctx.table.columnNames())
     + ',$)';
 
-  return { expr: compile.escape(code, spec.expr, params) };
+  return { escape: compile.escape(code, spec.expr, params) };
 }

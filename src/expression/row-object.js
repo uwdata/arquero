@@ -24,6 +24,10 @@ export function rowObjectExpression(node, props) {
   return node;
 }
 
+export function rowObjectCode(props) {
+  return codegen(rowObjectExpression({}, props));
+}
+
 export function rowObjectBuilder(props) {
-  return compile.expr(codegen(rowObjectExpression({}, props)));
+  return compile.expr(rowObjectCode(props));
 }

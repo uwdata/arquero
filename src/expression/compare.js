@@ -24,11 +24,11 @@ export default function(table, fields) {
     table,
     value: (name, node) => {
       names.push(name);
-      if (node.expr) {
+      if (node.escape) {
         // if an escaped function, invoke it directly
         const f = i => `fn[${fn.length}](${i}, data)`;
         exprs.push([f('a'), f('b')]);
-        fn.push(node.expr);
+        fn.push(node.escape);
       } else {
         // generate code to extract values to compare
         exprs.push([
