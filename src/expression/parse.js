@@ -44,7 +44,7 @@ export default function(input, opt = {}) {
     },
     value(name, node) {
       names.push(name);
-      const e = node.expr || (opt.ast
+      const e = node.escape || (opt.ast
         ? clean(node)
         : compileExpr(generate(node), params));
       exprs.push(e);

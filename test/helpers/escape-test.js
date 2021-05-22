@@ -1,6 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import { escape, query, table } from '../../src';
+import { escape, op, query, table } from '../../src';
 
 tape('derive supports escaped functions', t => {
   const dt = table({ a: [1, 2], b: [3, 4] });
@@ -17,6 +17,13 @@ tape('derive supports escaped functions', t => {
     dt.derive({ z: escape(d => d.a * -d.b + off) }),
     { a: [1, 2], b: [3, 4], z: [-2, -7] },
     'derive data with escape, two columns'
+  );
+
+  tableEqual(t,
+    dt.params({ foo: 2 })
+      .derive({ z: escape((d, $) => sq(d.a) + off + op.abs($.foo)) }),
+    { a: [1, 2], b: [3, 4], z: [4, 7] },
+    'derive data with escape, op, and params'
   );
 
   t.end();
@@ -60,6 +67,20 @@ tape('orderby supports escaped functions', t => {
     table({ v: [1, 2, 3] }).orderby(escape(d => -d.v)),
     { v: [3, 2, 1] },
     'orderby data with escape'
+  );
+
+  t.end();
+});
+
+tape('aggregate verbs throw for escaped functions', t => {
+  t.throws(
+    () => table({ v: [1, 2, 3] }).rollup({ v: escape(d => -d.v) }),
+    'rollup throws on escaped function'
+  );
+
+  t.throws(
+    () => table({ g: [1, 2], a: [3, 4] }).pivot('g', { v: escape(d => -d.a) }),
+    'pivot throws on escaped function'
   );
 
   t.end();
