@@ -288,13 +288,13 @@ export default class Transformable {
    * If the expand option is specified, imputes new rows for missing
    * combinations of values. All combinations of key values (a full cross
    * product) are considered for each level of grouping (specified by
-   * {@link Table#groupby}). New rows will be added for any combination of
-   * key and groupby values not already contained in the table. For all
+   * {@link Transformable#groupby}). New rows will be added for any combination
+   * of key and groupby values not already contained in the table. For all
    * non-key and non-group columns the new rows are populated with imputation
    * values (first argument) if specified, otherwise undefined.
    * If the expand option is specified, any filter or orderby settings are
    * removed from the output table, but groupby settings persist.
-   * @param {object} values Object of name-value pairs for the column values
+   * @param {ExprObject} values Object of name-value pairs for the column values
    *  to impute. The input object should have existing column names for keys
    *  and table expressions for values. The expressions will be evaluated to
    *  determine replacements for any missing values.
@@ -303,7 +303,7 @@ export default class Transformable {
    *  missing rows. All combinations of expanded values are considered, and
    *  new rows are added for each combination that does not appear in the
    *  input table.
-   * @return {Table} A new table with imputed values and/or rows.
+   * @return {this} A new table with imputed values and/or rows.
    * @example table.impute({ v: () => 0 })
    * @example table.impute({ v: d => op.mean(d.v) })
    * @example table.impute({ v: () => 0 }, { expand: ['x', 'y'] })
@@ -729,19 +729,24 @@ export default class Transformable {
  */
 
 /**
- * A function defined over a table row.
+ * A value that can be coerced to a string.
  * @typedef {object} Stringable
  * @property {() => string} toString String coercion method.
  */
 
 /**
- * A table expression provided as a string or string-coercible object.
+ * A table expression provided as a string or string-coercible value.
  * @typedef {string|Stringable} TableExprString
  */
 
 /**
+ * A struct object with arbitraty named properties.
+ * @typedef {Object.<string, *>} Struct
+ */
+
+/**
  * A function defined over a table row.
- * @typedef {(d?: object, $?: Params) => any} TableExprFunc
+ * @typedef {(d?: Struct, $?: Params) => any} TableExprFunc
  */
 
 /**
@@ -751,7 +756,7 @@ export default class Transformable {
 
 /**
  * A function defined over rows from two tables.
- * @typedef {(a?: object, b?: object, $?: Params) => any} TableFunc2
+ * @typedef {(a?: Struct, b?: Struct, $?: Params) => any} TableFunc2
  */
 
 /**
@@ -908,11 +913,12 @@ export default class Transformable {
 /**
  * Options for impute transformations.
  * @typedef {object} ImputeOptions
- * @property {any} [expand] Column values to combine to impute missing rows.
- *  For columns names and indices, all unique column values are considered.
- *  Otherwise, each entry should be an object of name-expresion pairs, with
- *  valid table expressions for {@link Table#rollup}. All combinations of
- *  values are checked for each set of unique groupby values.
+ * @property {ExprList} [expand] Column values to combine to impute missing
+ *  rows. For column names and indices, all unique column values are
+ *  considered. Otherwise, each entry should be an object of name-expresion
+ *  pairs, with valid table expressions for {@link Transformable#rollup}.
+ *  All combinations of values are checked for each set of unique groupby
+ *  values.
  */
 
 /**
