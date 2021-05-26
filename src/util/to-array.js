@@ -1,6 +1,6 @@
 import isArray from './is-array';
 
-export default function toArray(value) {
+export default function(value) {
   return value != null
     ? (isArray(value) ? value : [value])
     : [];

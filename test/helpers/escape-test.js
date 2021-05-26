@@ -26,6 +26,12 @@ tape('derive supports escaped functions', t => {
     'derive data with escape, op, and params'
   );
 
+  tableEqual(t,
+    dt.derive({ z: escape(2) }),
+    { a: [1, 2], b: [3, 4], z: [2, 2] },
+    'derive data with escaped literal value'
+  );
+
   t.end();
 });
 
