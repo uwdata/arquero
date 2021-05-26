@@ -17,7 +17,7 @@ export default function(table, { names, exprs, ops }) {
 }
 
 function output(names, exprs, groups, result = [], cols) {
-  if (!result.length) return;
+  if (!exprs.length) return;
   const size = groups ? groups.size : 1;
   const op = (id, row) => result[id][row];
   const n = names.length;
