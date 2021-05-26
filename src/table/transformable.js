@@ -862,7 +862,7 @@ export default class Transformable {
  */
 
 /**
- * Options for relocate transformations.
+ * Options for derive transformations.
  * @typedef {object} DeriveOptions
  * @property {boolean} [drop=false] A flag indicating if the original
  *  columns should be dropped, leaving only the derived columns. If true,
