@@ -57,6 +57,10 @@ aq.addFunction(function square(x) { return x * x; });
 
 Register a custom aggregate function. Throws an error if a function with the same name is already registered and the override option is not specified. After registration, the operator will be accessible via the [`op`](#op) object.
 
+In addition to column values, internally aggregate functions are passed a `state` object that tracks intermediate values throughout the aggregation. Each [groupby](verbs/#groupby) group receives a different state object. The state object always has a `count` property (total number of values, including invalid values) and a `valid` property (number of values that are not `null`, `undefined`, or `NaN`). Each aggregate operator may write intermediate values to the `state` object. Follow the property naming convention of using the aggregate function name as a property name prefix to avoid namespace collisions! For example, the `mean` aggregate function writes to the properties `state.mean` and `state.mean_d`.
+
+The `rem` function of an aggregate definition is used to support rolling window calculations. It is safe to define `rem` as a no-op (`() => {}`) if the aggregate is never used in the context of a rolling window frame.
+
 * *name*: The name to use for the aggregate function.
 * *def*: An aggregate operator definition object:
   * *create*: A creation function that takes non-field parameter values as input and returns a new aggregate operator instance. An aggregate operator instance should have four methods: *init(state)* to initialize any operator state, *add(state, value)* to add a value to the aggregate, *rem(state, value)* to remove a value from the aggregate, and *value(state)* to retrieve the current operator output value. The *state* parameter is a normal object for tracking all state information for a shared set of input field values.
