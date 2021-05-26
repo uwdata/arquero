@@ -11,6 +11,7 @@ import {
   Parameter,
   Property
 } from './ast/constants';
+import { is, isFunctionExpression } from './ast/util';
 import walk from './ast/walk';
 import constants from './constants';
 import rewrite from './rewrite';
@@ -19,10 +20,12 @@ import {
   getAggregate, getWindow,
   hasAggregate, hasFunction, hasWindow
 } from '../op';
+
 import error from '../util/error';
 import has from '../util/has';
+import isArray from '../util/is-array';
 import isNumber from '../util/is-number';
-import { is, isFunctionExpression } from './ast/util';
+import toString from '../util/to-string';
 
 const PARSER_OPT = { ecmaVersion: 11 };
 const DEFAULT_PARAM_ID = '$';
@@ -87,7 +90,9 @@ export default function parseExpression(ctx, spec) {
 
 function parseAST(expr) {
   try {
-    const code = expr.field ? fieldRef(expr) : expr;
+    const code = expr.field ? fieldRef(expr)
+      : isArray(expr) ? toString(expr)
+      : expr;
     return parse(`expr=(${code})`, PARSER_OPT).body[0].expression.right;
   } catch (err) {
     error(`Expression parse error: ${expr+''}`, err);
