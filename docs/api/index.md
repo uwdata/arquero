@@ -508,13 +508,13 @@ aq.agg(aq.table({ a: [1, 3, 5] }), d => [op.min(d.a), op.max('a')]) // [1, 5]
 
 
 <hr/><a id="escape" href="#escape">#</a>
-<em>aq</em>.<b>escape</b>(<i>func</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/escape.js)
+<em>aq</em>.<b>escape</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/escape.js)
 
-Annotate a JavaScript function *func* to bypass Arquero's default table expression handling. Escaped functions enable the direct use of JavaScript functions to process row data: no internal parsing or code generation is performed, and so [closures](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures) and arbitrary function invocations are supported. Escaped functions provide a lightweight alternative to [table params](https://uwdata.github.io/arquero/api/table#params) and [function registration](https://uwdata.github.io/arquero/api/extensibility#addFunction) to access variables in enclosing scopes.
+Annotate a JavaScript function or *value* to bypass Arquero's default table expression handling. Escaped values enable the direct use of JavaScript functions to process row data: no internal parsing or code generation is performed, and so [closures](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures) and arbitrary function invocations are supported. Escaped values provide a lightweight alternative to [table params](https://uwdata.github.io/arquero/api/table#params) and [function registration](https://uwdata.github.io/arquero/api/extensibility#addFunction) to access variables in enclosing scopes.
 
-An escaped function can be applied anywhere Arquero accepts [single-table table expressions](https://uwdata.github.io/arquero/api/expressions#table), including the [derive](verbs/#derive), [filter](verbs/#filter), and [spread](verbs/#spread) verbs. In addition, any of the [standard `op` functions](https://uwdata.github.io/arquero/api/op#functions) can be used. However, aggregate and window `op` functions are not supported. Also note that using escaped functions will break [serialization of Arquero queries to worker threads](https://github.com/uwdata/arquero-worker).
+An escaped value can be applied anywhere Arquero accepts [single-table table expressions](https://uwdata.github.io/arquero/api/expressions#table), including the [derive](verbs/#derive), [filter](verbs/#filter), and [spread](verbs/#spread) verbs. In addition, any of the [standard `op` functions](https://uwdata.github.io/arquero/api/op#functions) can be used within an escaped function. However, aggregate and window `op` functions are not supported. Also note that using escaped values will break [serialization of Arquero queries to worker threads](https://github.com/uwdata/arquero-worker).
 
-* *func*: A function that takes a row object as input. Aggregate and window `op` functions are not permitted.
+* *value*: A literal value or a function that is passed a row object and params object as input. Aggregate and window `op` functions are not permitted.
 
 *Examples*
 
