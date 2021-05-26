@@ -60,7 +60,7 @@ tape('impute imputes expanded rows for an ungrouped table', t => {
   tableEqual(t, dt, {
     x: ['a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'c'],
     y: [ 1,   2,   3,   1,   2,   3,   1,   2,   3 ],
-    z: ['x', na,  na,  na, 'x',  na,  na,  na, 'x']
+    z: ['x', na,  na,  na, 'x',  na,  na,  na,  'x']
   }, 'impute data');
 
   t.equal(dt.groups(), null, 'no groups');
@@ -68,7 +68,7 @@ tape('impute imputes expanded rows for an ungrouped table', t => {
   t.end();
 });
 
-tape('imputes imputes expanded rows for a grouped table', t => {
+tape('impute imputes expanded rows for a grouped table', t => {
   const dt = table({
       x: ['a', 'a', 'b', 'c'],
       y: [1, 1, 2, 3],
@@ -118,7 +118,7 @@ tape('impute imputes values and rows for an ungrouped table', t => {
   t.end();
 });
 
-tape('imputes imputes expanded rows for a grouped table', t => {
+tape('impute imputes expanded rows for a grouped table', t => {
   const dt = table({
       x: ['a', 'a', 'b', 'c'],
       y: [1, 1, 2, 3],
@@ -127,6 +127,34 @@ tape('imputes imputes expanded rows for a grouped table', t => {
     })
     .groupby('x', 'y')
     .impute({ v: op.max('v') }, { expand: 'z' })
+    .orderby('x', 'y', 'z')
+    .reify();
+
+  tableEqual(t, dt, {
+    x: ['a', 'a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'c'],
+    y: [ 1,   1,   1,   1,   2,   2,   2,   3,   3,   3 ],
+    z: ['x', 'x', 'y', 'z', 'x', 'y', 'z', 'x', 'y', 'z'],
+    v: [ 0,   9,   9,   9,   8,   8,   8,   7,   7,   7 ]
+  }, 'impute data');
+
+  t.deepEqual(
+    Array.from(dt.groups().keys),
+    [0, 0, 0, 0, 1, 1, 1, 2, 2, 2],
+    'group keys'
+  );
+
+  t.end();
+});
+
+tape('impute imputes expanded rows given fixed values', t => {
+  const dt = table({
+      x: ['a', 'a', 'b', 'c'],
+      y: [1, 1, 2, 3],
+      z: ['x', 'x', 'y', 'z'],
+      v: [0, 9, 8, 7]
+    })
+    .groupby('x', 'y')
+    .impute({ v: op.max('v') }, { expand: { z: ['x', 'y', 'z'] } })
     .orderby('x', 'y', 'z')
     .reify();
 

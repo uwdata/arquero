@@ -14,7 +14,8 @@ export default function(table, values, options = {}) {
   );
 
   if (options.expand) {
-    const params = parseValues('impute', table, options.expand, { preparse });
+    const opt = { preparse, aggronly: true };
+    const params = parseValues('impute', table, options.expand, opt);
     const result = _rollup(table.ungroup(), params);
     return _impute(
       table, values, params.names,
