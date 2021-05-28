@@ -37,6 +37,7 @@ export { default as escape } from './helpers/escape';
 export { default as desc } from './helpers/desc';
 export { default as field } from './helpers/field';
 export { default as frac } from './helpers/frac';
+export { default as names } from './helpers/names';
 export { default as rolling } from './helpers/rolling';
 export { all, endswith, matches, not, range, startswith } from './helpers/selection';
 export { default as agg } from './verbs/helpers/agg';

@@ -17,6 +17,7 @@ title: Arquero API Reference
 * [Selection Helpers](#selection-helpers)
   * [all](#all), [not](#not), [range](#range)
   * [matches](#matches), [startswith](#startswith), [endswith](#endswith)
+  * [names](#names)
 * [Queries](#queries)
   * [query](#query), [queryFrom](#queryFrom)
 
@@ -703,7 +704,7 @@ aq.range(2, 5)
 ```
 
 <hr/><a id="matches" href="#matches">#</a>
-<em>aq</em>.<b>matches</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
+<em>aq</em>.<b>matches</b>(<i>pattern</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Select all columns whose names match a pattern. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -722,7 +723,7 @@ aq.matches(/^[abc]/i)
 ```
 
 <hr/><a id="startswith" href="#startswith">#</a>
-<em>aq</em>.<b>startswith</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
+<em>aq</em>.<b>startswith</b>(<i>string</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Select all columns whose names start with a string. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -735,7 +736,7 @@ aq.startswith('prefix_')
 ```
 
 <hr/><a id="endswith" href="#endswith">#</a>
-<em>aq</em>.<b>endswith</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
+<em>aq</em>.<b>endswith</b>(<i>string</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
 Select all columns whose names end with a string. Returns a function-valued selection compatible with [select](verbs/#select).
 
@@ -746,6 +747,36 @@ Select all columns whose names end with a string. Returns a function-valued sele
 ```js
 aq.endswith('_suffix')
 ```
+
+<hr/><a id="names" href="#names">#</a>
+<em>aq</em>.<b>names</b>(<i>...names</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/names.js)
+
+Select columns by index and rename them to the provided *names*. Returns a selection helper function that takes a table as input and produces a rename map as output. If the number of provided names is less than the number of table columns, the rename map will include entries for the provided names only. If the number of table columns is less than then number of provided names, the rename map will include only entries that cover the existing columns.
+
+* *names*: An ordered set of strings to use as the new column names.
+
+*Examples*
+
+```js
+// helper to rename the first three columns to 'a', 'b', 'c'
+aq.names('a', 'b', 'c')
+```
+
+```js
+// names can also be passed as arrays
+aq.names(['a', 'b', 'c'])
+```
+
+```js
+// rename the first three columns, all other columns remain as-is
+table.rename(aq.names(['a', 'b', 'c']))
+```
+
+```js
+// select and rename the first three columns, all other columns are dropped
+table.select(aq.names(['a', 'b', 'c']))
+```
+
 
 <br/>
 
