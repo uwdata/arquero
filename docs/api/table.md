@@ -176,7 +176,7 @@ Returns the bitset mask for filtered rows, or null if there is no filter.
 
 Get or set table expression parameter values. If called with no arguments, returns the current parameter values as an object. Otherwise, adds the provided parameters to this table's parameter set and returns the table. Any prior parameters with names matching the input parameters are overridden.
 
-Also see the [`escape()` expression helper](/#escape) for a lightweight alternative that allows access to variables defined in an enclosing scope.
+Also see the [`escape()` expression helper](./#escape) for a lightweight alternative that allows access to variables defined in an enclosing scope.
 
 * *values*: A set of parameter values to add as an object of name-value pairs.
 
