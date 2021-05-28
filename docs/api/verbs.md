@@ -276,9 +276,9 @@ table.relocate({ colA: 'newA', colB: 'newB' }, { after: 'colC' })
 <hr/><a id="rename" href="#rename">#</a>
 <em>table</em>.<b>rename</b>(<i>columns</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/rename.js)
 
-Rename one or more columns, preserving column order.
+Rename one or more columns, preserving column order. The *columns* input should be an object or Map instance that maps existing column names to new column names. Use the [`names()` helper function](./#names) to create a rename map based on integer column indices.
 
-* *columns*: One or more rename objects with current column names as keys and new column names as values.
+* *columns*: A rename object or [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) with current column names as keys and new column names as values, or a selection helper function that takes a table as input and returns a rename map as output.
 
 *Examples*
 
@@ -301,6 +301,12 @@ table.rename({ colA: 'colA2', colB: 'colB2' })
 // rename colA and colB, alternate syntax
 table.rename({ colA: 'colA2' }, { colB: 'colB2' })
 ```
+
+```js
+// rename the first two columns (by index) to 'colA2' and 'colB2'
+table.rename(aq.names('colA2', 'colB2'))
+```
+
 
 <hr/><a id="reify" href="#reify">#</a>
 <em>table</em>.<b>reify</b>([<i>indices</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
