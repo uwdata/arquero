@@ -38,9 +38,14 @@ function toObject(value) {
 }
 
 /**
+ * Proxy type for SelectHelper function.
+ * @typedef {import('../table/transformable').SelectHelper} SelectHelper
+ */
+
+/**
  * Select all columns in a table.
  * Returns a function-valued selection compatible with {@link Table#select}.
- * @return {Function} Selection function compatible with {@link Table#select}.
+ * @return {SelectHelper} Selection function compatible with select().
  */
 export function all() {
   return decorate(
@@ -54,7 +59,7 @@ export function all() {
  * Returns a function-valued selection compatible with {@link Table#select}.
  * @param {...any} selection The selection to negate. May be a column name,
  *  column index, array of either, or a selection function (e.g., from range).
- * @return {Function} Selection function compatible with {@link Table#select}.
+ * @return {SelectHelper} Selection function compatible with select().
  */
 export function not(...selection) {
   selection = selection.flat();
@@ -71,7 +76,7 @@ export function not(...selection) {
  * Select a contiguous range of columns.
  * @param {string|number} start The name/index of the first selected column.
  * @param {string|number} end The name/index of the last selected column.
- * @return {Function} Selection function compatible with {@link Table#select}.
+ * @return {SelectHelper} Selection function compatible with select().
  */
 export function range(start, end) {
   return decorate(
@@ -88,7 +93,7 @@ export function range(start, end) {
 /**
  * Select all columns whose names match a pattern.
  * @param {string|RegExp} pattern A string or regular expression pattern to match.
- * @return {Function} Selection function compatible with {@link Table#select}.
+ * @return {SelectHelper} Selection function compatible with select().
  */
 export function matches(pattern) {
   if (isString(pattern)) pattern = RegExp(escapeRegExp(pattern));
@@ -101,7 +106,7 @@ export function matches(pattern) {
 /**
  * Select all columns whose names start with a string.
  * @param {string} string The string to match at the start of the column name.
- * @return {Function} Selection function compatible with {@link Table#select}.
+ * @return {SelectHelper} Selection function compatible with select().
  */
 export function startswith(string) {
   return matches(RegExp('^' + escapeRegExp(string)));
@@ -110,7 +115,7 @@ export function startswith(string) {
 /**
  * Select all columns whose names end with a string.
  * @param {string} string The string to match at the end of the column name.
- * @return {Function} Selection function compatible with {@link Table#select}.
+ * @return {SelectHelper} Selection function compatible with select().
  */
 export function endswith(string) {
   return matches(RegExp(escapeRegExp(string) + '$'));
