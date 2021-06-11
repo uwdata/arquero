@@ -98,3 +98,33 @@ tape('spread ignores as option with multi column input', t => {
   }, 'spread data with as');
   t.end();
 });
+
+tape('spread handles arrays of varying length', t => {
+  const data1 = {
+    u: [
+      ['A', 'B', 'C'],
+      ['D', 'E']
+    ]
+  };
+  const data2 = {
+    u: data1.u.slice().reverse()
+  };
+  const obj = [
+    { u_1: 'A', u_2: 'B', u_3: 'C' },
+    { u_1: 'D', u_2: 'E', u_3: undefined }
+  ];
+
+  t.deepEqual(
+    table(data1).spread('u').objects(),
+    obj,
+    'spread data, larger first'
+  );
+
+  t.deepEqual(
+    table(data2).spread('u').objects(),
+    obj.slice().reverse(),
+    'spread data, smaller first'
+  );
+
+  t.end();
+});
