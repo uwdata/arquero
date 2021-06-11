@@ -43,12 +43,11 @@ export default function(table, { names, exprs, ops = [] }, options = {}) {
 function spread(table, get, limit) {
   const nrows = table.totalRows();
   const columns = [];
-  let j = -1;
 
   table.scan((row, data) => {
     const values = toArray(get(row, data));
     const n = Math.min(values.length, limit);
-    while (++j < n) {
+    while (columns.length < n) {
       columns.push(Array(nrows).fill(NULL));
     }
     for (let i = 0; i < n; ++i) {
