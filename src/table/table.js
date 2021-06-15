@@ -276,7 +276,7 @@ export default class Table extends Transformable {
    */
   print(options = {}) {
     if (typeof options === 'number') {
-      options = { limit: 10 };
+      options = { limit: options };
     } else if (options.limit == null) {
       options.limit = 10;
     }
