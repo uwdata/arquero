@@ -38,7 +38,13 @@ function dateTest(t, type) {
     date(2000, 0, 1),
     date(2004, 10, 12),
     date(2007, 3, 14),
-    date(2009, 6, 26)
+    date(2009, 6, 26),
+    date(2000, 0, 1),
+    date(2004, 10, 12),
+    date(2007, 3, 14),
+    date(2009, 6, 26),
+    date(2000, 0, 1),
+    date(2004, 10, 12)
   ];
   valueTest(t, type, values, ', without nulls');
   valueTest(t, type, [null, ...values, undefined], ', with nulls');
