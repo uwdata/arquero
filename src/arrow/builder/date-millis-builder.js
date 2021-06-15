@@ -1,7 +1,7 @@
 import { array } from './util';
 
 export default function(type, length) {
-  const data = array(type.ArrayType, length);
+  const data = array(type.ArrayType, length << 1);
   return {
     set(value, index) {
       const i = index << 1;
