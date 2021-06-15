@@ -1,5 +1,6 @@
 import Transformable from './transformable';
 import error from '../util/error';
+import isNumber from '../util/is-number';
 import repeat from '../util/repeat';
 
 /**
@@ -275,7 +276,7 @@ export default class Table extends Transformable {
    *  number-valued, specifies the row limit.
    */
   print(options = {}) {
-    if (typeof options === 'number') {
+    if (isNumber(options)) {
       options = { limit: options };
     } else if (options.limit == null) {
       options.limit = 10;
