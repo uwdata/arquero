@@ -1,6 +1,6 @@
 {
   "name": "arquero",
-  "version": "4.8.3",
+  "version": "4.8.4",
   "description": "Query processing and transformation of array-backed data tables.",
   "keywords": [
     "data",
