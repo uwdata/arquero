@@ -156,7 +156,7 @@ export default class Query extends Transformable {
 function serialize(query, method, props) {
   return {
     ...props,
-    verbs: query._verbs.map(verb => verb[method]()),
+    verbs: query._verbs.map(verb => verb[method]({query})),
     ...(query._params ? { params: query._params } : null),
     ...(query._table ? { table: query._table } : null)
   };

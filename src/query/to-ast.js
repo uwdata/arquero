@@ -37,16 +37,16 @@ const Methods = {
   [SelectionList]: astSelectionList
 };
 
-export default function(value, type, propTypes) {
+export default function(value, type, propTypes, opt) {
   return type === TableRef ? astTableRef(value)
     : type === TableRefList ? value.map(astTableRef)
-    : ast(toObject(value), type, propTypes);
+    : ast(toObject(value), type, propTypes, opt);
 }
 
-function ast(value, type, propTypes) {
+function ast(value, type, propTypes, opt) {
   return type === Options
     ? (value ? astOptions(value, propTypes) : value)
-    : Methods[type](value);
+    : Methods[type](value, opt);
 }
 
 function astOptions(value, types = {}) {

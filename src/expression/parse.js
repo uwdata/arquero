@@ -101,9 +101,14 @@ function getParams(opt) {
         ...getTableParams(opt.join[1]),
         ...getTableParams(opt.join[0])
       }
+    : opt.query ? getQueryParams(opt.query)
     : {}) || {};
 }
 
 function getTableParams(table) {
   return table && isFunction(table.params) ? table.params() : {};
+}
+
+function getQueryParams(query) {
+  return query && isFunction(query.params) ? query.params() : {};
 }
