@@ -235,7 +235,7 @@ table.select('colA', 'colB')
 ```
 
 ```js
-table.select(not('colB', 'colC'))
+table.select(aq.not('colB', 'colC'))
 ```
 
 ```js
