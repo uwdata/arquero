@@ -358,7 +358,7 @@ const dt = await aq.loadCSV('data/table.tsv', { delimiter: '\t' })
 <hr/><a id="loadFixed" href="#loadFixed">#</a>
 <em>aq</em>.<b>loadFixed</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load-file.js)
 
-Load a comma-separated values (CSV) file from a *url* and return a Promise for a <a href="table">table</a>. By default, automatic type inference is performed for input values; string values that match the ISO standard date format are parsed into JavaScript Date objects. To disable this behavior set *options.autoType* to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use *options.parse*.
+Load a fixed-width file from a *url* and return a Promise for a <a href="table">table</a>. By default, automatic type inference is performed for input values; string values that match the ISO standard date format are parsed into JavaScript Date objects. To disable this behavior set *options.autoType* to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use *options.parse*.
 
 This method performs both loading and parsing, and is equivalent to `aq.load(url, { using: aq.fromFixed })`. To instead parse a fixed width string that has already been loaded, use [fromFixed](#fromFixed).
 
