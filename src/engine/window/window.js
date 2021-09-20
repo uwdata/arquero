@@ -5,7 +5,7 @@ import unroll from '../../util/unroll';
 import windowState from './window-state';
 
 const frameValue = op =>
-  (op.frame || [null, null]).map(v => Number.isFinite(v) ? v : null);
+  (op.frame || [null, null]).map(v => Number.isFinite(v) ? Math.abs(v) : null);
 
 const peersValue = op => !!op.peers;
 
