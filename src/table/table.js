@@ -440,7 +440,7 @@ export default class Table extends Transformable {
       }
     } else if (filter) {
       let c = n - i + 1;
-      for (i = filter.nth(i); --c; i = filter.next(i + 1)) {
+      for (i = filter.nth(i); --c && i > -1; i = filter.next(i + 1)) {
         fn(i, data, stop);
       }
     } else {
