@@ -104,6 +104,33 @@ tape('ColumnTable scan supports filtering and ordering', t => {
   t.end();
 });
 
+tape('ColumnTable scan supports early termination', t => {
+  const table = new ColumnTable({
+    a: ['a', 'a', 'a', 'b', 'b'],
+    b: [2, 1, 4, 5, 3]
+  });
+
+  let count;
+  const visitor = (row, data, stop) => { if (++count > 1) stop(); };
+
+  count = 0;
+  table.scan(visitor, true);
+  t.equal(count, 2, 'standard scan');
+
+  count = 0;
+  const filter = new BitSet(5);
+  [1, 2, 4].forEach(i => filter.set(i));
+  table.create({ filter }).scan(visitor, true);
+  t.equal(count, 2, 'filtered scan');
+
+  count = 0;
+  const order = (u, v, { b }) => b.get(u) - b.get(v);
+  table.create({ order }).scan(visitor, true);
+  t.equal(count, 2, 'ordered scan');
+
+  t.end();
+});
+
 tape('ColumnTable memoizes indices', t => {
   const ut = new ColumnTable({ v: [1, 3, 2] });
   const ui = ut.indices(false);
