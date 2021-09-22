@@ -10,7 +10,7 @@ function onwarn(warning, defaultHandler) {
 }
 
 const name = 'aq';
-const external = [ 'apache-arrow' ];
+const external = [ 'apache-arrow', 'node-fetch' ];
 const globals = { 'apache-arrow': 'Arrow' };
 const plugins = [
   json(),
@@ -21,14 +21,13 @@ const plugins = [
 export default [
   {
     input: 'src/index-node.js',
-    external,
+    external: ['acorn'].concat(external),
     plugins,
     onwarn,
     output: [
       {
         file: 'dist/arquero.node.js',
         format: 'cjs',
-        globals,
         name
       }
     ]
