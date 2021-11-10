@@ -30,7 +30,7 @@ export default function(input, opt = {}) {
   // parser context
   const ctx = {
     op(op) {
-      const key = `${op.name}(${op.fields.concat(op.params).join(',')})`;
+      const key = opKey(op);
       return opcall[key] || (op.id = ++opId, opcall[key] = op);
     },
     field(node) {
@@ -93,6 +93,15 @@ export default function(input, opt = {}) {
   ops.forEach(op => op.fields = op.fields.map(id => f[id]));
 
   return { names, exprs, ops };
+}
+
+function opKey(op) {
+  let key = `${op.name}(${op.fields.concat(op.params).join(',')})`;
+  if (op.frame) {
+    const frame = op.frame.map(v => Number.isFinite(v) ? Math.abs(v) : -1);
+    key += `[${frame},${!!op.peers}]`;
+  }
+  return key;
 }
 
 function getParams(opt) {

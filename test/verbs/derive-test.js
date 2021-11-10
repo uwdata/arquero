@@ -198,6 +198,27 @@ tape('derive supports parameters', t => {
   t.end();
 });
 
+tape('derive supports differing window frames', t => {
+  const dt = table({ x: [1, 2, 3, 4, 5, 6] })
+    .derive({
+      cs0: rolling(d => op.sum(d.x)),
+      cs4: rolling(d => op.sum(d.x), [-4, 0]),
+      cs2: rolling(d => op.sum(d.x), [-2, 0])
+    });
+
+  tableEqual(t, dt,
+    {
+      x:   [1, 2, 3,  4,  5,  6],
+      cs0: [1, 3, 6, 10, 15, 21],
+      cs4: [1, 3, 6, 10, 15, 20],
+      cs2: [1, 3, 6,  9, 12, 15]
+    },
+    'derive data'
+  );
+
+  t.end();
+});
+
 tape('derive supports streaming value windows', t => {
   const dt = table({ val: [1, 2, 3, 4, 5] })
     .orderby('val')
