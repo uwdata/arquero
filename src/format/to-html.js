@@ -21,8 +21,22 @@ import mapObject from '../util/map-object';
  */
 
 /**
+ * Class function.
+ * @callback ClassFunction
+ * @param {string} name The column name.
+ * @param {number} row The table row index.
+ * @return {string} A classname string.
+ */
+
+/**
  * CSS style options.
  * @typedef {Object.<string, string | StyleFunction>} StyleOptions
+ */
+
+/**
+ * Class options.
+ * @typedef {Object.<string, string | ClassFunction>} ClassOptions
+ * @typedef {Object.<string, string | ClassFunction>} AltClassOptions
  */
 
 /**
@@ -50,6 +64,18 @@ import mapObject from '../util/map-object';
  *  'tbody', 'tr', 'th', or 'td'. The object values should be strings of
  *  valid CSS style directives (such as "font-weight: bold;") or functions
  *  that take a column name and row as inputs and return a CSS string.
+ *  @property {ClassOptions} [class] class property to include in HTML output.
+ *   The object keys should be HTML table tag names: 'table', 'thead',
+ *  'tbody', 'tr', 'th', or 'td'. The object values should be strings of
+ *  valid class names or functions that take a column name and row as
+ *  inputs and return a class string
+ *  @property {AltClassOptions} [classAlt] alternating class property to include
+ *  in HTML output. When used in conjuntion with 'class' will apply these class
+ *  names to every other element. For example, to create alternate background colors
+ *  on every other row, spreadsheet style. The object keys should be HTML table tag
+ *   names: 'table', 'thead', 'tbody', 'tr', 'th', or 'td'. The object values should be strings of
+ *  valid class names or functions that take a column name and row as
+ *  inputs and return a class string
  * @property {number} [maxdigits=6] The maximum number of fractional digits
  *  to include when formatting numbers. This option is passed to the format
  *  inference method and is overridden by any explicit format options.
@@ -65,16 +91,18 @@ export default function(table, options = {}) {
   const names = columns(table, options.columns);
   const { align, format } = formats(table, names, options);
   const style = styles(options);
+  const elClass  = classes(options);
+  const classAlt = classesAlt(options);
   const nullish = options.null;
 
   const alignValue = a => a === 'c' ? 'center' : a === 'r' ? 'right' : 'left';
   const escape = s => s.replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
   const baseFormat = (value, opt) => escape(formatValue(value, opt));
   const formatter = nullish
-    ? (value, opt) => value == null ? nullish(value) : baseFormat(value, opt)
-    : baseFormat;
+      ? (value, opt) => value == null ? nullish(value) : baseFormat(value, opt)
+      : baseFormat;
 
   let r = -1;
   let idx = -1;
@@ -82,16 +110,19 @@ export default function(table, options = {}) {
   const tag = (tag, name, shouldAlign) => {
     const a = shouldAlign ? alignValue(align[name]) : '';
     const s = style[tag] ? (style[tag](name, idx, r) || '') : '';
+    const c = elClass[tag] ? (elClass[tag](name, idx, r) || '') : '';
+    const altc = classAlt[tag] ? (classAlt[tag](name, idx, r) || '') : '';
     const css = (a ? (`text-align: ${a};` + (s ? ' ' : '')) : '') + s;
-    return `<${tag}${css ? ` style="${css}"` : ''}>`;
+    const clss = (idx % 2) ? (c ? ` class="${c}"` : '') :  (altc ? ` class="${altc}"` : (c ? ` class="${c}"` : ''));
+    return `<${tag}${css ? ` style="${css}"` : ''}${clss}>`;
   };
 
   let text = tag('table')
-    + tag('thead')
-    + tag('tr', r)
-    + names.map(name => `${tag('th', name, 1)}${name}</th>`).join('')
-    + '</tr></thead>'
-    + tag('tbody');
+      + tag('thead')
+      + tag('tr', r)
+      + names.map(name => `${tag('th', name, 1)}${name}</th>`).join('')
+      + '</tr></thead>'
+      + tag('tbody');
 
   scan(table, names, options.limit, options.offset, {
     row(row) {
@@ -100,8 +131,8 @@ export default function(table, options = {}) {
     },
     cell(value, name) {
       text += tag('td', name, 1)
-        + formatter(value, format[name])
-        + '</td>';
+          + formatter(value, format[name])
+          + '</td>';
     }
   });
 
@@ -110,7 +141,21 @@ export default function(table, options = {}) {
 
 function styles(options) {
   return mapObject(
-    options.style,
-    value => isFunction(value) ? value : () => value
+      options.style,
+      value => isFunction(value) ? value : () => value
+  );
+}
+
+function classes(options) {
+  return mapObject(
+      options.class,
+      value => isFunction(value) ? value : () => value
+  );
+}
+
+function classesAlt(options) {
+  return mapObject(
+      options.classAlt,
+      value => isFunction(value) ? value : () => value
   );
 }
