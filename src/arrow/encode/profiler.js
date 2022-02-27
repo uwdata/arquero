@@ -101,7 +101,7 @@ function infer(p) {
     return Type.Float64;
   }
   else if (p.bigints === valid) {
-    const v = -p.min > p.max ? -p.min - 1n : p.max;
+    const v = -p.min > p.max ? -p.min - 1 : p.max;
     return p.min < 0
       ? v < 2 ** 63 ? Type.Int64
         : error(`BigInt exceeds 64 bits: ${v}`)
