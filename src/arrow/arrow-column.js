@@ -1,24 +1,24 @@
 import arrowDictionary from './arrow-dictionary';
-import Type from './arrow-types';
 import error from '../util/error';
 import repeat from '../util/repeat';
 import toString from '../util/to-string';
 import unroll from '../util/unroll';
+import { isDict, isFixedSizeList, isList, isStruct, isUtf8 } from './arrow-types';
 
-const isList = id => id === Type.List || id === Type.FixedSizeList;
+const isListType = type => isList(type) || isFixedSizeList(type);
 
 /**
  * Create an Arquero column that proxies access to an Arrow column.
  * @param {object} arrow An Apache Arrow column.
  * @return {import('../table/column').ColumnType} An Arquero-compatible column.
  */
-export default function arrowColumn(arrow, nested) {
-  if (arrow.dictionary) return arrowDictionary(arrow);
-  const { typeId, chunks, length, numChildren } = arrow;
-  const vector = chunks && chunks.length === 1 ? chunks[0] : arrow;
+export default function arrowColumn(vector, nested) {
+  const { type, length, numChildren } = vector;
+  if (isDict(type)) return arrowDictionary(vector);
+
   const get = numChildren && nested ? getNested(vector)
     : numChildren ? memoize(getNested(vector))
-    : typeId === Type.Utf8 ? memoize(row => vector.get(row))
+    : isUtf8(type) ? memoize(row => vector.get(row))
     : null;
 
   return get
@@ -45,8 +45,8 @@ const arrayFrom = vector => vector.numChildren
   : vector.nullCount ? [...vector]
   : vector.toArray();
 
-const getNested = vector => isList(vector.typeId) ? getList(vector)
-  : vector.typeId === Type.Struct ? getStruct(vector)
+const getNested = vector => isListType(vector.type) ? getList(vector)
+  : isStruct(vector.type) ? getStruct(vector)
   : error(`Unsupported Arrow type: ${toString(vector.VectorName)}`);
 
 const getList = vector => vector.nullCount

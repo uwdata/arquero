@@ -1,7 +1,6 @@
-import { from } from '../arrow/arrow-table';
+import { fromIPC } from '../arrow/arrow-table';
 import arrowColumn from '../arrow/arrow-column';
 import resolve, { all } from '../helpers/selection';
-import BitSet from '../table/bit-set';
 import columnSet from '../table/column-set';
 import ColumnTable from '../table/column-table';
 
@@ -22,11 +21,12 @@ import ColumnTable from '../table/column-table';
  * @return {ColumnTable} A new table containing the imported values.
  */
 export default function(arrow, options = {}) {
-  arrow = from(arrow);
-  const { chunks, length, schema } = arrow;
+  if (arrow && !arrow.batches) {
+    arrow = fromIPC()(arrow);
+  }
 
   // resolve column selection
-  const fields = schema.fields.map(f => f.name);
+  const fields = arrow.schema.fields.map(f => f.name);
   const sel = resolve({
     columnNames: test => test ? fields.filter(test) : fields.slice(),
     columnIndex: name => fields.indexOf(name)
@@ -35,19 +35,8 @@ export default function(arrow, options = {}) {
   // build Arquero columns for backing Arrow columns
   const cols = columnSet();
   sel.forEach((name, key) => {
-    cols.add(name, arrowColumn(arrow.getColumn(key)));
+    cols.add(name, arrowColumn(arrow.getChild(key)));
   });
 
-  // build row filter bit mask as needed
-  const bits = arrow.count() !== length ? new BitSet(length) : null;
-  if (bits) {
-    let b = 0;
-    let c = 0;
-    arrow.scan(
-      idx => bits.set(b + idx),
-      batch => { while (chunks[c] !== batch) b += chunks[c++].length; }
-    );
-  }
-
-  return new ColumnTable(cols.data, cols.names, bits);
+  return new ColumnTable(cols.data, cols.names);
 }

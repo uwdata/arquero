@@ -36,15 +36,16 @@ import isFunction from '../../util/is-function';
 export default function(data, options = {}) {
   const { types = {} } = options;
   const { dataFrom, names, nrows, scan } = init(data, options);
-  return table().new(
-    names.map(name => {
-      const col = dataFrom(data, name, nrows, scan, types[name]);
-      return col.length === nrows
-        ? col
-        : error('Column length mismatch');
-    }),
-    names
-  );
+  const cols = {};
+  names.forEach(name => {
+    const col = dataFrom(data, name, nrows, scan, types[name]);
+    if (col.length !== nrows) {
+      error('Column length mismatch');
+    }
+    cols[name] = col;
+  });
+  const T = table();
+  return new T(cols);
 }
 
 function init(data, options) {

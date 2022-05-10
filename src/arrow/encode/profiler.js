@@ -1,5 +1,4 @@
-import { Field, FixedSizeList, List, Struct } from 'apache-arrow';
-import Type from '../arrow-types';
+import { Field, FixedSizeList, List, Struct, Type } from 'apache-arrow';
 import resolveType from '../builder/resolve-type';
 import error from '../../util/error';
 import isArrayType from '../../util/is-array-type';
