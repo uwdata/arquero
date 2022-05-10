@@ -6,9 +6,10 @@ import sequence from '../op/functions/sequence';
  * @param {object} vector An Apache Arrow dictionary column.
  */
 export default function(vector) {
-  const { chunks, dictionary, length, nullCount } = vector;
+  const { data, length, nullCount } = vector;
+  const dictionary = data[data.length - 1].dictionary;
   const size = dictionary.length;
-  const keys = dictKeys(chunks || [vector], length, nullCount, size);
+  const keys = dictKeys(data || [vector], length, nullCount, size);
   const values = Array(size);
 
   const value = k => k == null || k < 0 || k >= size ? null

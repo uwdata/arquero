@@ -1,6 +1,6 @@
 import tape from 'tape';
 import { readFileSync } from 'fs';
-import { Int8Vector, Table, Type } from 'apache-arrow';
+import { Int8, Type, tableFromIPC, tableToIPC, vectorFromArray } from 'apache-arrow';
 import fromArrow from '../../src/format/from-arrow';
 import fromCSV from '../../src/format/from-csv';
 import fromJSON from '../../src/format/from-json';
@@ -13,6 +13,10 @@ function date(year, month=0, date=1, hours=0, minutes=0, seconds=0, ms=0) {
 
 function utc(year, month=0, date=1, hours=0, minutes=0, seconds=0, ms=0) {
   return new Date(Date.UTC(year, month, date, hours, minutes, seconds, ms));
+}
+
+function Int8Vector(data) {
+  return vectorFromArray(data, new Int8);
 }
 
 function isArrayType(value) {
@@ -31,7 +35,7 @@ function compareColumns(name, aqt, art) {
   const normalize = v => v === undefined ? null : v instanceof Date ? +v : v;
   const idx = aqt.indices();
   const aqc = aqt.column(name);
-  const arc = art.getColumn(name);
+  const arc = art.getChild(name);
   const err = [];
   for (let i = 0; i < idx.length; ++i) {
     let v1 = normalize(aqc.get(idx[i]));
@@ -60,7 +64,7 @@ tape('toArrow produces Arrow data for an input table', t => {
     d: [date(2000,0,1), date(2000,1,2), null, date(2010,6,9), date(2018,0,1), date(2020,10,3)],
     u: [utc(2000,0,1), utc(2000,1,2), null, utc(2010,6,9), utc(2018,0,1), utc(2020,10,3)],
     e: [null, null, null, null, null, null],
-    v: Int8Vector.from([10, 9, 8, 7, 6, 5]),
+    v: Int8Vector([10, 9, 8, 7, 6, 5]),
     a: [[1, null, 3], [4, 5], null, [6, 7], [8, 9], []],
     l: [[1], [2], [3], [4], [5], [6]],
     o: [1, 2, 3, null, 5, 6].map(v => v ? { key: v } : null)
@@ -78,8 +82,8 @@ tape('toArrow produces Arrow data for an input table', t => {
     'object array and arrow tables match'
   );
 
-  const buffer = at.serialize();
-  const bt = Table.from(buffer);
+  const buffer = tableToIPC(at);
+  const bt = tableFromIPC(buffer);
 
   t.equal(
     compareTables(dt, bt), 0,
@@ -109,15 +113,15 @@ tape('toArrow produces Arrow data for an input CSV', async t => {
     'object array and arrow tables match'
   );
 
-  const buffer = at.serialize();
+  const buffer = tableToIPC(at);
 
   t.equal(
-    compareTables(st, Table.from(buffer)), 0,
+    compareTables(st, tableFromIPC(buffer)), 0,
     'arquero and serialized arrow tables match'
   );
 
   t.equal(
-    compareTables(fromArrow(Table.from(buffer)), at), 0,
+    compareTables(fromArrow(tableFromIPC(buffer)), at), 0,
     'serialized arquero and arrow tables match'
   );
 
@@ -127,7 +131,7 @@ tape('toArrow produces Arrow data for an input CSV', async t => {
 tape('toArrow handles ambiguously typed data', async t => {
   const at = table({ x: [1, 2, 3, 'foo'] }).toArrow();
   t.deepEqual(
-    [...at.getColumn('x')],
+    [...at.getChild('x')],
     ['1', '2', '3', 'foo'],
     'fallback to string type if a string is observed'
   );
@@ -147,8 +151,8 @@ tape('toArrow result produces serialized arrow data', t => {
   const json = dt.toJSON();
   const jt = fromJSON(json);
 
-  const bytes = dt.toArrow().serialize();
-  const bt = fromArrow(Table.from(bytes));
+  const bytes = tableToIPC(dt.toArrow());
+  const bt = fromArrow(tableFromIPC(bytes));
 
   t.deepEqual(
     [bt.toJSON(), jt.toJSON()],
@@ -217,7 +221,7 @@ tape('toArrow respects limit and types option', t => {
     types: { w: Type.Utf8, x: Type.Int32, y: Type.Float32 }
   });
 
-  const types = ['w', 'x', 'y', 'z'].map(name => at.getColumn(name).type);
+  const types = ['w', 'x', 'y', 'z'].map(name => at.getChild(name).type);
 
   t.deepEqual(
     types.map(t => t.typeId),

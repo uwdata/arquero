@@ -1,4 +1,4 @@
-import Type from '../arrow-types';
+import { Type } from 'apache-arrow';
 import arrayBuilder from './array-builder';
 import boolBuilder from './bool-builder';
 import dateDayBuilder from './date-day-builder';

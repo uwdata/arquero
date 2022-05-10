@@ -1,10 +1,9 @@
-import { Builder } from 'apache-arrow';
+import { makeBuilder } from 'apache-arrow';
 
 export default function(type) {
-  const b = Builder.new({
+  const b = makeBuilder({
     type,
-    nullValues: [null, undefined],
-    highWaterMark: Infinity
+    nullValues: [null, undefined]
   });
   return {
     set(value, index) { b.set(index, value); },

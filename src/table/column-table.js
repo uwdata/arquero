@@ -4,7 +4,7 @@ import columnSet from './column-set';
 import Table from './table';
 import { nest, regroup, reindex } from './regroup';
 import { rowObjectBuilder } from '../expression/row-object';
-import toArrow from '../format/to-arrow';
+import { default as toArrow, toArrowIPC } from '../format/to-arrow';
 import toCSV from '../format/to-csv';
 import toHTML from '../format/to-html';
 import toJSON from '../format/to-json';
@@ -304,7 +304,7 @@ export default class ColumnTable extends Table {
    * @return {Uint8Array} A new Uint8Array of Arrow-encoded binary data.
    */
   toArrowBuffer(options) {
-    return toArrow(this, options).serialize();
+    return toArrowIPC(this, options);
   }
 
   /**
