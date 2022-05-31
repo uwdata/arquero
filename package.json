@@ -44,6 +44,7 @@
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.1.3",
+    "@rollup/plugin-replace": "^4.0.0",
     "eslint": "^8.9.0",
     "esm": "^3.2.25",
     "rimraf": "^3.0.2",
@@ -55,6 +56,9 @@
   },
   "esm": {
     "force": true,
-    "mainFields": ["module", "main"]
+    "mainFields": [
+      "module",
+      "main"
+    ]
   }
 }
