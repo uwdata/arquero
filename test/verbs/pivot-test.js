@@ -128,3 +128,15 @@ tape('pivot handles filtered and ordered table', t => {
 
   t.end();
 });
+
+tape('pivot handles count aggregates', t => {
+  const data = {
+    k: ['a', 'b', 'b']
+  };
+
+  const ut = table(data).pivot('k', { count: op.count() });
+  tableEqual(t, ut, {
+    a: [ 1 ], b: [ 2 ]
+  }, 'pivot data');
+  t.end();
+});

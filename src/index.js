@@ -23,9 +23,9 @@ export const internal = {
 };
 
 // export public API
-export { version } from '../package.json';
+import pkg from '../package.json';
+export const version = pkg.version;
 export { seed } from './util/random';
-export { default as Type } from './arrow/arrow-types';
 export { default as fromArrow } from './format/from-arrow';
 export { default as fromCSV } from './format/from-csv';
 export { default as fromFixed } from './format/from-fixed';

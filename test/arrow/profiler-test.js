@@ -2,7 +2,7 @@ import tape from 'tape';
 import { profiler } from '../../src/arrow/encode/profiler';
 import {
   Float64, Int16, Int32, Int64, Int8,
-  Uint16, Uint32, Uint64, Uint8
+  Uint16, Uint32, Uint64, Uint8, util
 } from 'apache-arrow';
 
 function profile(array) {
@@ -12,7 +12,7 @@ function profile(array) {
 }
 
 function typeCompare(a, b) {
-  return a.compareTo(b);
+  return util.compareTypes(a, b);
 }
 
 tape('profiler infers integer types', t => {

@@ -589,9 +589,9 @@ Format this table as an [Apache Arrow](https://arrow.apache.org/docs/js/) table 
   * *columns*: Ordered list of column names to include. If function-valued, the function should accept this table as a single argument and return an array of column name strings.
   * *limit*: The maximum number of rows to include (default `Infinity`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
-  * *types*: An optional object indicating the [Arrow data type](https://arrow.apache.org/docs/js/enums/type.html) to use for named columns. If specified, the input should be an object with column names for keys and Arrow data types for values. If a column's data type is not explicitly provided, type inference will be performed.
+  * *types*: An optional object indicating the [Arrow data type](https://arrow.apache.org/docs/js/enums/Arrow_dom.Type.html) to use for named columns. If specified, the input should be an object with column names for keys and Arrow data types for values. If a column's data type is not explicitly provided, type inference will be performed.
 
-    Type values can either be instantiated Arrow [DataType](https://arrow.apache.org/docs/js/classes/datatype.html) instances (for example, `new Float64()`,`new DateMilliseconds()`, *etc.*) or type enum codes (`Type.Float64`, `Type.Date`, `Type.Dictionary`). For convenience, arquero re-exports the apache-arrow `Type` enum object (see examples below). High-level types map to specific data type instances as follows:
+    Type values can either be instantiated Arrow [DataType](https://arrow.apache.org/docs/js/classes/Arrow_dom.DataType.html) instances (for example, `new Float64()`,`new DateMilliseconds()`, *etc.*) or type enum codes (`Type.Float64`, `Type.Date`, `Type.Dictionary`). High-level types map to specific data type instances as follows:
 
     * `Type.Date` → `new DateMilliseconds()`
     * `Type.Dictionary` → `new Dictionary(new Utf8(), new Int32())`
@@ -607,7 +607,8 @@ Format this table as an [Apache Arrow](https://arrow.apache.org/docs/js/) table 
 Encode Arrow data from an input Arquero table:
 
 ```js
-const { table, Type } = require('arquero');
+import { table } from 'arquero';
+import { Type } from 'apache-arrow';
 
 // create Arquero table
 const dt = table({
@@ -642,7 +643,7 @@ This method will throw an error if type inference fails or if the generated colu
 Encode Arrow data from an input Arquero table:
 
 ```js
-const { table } = require('arquero');
+import { table } from 'arquero';
 
 const dt = table({
   x: [1, 2, 3, 4, 5],

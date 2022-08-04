@@ -15,9 +15,14 @@ export default function(table, on, values, options = {}) {
   // use custom toString method for proper field resolution
   const results = keys.map(
     k => aggregate(table, values.ops.map(op => {
+      if (op.name === 'count') { // fix #273
+        const fn = r => k === keyColumn[r] ? 1 : NaN;
+        fn.toString = () => k + ':1';
+        return { ...op, name: 'sum', fields: [fn] };
+      }
       const fields = op.fields.map(f => {
         const fn = (r, d) => k === keyColumn[r] ? f(r, d) : NaN;
-        fn.toString = () => k + ':' + f + '';
+        fn.toString = () => k + ':' + f;
         return fn;
       });
       return { ...op, fields };

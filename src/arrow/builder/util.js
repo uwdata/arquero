@@ -11,11 +11,11 @@ export function array(Type, length, bpe = Type.BYTES_PER_ELEMENT) {
 export function arrowData(d) {
   return d instanceof Data
     ? d
-    : Data.new(d.type, 0, d.length, d.nulls, d.buffers, null, d.dict);
+    : new Data(d.type, 0, d.length, d.nulls, d.buffers, null, d.dict);
 }
 
 export function arrowVector(data) {
-  return Vector.new(arrowData(data));
+  return new Vector([arrowData(data)]);
 }
 
 export const encoder = new TextEncoder();

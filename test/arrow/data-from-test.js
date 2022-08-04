@@ -2,7 +2,7 @@ import tape from 'tape';
 import {
   Bool, DateDay, DateMillisecond, Dictionary, Field, FixedSizeList,
   Float32, Float64, Int16, Int32, Int64, Int8, List, Struct, Table,
-  Uint16, Uint32, Uint64, Uint8, Utf8, Vector
+  Uint16, Uint32, Uint64, Uint8, Utf8, tableToIPC, vectorFromArray
 } from 'apache-arrow';
 import { dataFromScan } from '../../src/arrow/encode/data-from';
 import { scanTable } from '../../src/arrow/encode/scan';
@@ -17,19 +17,19 @@ function dataFromTable(table, column, type, nullable) {
 function integerTest(t, type) {
   const values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, undefined], ', with nulls');
+  valueTest(t, type, [null, ...values, null], ', with nulls');
 }
 
 function floatTest(t, type) {
   const values = [0, NaN, 1/3, Math.PI, 7, Infinity, -Infinity];
   valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, undefined], ', with nulls');
+  valueTest(t, type, [null, ...values, null], ', with nulls');
 }
 
 function bigintTest(t, type) {
   const values = [0n, 1n, 10n, 100n, 1000n, 10n ** 10n];
   valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, undefined], ', with nulls');
+  valueTest(t, type, [null, ...values, null], ', with nulls');
 }
 
 function dateTest(t, type) {
@@ -47,18 +47,18 @@ function dateTest(t, type) {
     date(2004, 10, 12)
   ];
   valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, undefined], ', with nulls');
+  valueTest(t, type, [null, ...values, null], ', with nulls');
 }
 
 function valueTest(t, type, values, msg) {
   const dt = table({ values });
   const u = dataFromTable(dt, dt.column('values'), type);
-  const v = Vector.from({ type, values, highWaterMark: Infinity });
-  const tu = Table.new([u], ['values']);
-  const tv = Table.new([v], ['values']);
+  const v = vectorFromArray(values, type);
+  const tu = new Table({ values: u });
+  const tv = new Table({ values: v });
   t.equal(
-    tu.serialize().join(' '),
-    tv.serialize().join(' '),
+    tableToIPC(tu).join(' '),
+    tableToIPC(tv).join(' '),
     'serialized data matches' + msg
   );
 }
@@ -67,7 +67,7 @@ tape('dataFrom encodes dictionary data', t => {
   const type = new Dictionary(new Utf8(), new Uint32(), 0);
   const values = ['a', 'b', 'FOO', 'b', 'a'];
   valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, undefined], ', with nulls');
+  valueTest(t, type, [null, ...values, null], ', with nulls');
   t.end();
 });
 
@@ -75,7 +75,7 @@ tape('dataFrom encodes boolean data', t => {
   const type = new Bool();
   const values = [true, false, false, true, false];
   valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, undefined], ', with nulls');
+  valueTest(t, type, [null, ...values, null], ', with nulls');
   t.end();
 });
 
@@ -144,7 +144,7 @@ tape('dataFrom encodes list data', t => {
   const type = new List(field);
   const values = [[1, 2], [3], [4, 5, 6], [7]];
   valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, undefined], ', with nulls');
+  valueTest(t, type, [null, ...values, null], ', with nulls');
   t.end();
 });
 
@@ -153,7 +153,7 @@ tape('dataFrom encodes fixed size list data', t => {
   const type = new FixedSizeList(1, field);
   const values = [[1], [2], [3], [4], [5], [6]];
   valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, undefined], ', with nulls');
+  valueTest(t, type, [null, ...values, null], ', with nulls');
   t.end();
 });
 
@@ -162,6 +162,6 @@ tape('dataFrom encodes struct data', t => {
   const type = new Struct([key]);
   const values = [1, 2, 3, null, 5, 6].map(key => ({ key }));
   valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, undefined], ', with nulls');
+  valueTest(t, type, [null, ...values, null], ', with nulls');
   t.end();
 });
