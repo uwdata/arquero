@@ -287,3 +287,11 @@ tape('rollup supports spearman rank correlation', t => {
   tableEqual(t, dt, { rho: [ -1 ]}, 'spearman rank correlation');
   t.end();
 });
+
+tape('rollup errors when parsing window functions', t => {
+  t.throws(() =>
+    table({ a: [1, 2, 2, 3, 4, 5] })
+      .rollup({ x: d => op.first_value(d.a) })
+  );
+  t.end();
+});
