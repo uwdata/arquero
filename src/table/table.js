@@ -274,6 +274,7 @@ export default class Table extends Transformable {
    * @param {PrintOptions|number} options The options for row object
    *  generation, determining which rows and columns are printed. If
    *  number-valued, specifies the row limit.
+   * @return {this} The table instance.
    */
   print(options = {}) {
     if (isNumber(options)) {
@@ -287,6 +288,7 @@ export default class Table extends Transformable {
 
     console.log(msg);   // eslint-disable-line no-console
     console.table(obj); // eslint-disable-line no-console
+    return this;
   }
 
   /**
