@@ -134,10 +134,10 @@ const visitors = {
 
     // parse operator and rewrite invocation
     if (def) {
-      if ((ctx.join || ctx.aggregate === false) && hasAggregate(def)) {
+      if ((ctx.join || ctx.aggregate === false) && hasAggregate(name)) {
         ERROR_AGGREGATE(node, ctx);
       }
-      if ((ctx.join || ctx.window === false) && hasWindow(def)) {
+      if ((ctx.join || ctx.window === false) && hasWindow(name)) {
         ERROR_WINDOW(node, ctx);
       }
 
