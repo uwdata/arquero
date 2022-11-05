@@ -1,4 +1,4 @@
-# Arquero <a href="https://github.com/uwdata/arquero"><img align="right" src="https://github.com/uwdata/arquero/blob/master/docs/assets/logo.svg?raw=true" height="38"></img></a>
+# Arquero <a href="https://github.com/uwdata/arquero"><img align="right" src="https://raw.githubusercontent.com/uwdata/arquero/main/docs/assets/logo.svg" height="38"></img></a>
 
 **Arquero** is a JavaScript library for query processing and transformation of array-backed data tables. Following the [relational algebra](https://en.wikipedia.org/wiki/Relational_algebra) and inspired by the design of [dplyr](https://dplyr.tidyverse.org/), Arquero provides a fluent API for manipulating column-oriented data frames. Arquero supports a range of data transformation tasks, including filter, sample, aggregation, window, join, and reshaping operations.
 
