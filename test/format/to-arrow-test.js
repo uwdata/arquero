@@ -233,3 +233,71 @@ tape('toArrow respects limit and types option', t => {
 
   t.end();
 });
+
+tape('toArrowBuffer generates the correct output for file option', (t) => {
+  const dt = table({
+    w: ['a', 'b', 'a'],
+    x: [1, 2, 3],
+    y: [1.6181, 2.7182, 3.1415],
+    z: [true, true, false]
+  });
+
+  const buffer = dt.toArrowBuffer({ format: 'file' });
+
+  t.deepEqual(
+    buffer.slice(0, 8),
+    new Uint8Array([65, 82, 82, 79, 87, 49, 0, 0])
+  );
+  t.end();
+});
+
+tape('toArrowBuffer generates the correct output for stream option', (t) => {
+  const dt = table({
+    w: ['a', 'b', 'a'],
+    x: [1, 2, 3],
+    y: [1.6181, 2.7182, 3.1415],
+    z: [true, true, false]
+  });
+
+  const buffer = dt.toArrowBuffer({ format: 'stream' });
+
+  t.deepEqual(
+    buffer.slice(0, 8),
+    new Uint8Array([255, 255, 255, 255, 72, 1, 0, 0])
+  );
+  t.end();
+});
+
+tape('toArrowBuffer defaults to using stream option', (t) => {
+  const dt = table({
+    w: ['a', 'b', 'a'],
+    x: [1, 2, 3],
+    y: [1.6181, 2.7182, 3.1415],
+    z: [true, true, false]
+  });
+
+  const buffer = dt.toArrowBuffer();
+
+  t.deepEqual(
+    buffer.slice(0, 8),
+    new Uint8Array([255, 255, 255, 255, 72, 1, 0, 0])
+  );
+  t.end();
+});
+
+tape(
+  'toArrowBuffer throws an error if the format is not stream or file',
+  (t) => {
+    t.throws(() => {
+      const dt = table({
+        w: ['a', 'b', 'a'],
+        x: [1, 2, 3],
+        y: [1.6181, 2.7182, 3.1415],
+        z: [true, true, false]
+      });
+
+      dt.toArrowBuffer({ format: 'nonsense' });
+    }, 'Unrecognised output format');
+    t.end();
+  }
+);

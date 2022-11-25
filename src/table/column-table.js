@@ -300,7 +300,8 @@ export default class ColumnTable extends Table {
 
   /**
    * Format this table as binary data in the Apache Arrow IPC format.
-   * @param {ArrowFormatOptions} [options] The formatting options.
+   * @param {ArrowFormatOptions} [options] The formatting options. Set {format: 'stream'} 
+   *        or {format:"file"} for specific IPC format
    * @return {Uint8Array} A new Uint8Array of Arrow-encoded binary data.
    */
   toArrowBuffer(options) {
