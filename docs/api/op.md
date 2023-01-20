@@ -179,11 +179,12 @@ Returns the zero-based month of the specified *date* according to local time. A 
 * *date*: The input Date or timestamp value.
 
 <hr/><a id="week" href="#week">#</a>
-<em>op</em>.<b>week</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+<em>op</em>.<b>week</b>(<i>date</i>[, <i>firstday</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
 
-Returns the Sunday-based week number of the year (0-53) for the specified *date* according to local time. All days in a new year preceding the first Sunday are considered to be in week 0.
+Returns the week number of the year (0-53) for the specified *date* according to local time. By default, Sunday is used as the first day of the week. All days in a new year preceding the first Sunday are considered to be in week 0.
 
 * *date*: The input Date or timestamp value.
+* *firstday*: Number of first day of the week (default `0` for Sunday, `1` for Monday and so on).
 
 <hr/><a id="date" href="#date">#</a>
 <em>op</em>.<b>date</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
@@ -269,11 +270,12 @@ Returns the zero-based month of the specified *date* according to [Coordinated U
 * *date*: The input Date or timestamp value.
 
 <hr/><a id="utcweek" href="#utcweek">#</a>
-<em>op</em>.<b>utcweek</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
+<em>op</em>.<b>utcweek</b>(<i>date</i>[, <i>firstday</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
 
-Returns the Sunday-based week number of the year (0-53) for the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). All days in a new year preceding the first Sunday are considered to be in week 0.
+Returns the week number of the year (0-53) for the specified *date* according to [Coordinated Universal Time (UTC)](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). By default, Sunday is used as the first day of the week. All days in a new year preceding the first Sunday are considered to be in week 0.
 
 * *date*: The input Date or timestamp value.
+* *firstday*: Number of first day of the week (default `0` for Sunday, `1` for Monday and so on).
 
 <hr/><a id="utcdate" href="#utcdate">#</a>
 <em>op</em>.<b>utcdate</b>(<i>date</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/date.js)
