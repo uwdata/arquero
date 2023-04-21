@@ -1,7 +1,7 @@
 import json from '@rollup/plugin-json';
 import bundleSize from 'rollup-plugin-bundle-size';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 
 function onwarn(warning, defaultHandler) {
   if (warning.code !== 'CIRCULAR_DEPENDENCY') {
