@@ -202,6 +202,9 @@ function spliceMember(node, index, ctx, check, parent) {
   } else if (is(Literal, property)) {
     name = property.value;
   } else try {
+    // visit subtree to ensure nodes are rewritten as needed
+    // then compile the code to compute the property name
+    walk(property, ctx, visitors, node);
     name = ctx.param(property);
   } catch (e) {
     ctx.error(node, ERROR_MEMBER);

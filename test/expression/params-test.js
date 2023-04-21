@@ -18,6 +18,36 @@ tape('parse supports table expression with parameter arg', t => {
   t.end();
 });
 
+tape('parse supports table expression with renamed parameter arg', t => {
+  const cols = {
+    a: [1, 3, 5, 7],
+    b: [2, 4, 6, 8]
+  };
+
+  const t1 = table(cols)
+    .params({ lo: 1, hi: 7 })
+    .filter((d, _) => _.lo < d.a && d.a < _.hi)
+    .reify();
+  tableEqual(t, t1, { a: [3, 5], b: [4, 6] }, 'parameter filtered data');
+  t.deepEqual(t1.params(), { lo: 1, hi: 7 });
+
+  const t2 = table(cols)
+    .params({ lo: 1, hi: 7 })
+    .filter((d, params) => op.equal(params.lo, d.a))
+    .reify();
+  tableEqual(t, t2, { a: [1], b: [2] }, 'parameter filtered data');
+  t.deepEqual(t2.params(), { lo: 1, hi: 7 });
+
+  const t3 = table(cols)
+    .params({ column: 'a' })
+    .filter((d, p) => d[p.column] > 3)
+    .reify();
+  tableEqual(t, t3, { a: [5, 7], b: [6, 8] }, 'parameter filtered data');
+  t.deepEqual(t3.params(), { column: 'a' });
+
+  t.end();
+});
+
 tape('parse supports table expression with object pattern parameter arg', t => {
   const cols = {
     a: [1, 3, 5, 7],
