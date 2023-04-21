@@ -1,5 +1,6 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
+import op from '../../src/op/op-api';
 import { table } from '../../src/table';
 
 tape('parse supports table expression with parameter arg', t => {
