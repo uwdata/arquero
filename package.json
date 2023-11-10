@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "acorn": "^8.8.2",
-    "apache-arrow": "^11.0.0",
+    "apache-arrow": "^13.0.0",
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {
@@ -55,6 +55,9 @@
   },
   "esm": {
     "force": true,
-    "mainFields": ["module", "main"]
+    "mainFields": [
+      "module",
+      "main"
+    ]
   }
 }
