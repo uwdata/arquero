@@ -132,14 +132,14 @@ tape('fromJSON parses JSON text with parse option as data only', t => {
 
 tape('fromJSON parses ISO date strings', t => {
   const values = [
-    0, '', '2.1', '2000',
+    0, '', '2.1', '2000', '2022-2023',
     new Date(Date.UTC(2000, 0, 1)),
     new Date(Date.UTC(2000, 0, 1)),
     new Date(2021, 0, 6, 12),
     new Date(2021, 0, 6, 4)
   ];
   const str = [
-    0, '', '2.1', '2000',
+    0, '', '2.1', '2000', '2022-2023',
     '2000-01',
     '2000-01-01',
     '2021-01-06T12:00:00.000',
