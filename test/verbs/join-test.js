@@ -471,3 +471,26 @@ tape('join supports object-valued keys', t => {
 
   t.end();
 });
+
+tape('join allows empty suffix', t => {
+  const t1 = table({ k: [1, 2, 3], a: [3, 4, 1]});
+  const t2 = table({ k: [1, 2, 3], a: [5, 6, 2]});
+
+  const tj = t1.join(t2, ['k','k'], [all(), not('k')], { suffix: ['', '_2'] });
+
+  tableEqual(t, tj,  {
+    k: [1, 2, 3],
+    a: [3, 4, 1],
+    a_2: [5, 6, 2]
+  }, 'join with empty suffix left');
+
+  const tj2 = t1.join(t2, ['k','k'], [all(), not('k')], { suffix: ['_2', ''] });
+
+  tableEqual(t, tj2,  {
+    k: [1, 2, 3],
+    a_2: [3, 4, 1],
+    a: [5, 6, 2]
+  }, 'join with empty suffix right');
+
+  t.end();
+});

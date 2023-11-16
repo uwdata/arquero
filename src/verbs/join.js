@@ -86,8 +86,8 @@ function parseValues(tableL, tableR, values, optParse, suffix = []) {
       }
     });
     if (rename.size) {
-      rekey(vL.names, rename, suffix[0] || '_1');
-      rekey(vR.names, rename, suffix[1] || '_2');
+      suffix[0] !== '' && rekey(vL.names, rename, suffix[0] || '_1');
+      suffix[1] !== '' && rekey(vR.names, rename, suffix[1] || '_2');
     }
 
     return {
