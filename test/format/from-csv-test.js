@@ -43,6 +43,7 @@ tape('fromCSV infers types', t => {
     new Date(2000, 0, 1).toISOString(),
     new Date(1979, 3, 14, 3, 45).toISOString()
   ], v => v instanceof Date);
+  check('date-like strings', ['2022-23', '2023-24'], v => typeof v === 'string');
   t.end();
 });
 
