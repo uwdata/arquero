@@ -93,7 +93,7 @@ Arquero uses modern JavaScript features, and so will not work with some outdated
 
 ### In Node.js or Application Bundles
 
-First install `arquero` as a dependency, via `npm install arquero --save` or `yarn add arquero`. Arquero assumes Node version 12 or higher.
+First install `arquero` as a dependency, for example via `npm install arquero --save`. Arquero assumes Node version 12 or higher.
 
 Import using CommonJS module syntax:
 
@@ -118,5 +118,5 @@ import { op, table } from 'arquero';
 To build and develop Arquero locally:
 
 - Clone [https://github.com/uwdata/arquero](https://github.com/uwdata/arquero).
-- Run `yarn` to install dependencies for all packages. If you don't have yarn installed, see [https://yarnpkg.com/en/docs/install](https://yarnpkg.com/en/docs/install).
-- Run `yarn test` to run test cases, `yarn perf` to run performance benchmarks, and `yarn build` to build output files.
+- Run `npm i` to install dependencies.
+- Run `npm test` to run test cases, `npm run perf` to run performance benchmarks, and `npm run build` to build output files.
