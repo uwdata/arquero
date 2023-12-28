@@ -8,7 +8,7 @@ title: Table \| Arquero API Reference
 * [Table Metadata](#metadata)
   * [numCols](#numCols), [numRows](#numRows), [size](#size), [totalRows](#totalRows)
   * [isFiltered](#isFiltered), [isGrouped](#isGrouped), [isOrdered](#isOrdered)
-  * [comparator](#foo), [groups](#groups), [mask](#mask)
+  * [comparator](#comparator), [groups](#groups), [mask](#mask)
   * [params](#params)
 * [Table Transformation](#transformation)
   * [assign](#assign)
