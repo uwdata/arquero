@@ -30,28 +30,28 @@
     "prebuild": "rimraf dist && mkdir dist",
     "build": "rollup -c rollup.config.mjs",
     "postbuild": "tsc",
-    "preperf": "yarn build",
+    "preperf": "npm run build",
     "perf": "TZ=America/Los_Angeles tape 'perf/**/*-perf.js'",
-    "lint": "yarn eslint src test --ext .js",
+    "lint": "eslint src test --ext .js",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' --require esm",
-    "prepublishOnly": "yarn test && yarn lint && yarn build"
+    "prepublishOnly": "npm test && npm run lint && npm run build"
   },
   "dependencies": {
     "acorn": "^8.11.2",
-    "apache-arrow": "^14.0.1",
+    "apache-arrow": "^14.0.2",
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {
-    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "eslint": "^8.53.0",
+    "eslint": "^8.56.0",
     "esm": "^3.2.25",
     "rimraf": "^5.0.5",
-    "rollup": "^4.4.1",
+    "rollup": "^4.9.1",
     "rollup-plugin-bundle-size": "^1.0.3",
     "tape": "^5.7.2",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.3"
   },
   "esm": {
     "force": true,
