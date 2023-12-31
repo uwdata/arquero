@@ -15,6 +15,10 @@ const {
   concat, union, except, intersect
 } = Verbs;
 
+function toAST(query) {
+  return JSON.parse(JSON.stringify(query.toAST()));
+}
+
 tape('Query builds single-table queries', t => {
   const q = query()
     .derive({ bar: d => d.foo + 1 })
@@ -110,6 +114,85 @@ tape('Query supports multi-table queries', t => {
         options: undefined
       }
     ]
+  }, 'serialized query from builder');
+
+  t.end();
+});
+
+tape('Query supports serializing parameterized queries to AST', t => {
+  const q = query()
+    .params({param1: 5})
+    .derive({ bar: (d, $) => d.foo + $.param1 })
+    .filter((d, $) => d.foo < $.param1);
+
+  t.deepEqual(toAST(q), {
+    type: 'Query',
+    verbs: [
+      {
+        type: 'Verb',
+        verb: 'derive',
+        values: [
+          {
+            type: 'BinaryExpression',
+            left: {
+              type: 'Column',
+              name: 'foo'
+            },
+            operator: '+',
+            right: {
+              type: 'Parameter',
+              object: {
+                type: 'Identifier',
+                start: 24,
+                end: 25,
+                name: '$'
+              },
+              property: {
+                type: 'Identifier',
+                start: 26,
+                end: 32,
+                name: 'param1'
+              },
+              computed: false,
+              name: 'param1'
+            },
+            as: 'bar'
+          }
+        ]
+      },
+      {
+        type: 'Verb',
+        verb: 'filter',
+        criteria: {
+          type: 'BinaryExpression',
+          left: {
+            type: 'Column',
+            name: 'foo'
+          },
+          operator: '<',
+          right: {
+            type: 'Parameter',
+            object: {
+              type: 'Identifier',
+              start: 24,
+              end: 25,
+              name: '$'
+            },
+            property: {
+              type: 'Identifier',
+              start: 26,
+              end: 32,
+              name: 'param1'
+            },
+            computed: false,
+            name: 'param1'
+          }
+        }
+      }
+    ],
+    params: {
+      param1: 5
+    }
   }, 'serialized query from builder');
 
   t.end();

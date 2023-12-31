@@ -101,10 +101,10 @@ export class Verb {
    * to translate Arquero verbs to alternative data processing platforms.
    * @returns {object} A JSON-compatible abstract syntax tree object.
    */
-  toAST() {
+  toAST(opt) {
     const obj = { type: VerbType, verb: this.verb };
     this.schema.forEach(({ name, type, props }) => {
-      obj[name] = toAST(this[name], type, props);
+      obj[name] = toAST(this[name], type, props, opt);
     });
     return obj;
   }
