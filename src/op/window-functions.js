@@ -12,15 +12,15 @@ import NULL from '../util/null';
 /**
  * Retrieve an output value from a window operator.
  * @callback WindowValue
- * @param {WindowState} state The window state object.
+ * @param {import('../engine/window/window-state').WindowState} state The window state object.
  * @return {*} The output value.
  */
 
 /**
  * An operator instance for a window function.
  * @typedef {object} WindowOperator
- * @property {AggregateInit} init Initialize the operator.
- * @property {AggregateValue} value Retrieve an output value.
+ * @property {import('./aggregate-functions').AggregateInit} init Initialize the operator.
+ * @property {import('./aggregate-functions').AggregateValue} value Retrieve an output value.
  */
 
 /**
@@ -33,7 +33,7 @@ import NULL from '../util/null';
 /**
  * An operator definition for a window function.
  * @typedef {object} WindowDef
- * @property {AggregateCreate} create Create a new operator instance.
+ * @property {import('./aggregate-functions').AggregateCreate} create Create a new operator instance.
  * @property {number[]} param Two-element array containing the
  *  counts of input fields and additional parameters.
  */

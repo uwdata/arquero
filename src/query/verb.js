@@ -24,6 +24,7 @@ import {
 } from './constants';
 
 import toAST from './to-ast';
+import Table from '../table/table';
 
 /**
  * Model an Arquero verb as a serializable object.
@@ -177,9 +178,9 @@ export const Verbs = {
   select:     createVerb('select', [
                 { name: 'columns', type: SelectionList }
               ]),
-  ungroup:    createVerb('ungroup'),
-  unorder:    createVerb('unorder'),
-  reify:      createVerb('reify'),
+  ungroup:    createVerb('ungroup', []),
+  unorder:    createVerb('unorder', []),
+  reify:      createVerb('reify', []),
   dedupe:     createVerb('dedupe', [
                 { name: 'keys', type: ExprList, default: [] }
               ]),

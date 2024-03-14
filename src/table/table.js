@@ -2,6 +2,7 @@ import Transformable from './transformable';
 import error from '../util/error';
 import isNumber from '../util/is-number';
 import repeat from '../util/repeat';
+import Reducer from '../engine/reduce/reducer';
 
 /**
  * Abstract class representing a data table.
@@ -35,7 +36,7 @@ export default class Table extends Transformable {
    * based on the values of the optional configuration argument. If a
    * setting is not specified, it is inherited from the current table.
    * @param {CreateOptions} [options] Creation options for the new table.
-   * @return {this} A newly created table.
+   * @return {Table} A newly created table.
    */
   create(options) { // eslint-disable-line no-unused-vars
     error('Not implemented');
@@ -274,7 +275,7 @@ export default class Table extends Transformable {
    * @param {PrintOptions|number} options The options for row object
    *  generation, determining which rows and columns are printed. If
    *  number-valued, specifies the row limit.
-   * @return {this} The table instance.
+   * @return {Table} The table instance.
    */
   print(options = {}) {
     if (isNumber(options)) {
@@ -461,7 +462,7 @@ export default class Table extends Transformable {
    * @param {number} [end] Zero-based index before which to end extraction.
    *  A negative index indicates an offset from the end of the group.
    *  If end is omitted, slice extracts through the end of the group.
-   * @return {this} A new table with sliced rows.
+   * @return {Table} A new table with sliced rows.
    * @example table.slice(1, -1)
    */
   slice(start = 0, end = Infinity) {

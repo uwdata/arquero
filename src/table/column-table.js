@@ -78,7 +78,7 @@ export default class ColumnTable extends Table {
    * The new table may have different data, filter, grouping, or ordering
    * based on the values of the optional configuration argument. If a
    * setting is not specified, it is inherited from the current table.
-   * @param {CreateOptions} [options] Creation options for the new table.
+   * @param {import('./table').CreateOptions} [options] Creation options for the new table.
    * @return {ColumnTable} A newly created table.
    */
   create({ data, names, filter, groups, order }) {
@@ -148,7 +148,7 @@ export default class ColumnTable extends Table {
    * @param {string} name The column name.
    * @param {ArrayConstructor|import('./table').TypedArrayConstructor} [constructor=Array]
    *  The array constructor for instantiating the output array.
-   * @return {import('./table').DataValue[]|import('./table).TypedArray} The array of column values.
+   * @return {import('./table').DataValue[]|import('./table').TypedArray} The array of column values.
    */
   array(name, constructor = Array) {
     const column = this.column(name);
@@ -197,7 +197,7 @@ export default class ColumnTable extends Table {
 
   /**
    * Returns an array of objects representing table rows.
-   * @param {ObjectsOptions} [options] The options for row object generation.
+   * @param {import('./table').ObjectsOptions} [options] The options for row object generation.
    * @return {object[]} An array of row objects.
    */
   objects(options = {}) {

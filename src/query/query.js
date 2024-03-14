@@ -1,3 +1,4 @@
+import Table from '../table/table';
 import Transformable from '../table/transformable';
 import { Query as QueryType } from './constants';
 import { Verb, Verbs } from './verb';
