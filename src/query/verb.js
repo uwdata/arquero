@@ -122,6 +122,7 @@ export class Verb {
  * @property {string} name The name of the parameter.
  * @property {ParamType} type The type of the parameter.
  * @property {{ [key: string]: ParamType }} [props] Types for non-literal properties.
+ * @property {any} [default] Default value for the parameter.
  */
 
 /**

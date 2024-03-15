@@ -20,7 +20,7 @@ import ColumnTable from '../table/column-table';
  * @param {ArrowOptions} options Options for Arrow import.
  * @return {ColumnTable} A new table containing the imported values.
  */
-export default function(arrow, options = {}) {
+export default function(arrow, options = {columns: undefined}) {
   if (arrow && !arrow.batches) {
     arrow = fromIPC()(arrow);
   }

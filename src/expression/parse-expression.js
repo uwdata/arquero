@@ -27,7 +27,12 @@ import isArray from '../util/is-array';
 import isNumber from '../util/is-number';
 import toString from '../util/to-string';
 
-const PARSER_OPT = { ecmaVersion: 11 };
+const PARSER_OPT = {
+    /** 
+     * @type {import('acorn').ecmaVersion}
+     */
+    ecmaVersion: 11
+};
 const DEFAULT_PARAM_ID = '$';
 const DEFAULT_TUPLE_ID = 'd';
 const DEFAULT_TUPLE_ID1 = 'd1';
@@ -93,8 +98,10 @@ function parseAST(expr) {
     const code = expr.field ? fieldRef(expr)
       : isArray(expr) ? toString(expr)
       : expr;
+    // @ts-ignore
     return parse(`expr=(${code})`, PARSER_OPT).body[0].expression.right;
   } catch (err) {
+    // @ts-ignore
     error(`Expression parse error: ${expr+''}`, err);
   }
 }

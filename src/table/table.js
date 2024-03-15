@@ -1,3 +1,4 @@
+
 import Transformable from './transformable';
 import error from '../util/error';
 import isNumber from '../util/is-number';
@@ -36,10 +37,12 @@ export default class Table extends Transformable {
    * based on the values of the optional configuration argument. If a
    * setting is not specified, it is inherited from the current table.
    * @param {CreateOptions} [options] Creation options for the new table.
-   * @return {Table} A newly created table.
+   * @return {this} A newly created table.
    */
   create(options) { // eslint-disable-line no-unused-vars
     error('Not implemented');
+    // @ts-ignore
+    return {};
   }
 
   /**
@@ -209,6 +212,7 @@ export default class Table extends Transformable {
    */
   array(name, constructor) { // eslint-disable-line no-unused-vars
     error('Not implemented');
+    return [];
   }
 
   /**
@@ -242,6 +246,8 @@ export default class Table extends Transformable {
    */
   getter(name) { // eslint-disable-line no-unused-vars
     error('Not implemented');
+    // @ts-ignore
+    return {};
   }
 
   /**
@@ -251,6 +257,7 @@ export default class Table extends Transformable {
    */
   objects(options) { // eslint-disable-line no-unused-vars
     error('Not implemented');
+    return [];
   }
 
   /**
@@ -260,6 +267,7 @@ export default class Table extends Transformable {
    */
    object(row) { // eslint-disable-line no-unused-vars
     error('Not implemented');
+    return {};
   }
 
   /**
@@ -268,6 +276,7 @@ export default class Table extends Transformable {
    */
   [Symbol.iterator]() {
     error('Not implemented');
+    return Array.prototype[Symbol.iterator].call([]);
   }
 
   /**
@@ -275,15 +284,19 @@ export default class Table extends Transformable {
    * @param {PrintOptions|number} options The options for row object
    *  generation, determining which rows and columns are printed. If
    *  number-valued, specifies the row limit.
-   * @return {Table} The table instance.
+   * @return {this} The table instance.
    */
   print(options = {}) {
     if (isNumber(options)) {
+      // @ts-ignore
       options = { limit: options };
+    // @ts-ignore
     } else if (options.limit == null) {
+      // @ts-ignore
       options.limit = 10;
     }
 
+    // @ts-ignore
     const obj = this.objects({ ...options, grouped: false });
     const msg = `${this[Symbol.toStringTag]}. Showing ${obj.length} rows.`;
 
@@ -353,7 +366,7 @@ export default class Table extends Transformable {
 
     // if not grouped, return a single partition
     if (!this.isGrouped()) {
-      return [ this.indices(order) ];
+      return [ Array.from(this.indices(order)) ];
     }
 
     // generate partitions
@@ -462,7 +475,7 @@ export default class Table extends Transformable {
    * @param {number} [end] Zero-based index before which to end extraction.
    *  A negative index indicates an offset from the end of the group.
    *  If end is omitted, slice extracts through the end of the group.
-   * @return {Table} A new table with sliced rows.
+   * @return {this} A new table with sliced rows.
    * @example table.slice(1, -1)
    */
   slice(start = 0, end = Infinity) {
@@ -483,9 +496,10 @@ export default class Table extends Transformable {
    * This method allows the use of custom reducer implementations,
    * for example to produce multiple rows for an aggregate.
    * @param {Reducer} reducer The reducer to apply.
-   * @return {Table} A new table of reducer outputs.
+   * @return {this} A new table of reducer outputs.
    */
   reduce(reducer) {
+    // @ts-ignore
     return this.__reduce(this, reducer);
   }
 }
@@ -532,7 +546,7 @@ export default class Table extends Transformable {
  * @property {string[]} names Column names for each group.
  * @property {RowExpression[]} get Value accessor functions for each group.
  * @property {number[]} rows Indices of an example table row for each group.
- * @property {number[]} keys Per-row group indices, length is total rows of table.
+ * @property {Uint32Array} keys Per-row group indices, length is total rows of table.
  */
 
 /**

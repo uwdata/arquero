@@ -14,7 +14,7 @@ import isFunction from '../../util/is-function';
  * @property {number} [limit=Infinity] The maximum number of rows to include.
  * @property {number} [offset=0] The row offset indicating how many initial
  *  rows to skip.
- * @property {string[]|(data: object) => string[]} [columns] Ordered list of
+ * @property {string[]|((data: object) => string[])} [columns] Ordered list of
  *  column names to include. If function-valued, the function should accept
  *  a dataset as input and return an array of column name strings.
  * @property {object} [types] The Arrow data types to use. If specified,
@@ -45,6 +45,7 @@ export default function(data, options = {}) {
     cols[name] = col;
   });
   const T = table();
+  // @ts-ignore
   return new T(cols);
 }
 

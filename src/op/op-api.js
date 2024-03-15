@@ -1,3 +1,4 @@
+// @ts-nocheck
 import functions from './functions';
 import op from './op';
 

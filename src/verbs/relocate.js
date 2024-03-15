@@ -2,7 +2,7 @@ import _select from '../engine/select';
 import resolve from '../helpers/selection';
 import error from '../util/error';
 
-export default function(table, columns, { before, after } = {}) {
+export default function(table, columns, { before, after } = { before: null, after: null }) {
   const bef = before != null;
   const aft = after != null;
 

@@ -23,7 +23,7 @@ export const internal = {
 };
 
 // export public API
-import pkg from '../package.json';
+import * as pkg from '../package.json';
 export const version = pkg.version;
 export { seed } from './util/random';
 export { default as fromArrow } from './format/from-arrow';

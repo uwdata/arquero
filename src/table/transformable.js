@@ -21,7 +21,7 @@ export default class Transformable {
    * table's parameter set and returns the table. Any prior parameters
    * with names matching the input parameters are overridden.
    * @param {Params} [values] The parameter values.
-   * @return {Transformable|Params} The current parameters values (if called with
+   * @return {this|Params} The current parameters values (if called with
    *  no arguments) or this table.
    */
   params(values) {
@@ -41,9 +41,10 @@ export default class Transformable {
    * Instead, the backing data itself is filtered and ordered as needed.
    * @param {number[]} [indices] Ordered row indices to materialize.
    *  If unspecified, all rows passing the table filter are used.
-   * @return {Transformable} A reified table.
+   * @return {this} A reified table.
    */
   reify(indices) {
+    // @ts-ignore
     return this.__reify(this, indices);
   }
 
@@ -53,11 +54,12 @@ export default class Transformable {
    * Count the number of values in a group. This method is a shorthand
    * for {@link Transformable#rollup} with a count aggregate function.
    * @param {CountOptions} [options] Options for the count.
-   * @return {Transformable} A new table with groupby and count columns.
+   * @return {this} A new table with groupby and count columns.
    * @example table.groupby('colA').count()
    * @example table.groupby('colA').count({ as: 'num' })
    */
   count(options) {
+    // @ts-ignore
     return this.__count(this, options);
   }
 
@@ -73,11 +75,12 @@ export default class Transformable {
    *  where to place derived columns. Specifying both before and after is an
    *  error. Unlike the relocate verb, this option affects only new columns;
    *  updated columns with existing names are excluded from relocation.
-   * @return {Transformable} A new table with derived columns added.
+   * @return {this} A new table with derived columns added.
    * @example table.derive({ sumXY: d => d.x + d.y })
    * @example table.derive({ z: d => d.x * d.y }, { before: 'x' })
    */
   derive(values, options) {
+    // @ts-ignore
     return this.__derive(this, values, options);
   }
 
@@ -89,10 +92,11 @@ export default class Transformable {
    * @param {TableExpr} criteria Filter criteria as a table expression.
    *  Both aggregate and window functions are permitted, taking into account
    *  {@link Transformable#groupby} or {@link Transformable#orderby} settings.
-   * @return {Transformable} A new table with filtered rows.
+   * @return {this} A new table with filtered rows.
    * @example table.filter(d => abs(d.value) < 5)
    */
   filter(criteria) {
+    // @ts-ignore
     return this.__filter(this, criteria);
   }
 
@@ -105,7 +109,7 @@ export default class Transformable {
    * @param {number} [end] Zero-based index before which to end extraction.
    *  A negative index indicates an offset from the end of the group.
    *  If end is omitted, slice extracts through the end of the group.
-   * @return {Transformable} A new table with sliced rows.
+   * @return {this} A new table with sliced rows.
    * @example table.slice(1, -1)
    */
   slice(start, end) {
@@ -121,11 +125,12 @@ export default class Transformable {
    *  The keys may be specified using column name strings, column index
    *  numbers, value objects with output column names for keys and table
    *  expressions for values, or selection helper functions.
-   * @return {Transformable} A new table with grouped rows.
+   * @return {this} A new table with grouped rows.
    * @example table.groupby('colA', 'colB')
    * @example table.groupby({ key: d => d.colA + d.colB })
    */
   groupby(...keys) {
+    // @ts-ignore
     return this.__groupby(this, keys.flat());
   }
 
@@ -148,12 +153,13 @@ export default class Transformable {
    *  with output column names for keys and table expressions
    *  for values (the output names will be ignored).
    *  If an array, array values must be valid key parameters.
-   * @return {Transformable} A new ordered table.
+   * @return {this} A new ordered table.
    * @example table.orderby('a', desc('b'))
    * @example table.orderby({ a: 'a', b: desc('b') )})
    * @example table.orderby(desc(d => d.a))
    */
   orderby(...keys) {
+    // @ts-ignore
     return this.__orderby(this, keys.flat());
   }
 
@@ -169,12 +175,13 @@ export default class Transformable {
    * @param {RelocateOptions} options Options for relocating. Must include
    *  either the before or after property to indicate where to place the
    *  relocated columns. Specifying both before and after is an error.
-   * @return {Transformable} A new table with relocated columns.
+   * @return {this} A new table with relocated columns.
    * @example table.relocate(['colY', 'colZ'], { after: 'colX' })
    * @example table.relocate(not('colB', 'colC'), { before: 'colA' })
    * @example table.relocate({ colA: 'newA', colB: 'newB' }, { after: 'colC' })
    */
   relocate(columns, options) {
+    // @ts-ignore
     return this.__relocate(this, toArray(columns), options);
   }
 
@@ -182,11 +189,12 @@ export default class Transformable {
    * Rename one or more columns, preserving column order.
    * @param {...Select} columns One or more rename objects with current
    *  column names as keys and new column names as values.
-   * @return {Transformable} A new table with renamed columns.
+   * @return {this} A new table with renamed columns.
    * @example table.rename({ oldName: 'newName' })
    * @example table.rename({ a: 'a2', b: 'b2' })
    */
   rename(...columns) {
+    // @ts-ignore
     return this.__rename(this, columns.flat());
   }
 
@@ -199,11 +207,12 @@ export default class Transformable {
    *  keys and table expressions for values. The expressions must be valid
    *  aggregate expressions: window functions are not allowed and column
    *  references must be arguments to aggregate functions.
-   * @return {Transformable} A new table of aggregate summary values.
+   * @return {this} A new table of aggregate summary values.
    * @example table.groupby('colA').rollup({ mean: d => mean(d.colB) })
    * @example table.groupby('colA').rollup({ mean: op.median('colB') })
    */
   rollup(values) {
+    // @ts-ignore
     return this.__rollup(this, values);
   }
 
@@ -216,12 +225,13 @@ export default class Transformable {
    *  If function-valued, the input should be an aggregate table
    *  expression compatible with {@link Transformable#rollup}.
    * @param {SampleOptions} [options] Options for sampling.
-   * @return {Transformable} A new table with sampled rows.
+   * @return {this} A new table with sampled rows.
    * @example table.sample(50)
    * @example table.sample(100, { replace: true })
    * @example table.groupby('colA').sample(() => op.floor(0.5 * op.count()))
    */
   sample(size, options) {
+    // @ts-ignore
     return this.__sample(this, size, options);
   }
 
@@ -233,32 +243,35 @@ export default class Transformable {
    *  as values, or functions that take a table as input and returns a valid
    *  selection parameter (typically the output of selection helper functions
    *  such as {@link all}, {@link not}, or {@link range}).
-   * @return {Transformable} A new table of selected columns.
+   * @return {this} A new table of selected columns.
    * @example table.select('colA', 'colB')
    * @example table.select(not('colB', 'colC'))
    * @example table.select({ colA: 'newA', colB: 'newB' })
    */
   select(...columns) {
+    // @ts-ignore
     return this.__select(this, columns.flat());
   }
 
   /**
    * Ungroup a table, removing any grouping criteria.
    * Undoes the effects of {@link Transformable#groupby}.
-   * @return {Transformable} A new ungrouped table, or this table if not grouped.
+   * @return {this} A new ungrouped table, or this table if not grouped.
    * @example table.ungroup()
    */
   ungroup() {
+    // @ts-ignore
     return this.__ungroup(this);
   }
 
   /**
    * Unorder a table, removing any sorting criteria.
    * Undoes the effects of {@link Transformable#orderby}.
-   * @return {Transformable} A new unordered table, or this table if not ordered.
+   * @return {this} A new unordered table, or this table if not ordered.
    * @example table.unorder()
    */
   unorder() {
+    // @ts-ignore
     return this.__unorder(this);
   }
 
@@ -272,12 +285,13 @@ export default class Transformable {
    *  The keys may be specified using column name strings, column index
    *  numbers, value objects with output column names for keys and table
    *  expressions for values, or selection helper functions.
-   * @return {Transformable} A new de-duplicated table.
+   * @return {this} A new de-duplicated table.
    * @example table.dedupe()
    * @example table.dedupe('a', 'b')
    * @example table.dedupe({ abs: d => op.abs(d.a) })
    */
   dedupe(...keys) {
+    // @ts-ignore
     return this.__dedupe(this, keys.flat());
   }
 
@@ -303,12 +317,13 @@ export default class Transformable {
    *  missing rows. All combinations of expanded values are considered, and
    *  new rows are added for each combination that does not appear in the
    *  input table.
-   * @return {Transformable} A new table with imputed values and/or rows.
+   * @return {this} A new table with imputed values and/or rows.
    * @example table.impute({ v: () => 0 })
    * @example table.impute({ v: d => op.mean(d.v) })
    * @example table.impute({ v: () => 0 }, { expand: ['x', 'y'] })
    */
   impute(values, options) {
+    // @ts-ignore
     return this.__impute(this, values, options);
   }
 
@@ -326,12 +341,13 @@ export default class Transformable {
    *  numbers, value objects with output column names for keys and table
    *  expressions for values, or selection helper functions.
    * @param {FoldOptions} [options] Options for folding.
-   * @return {Transformable} A new folded table.
+   * @return {this} A new folded table.
    * @example table.fold('colA')
    * @example table.fold(['colA', 'colB'])
    * @example table.fold(range(5, 8))
    */
   fold(values, options) {
+    // @ts-ignore
     return this.__fold(this, values, options);
   }
 
@@ -354,12 +370,13 @@ export default class Transformable {
    *  If object-valued, the input object should have output value
    *  names for keys and aggregate table expressions for values.
    * @param {PivotOptions} [options] Options for pivoting.
-   * @return {Transformable} A new pivoted table.
+   * @return {this} A new pivoted table.
    * @example table.pivot('key', 'value')
    * @example table.pivot(['keyA', 'keyB'], ['valueA', 'valueB'])
    * @example table.pivot({ key: d => d.key }, { value: d => sum(d.value) })
    */
   pivot(keys, values, options) {
+    // @ts-ignore
     return this.__pivot(this, keys, values, options);
   }
 
@@ -371,11 +388,12 @@ export default class Transformable {
    *  numbers, value objects with output column names for keys and table
    *  expressions for values, or selection helper functions.
    * @param {SpreadOptions} [options] Options for spreading.
-   * @return {Transformable} A new table with the spread columns added.
+   * @return {this} A new table with the spread columns added.
    * @example table.spread({ a: split(d.text, '') })
    * @example table.spread('arrayCol', { limit: 100 })
    */
   spread(values, options) {
+    // @ts-ignore
     return this.__spread(this, values, options);
   }
 
@@ -389,10 +407,11 @@ export default class Transformable {
    *  numbers, value objects with output column names for keys and table
    *  expressions for values, or selection helper functions.
    * @param {UnrollOptions} [options] Options for unrolling.
-   * @return {Transformable} A new unrolled table.
+   * @return {this} A new unrolled table.
    * @example table.unroll('colA', { limit: 1000 })
    */
   unroll(values, options) {
+    // @ts-ignore
     return this.__unroll(this, values, options);
   }
 
@@ -411,10 +430,11 @@ export default class Transformable {
    * @param {...ExprList} values The column values to add from the
    *  secondary table. Can be column name strings or objects with column
    *  names as keys and table expressions as values.
-   * @return {Transformable} A new table with lookup values added.
+   * @return {this} A new table with lookup values added.
    * @example table.lookup(other, ['key1', 'key2'], 'value1', 'value2')
    */
   lookup(other, on, ...values) {
+    // @ts-ignore
     return this.__lookup(this, other, on, values.flat());
   }
 
@@ -451,11 +471,12 @@ export default class Transformable {
    *  If object-valued, specifies the key-value pairs for each output,
    *  defined using two-table table expressions.
    * @param {JoinOptions} [options] Options for the join.
-   * @return {Transformable} A new joined table.
+   * @return {this} A new joined table.
    * @example table.join(other, ['keyL', 'keyR'])
    * @example table.join(other, (a, b) => equal(a.keyL, b.keyR))
    */
   join(other, on, values, options) {
+    // @ts-ignore
     return this.__join(this, other, on, values, options);
   }
 
@@ -488,12 +509,13 @@ export default class Transformable {
    *  defined using two-table table expressions.
    * @param {JoinOptions} [options] Options for the join. With this method,
    *  any options will be overridden with {left: true, right: false}.
-   * @return {Transformable} A new joined table.
+   * @return {this} A new joined table.
    * @example table.join_left(other, ['keyL', 'keyR'])
    * @example table.join_left(other, (a, b) => equal(a.keyL, b.keyR))
    */
   join_left(other, on, values, options) {
     const opt = { ...options, left: true, right: false };
+    // @ts-ignore
     return this.__join(this, other, on, values, opt);
   }
 
@@ -526,12 +548,13 @@ export default class Transformable {
    *  defined using two-table table expressions.
    * @param {JoinOptions} [options] Options for the join. With this method,
    *  any options will be overridden with {left: false, right: true}.
-   * @return {Transformable} A new joined table.
+   * @return {this} A new joined table.
    * @example table.join_right(other, ['keyL', 'keyR'])
    * @example table.join_right(other, (a, b) => equal(a.keyL, b.keyR))
    */
   join_right(other, on, values, options) {
     const opt = { ...options, left: false, right: true };
+    // @ts-ignore
     return this.__join(this, other, on, values, opt);
   }
 
@@ -564,12 +587,13 @@ export default class Transformable {
    *  defined using two-table table expressions.
    * @param {JoinOptions} [options] Options for the join. With this method,
    *  any options will be overridden with {left: true, right: true}.
-   * @return {Transformable} A new joined table.
+   * @return {this} A new joined table.
    * @example table.join_full(other, ['keyL', 'keyR'])
    * @example table.join_full(other, (a, b) => equal(a.keyL, b.keyR))
    */
   join_full(other, on, values, options) {
     const opt = { ...options, left: true, right: true };
+    // @ts-ignore
     return this.__join(this, other, on, values, opt);
   }
 
@@ -591,11 +615,12 @@ export default class Transformable {
    *  If object-valued, specifies the key-value pairs for each output,
    *  defined using two-table table expressions.
    * @param {JoinOptions} [options] Options for the join.
-   * @return {Transformable} A new joined table.
+   * @return {this} A new joined table.
    * @example table.cross(other)
    * @example table.cross(other, [['leftKey', 'leftVal'], ['rightVal']])
    */
   cross(other, values, options) {
+    // @ts-ignore
     return this.__cross(this, other, values, options);
   }
 
@@ -615,12 +640,13 @@ export default class Transformable {
    *  join key values can be arrays or objects, and that normal join
    *  semantics do not consider null or undefined values to be equal (that is,
    *  null !== null). Use the op.equal function to handle these cases.
-   * @return {Transformable} A new filtered table.
+   * @return {this} A new filtered table.
    * @example table.semijoin(other)
    * @example table.semijoin(other, ['keyL', 'keyR'])
    * @example table.semijoin(other, (a, b) => equal(a.keyL, b.keyR))
    */
   semijoin(other, on) {
+    // @ts-ignore
     return this.__semijoin(this, other, on);
   }
 
@@ -640,12 +666,13 @@ export default class Transformable {
    *  join key values can be arrays or objects, and that normal join
    *  semantics do not consider null or undefined values to be equal (that is,
    *  null !== null). Use the op.equal function to handle these cases.
-   * @return {Transformable} A new filtered table.
+   * @return {this} A new filtered table.
    * @example table.antijoin(other)
    * @example table.antijoin(other, ['keyL', 'keyR'])
    * @example table.antijoin(other, (a, b) => equal(a.keyL, b.keyR))
    */
   antijoin(other, on) {
+    // @ts-ignore
     return this.__antijoin(this, other, on);
   }
 
@@ -657,12 +684,13 @@ export default class Transformable {
    * Only named columns in this table are included in the output.
    * @see Transformable#union
    * @param  {...TableRef} tables A list of tables to concatenate.
-   * @return {Transformable} A new concatenated table.
+   * @return {this} A new concatenated table.
    * @example table.concat(other)
    * @example table.concat(other1, other2)
    * @example table.concat([other1, other2])
    */
   concat(...tables) {
+    // @ts-ignore
     return this.__concat(this, tables.flat());
   }
 
@@ -674,12 +702,13 @@ export default class Transformable {
    * Only named columns in this table are included in the output.
    * @see Transformable#concat
    * @param  {...TableRef} tables A list of tables to union.
-   * @return {Transformable} A new unioned table.
+   * @return {this} A new unioned table.
    * @example table.union(other)
    * @example table.union(other1, other2)
    * @example table.union([other1, other2])
    */
   union(...tables) {
+    // @ts-ignore
     return this.__union(this, tables.flat());
   }
 
@@ -690,12 +719,13 @@ export default class Transformable {
    * calls, but additionally suppresses duplicate rows.
    * @see Transformable#semijoin
    * @param  {...TableRef} tables A list of tables to intersect.
-   * @return {Transformable} A new filtered table.
+   * @return {this} A new filtered table.
    * @example table.intersect(other)
    * @example table.intersect(other1, other2)
    * @example table.intersect([other1, other2])
    */
   intersect(...tables) {
+    // @ts-ignore
     return this.__intersect(this, tables.flat());
   }
 
@@ -706,12 +736,13 @@ export default class Transformable {
    * calls, but additionally suppresses duplicate rows.
    * @see Transformable#antijoin
    * @param  {...TableRef} tables A list of tables to difference.
-   * @return {Transformable} A new filtered table.
+   * @return {this} A new filtered table.
    * @example table.except(other)
    * @example table.except(other1, other2)
    * @example table.except([other1, other2])
    */
   except(...tables) {
+    // @ts-ignore
     return this.__except(this, tables.flat());
   }
 }

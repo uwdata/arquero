@@ -1,7 +1,7 @@
 import { NEWLINE, RETURN } from './constants';
 import filter from './text-filter';
 
-export default function(text, { skip, comment }) {
+export default function(text, { skip = undefined, comment = undefined }) {
   let N = text.length;
   let I = 0; // current character index
 

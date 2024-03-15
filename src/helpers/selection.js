@@ -96,10 +96,11 @@ export function range(start, end) {
  * @return {SelectHelper} Selection function compatible with select().
  */
 export function matches(pattern) {
-  if (isString(pattern)) pattern = RegExp(escapeRegExp(pattern));
+    let _pattern;
+  if (isString(pattern)) _pattern = RegExp(escapeRegExp(pattern));
   return decorate(
-    table => table.columnNames(name => pattern.test(name)),
-    () => ({ matches: [pattern.source, pattern.flags] })
+    table => table.columnNames(name => _pattern.test(name)),
+    () => ({ matches: [_pattern.source, _pattern.flags] })
   );
 }
 

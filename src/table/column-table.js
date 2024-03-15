@@ -79,14 +79,15 @@ export default class ColumnTable extends Table {
    * based on the values of the optional configuration argument. If a
    * setting is not specified, it is inherited from the current table.
    * @param {import('./table').CreateOptions} [options] Creation options for the new table.
-   * @return {ColumnTable} A newly created table.
+   * @return {this} A newly created table.
    */
-  create({ data, names, filter, groups, order }) {
+  create({ data, names, filter, groups, order } = { data: undefined, names: undefined, filter: undefined, groups: undefined, order: undefined}) {
     const f = filter !== undefined ? filter : this.mask();
 
+    // @ts-ignore
     return new ColumnTable(
       data || this._data,
-      names || (!data ? this._names : null),
+      names || (!data ? Object.assign([], this._names) : null),
       f,
       groups !== undefined ? groups : regroup(this._group, filter && f),
       order !== undefined ? order : this._order,
@@ -100,7 +101,7 @@ export default class ColumnTable extends Table {
    * prior to assignment. In the case of repeated column names, input table
    * columns overwrite existing columns.
    * @param {...ColumnTable} tables The tables to merge with this table.
-   * @return {ColumnTable} A new table with merged columns.
+   * @return {this} A new table with merged columns.
    * @example table.assign(table1, table2)
    */
   assign(...tables) {
@@ -181,9 +182,11 @@ export default class ColumnTable extends Table {
   getter(name) {
     const column = this.column(name);
     const indices = this.isFiltered() || this.isOrdered() ? this.indices() : null;
+    if (!column) {
+        error(`Unrecognized column: ${name}`);
+    }
     return indices ? row => column.get(indices[row])
-      : column ? row => column.get(row)
-      : error(`Unrecognized column: ${name}`);
+      : row => column.get(row);
   }
 
   /**
@@ -240,11 +243,11 @@ export default class ColumnTable extends Table {
    * Instead, the backing data itself is filtered and ordered as needed.
    * @param {number[]} [indices] Ordered row indices to materialize.
    *  If unspecified, all rows passing the table filter are used.
-   * @return {ColumnTable} A reified table.
+   * @return {this} A reified table.
    */
   reify(indices) {
     const nrows = indices ? indices.length : this.numRows();
-    const names = this._names;
+    const names =  Object.assign([], this._names);
     let data, groups;
 
     if (!indices && !this.isOrdered()) {

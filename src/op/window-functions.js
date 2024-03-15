@@ -43,6 +43,8 @@ const rank = {
     let rank;
     return {
       init: () => rank = 1,
+      add: noop,
+      rem: noop,
       value: w => {
         const i = w.index;
         return (i && !w.peer(i)) ? (rank = i + 1) : rank;
@@ -57,6 +59,8 @@ const cume_dist = {
     let cume;
     return {
       init: () => cume = 0,
+      add: noop,
+      rem: noop,
       value: w => {
         const { index, peer, size } = w;
         let i = index;
@@ -80,6 +84,8 @@ export default {
     create() {
       return {
         init: noop,
+        add: noop,
+        rem: noop,
         value: w => w.index + 1
       };
     },
@@ -95,6 +101,8 @@ export default {
       let j, rank;
       return {
         init: () => (j = -1, rank = 1),
+        add: noop,
+        rem: noop,
         value: w => {
           const i = w.index;
           if (i >= j) {
@@ -114,6 +122,8 @@ export default {
       let drank;
       return {
         init: () => drank = 1,
+        add: noop,
+        rem: noop,
         value: w => {
           const i = w.index;
           return (i && !w.peer(i)) ? ++drank : drank;
@@ -129,6 +139,8 @@ export default {
       const { init, value } = rank.create();
       return {
         init,
+        add: noop,
+        rem: noop,
         value: w => (value(w) - 1) / (w.size - 1)
       };
     },
@@ -146,6 +158,8 @@ export default {
       const { init, value } = cume_dist.create();
       return {
         init,
+        add: noop,
+        rem: noop,
         value: w => Math.ceil(num * value(w))
       };
     },
@@ -158,6 +172,8 @@ export default {
       offset = +offset || 1;
       return {
         init: noop,
+        add: noop,
+        rem: noop,
         value: (w, f) => {
           const i = w.index - offset;
           return i >= 0 ? w.value(i, f) : defaultValue;
@@ -173,6 +189,8 @@ export default {
       offset = +offset || 1;
       return {
         init: noop,
+        add: noop,
+        rem: noop,
         value: (w, f) => {
           const i = w.index + offset;
           return i < w.size ? w.value(i, f) : defaultValue;
@@ -187,6 +205,8 @@ export default {
     create() {
       return {
         init: noop,
+        add: noop,
+        rem: noop,
         value: (w, f) => w.value(w.i0, f)
       };
     },
@@ -198,6 +218,8 @@ export default {
     create() {
       return {
         init: noop,
+        add: noop,
+        rem: noop,
         value: (w, f) => w.value(w.i1 - 1, f)
       };
     },
@@ -211,6 +233,8 @@ export default {
       if (!(nth > 0)) error('nth_value nth must be greater than zero.');
       return {
         init: noop,
+        add: noop,
+        rem: noop,
         value: (w, f) => {
           const i = w.i0 + (nth - 1);
           return i < w.i1 ? w.value(i, f) : NULL;
@@ -226,6 +250,8 @@ export default {
       let value;
       return {
         init: () => value = defaultValue,
+        add: noop,
+        rem: noop,
         value: (w, f) => {
           const v = w.value(w.index, f);
           return isValid(v) ? (value = v) : value;
@@ -241,6 +267,8 @@ export default {
       let value, idx;
       return {
         init: () => (value = defaultValue, idx = -1),
+        add: noop,
+        rem: noop,
         value: (w, f) => w.index <= idx ? value
           : (idx = find(w, f, w.index)) >= 0 ? (value = w.value(idx, f))
           : (idx = w.size, value = defaultValue)

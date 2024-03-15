@@ -2,9 +2,13 @@
   "include": ["src/**/*"],
   "compilerOptions": {
     "allowJs": true,
+    "checkJs": true,
     "declaration": true,
     "emitDeclarationOnly": true,
     "outDir": "dist/types",
-    "skipLibCheck": true
+    "target": "ES2020",
+    "moduleResolution": "node",
+    "skipLibCheck": false,
+    "resolveJsonModule": true
   }
 }

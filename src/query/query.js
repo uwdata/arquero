@@ -108,7 +108,10 @@ export default class Query extends Transformable {
   evaluate(table, catalog) {
     table = table || catalog(this._table);
     for (const verb of this._verbs) {
-      table = verb.evaluate(table.params(this._params), catalog);
+      const tableParams = table.params(this._params);
+      if (tableParams instanceof Table) {
+        table = verb.evaluate(tableParams, catalog);
+      }
     }
     return table;
   }
