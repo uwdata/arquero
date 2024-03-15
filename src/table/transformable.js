@@ -44,6 +44,7 @@ export default class Transformable {
    * @return {this} A reified table.
    */
   reify(indices) {
+    // @ts-ignore
     return this.__reify(this, indices);
   }
 
@@ -58,6 +59,7 @@ export default class Transformable {
    * @example table.groupby('colA').count({ as: 'num' })
    */
   count(options) {
+    // @ts-ignore
     return this.__count(this, options);
   }
 
@@ -78,6 +80,7 @@ export default class Transformable {
    * @example table.derive({ z: d => d.x * d.y }, { before: 'x' })
    */
   derive(values, options) {
+    // @ts-ignore
     return this.__derive(this, values, options);
   }
 
@@ -93,6 +96,7 @@ export default class Transformable {
    * @example table.filter(d => abs(d.value) < 5)
    */
   filter(criteria) {
+    // @ts-ignore
     return this.__filter(this, criteria);
   }
 
@@ -126,6 +130,7 @@ export default class Transformable {
    * @example table.groupby({ key: d => d.colA + d.colB })
    */
   groupby(...keys) {
+    // @ts-ignore
     return this.__groupby(this, keys.flat());
   }
 
@@ -154,6 +159,7 @@ export default class Transformable {
    * @example table.orderby(desc(d => d.a))
    */
   orderby(...keys) {
+    // @ts-ignore
     return this.__orderby(this, keys.flat());
   }
 
@@ -175,6 +181,7 @@ export default class Transformable {
    * @example table.relocate({ colA: 'newA', colB: 'newB' }, { after: 'colC' })
    */
   relocate(columns, options) {
+    // @ts-ignore
     return this.__relocate(this, toArray(columns), options);
   }
 
@@ -187,6 +194,7 @@ export default class Transformable {
    * @example table.rename({ a: 'a2', b: 'b2' })
    */
   rename(...columns) {
+    // @ts-ignore
     return this.__rename(this, columns.flat());
   }
 
@@ -204,6 +212,7 @@ export default class Transformable {
    * @example table.groupby('colA').rollup({ mean: op.median('colB') })
    */
   rollup(values) {
+    // @ts-ignore
     return this.__rollup(this, values);
   }
 
@@ -222,6 +231,7 @@ export default class Transformable {
    * @example table.groupby('colA').sample(() => op.floor(0.5 * op.count()))
    */
   sample(size, options) {
+    // @ts-ignore
     return this.__sample(this, size, options);
   }
 
@@ -239,6 +249,7 @@ export default class Transformable {
    * @example table.select({ colA: 'newA', colB: 'newB' })
    */
   select(...columns) {
+    // @ts-ignore
     return this.__select(this, columns.flat());
   }
 
@@ -249,6 +260,7 @@ export default class Transformable {
    * @example table.ungroup()
    */
   ungroup() {
+    // @ts-ignore
     return this.__ungroup(this);
   }
 
@@ -259,6 +271,7 @@ export default class Transformable {
    * @example table.unorder()
    */
   unorder() {
+    // @ts-ignore
     return this.__unorder(this);
   }
 
@@ -278,6 +291,7 @@ export default class Transformable {
    * @example table.dedupe({ abs: d => op.abs(d.a) })
    */
   dedupe(...keys) {
+    // @ts-ignore
     return this.__dedupe(this, keys.flat());
   }
 
@@ -309,6 +323,7 @@ export default class Transformable {
    * @example table.impute({ v: () => 0 }, { expand: ['x', 'y'] })
    */
   impute(values, options) {
+    // @ts-ignore
     return this.__impute(this, values, options);
   }
 
@@ -332,6 +347,7 @@ export default class Transformable {
    * @example table.fold(range(5, 8))
    */
   fold(values, options) {
+    // @ts-ignore
     return this.__fold(this, values, options);
   }
 
@@ -360,6 +376,7 @@ export default class Transformable {
    * @example table.pivot({ key: d => d.key }, { value: d => sum(d.value) })
    */
   pivot(keys, values, options) {
+    // @ts-ignore
     return this.__pivot(this, keys, values, options);
   }
 
@@ -376,6 +393,7 @@ export default class Transformable {
    * @example table.spread('arrayCol', { limit: 100 })
    */
   spread(values, options) {
+    // @ts-ignore
     return this.__spread(this, values, options);
   }
 
@@ -393,6 +411,7 @@ export default class Transformable {
    * @example table.unroll('colA', { limit: 1000 })
    */
   unroll(values, options) {
+    // @ts-ignore
     return this.__unroll(this, values, options);
   }
 
@@ -415,6 +434,7 @@ export default class Transformable {
    * @example table.lookup(other, ['key1', 'key2'], 'value1', 'value2')
    */
   lookup(other, on, ...values) {
+    // @ts-ignore
     return this.__lookup(this, other, on, values.flat());
   }
 
@@ -456,6 +476,7 @@ export default class Transformable {
    * @example table.join(other, (a, b) => equal(a.keyL, b.keyR))
    */
   join(other, on, values, options) {
+    // @ts-ignore
     return this.__join(this, other, on, values, options);
   }
 
@@ -494,6 +515,7 @@ export default class Transformable {
    */
   join_left(other, on, values, options) {
     const opt = { ...options, left: true, right: false };
+    // @ts-ignore
     return this.__join(this, other, on, values, opt);
   }
 
@@ -532,6 +554,7 @@ export default class Transformable {
    */
   join_right(other, on, values, options) {
     const opt = { ...options, left: false, right: true };
+    // @ts-ignore
     return this.__join(this, other, on, values, opt);
   }
 
@@ -570,6 +593,7 @@ export default class Transformable {
    */
   join_full(other, on, values, options) {
     const opt = { ...options, left: true, right: true };
+    // @ts-ignore
     return this.__join(this, other, on, values, opt);
   }
 
@@ -596,6 +620,7 @@ export default class Transformable {
    * @example table.cross(other, [['leftKey', 'leftVal'], ['rightVal']])
    */
   cross(other, values, options) {
+    // @ts-ignore
     return this.__cross(this, other, values, options);
   }
 
@@ -621,6 +646,7 @@ export default class Transformable {
    * @example table.semijoin(other, (a, b) => equal(a.keyL, b.keyR))
    */
   semijoin(other, on) {
+    // @ts-ignore
     return this.__semijoin(this, other, on);
   }
 
@@ -646,6 +672,7 @@ export default class Transformable {
    * @example table.antijoin(other, (a, b) => equal(a.keyL, b.keyR))
    */
   antijoin(other, on) {
+    // @ts-ignore
     return this.__antijoin(this, other, on);
   }
 
@@ -663,6 +690,7 @@ export default class Transformable {
    * @example table.concat([other1, other2])
    */
   concat(...tables) {
+    // @ts-ignore
     return this.__concat(this, tables.flat());
   }
 
@@ -680,6 +708,7 @@ export default class Transformable {
    * @example table.union([other1, other2])
    */
   union(...tables) {
+    // @ts-ignore
     return this.__union(this, tables.flat());
   }
 
@@ -696,6 +725,7 @@ export default class Transformable {
    * @example table.intersect([other1, other2])
    */
   intersect(...tables) {
+    // @ts-ignore
     return this.__intersect(this, tables.flat());
   }
 
@@ -712,6 +742,7 @@ export default class Transformable {
    * @example table.except([other1, other2])
    */
   except(...tables) {
+    // @ts-ignore
     return this.__except(this, tables.flat());
   }
 }
@@ -756,7 +787,7 @@ export default class Transformable {
 
 /**
  * A function defined over rows from two tables.
- * @typedef {(a?: Struct, b?: Struct, $?: Params) => any} TableFunc2
+ * @typedef {(a?: Struct, b?: Struct, $?: Params) => any} TableExprFunc2
  */
 
 /**

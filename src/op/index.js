@@ -39,7 +39,7 @@ export function hasWindow(name) {
 /**
  * Get an aggregate function definition.
  * @param {string} name The name of the aggregate function.
- * @return {AggregateDef} The aggregate function definition,
+ * @return {import('./aggregate-functions').AggregateDef} The aggregate function definition,
  *  or undefined if not found.
  */
 export function getAggregate(name) {
@@ -49,7 +49,7 @@ export function getAggregate(name) {
 /**
  * Get a window function definition.
  * @param {string} name The name of the window function.
- * @return {WindowDef} The window function definition,
+ * @return {import('./window-functions').WindowDef} The window function definition,
  *  or undefined if not found.
  */
 export function getWindow(name) {

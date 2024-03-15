@@ -12,7 +12,9 @@ const peersValue = op => !!op.peers;
 function windowOp(spec) {
   const { id, name, fields = [], params = [] } = spec;
   const op = getWindow(name).create(...params);
+  // @ts-ignore
   if (fields.length) op.get = fields[0];
+  // @ts-ignore
   op.id = id;
   return op;
 }

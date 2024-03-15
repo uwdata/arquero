@@ -79,7 +79,7 @@ export default function(input, opt = {}) {
 
   // return expression asts if requested
   if (opt.ast) {
-    return { names, exprs };
+    return { names, exprs, ops: [] };
   }
 
   // compile input field accessors

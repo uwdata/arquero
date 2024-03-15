@@ -47,7 +47,9 @@ export function fromObject(value) {
     : !isObject(value) ? value
     : isArray(value.verbs) ? Query.from(value)
     : isArray(value.all) ? all()
+    // @ts-ignore
     : isArray(value.range) ? range(...value.range)
+    // @ts-ignore
     : isArray(value.match) ? matches(RegExp(...value.match))
     : isArray(value.not) ? not(value.not.map(toObject))
     : fromExprObject(value);

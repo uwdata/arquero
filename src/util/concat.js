@@ -1,4 +1,4 @@
-export default function(list, fn = (x => x), delim = '') {
+export default function(list, fn = ((_, x) => x), delim = '') {
   const n = list.length;
   if (!n) return '';
 

@@ -16,10 +16,13 @@ export default function(oplist, stream) {
   const { ops, output } = expand(oplist, stream);
   const fields = oplist[0].fields;
   const n = fields.length;
+  
+  if (n > 2 ) {
+    error('Unsupported field count: ' + n);
+  }
   const cls = n === 0 ? FieldReducer
     : n === 1 ? Field1Reducer
-    : n === 2 ? Field2Reducer
-    : error('Unsupported field count: ' + n);
+    : Field2Reducer;
   return new cls(fields, ops, output, stream);
 }
 

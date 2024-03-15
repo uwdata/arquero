@@ -17,7 +17,7 @@ import isFunction from '../util/is-function';
  * Column format options. The object keys should be column names.
  * The object values should be formatting functions or objects.
  * If specified, these override any automatically inferred options.
- * @typedef {Object.<string, import('./value').ValueFormatOptions} ColumnFormatOptions
+ * @typedef {Object.<string, import('./value').ValueFormatOptions>} ColumnFormatOptions
  */
 
 /**

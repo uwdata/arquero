@@ -9,7 +9,7 @@ import isString from '../../util/is-string';
 import isFunction from '../../util/is-function';
 import toArray from '../../util/to-array';
 
-export default function(name, table, params, options = { window: false }) {
+export default function(name, table, params, options) {
   const exprs = new Map();
 
   const marshal = param => {
@@ -21,10 +21,11 @@ export default function(name, table, params, options = { window: false }) {
   };
 
   toArray(params).forEach(marshal);
-
+  if (options === undefined) {
+    options = { window: false };
+  }
   if (options.preparse) {
     options.preparse(exprs);
   }
-
   return parse(exprs, { table, ...options });
 }
