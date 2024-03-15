@@ -28,10 +28,10 @@ import isNumber from '../util/is-number';
 import toString from '../util/to-string';
 
 const PARSER_OPT = {
-    /** 
-     * @type {import('acorn').ecmaVersion}
-     */
-    ecmaVersion: 11
+  /** 
+  * @type {import('acorn').ecmaVersion}
+  */
+  ecmaVersion: 11
 };
 const DEFAULT_PARAM_ID = '$';
 const DEFAULT_TUPLE_ID = 'd';

@@ -24,6 +24,7 @@ import {
 } from './constants';
 
 import toAST from './to-ast';
+// eslint-disable-next-line no-unused-vars
 import Table from '../table/table';
 
 /**

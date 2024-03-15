@@ -3,6 +3,7 @@ import Transformable from './transformable';
 import error from '../util/error';
 import isNumber from '../util/is-number';
 import repeat from '../util/repeat';
+// eslint-disable-next-line no-unused-vars
 import Reducer from '../engine/reduce/reducer';
 
 /**

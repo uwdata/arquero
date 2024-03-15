@@ -32,8 +32,10 @@
     "postbuild": "tsc",
     "preperf": "npm run build",
     "perf": "TZ=America/Los_Angeles tape 'perf/**/*-perf.js'",
+    "perf-windows": "SET TZ=America/Los_Angeles && tape perf/**/*-perf.js",
     "lint": "eslint src test --ext .js",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' --require esm",
+    "test-windows": "SET TZ=America/Los_Angeles && tape test/**/*-test.js --require esm",
     "prepublishOnly": "npm test && npm run lint && npm run build"
   },
   "dependencies": {

@@ -107,7 +107,7 @@ export default class BitSet {
   /**
    * Negate all bits in this bitset.
    * Modifies this BitSet in place.
-   * @return {BitSet}
+   * @return {this}
    */
   not() {
     const bits = this._bits;

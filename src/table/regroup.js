@@ -1,12 +1,11 @@
 import { array_agg, entries_agg, map_agg, object_agg } from '../op/op-api';
 import error from '../util/error';
 import uniqueName from '../util/unique-name';
-import BitSet from './bit-set';
 
 /**
  * Regroup table rows in response to a BitSet filter.
  * @param {import('./column-table').GroupBySpec} groups The current groupby specification.
- * @param {BitSet} filter The filter to apply.
+ * @param {import('./column-table').BitSet} filter The filter to apply.
  */
 export function regroup(groups, filter) {
   if (!groups || !filter) return groups;
@@ -77,9 +76,9 @@ export function reindex(groups, scan, filter, nrows) {
 }
 
 export function nest(table, idx, obj, type) {
-    if (type !== 'map' && type !== 'entries' && type !== 'object') {
-        error('groups option must be "map", "entries", or "object".');
-    }
+  if (type !== 'map' && type !== true && type !== 'entries' && type !== 'object') {
+    error('groups option must be "map", "entries", or "object".');
+  }
 
   const agg = type === 'map' || type === true ? map_agg
     : type === 'entries' ? entries_agg

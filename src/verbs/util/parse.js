@@ -21,12 +21,11 @@ export default function(name, table, params, options) {
   };
 
   toArray(params).forEach(marshal);
-
-  if (options.preparse) {
-    options.preparse(exprs);
-  }
   if (options === undefined) {
     options = { window: false };
+  }
+  if (options.preparse) {
+    options.preparse(exprs);
   }
   return parse(exprs, { table, ...options });
 }

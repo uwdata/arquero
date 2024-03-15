@@ -99,14 +99,15 @@ function infer(p) {
   else if (p.nums === valid) {
     return Type.Float64;
   }
-else if (p.bigints === valid) {
+  else if (p.bigints === valid) {
+    // eslint-disable-next-line no-undef
     const v = -p.min > p.max ? BigInt(-p.min) - 1n : p.max;
     return p.min < 0
-        ? v < 2n ** 63n ? Type.Int64
-            : error(`BigInt exceeds 64 bits: ${v}`)
-        : p.max < 2n ** 64n ? Type.Uint64
-            : error(`BigInt exceeds 64 bits: ${p.max}`);
-}
+      ? v < 2n ** 63n ? Type.Int64
+        : error(`BigInt exceeds 64 bits: ${v}`)
+      : p.max < 2n ** 64n ? Type.Uint64
+        : error(`BigInt exceeds 64 bits: ${p.max}`);
+  }
   else if (p.bools === valid) {
     return Type.Bool;
   }
