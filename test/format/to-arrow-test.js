@@ -263,7 +263,7 @@ tape('toArrowBuffer generates the correct output for stream option', (t) => {
 
   t.deepEqual(
     buffer.slice(0, 8),
-    new Uint8Array([255, 255, 255, 255, 72, 1, 0, 0])
+    new Uint8Array([255, 255, 255, 255, 88, 1, 0, 0])
   );
   t.end();
 });
@@ -280,7 +280,7 @@ tape('toArrowBuffer defaults to using stream option', (t) => {
 
   t.deepEqual(
     buffer.slice(0, 8),
-    new Uint8Array([255, 255, 255, 255, 72, 1, 0, 0])
+    new Uint8Array([255, 255, 255, 255, 88, 1, 0, 0])
   );
   t.end();
 });
