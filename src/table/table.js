@@ -525,6 +525,11 @@ export default class Table extends Transformable {
  */
 
 /**
+ * Abstract class for custom aggregation operations.
+ * @typedef {import('../engine/reduce/reducer').default} Reducer
+ */
+
+/**
  * A table groupby specification.
  * @typedef {object} GroupBySpec
  * @property {number} size The number of groups.

@@ -756,7 +756,7 @@ export default class Transformable {
 
 /**
  * A function defined over rows from two tables.
- * @typedef {(a?: Struct, b?: Struct, $?: Params) => any} TableFunc2
+ * @typedef {(a?: Struct, b?: Struct, $?: Params) => any} TableExprFunc2
  */
 
 /**
