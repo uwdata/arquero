@@ -16,12 +16,12 @@ Arquero is Spanish for "archer": if datasets are [arrows](https://arrow.apache.o
 
 ## API Documentation
 
-* [Top-Level API](https://uwdata.github.io/arquero/api) - All methods in the top-level Arquero namespace.
-* [Table](https://uwdata.github.io/arquero/api/table) - Table access and output methods.
-* [Verbs](https://uwdata.github.io/arquero/api/verbs) - Table transformation verbs.
-* [Op Functions](https://uwdata.github.io/arquero/api/op) - All functions, including aggregate and window functions.
-* [Expressions](https://uwdata.github.io/arquero/api/expressions) - Parsing and generation of table expressions.
-* [Extensibility](https://uwdata.github.io/arquero/api/extensibility) - Extend Arquero with new expression functions or table verbs.
+* [Top-Level API](https://idl.uw.edu/arquero/api) - All methods in the top-level Arquero namespace.
+* [Table](https://idl.uw.edu/arquero/api/table) - Table access and output methods.
+* [Verbs](https://idl.uw.edu/arquero/api/verbs) - Table transformation verbs.
+* [Op Functions](https://idl.uw.edu/arquero/api/op) - All functions, including aggregate and window functions.
+* [Expressions](https://idl.uw.edu/arquero/api/expressions) - Parsing and generation of table expressions.
+* [Extensibility](https://idl.uw.edu/arquero/api/extensibility) - Extend Arquero with new expression functions or table verbs.
 
 ## Example
 
@@ -80,7 +80,7 @@ To use in the browser, you can load Arquero from a content delivery network:
 <script src="https://cdn.jsdelivr.net/npm/arquero@latest"></script>
 ```
 
-Arquero will be imported into the `aq` global object. The default browser bundle does not include the [Apache Arrow](https://arrow.apache.org/) library. To perform Arrow encoding using [toArrow()](https://uwdata.github.io/arquero/api/#toArrow) or binary file loading using [loadArrow()](https://uwdata.github.io/arquero/api/#loadArrow), import Apache Arrow first:
+Arquero will be imported into the `aq` global object. The default browser bundle does not include the [Apache Arrow](https://arrow.apache.org/) library. To perform Arrow encoding using [toArrow()](https://idl.uw.edu/arquero/api/#toArrow) or binary file loading using [loadArrow()](https://idl.uw.edu/arquero/api/#loadArrow), import Apache Arrow first:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/apache-arrow@latest"></script>

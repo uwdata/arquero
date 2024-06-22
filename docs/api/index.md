@@ -35,7 +35,7 @@ Create a new <a href="table">table</a> for a set of named *columns*, optionally 
 
 JavaScript objects have specific key ordering rules: keys are enumerated in the order they are assigned, except for integer keys, which are enumerated first in sorted order. As a result, when using a standard object any *columns* entries with integer keys are listed first regardless of their order in the object definition. Use the *names* argument to ensure proper column ordering is respected. Map and entry arrays will preserve name ordering, in which case the *names* argument is only needed if you wish to specify an ordering different from the *columns* input.
 
-To bind together columns from multiple tables with the same number of rows, use the table [assign](table/#assign) method. To transform the table, use the various [verb](verbs) methods.
+To bind together columns from multiple tables with the same number of rows, use the table [assign](table#assign) method. To transform the table, use the various [verb](verbs) methods.
 
 * *columns*: An object or Map providing a named set of column arrays, or an entries array of the form `[[name, values], ...]`. Keys are column name strings; the enumeration order of the keys determines the column indices if the *names* argument is not provided. Column values should be arrays (or array-like values) of identical length.
 * *names*: An array of column names, specifying the index order of columns in the table.
@@ -492,7 +492,7 @@ All table expression operations, including standard functions, aggregate functio
 <hr/><a id="agg" href="#agg">#</a>
 <em>aq</em>.<b>agg</b>(<i>table</i>, <i>expression</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/helpers/agg.js)
 
-Compute a single aggregate value for a table. This method is a convenient shortcut for ungrouping a table, applying a [rollup](verbs/#rollup) verb for a single aggregate expression, and extracting the resulting aggregate value.
+Compute a single aggregate value for a table. This method is a convenient shortcut for ungrouping a table, applying a [rollup](verbs#rollup) verb for a single aggregate expression, and extracting the resulting aggregate value.
 
 * *table*: An Arquero table.
 * *expression*: An aggregate-valued table expression. Aggregate functions are permitted, and will take into account any [orderby](#orderby) settings. Window functions are not permitted and any [groupby](#groupby) settings will be ignored.
@@ -511,9 +511,9 @@ aq.agg(aq.table({ a: [1, 3, 5] }), d => [op.min(d.a), op.max('a')]) // [1, 5]
 <hr/><a id="escape" href="#escape">#</a>
 <em>aq</em>.<b>escape</b>(<i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/escape.js)
 
-Annotate a JavaScript function or *value* to bypass Arquero's default table expression handling. Escaped values enable the direct use of JavaScript functions to process row data: no internal parsing or code generation is performed, and so [closures](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures) and arbitrary function invocations are supported. Escaped values provide a lightweight alternative to [table params](https://uwdata.github.io/arquero/api/table#params) and [function registration](https://uwdata.github.io/arquero/api/extensibility#addFunction) to access variables in enclosing scopes.
+Annotate a JavaScript function or *value* to bypass Arquero's default table expression handling. Escaped values enable the direct use of JavaScript functions to process row data: no internal parsing or code generation is performed, and so [closures](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures) and arbitrary function invocations are supported. Escaped values provide a lightweight alternative to [table params](table#params) and [function registration](extensibility#addFunction) to access variables in enclosing scopes.
 
-An escaped value can be applied anywhere Arquero accepts [single-table table expressions](https://uwdata.github.io/arquero/api/expressions#table), including the [derive](verbs/#derive), [filter](verbs/#filter), and [spread](verbs/#spread) verbs. In addition, any of the [standard `op` functions](https://uwdata.github.io/arquero/api/op#functions) can be used within an escaped function. However, aggregate and window `op` functions are not supported. Also note that using escaped values will break [serialization of Arquero queries to worker threads](https://github.com/uwdata/arquero-worker).
+An escaped value can be applied anywhere Arquero accepts [single-table table expressions](expressions#table), including the [derive](verbs#derive), [filter](verbs#filter), and [spread](verbs#spread) verbs. In addition, any of the [standard `op` functions](op#functions) can be used within an escaped function. However, aggregate and window `op` functions are not supported. Also note that using escaped values will break [serialization of Arquero queries to worker threads](https://github.com/uwdata/arquero-worker).
 
 * *value*: A literal value or a function that is passed a row object and params object as input. Aggregate and window `op` functions are not permitted.
 
@@ -589,7 +589,7 @@ aq.desc(d => op.lower(d.colA))
 <hr/><a id="frac" href="#frac">#</a>
 <em>aq</em>.<b>frac</b>(<i>fraction</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/frac.js)
 
-Generate a table expression that computes the number of rows corresponding to a given fraction for each group. The resulting string can be used as part of the input to the [sample](verbs/#sample) verb.
+Generate a table expression that computes the number of rows corresponding to a given fraction for each group. The resulting string can be used as part of the input to the [sample](verbs#sample) verb.
 
 * *fraction*: The fractional value.
 
@@ -606,7 +606,7 @@ Annotate a table expression to compute rolling aggregate or window functions wit
 
 * *expr*: The table expression to annotate.
 * *frame*:The sliding window frame offsets. Each entry indicates an offset from the current value. If an entry is non-finite, the frame will be unbounded in that direction, including all preceding or following values. If unspecified or `null`, the default frame `[-Infinity, 0]` includes the current values and all preceding values.
-* *includePeers*: Boolean flag indicating if the sliding window frame should ignore peer (tied) values. If `false` (the default), the window frame boundaries are insensitive to peer values. If `true`, the window frame expands to include all peers. This parameter only affects operations that depend on the window frame: namely [aggregate functions](op/#aggregate-functions) and the [first_value](op/#first_value), [last_value](op/#last_value), and [nth_value](op/#last_values) window functions.
+* *includePeers*: Boolean flag indicating if the sliding window frame should ignore peer (tied) values. If `false` (the default), the window frame boundaries are insensitive to peer values. If `true`, the window frame expands to include all peers. This parameter only affects operations that depend on the window frame: namely [aggregate functions](op#aggregate-functions) and the [first_value](op#first_value), [last_value](op#last_value), and [nth_value](op#last_values) window functions.
 
 *Examples*
 
@@ -653,12 +653,12 @@ aq.seed(null)
 
 ## <a id="selection-helpers">Selection Helpers</a>
 
-Methods for selecting columns. The result of these methods can be passed as arguments to [select](verbs/#select), [groupby](verbs/#groupby), [join](verbs/#join) and other transformation verbs.
+Methods for selecting columns. The result of these methods can be passed as arguments to [select](verbs#select), [groupby](verbs#groupby), [join](verbs#join) and other transformation verbs.
 
 <hr/><a id="all" href="#all">#</a>
 <em>aq</em>.<b>all</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
-Select all columns in a table. Returns a function-valued selection compatible with [select](verbs/#select).
+Select all columns in a table. Returns a function-valued selection compatible with [select](verbs#select).
 
 *Examples*
 
@@ -670,7 +670,7 @@ aq.all()
 <hr/><a id="not" href="#not">#</a>
 <em>aq</em>.<b>not</b>(<i>selection</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
-Negate a column *selection*, selecting all other columns in a table. Returns a function-valued selection compatible with [select](verbs/#select).
+Negate a column *selection*, selecting all other columns in a table. Returns a function-valued selection compatible with [select](verbs#select).
 
 * *selection*: The selection to negate. May be a column name, column index, array of either, or a selection function (e.g., from [range](#range)).
 
@@ -688,7 +688,7 @@ aq.not(aq.range(2, 5))
 <hr/><a id="range" href="#range">#</a>
 <em>aq</em>.<b>range</b>(<i>start</i>, <i>stop</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
-Select a contiguous range of columns. Returns a function-valued selection compatible with [select](verbs/#select).
+Select a contiguous range of columns. Returns a function-valued selection compatible with [select](verbs#select).
 
 * *start*: The name or integer index of the first selected column.
 * *stop*: The name or integer index of the last selected column.
@@ -706,7 +706,7 @@ aq.range(2, 5)
 <hr/><a id="matches" href="#matches">#</a>
 <em>aq</em>.<b>matches</b>(<i>pattern</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
-Select all columns whose names match a pattern. Returns a function-valued selection compatible with [select](verbs/#select).
+Select all columns whose names match a pattern. Returns a function-valued selection compatible with [select](verbs#select).
 
 * *pattern*: A string or [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) pattern to match.
 
@@ -725,7 +725,7 @@ aq.matches(/^[abc]/i)
 <hr/><a id="startswith" href="#startswith">#</a>
 <em>aq</em>.<b>startswith</b>(<i>string</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
-Select all columns whose names start with a string. Returns a function-valued selection compatible with [select](verbs/#select).
+Select all columns whose names start with a string. Returns a function-valued selection compatible with [select](verbs#select).
 
 * *string*: The string to match at the start of the column name.
 
@@ -738,7 +738,7 @@ aq.startswith('prefix_')
 <hr/><a id="endswith" href="#endswith">#</a>
 <em>aq</em>.<b>endswith</b>(<i>string</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/selection.js)
 
-Select all columns whose names end with a string. Returns a function-valued selection compatible with [select](verbs/#select).
+Select all columns whose names end with a string. Returns a function-valued selection compatible with [select](verbs#select).
 
 * *string*: The string to match at the end of the column name.
 
