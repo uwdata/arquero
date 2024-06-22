@@ -24,6 +24,8 @@ import {
 } from './constants';
 
 import toAST from './to-ast';
+// eslint-disable-next-line no-unused-vars
+import Table from '../table/table';
 
 /**
  * Model an Arquero verb as a serializable object.
@@ -121,6 +123,7 @@ export class Verb {
  * @property {string} name The name of the parameter.
  * @property {ParamType} type The type of the parameter.
  * @property {{ [key: string]: ParamType }} [props] Types for non-literal properties.
+ * @property {any} [default] Default value for the parameter.
  */
 
 /**
@@ -177,9 +180,9 @@ export const Verbs = {
   select:     createVerb('select', [
                 { name: 'columns', type: SelectionList }
               ]),
-  ungroup:    createVerb('ungroup'),
-  unorder:    createVerb('unorder'),
-  reify:      createVerb('reify'),
+  ungroup:    createVerb('ungroup', []),
+  unorder:    createVerb('unorder', []),
+  reify:      createVerb('reify', []),
   dedupe:     createVerb('dedupe', [
                 { name: 'keys', type: ExprList, default: [] }
               ]),

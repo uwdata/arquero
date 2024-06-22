@@ -22,7 +22,7 @@ const t = d => (
  * @param {number} [minutes=0] The minute within the hour.
  * @param {number} [seconds=0] The second within the minute.
  * @param {number} [milliseconds=0] The milliseconds within the second.
- * @return {date} The resuting Date value.
+ * @return {Date} The resuting Date value.
  */
 function datetime(year, month, date, hours, minutes, seconds, milliseconds) {
   return !arguments.length
@@ -48,7 +48,7 @@ function datetime(year, month, date, hours, minutes, seconds, milliseconds) {
  * @param {number} [minutes=0] The minute within the hour.
  * @param {number} [seconds=0] The second within the minute.
  * @param {number} [milliseconds=0] The milliseconds within the second.
- * @return {date} The resuting Date value.
+ * @return {Date} The resuting Date value.
  */
 function utcdatetime(year, month, date, hours, minutes, seconds, milliseconds) {
   return !arguments.length
@@ -71,14 +71,14 @@ function dayofyear(date) {
   t0.setMonth(0);
   t0.setDate(1);
   const tz = (t1.getTimezoneOffset() - t0.getTimezoneOffset()) * msMinute;
-  return Math.floor(1 + ((t1 - t0) - tz) / msDay);
+  return Math.floor(1 + ((t1.valueOf() - t0.valueOf()) - tz) / msDay);
 }
 
 function utcdayofyear(date) {
   t1.setTime(+date);
   t1.setUTCHours(0, 0, 0, 0);
   const t0 = Date.UTC(t1.getUTCFullYear(), 0, 1);
-  return Math.floor(1 + (t1 - t0) / msDay);
+  return Math.floor(1 + (t1.valueOf() - t0) / msDay);
 }
 
 function week(date, firstday) {
@@ -92,7 +92,7 @@ function week(date, firstday) {
   t0.setDate(1 - (t0.getDay() + 7 - i) % 7);
   t0.setHours(0, 0, 0, 0);
   const tz = (t1.getTimezoneOffset() - t0.getTimezoneOffset()) * msMinute;
-  return Math.floor((1 + (t1 - t0) - tz) / msWeek);
+  return Math.floor((1 + (t1.valueOf() - t0.valueOf()) - tz) / msWeek);
 }
 
 function utcweek(date, firstday) {
@@ -105,7 +105,7 @@ function utcweek(date, firstday) {
   t0.setUTCDate(1);
   t0.setUTCDate(1 - (t0.getUTCDay() + 7 - i) % 7);
   t0.setUTCHours(0, 0, 0, 0);
-  return Math.floor((1 + (t1 - t0)) / msWeek);
+  return Math.floor((1 + (t1.valueOf() - t0.valueOf())) / msWeek);
 }
 
 export default {

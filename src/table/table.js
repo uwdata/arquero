@@ -1,7 +1,10 @@
+
 import Transformable from './transformable';
 import error from '../util/error';
 import isNumber from '../util/is-number';
 import repeat from '../util/repeat';
+// eslint-disable-next-line no-unused-vars
+import Reducer from '../engine/reduce/reducer';
 
 /**
  * Abstract class representing a data table.
@@ -39,6 +42,8 @@ export default class Table extends Transformable {
    */
   create(options) { // eslint-disable-line no-unused-vars
     error('Not implemented');
+    // @ts-ignore
+    return {};
   }
 
   /**
@@ -208,6 +213,7 @@ export default class Table extends Transformable {
    */
   array(name, constructor) { // eslint-disable-line no-unused-vars
     error('Not implemented');
+    return [];
   }
 
   /**
@@ -241,6 +247,8 @@ export default class Table extends Transformable {
    */
   getter(name) { // eslint-disable-line no-unused-vars
     error('Not implemented');
+    // @ts-ignore
+    return {};
   }
 
   /**
@@ -250,6 +258,7 @@ export default class Table extends Transformable {
    */
   objects(options) { // eslint-disable-line no-unused-vars
     error('Not implemented');
+    return [];
   }
 
   /**
@@ -259,6 +268,7 @@ export default class Table extends Transformable {
    */
    object(row) { // eslint-disable-line no-unused-vars
     error('Not implemented');
+    return {};
   }
 
   /**
@@ -267,6 +277,7 @@ export default class Table extends Transformable {
    */
   [Symbol.iterator]() {
     error('Not implemented');
+    return Array.prototype[Symbol.iterator].call([]);
   }
 
   /**
@@ -278,11 +289,15 @@ export default class Table extends Transformable {
    */
   print(options = {}) {
     if (isNumber(options)) {
+      // @ts-ignore
       options = { limit: options };
+    // @ts-ignore
     } else if (options.limit == null) {
+      // @ts-ignore
       options.limit = 10;
     }
 
+    // @ts-ignore
     const obj = this.objects({ ...options, grouped: false });
     const msg = `${this[Symbol.toStringTag]}. Showing ${obj.length} rows.`;
 
@@ -352,7 +367,7 @@ export default class Table extends Transformable {
 
     // if not grouped, return a single partition
     if (!this.isGrouped()) {
-      return [ this.indices(order) ];
+      return [ Array.from(this.indices(order)) ];
     }
 
     // generate partitions
@@ -482,9 +497,10 @@ export default class Table extends Transformable {
    * This method allows the use of custom reducer implementations,
    * for example to produce multiple rows for an aggregate.
    * @param {Reducer} reducer The reducer to apply.
-   * @return {Table} A new table of reducer outputs.
+   * @return {this} A new table of reducer outputs.
    */
   reduce(reducer) {
+    // @ts-ignore
     return this.__reduce(this, reducer);
   }
 }
@@ -531,7 +547,7 @@ export default class Table extends Transformable {
  * @property {string[]} names Column names for each group.
  * @property {RowExpression[]} get Value accessor functions for each group.
  * @property {number[]} rows Indices of an example table row for each group.
- * @property {number[]} keys Per-row group indices, length is total rows of table.
+ * @property {Uint32Array} keys Per-row group indices, length is total rows of table.
  */
 
 /**

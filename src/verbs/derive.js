@@ -2,7 +2,7 @@ import relocate from './relocate';
 import _derive from '../engine/derive';
 import parse from '../expression/parse';
 
-export default function(table, values, options = {}) {
+export default function(table, values, options = { before: null, after: null }) {
   const dt = _derive(table, parse(values, { table }), options);
 
   return options.drop || (options.before == null && options.after == null)

@@ -4,8 +4,8 @@ import uniqueName from '../util/unique-name';
 
 /**
  * Regroup table rows in response to a BitSet filter.
- * @param {GroupBySpec} groups The current groupby specification.
- * @param {BitSet} filter The filter to apply.
+ * @param {import('./column-table').GroupBySpec} groups The current groupby specification.
+ * @param {import('./column-table').BitSet} filter The filter to apply.
  */
 export function regroup(groups, filter) {
   if (!groups || !filter) return groups;
@@ -36,7 +36,7 @@ export function regroup(groups, filter) {
 /**
  * Regroup table rows in response to a re-indexing.
  * This operation may or may not involve filtering of rows.
- * @param {GroupBySpec} groups The current groupby specification.
+ * @param {import('./column-table').GroupBySpec} groups The current groupby specification.
  * @param {Function} scan Function to scan new row indices.
  * @param {boolean} filter Flag indicating if filtering may occur.
  * @param {number} nrows The number of rows in the new table.
@@ -76,10 +76,13 @@ export function reindex(groups, scan, filter, nrows) {
 }
 
 export function nest(table, idx, obj, type) {
+  if (type !== 'map' && type !== true && type !== 'entries' && type !== 'object') {
+    error('groups option must be "map", "entries", or "object".');
+  }
+
   const agg = type === 'map' || type === true ? map_agg
     : type === 'entries' ? entries_agg
-    : type === 'object' ? object_agg
-    : error('groups option must be "map", "entries", or "object".');
+    : object_agg;
 
   const { names } = table.groups();
   const col = uniqueName(table.columnNames(), '_');

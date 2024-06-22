@@ -17,7 +17,7 @@ const dictOps = {
  * @param {object} col The actual table column instance.
  * @param {object} op Parent AST node operating on the column reference.
  */
-export default function(ref, name, index = 0, col, op) {
+export default function(ref, name, index = 0, col = 0, op = 0) {
   ref.type = Column;
   ref.name = name;
   ref.table = index;

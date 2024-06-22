@@ -51,7 +51,7 @@ export default function(text, options = {}) {
   );
 }
 
-function positions({ positions, widths }) {
+function positions({ positions = undefined, widths = undefined }) {
   if (!positions && !widths) {
     error('Fixed width files require a "positions" or "widths" option');
   }

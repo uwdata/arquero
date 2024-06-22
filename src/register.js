@@ -86,6 +86,7 @@ export function addWindowFunction(name, def, options) {
  */
 export function addFunction(name, fn, options = {}) {
   if (arguments.length === 1) {
+    // @ts-ignore
     fn = name;
     name = fn.name;
     if (name === '' || name === 'anonymous') {
@@ -130,6 +131,7 @@ function verifyTableMethod(name, fn, options) {
   // perform name checks
   if (RESERVED[name]) onReserve(name, type);
   if ((name + '')[0] === '_') onIllegal(name, type);
+  // @ts-ignore
   check(name, options, proto, type);
 }
 
@@ -218,11 +220,6 @@ export function addPackage(bundle, options = {}) {
  */
 
 /**
- * Verb parameter definition.
- * @typedef {import('./query/verb').ParamDef} ParamDef
- */
-
-/**
  * Verb definition.
  * @typedef {object} VerbDef
  * @property {Function} method A function implementing the verb.
@@ -233,7 +230,7 @@ export function addPackage(bundle, options = {}) {
  * Verb parameter definition.
  * @typedef {object} ParamDef
  * @property {string} name The verb parameter name.
- * @property {ParamType} type The verb parameter type.
+ * @property {import('./query/verb').ParamType} type The verb parameter type.
  */
 
 /**
