@@ -37,21 +37,21 @@
     "prepublishOnly": "npm test && npm run lint && npm run build"
   },
   "dependencies": {
-    "acorn": "^8.11.2",
-    "apache-arrow": "^14.0.2",
+    "acorn": "^8.11.3",
+    "apache-arrow": "^15.0.2",
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "eslint": "^8.56.0",
+    "eslint": "^8.57.0",
     "esm": "^3.2.25",
     "rimraf": "^5.0.5",
-    "rollup": "^4.9.1",
+    "rollup": "^4.13.0",
     "rollup-plugin-bundle-size": "^1.0.3",
-    "tape": "^5.7.2",
-    "typescript": "^5.3.3"
+    "tape": "^5.7.5",
+    "typescript": "^5.4.3"
   },
   "esm": {
     "force": true,
