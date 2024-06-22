@@ -206,7 +206,7 @@ function spliceMember(node, index, ctx, check, parent) {
     // then compile the code to compute the property name
     walk(property, ctx, visitors, node);
     name = ctx.param(property);
-  } catch (e) {
+  } catch (e) { // eslint-disable-line no-unused-vars
     ctx.error(node, ERROR_MEMBER);
   }
 

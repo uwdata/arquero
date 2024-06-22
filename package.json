@@ -32,26 +32,26 @@
     "postbuild": "tsc",
     "preperf": "npm run build",
     "perf": "TZ=America/Los_Angeles tape 'perf/**/*-perf.js'",
-    "lint": "eslint src test --ext .js",
+    "lint": "eslint src test",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' --require esm",
     "prepublishOnly": "npm test && npm run lint && npm run build"
   },
   "dependencies": {
-    "acorn": "^8.11.3",
+    "acorn": "^8.12.0",
     "apache-arrow": "^15.0.2",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.7.0"
   },
   "devDependencies": {
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "eslint": "^8.57.0",
+    "eslint": "^9.5.0",
     "esm": "^3.2.25",
-    "rimraf": "^5.0.5",
-    "rollup": "^4.13.0",
+    "rimraf": "^5.0.7",
+    "rollup": "^4.18.0",
     "rollup-plugin-bundle-size": "^1.0.3",
-    "tape": "^5.7.5",
-    "typescript": "^5.4.3"
+    "tape": "^5.8.1",
+    "typescript": "^5.5.2"
   },
   "esm": {
     "force": true,

@@ -11,7 +11,7 @@ export function table() {
   // when Apache Arrow has not been imported
   try {
     return Table;
-  } catch (err) {
+  } catch (err) { // eslint-disable-line no-unused-vars
     fail();
   }
 }
@@ -21,7 +21,7 @@ export function fromIPC() {
   // when Apache Arrow has not been imported
   try {
     return tableFromIPC;
-  } catch (err) {
+  } catch (err) { // eslint-disable-line no-unused-vars
     fail();
   }
 }
