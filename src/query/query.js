@@ -146,6 +146,11 @@ export default class Query extends Transformable {
 }
 
 /**
+ * Abstract class representing a data table.
+ * @typedef {import('../table/table').default} Table
+ */
+
+/**
  * Serialized object representation of a query.
  * @typedef {object} QueryObject
  * @property {object[]} verbs An array of verb definitions.

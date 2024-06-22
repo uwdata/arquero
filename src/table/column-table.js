@@ -79,7 +79,7 @@ export default class ColumnTable extends Table {
    * based on the values of the optional configuration argument. If a
    * setting is not specified, it is inherited from the current table.
    * @param {CreateOptions} [options] Creation options for the new table.
-   * @return {ColumnTable} A newly created table.
+   * @return {this} A newly created table.
    */
   create({ data, names, filter, groups, order }) {
     const f = filter !== undefined ? filter : this.mask();
@@ -146,9 +146,9 @@ export default class ColumnTable extends Table {
    * Get an array of values contained in a column. The resulting array
    * respects any table filter or orderby criteria.
    * @param {string} name The column name.
-   * @param {ArrayConstructor|import('./table').TypedArrayConstructor} [constructor=Array]
+   * @param {ArrayConstructor|TypedArrayConstructor} [constructor=Array]
    *  The array constructor for instantiating the output array.
-   * @return {import('./table').DataValue[]|import('./table).TypedArray} The array of column values.
+   * @return {DataValue[]|TypedArray} The array of column values.
    */
   array(name, constructor = Array) {
     const column = this.column(name);
@@ -162,7 +162,7 @@ export default class ColumnTable extends Table {
    * Get the value for the given column and row.
    * @param {string} name The column name.
    * @param {number} [row=0] The row index, defaults to zero if not specified.
-   * @return {import('./table').DataValue} The table value at (column, row).
+   * @return {DataValue} The table value at (column, row).
    */
   get(name, row = 0) {
     const column = this.column(name);
@@ -176,7 +176,7 @@ export default class ColumnTable extends Table {
    * function takes a row index as its single argument and returns the
    * corresponding column value.
    * @param {string} name The column name.
-   * @return {import('./table').ColumnGetter} The column getter function.
+   * @return {ColumnGetter} The column getter function.
    */
   getter(name) {
     const column = this.column(name);
@@ -240,7 +240,7 @@ export default class ColumnTable extends Table {
    * Instead, the backing data itself is filtered and ordered as needed.
    * @param {number[]} [indices] Ordered row indices to materialize.
    *  If unspecified, all rows passing the table filter are used.
-   * @return {ColumnTable} A reified table.
+   * @return {this} A reified table.
    */
   reify(indices) {
     const nrows = indices ? indices.length : this.numRows();
@@ -364,6 +364,36 @@ function objectBuilder(table) {
 
   return b;
 }
+
+/**
+ * Options for derived table creation.
+ * @typedef {import('./table').CreateOptions} CreateOptions
+ */
+
+/**
+ * A typed array constructor.
+ * @typedef {import('./table').TypedArrayConstructor} TypedArrayConstructor
+ */
+
+/**
+ * A typed array instance.
+ * @typedef {import('./table').TypedArray} TypedArray
+ */
+
+/**
+ * Table value.
+ * @typedef {import('./table').DataValue} DataValue
+ */
+
+/**
+ * Column value accessor.
+ * @typedef {import('./table').ColumnGetter} ColumnGetter
+ */
+
+/**
+ * Options for generating row objects.
+ * @typedef {import('./table').ObjectsOptions} ObjectsOptions
+ */
 
 /**
  * A table transformation.

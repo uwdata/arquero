@@ -241,3 +241,8 @@ export const Verbs = {
                 { name: 'tables', type: TableRefList }
               ])
 };
+
+/**
+ * Abstract class representing a data table.
+ * @typedef {import('../table/table').default} Table
+ */

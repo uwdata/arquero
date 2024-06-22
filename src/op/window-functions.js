@@ -10,10 +10,25 @@ import NULL from '../util/null';
  */
 
 /**
+ * A storage object for the state of the window.
+ * @typedef {import('../engine/window/window-state').default} WindowState
+ */
+
+/**
  * Retrieve an output value from a window operator.
  * @callback WindowValue
  * @param {WindowState} state The window state object.
  * @return {*} The output value.
+ */
+
+/**
+ * Initialize an aggregate operator.
+ * @typedef {import('./aggregate-functions').AggregateInit} AggregateInit
+ */
+
+/**
+ * Retrive an output value from an aggregate operator.
+ * @typedef {import('./aggregate-functions').AggregateValue} AggregateValue
  */
 
 /**
@@ -28,6 +43,11 @@ import NULL from '../util/null';
  * @callback WindowCreate
  * @param {...any} params The aggregate operator parameters.
  * @return {WindowOperator} The instantiated window operator.
+ */
+
+/**
+ * Create a new aggregate operator instance.
+ * @typedef {import('./aggregate-functions').AggregateCreate} AggregateCreate
  */
 
 /**
