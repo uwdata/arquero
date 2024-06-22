@@ -453,7 +453,6 @@ tape('parse throws on expressions with comma sequences', t => {
 });
 
 tape('parse throws on dirty tricks', t => {
-  // eslint-disable-next-line no-undef
   t.throws(() => parse({ f: () => globalThis }), 'no globalThis access');
   t.throws(() => parse({ f: () => global }), 'no global access');
   t.throws(() => parse({ f: () => window }), 'no window access');
