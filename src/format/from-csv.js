@@ -1,7 +1,5 @@
-import ColumnTable from '../table/column-table'; // eslint-disable-line no-unused-vars
-
-import fromTextRows from './from-text-rows';
-import parseDelimited from './parse/parse-delimited';
+import fromTextRows from './from-text-rows.js';
+import parseDelimited from './parse/parse-delimited.js';
 
 /**
  * Options for CSV parsing.
@@ -35,7 +33,8 @@ import parseDelimited from './parse/parse-delimited';
  * of input column values, use the parse option.
  * @param {string} text A string in a delimited-value format.
  * @param {CSVParseOptions} options The formatting options.
- * @return {ColumnTable} A new table containing the parsed values.
+ * @return {import('../table/column-table.js').ColumnTable} A new table
+ *  containing the parsed values.
  */
 export default function(text, options = {}) {
   const next = parseDelimited(text, options);

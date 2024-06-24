@@ -1,5 +1,5 @@
-import { formatDate, formatUTCDate } from '../../util/format-date';
-import parseIsoDate from '../../util/parse-iso-date';
+import { formatDate, formatUTCDate } from '../../util/format-date.js';
+import parseIsoDate from '../../util/parse-iso-date.js';
 
 const msMinute = 6e4;
 const msDay = 864e5;

@@ -1,6 +1,6 @@
-import columnSet from '../table/column-set';
-import error from '../util/error';
-import isString from '../util/is-string';
+import columnSet from '../table/column-set.js';
+import error from '../util/error.js';
+import isString from '../util/is-string.js';
 
 export default function(table, columns) {
   const cols = columnSet();

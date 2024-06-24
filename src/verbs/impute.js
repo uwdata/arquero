@@ -1,10 +1,10 @@
-import _impute from '../engine/impute';
-import _rollup from '../engine/rollup';
-import parse from '../expression/parse';
-import parseValues from './util/parse';
-import { array_agg_distinct } from '../op/op-api';
-import error from '../util/error';
-import toString from '../util/to-string';
+import _impute from '../engine/impute.js';
+import _rollup from '../engine/rollup.js';
+import parse from '../expression/parse.js';
+import parseValues from './util/parse.js';
+import { array_agg_distinct } from '../op/op-api.js';
+import error from '../util/error.js';
+import toString from '../util/to-string.js';
 
 export default function(table, values, options = {}) {
   values = parse(values, { table });

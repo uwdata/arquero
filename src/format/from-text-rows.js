@@ -1,8 +1,8 @@
-import ColumnTable from '../table/column-table';
-import identity from '../util/identity';
-import isFunction from '../util/is-function';
-import repeat from '../util/repeat';
-import valueParser from '../util/parse-values';
+import ColumnTable from '../table/column-table.js';
+import identity from '../util/identity.js';
+import isFunction from '../util/is-function.js';
+import repeat from '../util/repeat.js';
+import valueParser from '../util/parse-values.js';
 
 function defaultNames(n, off = 0) {
   return repeat(n - off, i => `col${i + off + 1}`);

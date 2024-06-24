@@ -1,5 +1,5 @@
-import columnSet from '../table/column-set';
-import NULL from '../util/null';
+import columnSet from '../table/column-set.js';
+import NULL from '../util/null.js';
 
 export default function(table, others) {
   const trows = table.numRows();

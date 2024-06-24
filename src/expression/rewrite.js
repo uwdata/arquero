@@ -1,5 +1,5 @@
-import { Column, Dictionary, Literal } from './ast/constants';
-import isFunction from '../util/is-function';
+import { Column, Dictionary, Literal } from './ast/constants.js';
+import isFunction from '../util/is-function.js';
 
 const dictOps = {
   '==': 1,

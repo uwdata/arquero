@@ -1,5 +1,5 @@
-import unroll from './unroll';
-import { aggregateGet } from './reduce/util';
+import unroll from './unroll.js';
+import { aggregateGet } from './reduce/util.js';
 
 export default function(table, { names = [], exprs = [], ops = [] }, options = {}) {
   if (names.length === 0) return table;

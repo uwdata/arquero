@@ -1,6 +1,6 @@
-import { EOF, EOL, NEWLINE, QUOTE, RETURN } from './constants';
-import filter from './text-filter';
-import error from '../../util/error';
+import { EOF, EOL, NEWLINE, QUOTE, RETURN } from './constants.js';
+import filter from './text-filter.js';
+import error from '../../util/error.js';
 
 // Adapted from d3-dsv: https://github.com/d3/d3-dsv/blob/master/src/dsv.js
 // Copyright 2013-2016 Mike Bostock

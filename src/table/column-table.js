@@ -1,19 +1,19 @@
-import { defaultColumnFactory } from './column';
-import columnsFrom from './columns-from';
-import columnSet from './column-set';
-import Table from './table';
-import { nest, regroup, reindex } from './regroup';
-import { rowObjectBuilder } from '../expression/row-object';
-import { default as toArrow, toArrowIPC } from '../format/to-arrow';
-import toCSV from '../format/to-csv';
-import toHTML from '../format/to-html';
-import toJSON from '../format/to-json';
-import toMarkdown from '../format/to-markdown';
-import resolve, { all } from '../helpers/selection';
-import arrayType from '../util/array-type';
-import entries from '../util/entries';
-import error from '../util/error';
-import mapObject from '../util/map-object';
+import { defaultColumnFactory } from './column.js';
+import columnsFrom from './columns-from.js';
+import columnSet from './column-set.js';
+import Table from './table.js';
+import { nest, regroup, reindex } from './regroup.js';
+import { rowObjectBuilder } from '../expression/row-object.js';
+import { default as toArrow, toArrowIPC } from '../format/to-arrow.js';
+import toCSV from '../format/to-csv.js';
+import toHTML from '../format/to-html.js';
+import toJSON from '../format/to-json.js';
+import toMarkdown from '../format/to-markdown.js';
+import resolve, { all } from '../helpers/selection.js';
+import arrayType from '../util/array-type.js';
+import entries from '../util/entries.js';
+import error from '../util/error.js';
+import mapObject from '../util/map-object.js';
 
 /**
  * Class representing a table backed by a named set of columns.
@@ -300,7 +300,7 @@ export default class ColumnTable extends Table {
 
   /**
    * Format this table as binary data in the Apache Arrow IPC format.
-   * @param {ArrowFormatOptions} [options] The formatting options. Set {format: 'stream'} 
+   * @param {ArrowFormatOptions} [options] The formatting options. Set {format: 'stream'}
    *        or {format:"file"} for specific IPC format
    * @return {Uint8Array} A new Uint8Array of Arrow-encoded binary data.
    */

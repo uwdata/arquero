@@ -1,8 +1,6 @@
-import ColumnTable from '../table/column-table'; // eslint-disable-line no-unused-vars
-
-import { columns, scan } from './util';
-import { formatUTCDate } from '../util/format-date';
-import isDate from '../util/is-date';
+import { columns, scan } from './util.js';
+import { formatUTCDate } from '../util/format-date.js';
+import isDate from '../util/is-date.js';
 
 /**
  * Options for CSV formatting.
@@ -10,7 +8,7 @@ import isDate from '../util/is-date';
  * @property {string} [delimiter=','] The delimiter between values.
  * @property {number} [limit=Infinity] The maximum number of rows to print.
  * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
- * @property {import('./util').ColumnSelectOptions} [columns] Ordered list
+ * @property {import('./util.js').ColumnSelectOptions} [columns] Ordered list
  *  of column names to include. If function-valued, the function should
  *  accept a table as input and return an array of column name strings.
  * @property {Object.<string, (value: any) => any>} [format] Object of column
@@ -23,7 +21,8 @@ import isDate from '../util/is-date';
  * Format a table as a comma-separated values (CSV) string. Other
  * delimiters, such as tabs or pipes ('|'), can be specified using
  * the options argument.
- * @param {ColumnTable} table The table to format.
+ * @param {import('../table/column-table.js').ColumnTable} table The table
+ *  to format.
  * @param {CSVFormatOptions} options The formatting options.
  * @return {string} A delimited-value format string.
  */

@@ -1,6 +1,6 @@
-import isDate from '../../util/is-date';
-import isRegExp from '../../util/is-regexp';
-import isObject from '../../util/is-object';
+import isDate from '../../util/is-date.js';
+import isRegExp from '../../util/is-regexp.js';
+import isObject from '../../util/is-object.js';
 
 /**
  * Compare two values for equality, using join semantics in which null

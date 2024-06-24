@@ -1,6 +1,6 @@
-import relocate from './relocate';
-import _derive from '../engine/derive';
-import parse from '../expression/parse';
+import relocate from './relocate.js';
+import _derive from '../engine/derive.js';
+import parse from '../expression/parse.js';
 
 export default function(table, values, options = {}) {
   const dt = _derive(table, parse(values, { table }), options);

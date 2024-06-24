@@ -1,5 +1,5 @@
-import error from '../util/error';
-import toString from '../util/to-string';
+import error from '../util/error.js';
+import toString from '../util/to-string.js';
 
 const visit = (node, opt) => {
   const f = visitors[node.type];

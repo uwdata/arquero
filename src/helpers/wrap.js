@@ -1,4 +1,4 @@
-import isFunction from '../util/is-function';
+import isFunction from '../util/is-function.js';
 
 /**
  * Annotate an expression in an object wrapper.

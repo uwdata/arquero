@@ -1,55 +1,64 @@
-import tape from 'tape';
-import { load, loadArrow, loadCSV, loadJSON } from '../../src/format/load-file';
+import assert from 'node:assert';
+import { load, loadArrow, loadCSV, loadJSON } from '../../src/format/load-file.js';
 
-tape('load loads from a URL', async t => {
-  const url = 'https://vega.github.io/vega-datasets/data/airports.csv';
-  const dt = await load(url);
-  t.deepEqual([dt.numRows(), dt.numCols()], [3376, 7], 'load table');
-  t.end();
-});
+describe('load file url', () => {
+  it('loads from a URL', async () => {
+    const url = 'https://vega.github.io/vega-datasets/data/airports.csv';
+    const dt = await load(url);
+    assert.deepEqual([dt.numRows(), dt.numCols()], [3376, 7], 'load table');
+  });
 
-tape('loadCSV loads CSV files from a URL', async t => {
-  const url = 'https://vega.github.io/vega-datasets/data/airports.csv';
-  const dt = await loadCSV(url);
-  t.deepEqual([dt.numRows(), dt.numCols()], [3376, 7], 'load csv table');
-  t.end();
-});
+  it('loadCSV loads CSV files from a URL', async () => {
+    const url = 'https://vega.github.io/vega-datasets/data/airports.csv';
+    const dt = await loadCSV(url);
+    assert.deepEqual([dt.numRows(), dt.numCols()], [3376, 7], 'load csv table');
+  });
 
-tape('loadJSON loads JSON files from a URL', async t => {
-  const url = 'https://vega.github.io/vega-datasets/data/budgets.json';
-  const rt = await loadJSON(url);
-  t.deepEqual([rt.numRows(), rt.numCols()], [230, 3], 'load json rows');
+  it('loadJSON loads JSON files from a URL', async () => {
+    const url = 'https://vega.github.io/vega-datasets/data/budgets.json';
+    const rt = await loadJSON(url);
+    assert.deepEqual([rt.numRows(), rt.numCols()], [230, 3], 'load json rows');
+  });
 
-  t.end();
-});
+  it('loadArrow loads Arrow files from a URL', async () => {
+    const url = 'https://vega.github.io/vega-datasets/data/flights-200k.arrow';
+    const dt = await loadArrow(url);
+    assert.deepEqual([dt.numRows(), dt.numCols()], [231083, 3], 'load arrow table');
+  });
 
-tape('loadArrow loads Arrow files from a URL', async t => {
-  const url = 'https://vega.github.io/vega-datasets/data/flights-200k.arrow';
-  const dt = await loadArrow(url);
-  t.deepEqual([dt.numRows(), dt.numCols()], [231083, 3], 'load arrow table');
-  t.end();
-});
+  it('fails on non-existent path', async () => {
+    try {
+      await load('https://foo.bar.baz/does.not.exist');
+      assert.fail('did not fail');
+    } catch (err) { // eslint-disable-line no-unused-vars
+      assert.ok(true, 'failed appropriately');
+    }
+  });
 
-tape('load fails on non-existent path', t => {
-  load('https://foo.bar.baz/does.not.exist')
-    .then(() => { t.fail('did not fail'); t.end(); })
-    .catch(() => { t.pass('failed appropriately'); t.end(); });
-});
+  it('fails on invalid protocol', async () => {
+    try {
+      await load('htsp://vega.github.io/vega-datasets/data/airports.csv');
+      assert.fail('did not fail');
+    } catch (err) { // eslint-disable-line no-unused-vars
+      assert.ok(true, 'failed appropriately');
+    }
+  });
 
-tape('load fails on invalid protocol', t => {
-  load('htsp://vega.github.io/vega-datasets/data/airports.csv')
-    .then(() => { t.fail('did not fail'); t.end(); })
-    .catch(() => { t.pass('failed appropriately'); t.end(); });
-});
+  it('loadJSON fails on non-JSON file URL', async () => {
+    try {
+      await loadJSON('https://vega.github.io/vega-datasets/data/airports.csv');
+      assert.fail('did not fail');
+    } catch (err) { // eslint-disable-line no-unused-vars
+      assert.ok(true, 'failed appropriately');
+    }
+  });
 
-tape('loadJSON fails on non-JSON file URL', t => {
-  loadJSON('https://vega.github.io/vega-datasets/data/airports.csv')
-    .then(() => { t.fail('did not fail'); t.end(); })
-    .catch(() => { t.pass('failed appropriately'); t.end(); });
-});
-
-tape('loadArrow fails on non-Arrow file URL', t => {
-  loadArrow('https://vega.github.io/vega-datasets/data/airports.csv')
-    .then(() => { t.fail('did not fail'); t.end(); })
-    .catch(() => { t.pass('failed appropriately'); t.end(); });
+  it('loadArrow fails on non-Arrow file URL', async () => {
+    try {
+      await loadArrow('https://vega.github.io/vega-datasets/data/airports.csv');
+      assert.fail('did not fail');
+    } catch (err) { // eslint-disable-line no-unused-vars
+      assert.ok(true, 'failed appropriately');
+    }
+  });
 });

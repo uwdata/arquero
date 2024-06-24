@@ -1,4 +1,4 @@
-import isMapOrSet from './is-map-or-set';
+import isMapOrSet from './is-map-or-set.js';
 
 export default function(names, name) {
   names = isMapOrSet(names) ? names : new Set(names);

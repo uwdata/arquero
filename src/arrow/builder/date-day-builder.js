@@ -1,4 +1,4 @@
-import { array } from './util';
+import { array } from './util.js';
 
 export default function(type, length) {
   const data = array(type.ArrayType, length);

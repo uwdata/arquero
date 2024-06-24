@@ -1,14 +1,14 @@
-import error from '../util/error';
-import isArray from '../util/is-array';
-import isFunction from '../util/is-function';
-import isNumber from '../util/is-number';
-import isObject from '../util/is-object';
-import isString from '../util/is-string';
-import toArray from '../util/to-array';
-import parse from '../expression/parse';
-import { isSelection, toObject } from './util';
+import error from '../util/error.js';
+import isArray from '../util/is-array.js';
+import isFunction from '../util/is-function.js';
+import isNumber from '../util/is-number.js';
+import isObject from '../util/is-object.js';
+import isString from '../util/is-string.js';
+import toArray from '../util/to-array.js';
+import parse from '../expression/parse.js';
+import { isSelection, toObject } from './util.js';
 
-import { Column } from '../expression/ast/constants';
+import { Column } from '../expression/ast/constants.js';
 import {
   Descending,
   Expr,
@@ -24,7 +24,7 @@ import {
   TableRef,
   TableRefList,
   Window
-} from './constants';
+} from './constants.js';
 
 const Methods = {
   [Expr]: astExpr,

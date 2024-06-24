@@ -1,4 +1,4 @@
-import isDate from '../util/is-date';
+import isDate from '../util/is-date.js';
 
 function isExactDateUTC(d) {
   return d.getUTCHours() === 0

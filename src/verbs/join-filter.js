@@ -1,8 +1,8 @@
-import _join_filter from '../engine/join-filter';
-import { inferKeys, keyPredicate } from './util/join-keys';
-import parse from '../expression/parse';
-import isArray from '../util/is-array';
-import toArray from '../util/to-array';
+import _join_filter from '../engine/join-filter.js';
+import { inferKeys, keyPredicate } from './util/join-keys.js';
+import parse from '../expression/parse.js';
+import isArray from '../util/is-array.js';
+import toArray from '../util/to-array.js';
 
 export default function(tableL, tableR, on, options) {
   on = inferKeys(tableL, tableR, on);

@@ -1,5 +1,5 @@
 import { Table, tableFromIPC } from 'apache-arrow';
-import error from '../util/error';
+import error from '../util/error.js';
 
 const fail = () => error(
   'Apache Arrow not imported, ' +

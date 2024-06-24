@@ -1,8 +1,8 @@
-import { indexLookup } from './join/lookup';
-import columnSet from '../table/column-set';
-import concat from '../util/concat';
-import isArray from '../util/is-array';
-import unroll from '../util/unroll';
+import { indexLookup } from './join/lookup.js';
+import columnSet from '../table/column-set.js';
+import concat from '../util/concat.js';
+import isArray from '../util/is-array.js';
+import unroll from '../util/unroll.js';
 
 function emitter(columns, getters) {
   const args = ['i', 'a', 'j', 'b'];

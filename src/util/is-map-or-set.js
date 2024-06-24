@@ -1,5 +1,5 @@
-import isMap from './is-map';
-import isSet from './is-set';
+import isMap from './is-map.js';
+import isSet from './is-set.js';
 
 export default function(value) {
   return isMap(value) || isSet(value);

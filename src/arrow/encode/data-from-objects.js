@@ -1,6 +1,6 @@
-import { dataFromScan } from './data-from';
-import { profile } from './profiler';
-import resolveType from '../builder/resolve-type';
+import { dataFromScan } from './data-from.js';
+import { profile } from './profiler.js';
+import resolveType from '../builder/resolve-type.js';
 
 export default function(data, name, nrows, scan, type, nullable = true) {
   type = resolveType(type);

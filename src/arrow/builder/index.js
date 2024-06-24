@@ -1,11 +1,11 @@
 import { Type } from 'apache-arrow';
-import arrayBuilder from './array-builder';
-import boolBuilder from './bool-builder';
-import dateDayBuilder from './date-day-builder';
-import dateMillisBuilder from './date-millis-builder';
-import defaultBuilder from './default-builder';
-import dictionaryBuilder from './dictionary-builder';
-import validBuilder from './valid-builder';
+import arrayBuilder from './array-builder.js';
+import boolBuilder from './bool-builder.js';
+import dateDayBuilder from './date-day-builder.js';
+import dateMillisBuilder from './date-millis-builder.js';
+import defaultBuilder from './default-builder.js';
+import dictionaryBuilder from './dictionary-builder.js';
+import validBuilder from './valid-builder.js';
 
 export default function(type, nrows, nullable = true) {
   let method;

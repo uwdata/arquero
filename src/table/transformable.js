@@ -1,5 +1,5 @@
-import toArray from '../util/to-array';
-import slice from '../helpers/slice';
+import toArray from '../util/to-array.js';
+import slice from '../helpers/slice.js';
 
 /**
  * Abstract base class for transforming data.

@@ -1,5 +1,5 @@
-import wrap from './wrap';
-import error from '../util/error';
+import wrap from './wrap.js';
+import error from '../util/error.js';
 
 /**
  * Escape a function or value to prevent it from being parsed and recompiled.

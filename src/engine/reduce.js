@@ -1,5 +1,5 @@
-import { reduceFlat, reduceGroups } from './reduce/util';
-import columnSet from '../table/column-set';
+import { reduceFlat, reduceGroups } from './reduce/util.js';
+import columnSet from '../table/column-set.js';
 
 export default function(table, reducer) {
   const cols = columnSet();

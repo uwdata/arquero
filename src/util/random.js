@@ -1,4 +1,4 @@
-import isValid from './is-valid';
+import isValid from './is-valid.js';
 
 let source = Math.random;
 

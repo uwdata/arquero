@@ -1,4 +1,4 @@
-import { Verb as VerbType } from './constants';
+import { Verb as VerbType } from './constants.js';
 
 import {
   fromObject,
@@ -7,7 +7,7 @@ import {
   joinValues,
   orderbyKeys,
   toObject
-} from './util';
+} from './util.js';
 
 import {
   Expr,
@@ -21,9 +21,9 @@ import {
   SelectionList,
   TableRef,
   TableRefList
-} from './constants';
+} from './constants.js';
 
-import toAST from './to-ast';
+import toAST from './to-ast.js';
 
 /**
  * Model an Arquero verb as a serializable object.

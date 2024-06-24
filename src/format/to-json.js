@@ -1,9 +1,7 @@
-import ColumnTable from '../table/column-table'; // eslint-disable-line no-unused-vars
-
-import { columns } from './util';
-import { formatUTCDate } from '../util/format-date';
-import defaultTrue from '../util/default-true';
-import isDate from '../util/is-date';
+import { columns } from './util.js';
+import { formatUTCDate } from '../util/format-date.js';
+import defaultTrue from '../util/default-true.js';
+import isDate from '../util/is-date.js';
 
 /**
  * Options for JSON formatting.
@@ -14,7 +12,7 @@ import isDate from '../util/is-date';
  * @property {boolean} [schema=true] Flag indicating if table schema metadata
  *  should be included in the JSON output. If false, only the data payload
  *  is included.
- * @property {import('./util').ColumnSelectOptions} [columns] Ordered list
+ * @property {import('./util.js').ColumnSelectOptions} [columns] Ordered list
  *  of column names to include. If function-valued, the function should
  *  accept a table as input and return an array of column name strings.
  * @property {Object.<string, (value: any) => any>} [format] Object of column
@@ -29,7 +27,8 @@ const defaultFormatter = value => isDate(value)
 
 /**
  * Format a table as a JavaScript Object Notation (JSON) string.
- * @param {ColumnTable} table The table to format.
+ * @param {import('../table/column-table.js').ColumnTable} table The
+ *  table to format.
  * @param {JSONFormatOptions} options The formatting options.
  * @return {string} A JSON string.
  */

@@ -1,7 +1,7 @@
-import { formatDate, formatUTCDate } from '../util/format-date';
-import isDate from '../util/is-date';
-import isFunction from '../util/is-function';
-import isTypedArray from '../util/is-typed-array';
+import { formatDate, formatUTCDate } from '../util/format-date.js';
+import isDate from '../util/is-date.js';
+import isFunction from '../util/is-function.js';
+import isTypedArray from '../util/is-typed-array.js';
 
 /**
  * Column format object.

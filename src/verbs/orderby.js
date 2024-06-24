@@ -1,11 +1,11 @@
-import _orderby from '../engine/orderby';
-import parse from '../expression/compare';
-import field from '../helpers/field';
-import error from '../util/error';
-import isFunction from '../util/is-function';
-import isObject from '../util/is-object';
-import isNumber from '../util/is-number';
-import isString from '../util/is-string';
+import _orderby from '../engine/orderby.js';
+import parse from '../expression/compare.js';
+import field from '../helpers/field.js';
+import error from '../util/error.js';
+import isFunction from '../util/is-function.js';
+import isObject from '../util/is-object.js';
+import isNumber from '../util/is-number.js';
+import isString from '../util/is-string.js';
 
 export default function(table, values) {
   return _orderby(table, parseValues(table, values));

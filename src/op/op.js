@@ -1,5 +1,5 @@
-import toArray from '../util/to-array';
-import toString from '../util/to-string';
+import toArray from '../util/to-array.js';
+import toString from '../util/to-string.js';
 
 export default function(name, fields = [], params = []) {
   return new Op(name, toArray(fields), toArray(params));

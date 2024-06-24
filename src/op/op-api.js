@@ -1,5 +1,5 @@
-import functions from './functions';
-import op from './op';
+import functions from './functions/index.js';
+import op from './op.js';
 
 export const any = (field) => op('any', field);
 export const count = () => op('count');

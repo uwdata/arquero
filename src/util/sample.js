@@ -1,6 +1,6 @@
-import ascending from './ascending';
-import bisector from './bisector';
-import { random } from './random';
+import ascending from './ascending.js';
+import bisector from './bisector.js';
+import { random } from './random.js';
 
 export default function(buffer, replace, index, weight) {
   return (

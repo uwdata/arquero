@@ -1,4 +1,4 @@
-import walk from './walk';
+import walk from './walk.js';
 
 function strip(node) {
   delete node.start;

@@ -1,8 +1,8 @@
-import { aggregateGet } from './reduce/util';
-import columnSet from '../table/column-set';
-import isValid from '../util/is-valid';
-import keyFunction from '../util/key-function';
-import unroll from '../util/unroll';
+import { aggregateGet } from './reduce/util.js';
+import columnSet from '../table/column-set.js';
+import isValid from '../util/is-valid.js';
+import keyFunction from '../util/key-function.js';
+import unroll from '../util/unroll.js';
 
 export default function(table, values, keys, arrays) {
   const write = keys && keys.length;

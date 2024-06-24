@@ -1,6 +1,6 @@
-import isBigInt from './is-bigint';
-import NULL from './null';
-import toNumeric from './to-numeric';
+import isBigInt from './is-bigint.js';
+import NULL from './null.js';
+import toNumeric from './to-numeric.js';
 
 export default function quantile(values, p) {
   const n = values.length;

@@ -1,4 +1,4 @@
-import isBigInt from './is-bigint';
+import isBigInt from './is-bigint.js';
 
 export default function(v) {
   return v === undefined ? v + ''

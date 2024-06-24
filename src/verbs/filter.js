@@ -1,6 +1,6 @@
-import _derive from '../engine/derive';
-import _filter from '../engine/filter';
-import parse from '../expression/parse';
+import _derive from '../engine/derive.js';
+import _filter from '../engine/filter.js';
+import parse from '../expression/parse.js';
 
 export default function(table, criteria) {
   const test = parse({ p: criteria }, { table });

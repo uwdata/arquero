@@ -1,4 +1,4 @@
-import { array } from './util';
+import { array } from './util.js';
 
 export default function(builder, length) {
   const valid = array(Uint8Array, length / 8);

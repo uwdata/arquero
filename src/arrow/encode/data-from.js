@@ -1,5 +1,5 @@
-import builder from '../builder';
-import { arrowData, ceil64Bytes } from '../builder/util';
+import builder from '../builder/index.js';
+import { arrowData, ceil64Bytes } from '../builder/util.js';
 
 export function dataFromArray(array, type) {
   const length = array.length;

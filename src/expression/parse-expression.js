@@ -10,22 +10,22 @@ import {
   Op,
   Parameter,
   Property
-} from './ast/constants';
-import { is, isFunctionExpression } from './ast/util';
-import walk from './ast/walk';
-import constants from './constants';
-import rewrite from './rewrite';
-import { ROW_OBJECT, rowObjectExpression } from './row-object';
+} from './ast/constants.js';
+import { is, isFunctionExpression } from './ast/util.js';
+import walk from './ast/walk.js';
+import constants from './constants.js';
+import rewrite from './rewrite.js';
+import { ROW_OBJECT, rowObjectExpression } from './row-object.js';
 import {
   getAggregate, getWindow,
   hasAggregate, hasFunction, hasWindow
-} from '../op';
+} from '../op/index.js';
 
-import error from '../util/error';
-import has from '../util/has';
-import isArray from '../util/is-array';
-import isNumber from '../util/is-number';
-import toString from '../util/to-string';
+import error from '../util/error.js';
+import has from '../util/has.js';
+import isArray from '../util/is-array.js';
+import isNumber from '../util/is-number.js';
+import toString from '../util/to-string.js';
 
 const PARSER_OPT = { ecmaVersion: 11 };
 const DEFAULT_PARAM_ID = '$';

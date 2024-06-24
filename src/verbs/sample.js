@@ -1,9 +1,9 @@
-import _derive from '../engine/derive';
-import _rollup from '../engine/rollup';
-import _sample from '../engine/sample';
-import parse from '../expression/parse';
-import isNumber from '../util/is-number';
-import isString from '../util/is-string';
+import _derive from '../engine/derive.js';
+import _rollup from '../engine/rollup.js';
+import _sample from '../engine/sample.js';
+import parse from '../expression/parse.js';
+import isNumber from '../util/is-number.js';
+import isString from '../util/is-string.js';
 
 export default function(table, size, options = {}) {
   return _sample(

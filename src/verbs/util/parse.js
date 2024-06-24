@@ -1,13 +1,13 @@
-import parse from '../../expression/parse';
-import field from '../../helpers/field';
-import resolve from '../../helpers/selection';
-import assign from '../../util/assign';
-import error from '../../util/error';
-import isNumber from '../../util/is-number';
-import isObject from '../../util/is-object';
-import isString from '../../util/is-string';
-import isFunction from '../../util/is-function';
-import toArray from '../../util/to-array';
+import parse from '../../expression/parse.js';
+import field from '../../helpers/field.js';
+import resolve from '../../helpers/selection.js';
+import assign from '../../util/assign.js';
+import error from '../../util/error.js';
+import isNumber from '../../util/is-number.js';
+import isObject from '../../util/is-object.js';
+import isString from '../../util/is-string.js';
+import isFunction from '../../util/is-function.js';
+import toArray from '../../util/to-array.js';
 
 export default function(name, table, params, options = { window: false }) {
   const exprs = new Map();

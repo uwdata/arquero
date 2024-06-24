@@ -6,10 +6,11 @@ export default [
   js.configs.recommended,
   {
     languageOptions: {
-      ecmaVersion: 2020,
-      sourceType: 'module',
+      ecmaVersion: 2022,
+      sourceType: "module",
       globals: {
         ...globals.browser,
+        ...globals.mocha,
         ...globals.node,
         ...globals.es6,
         globalThis: false

@@ -1,4 +1,4 @@
-import isArrayType from '../../util/is-array-type';
+import isArrayType from '../../util/is-array-type.js';
 
 export function scanArray(data, limit, offset) {
   const n = Math.min(data.length, offset + limit);

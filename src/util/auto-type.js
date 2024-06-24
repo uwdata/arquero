@@ -1,4 +1,4 @@
-import parseIsoDate from './parse-iso-date';
+import parseIsoDate from './parse-iso-date.js';
 
 export default function(input) {
   const value = input.trim();
