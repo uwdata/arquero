@@ -1,109 +1,97 @@
-import tape from 'tape';
-import tableEqual from '../table-equal';
-import { escape, op, query, table } from '../../src';
+import assert from 'node:assert';
+import tableEqual from '../table-equal.js';
+import { escape, op, query, table } from '../../src/index.js';
 
-tape('derive supports escaped functions', t => {
-  const dt = table({ a: [1, 2], b: [3, 4] });
-  const sq = x => x * x;
-  const off = 1;
+describe('escape', () => {
+  it('derive supports escaped functions', () => {
+    const dt = table({ a: [1, 2], b: [3, 4] });
+    const sq = x => x * x;
+    const off = 1;
 
-  tableEqual(t,
-    dt.derive({ z: escape(d => sq(d.a) + off) }),
-    { a: [1, 2], b: [3, 4], z: [2, 5] },
-    'derive data with escape'
-  );
+    tableEqual(
+      dt.derive({ z: escape(d => sq(d.a) + off) }),
+      { a: [1, 2], b: [3, 4], z: [2, 5] },
+      'derive data with escape'
+    );
 
-  tableEqual(t,
-    dt.derive({ z: escape(d => d.a * -d.b + off) }),
-    { a: [1, 2], b: [3, 4], z: [-2, -7] },
-    'derive data with escape, two columns'
-  );
+    tableEqual(
+      dt.derive({ z: escape(d => d.a * -d.b + off) }),
+      { a: [1, 2], b: [3, 4], z: [-2, -7] },
+      'derive data with escape, two columns'
+    );
 
-  tableEqual(t,
-    dt.params({ foo: 2 })
-      .derive({ z: escape((d, $) => sq(d.a) + off + op.abs($.foo)) }),
-    { a: [1, 2], b: [3, 4], z: [4, 7] },
-    'derive data with escape, op, and params'
-  );
+    tableEqual(
+      dt.params({ foo: 2 })
+        .derive({ z: escape((d, $) => sq(d.a) + off + op.abs($.foo)) }),
+      { a: [1, 2], b: [3, 4], z: [4, 7] },
+      'derive data with escape, op, and params'
+    );
 
-  tableEqual(t,
-    dt.derive({ z: escape(2) }),
-    { a: [1, 2], b: [3, 4], z: [2, 2] },
-    'derive data with escaped literal value'
-  );
+    tableEqual(
+      dt.derive({ z: escape(2) }),
+      { a: [1, 2], b: [3, 4], z: [2, 2] },
+      'derive data with escaped literal value'
+    );
+  });
 
-  t.end();
-});
+  it('filter supports escaped functions', () => {
+    const thresh = 5;
+    tableEqual(
+      table({ a: [1, 4, 9], b: [1, 2, 3] }).filter(escape(d => d.a < thresh)),
+      { a: [1, 4], b: [1, 2] },
+      'filter data with escape'
+    );
+  });
 
-tape('filter supports escaped functions', t => {
-  const thresh = 5;
-  tableEqual(t,
-    table({ a: [1, 4, 9], b: [1, 2, 3] }).filter(escape(d => d.a < thresh)),
-    { a: [1, 4], b: [1, 2] },
-    'filter data with escape'
-  );
+  it('spread supports escaped functions', () => {
+    const pair = d => [d.v, d.v * d.v + 1];
 
-  t.end();
-});
+    tableEqual(
+      table({ v: [3, 2, 1] }).spread({ v: escape(pair) }, { as: ['a', 'b'] }),
+      { a: [3, 2, 1], b: [10, 5, 2] },
+      'spread data with escape'
+    );
+  });
 
-tape('spread supports escaped functions', t => {
-  const pair = d => [d.v, d.v * d.v + 1];
+  it('groupby supports escaped functions', () => {
+    tableEqual(
+      table({ v: [3, 2, 1] }).groupby({ g: escape(d => -d.v) }).count(),
+      { g: [-3, -2, -1], count: [1, 1, 1] },
+      'groupby data with escape'
+    );
+  });
 
-  tableEqual(t,
-    table({ v: [3, 2, 1] }).spread({ v: escape(pair) }, { as: ['a', 'b'] }),
-    { a: [3, 2, 1], b: [10, 5, 2] },
-    'spread data with escape'
-  );
+  it('orderby supports escaped functions', () => {
+    tableEqual(
+      table({ v: [1, 2, 3] }).orderby(escape(d => -d.v)),
+      { v: [3, 2, 1] },
+      'orderby data with escape'
+    );
+  });
 
-  t.end();
-});
+  it('aggregate verbs throw for escaped functions', () => {
+    assert.throws(
+      () => table({ v: [1, 2, 3] }).rollup({ v: escape(d => -d.v) }),
+      'rollup throws on escaped function'
+    );
 
-tape('groupby supports escaped functions', t => {
-  tableEqual(t,
-    table({ v: [3, 2, 1] }).groupby({ g: escape(d => -d.v) }).count(),
-    { g: [-3, -2, -1], count: [1, 1, 1] },
-    'groupby data with escape'
-  );
+    assert.throws(
+      () => table({ g: [1, 2], a: [3, 4] }).pivot('g', { v: escape(d => -d.a) }),
+      'pivot throws on escaped function'
+    );
+  });
 
-  t.end();
-});
+  it('query serialization throws for escaped functions', () => {
+    const sq = d => d.a * d.a;
 
-tape('orderby supports escaped functions', t => {
-  tableEqual(t,
-    table({ v: [1, 2, 3] }).orderby(escape(d => -d.v)),
-    { v: [3, 2, 1] },
-    'orderby data with escape'
-  );
+    assert.throws(
+      () => query().derive({ z: escape(sq) }).toObject(),
+      'query toObject throws on escaped function'
+    );
 
-  t.end();
-});
-
-tape('aggregate verbs throw for escaped functions', t => {
-  t.throws(
-    () => table({ v: [1, 2, 3] }).rollup({ v: escape(d => -d.v) }),
-    'rollup throws on escaped function'
-  );
-
-  t.throws(
-    () => table({ g: [1, 2], a: [3, 4] }).pivot('g', { v: escape(d => -d.a) }),
-    'pivot throws on escaped function'
-  );
-
-  t.end();
-});
-
-tape('query serialization throws for escaped functions', t => {
-  const sq = d => d.a * d.a;
-
-  t.throws(
-    () => query().derive({ z: escape(sq) }).toObject(),
-    'query toObject throws on escaped function'
-  );
-
-  t.throws(
-    () => query().derive({ z: escape(sq) }).toAST(),
-    'query toAST throws on escape function'
-  );
-
-  t.end();
+    assert.throws(
+      () => query().derive({ z: escape(sq) }).toAST(),
+      'query toAST throws on escape function'
+    );
+  });
 });

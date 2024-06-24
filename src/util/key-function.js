@@ -1,7 +1,7 @@
-import isArray from './is-array';
-import isDate from './is-date';
-import isRegExp from './is-regexp';
-import isTypedArray from './is-typed-array';
+import isArray from './is-array.js';
+import isDate from './is-date.js';
+import isRegExp from './is-regexp.js';
+import isTypedArray from './is-typed-array.js';
 
 export function key(value) {
   const type = typeof value;

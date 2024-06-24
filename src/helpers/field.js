@@ -1,4 +1,4 @@
-import wrap from './wrap';
+import wrap from './wrap.js';
 
 /**
  * Annotate an expression to indicate it is a string field reference.

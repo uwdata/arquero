@@ -1,5 +1,5 @@
-import isArray from './is-array';
-import isMap from './is-map';
+import isArray from './is-array.js';
+import isMap from './is-map.js';
 
 export default function(value) {
   return isArray(value) ? value

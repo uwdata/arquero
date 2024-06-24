@@ -1,7 +1,7 @@
-import error from '../util/error';
-import isValid from '../util/is-valid';
-import noop from '../util/no-op';
-import NULL from '../util/null';
+import error from '../util/error.js';
+import isValid from '../util/is-valid.js';
+import noop from '../util/no-op.js';
+import NULL from '../util/null.js';
 
 /**
  * Initialize a window operator.

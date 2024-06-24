@@ -1,12 +1,12 @@
-import _join from '../engine/join';
-import { inferKeys, keyPredicate } from './util/join-keys';
-import parseValue from './util/parse';
-import parse from '../expression/parse';
-import { all, not } from '../helpers/selection';
-import isArray from '../util/is-array';
-import isString from '../util/is-string';
-import toArray from '../util/to-array';
-import toString from '../util/to-string';
+import _join from '../engine/join.js';
+import { inferKeys, keyPredicate } from './util/join-keys.js';
+import parseValue from './util/parse.js';
+import parse from '../expression/parse.js';
+import { all, not } from '../helpers/selection.js';
+import isArray from '../util/is-array.js';
+import isString from '../util/is-string.js';
+import toArray from '../util/to-array.js';
+import toString from '../util/to-string.js';
 
 const OPT_L = { aggregate: false, window: false };
 const OPT_R = { ...OPT_L, index: 1 };

@@ -1,11 +1,13 @@
-import ColumnTable from '../table/column-table'; // eslint-disable-line no-unused-vars
+import fromArrow from './from-arrow.js';
+import fromCSV from './from-csv.js';
+import fromFixed from './from-fixed.js';
+import fromJSON from './from-json.js';
+import { from } from '../table/index.js';
+import isArray from '../util/is-array.js';
 
-import fromArrow from './from-arrow';
-import fromCSV from './from-csv';
-import fromFixed from './from-fixed';
-import fromJSON from './from-json';
-import { from } from '../table';
-import isArray from '../util/is-array';
+/**
+ * @typedef {import('../table/column-table.js').ColumnTable} ColumnTable
+ */
 
 /**
  * Options for file loading.

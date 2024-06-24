@@ -1,6 +1,5 @@
-import tape from 'tape';
-import tableEqual from '../table-equal';
-import { not, table } from '../../src';
+import tableEqual from '../table-equal.js';
+import { not, table } from '../../src/index.js';
 
 function data() {
   return {
@@ -18,20 +17,19 @@ function output(key = 'key', value = 'value') {
   };
 }
 
-tape('fold generates key-value pair columns', t => {
-  const ut = table(data()).fold(['x', 'y']);
-  tableEqual(t, ut, output(), 'fold data');
-  t.end();
-});
+describe('fold', () => {
+  it('generates key-value pair columns', () => {
+    const ut = table(data()).fold(['x', 'y']);
+    tableEqual(ut, output(), 'fold data');
+  });
 
-tape('fold accepts select statements', t => {
-  const ut = table(data()).fold(not('k'));
-  tableEqual(t, ut, output(), 'fold selected data');
-  t.end();
-});
+  it('accepts select statements', () => {
+    const ut = table(data()).fold(not('k'));
+    tableEqual(ut, output(), 'fold selected data');
+  });
 
-tape('fold accepts named output columns', t => {
-  const ut = table(data()).fold(['x', 'y'], { as: ['u', 'v'] });
-  tableEqual(t, ut, output('u', 'v'), 'fold as data');
-  t.end();
+  it('accepts named output columns', () => {
+    const ut = table(data()).fold(['x', 'y'], { as: ['u', 'v'] });
+    tableEqual(ut, output('u', 'v'), 'fold as data');
+  });
 });

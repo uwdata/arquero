@@ -1,5 +1,5 @@
-import { aggregate, aggregateGet, groupOutput } from './reduce/util';
-import columnSet from '../table/column-set';
+import { aggregate, aggregateGet, groupOutput } from './reduce/util.js';
+import columnSet from '../table/column-set.js';
 
 const opt = (value, defaultValue) => value != null ? value : defaultValue;
 

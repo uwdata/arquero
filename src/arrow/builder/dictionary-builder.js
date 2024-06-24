@@ -1,5 +1,5 @@
-import utf8Builder from './utf8-builder';
-import { array, arrowVector } from './util';
+import utf8Builder from './utf8-builder.js';
+import { array, arrowVector } from './util.js';
 
 export default function(type, length) {
   const values = [];

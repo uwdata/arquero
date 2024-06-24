@@ -1,55 +1,52 @@
-import tape from 'tape';
-import tableEqual from '../table-equal';
-import { op, table } from '../../src';
+import assert from 'node:assert';
+import tableEqual from '../table-equal.js';
+import { op, table } from '../../src/index.js';
 
-tape('filter filters a table', t => {
-  const cols = {
-    a: [1, 3, 5, 7],
-    b: [2, 4, 6, 8]
-  };
+describe('filter', () => {
+  it('filters a table', () => {
+    const cols = {
+      a: [1, 3, 5, 7],
+      b: [2, 4, 6, 8]
+    };
 
-  const ft = table(cols).filter(d => 1 < d.a && d.a < 7).reify();
+    const ft = table(cols).filter(d => 1 < d.a && d.a < 7).reify();
 
-  t.equal(ft.numRows(), 2, 'num rows');
-  t.equal(ft.numCols(), 2, 'num cols');
-  tableEqual(t, ft, { a: [3, 5], b: [4, 6] }, 'filtered data');
-  t.end();
-});
+    assert.equal(ft.numRows(), 2, 'num rows');
+    assert.equal(ft.numCols(), 2, 'num cols');
+    tableEqual(ft, { a: [3, 5], b: [4, 6] }, 'filtered data');
+  });
 
-tape('filter filters a filtered table', t => {
-  const cols = {
-    a: [1, 3, 5, 7],
-    b: [2, 4, 6, 8]
-  };
+  it('filters a filtered table', () => {
+    const cols = {
+      a: [1, 3, 5, 7],
+      b: [2, 4, 6, 8]
+    };
 
-  const ft = table(cols)
-    .filter(d => 1 < d.a)
-    .filter(d => d.a < 7)
-    .reify();
+    const ft = table(cols)
+      .filter(d => 1 < d.a)
+      .filter(d => d.a < 7)
+      .reify();
 
-  t.equal(ft.numRows(), 2, 'num rows');
-  t.equal(ft.numCols(), 2, 'num cols');
-  tableEqual(t, ft, { a: [3, 5], b: [4, 6] }, 'filter data');
-  t.end();
-});
+    assert.equal(ft.numRows(), 2, 'num rows');
+    assert.equal(ft.numCols(), 2, 'num cols');
+    tableEqual(ft, { a: [3, 5], b: [4, 6] }, 'filter data');
+  });
 
-tape('filter supports value functions', t => {
-  const cols = { a: ['aa', 'ab', 'ba', 'bb'], b: [2, 4, 6, 8] };
-  const ft = table(cols).filter(d => op.startswith(d.a, 'a'));
-  tableEqual(t, ft, { a: ['aa', 'ab'], b: [2, 4] }, 'filter data');
-  t.end();
-});
+  it('supports value functions', () => {
+    const cols = { a: ['aa', 'ab', 'ba', 'bb'], b: [2, 4, 6, 8] };
+    const ft = table(cols).filter(d => op.startswith(d.a, 'a'));
+    tableEqual(ft, { a: ['aa', 'ab'], b: [2, 4] }, 'filter data');
+  });
 
-tape('filter supports aggregate functions', t => {
-  const cols = { a: [1, 3, 5, 7], b: [2, 4, 6, 8] };
-  const ft = table(cols).filter(({ a }) => a < op.median(a));
-  tableEqual(t, ft, { a: [1, 3], b: [2, 4] }, 'filter data');
-  t.end();
-});
+  it('supports aggregate functions', () => {
+    const cols = { a: [1, 3, 5, 7], b: [2, 4, 6, 8] };
+    const ft = table(cols).filter(({ a }) => a < op.median(a));
+    tableEqual(ft, { a: [1, 3], b: [2, 4] }, 'filter data');
+  });
 
-tape('filter supports window functions', t => {
-  const cols = { a: [1, 3, 5, 7], b: [2, 4, 6, 8]};
-  const ft = table(cols).filter(({ a }) => op.lag(a) > 2);
-  tableEqual(t, ft, { a: [5, 7], b: [6, 8] }, 'filter data');
-  t.end();
+  it('supports window functions', () => {
+    const cols = { a: [1, 3, 5, 7], b: [2, 4, 6, 8]};
+    const ft = table(cols).filter(({ a }) => op.lag(a) > 2);
+    tableEqual(ft, { a: [5, 7], b: [6, 8] }, 'filter data');
+  });
 });

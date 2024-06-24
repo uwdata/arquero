@@ -1,7 +1,7 @@
-import Transformable from './transformable';
-import error from '../util/error';
-import isNumber from '../util/is-number';
-import repeat from '../util/repeat';
+import Transformable from './transformable.js';
+import error from '../util/error.js';
+import isNumber from '../util/is-number.js';
+import repeat from '../util/repeat.js';
 
 /**
  * Abstract class representing a data table.

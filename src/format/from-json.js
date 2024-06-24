@@ -1,10 +1,10 @@
-import ColumnTable from '../table/column-table';
-import defaultTrue from '../util/default-true';
-import isArrayType from '../util/is-array-type';
-import isDigitString from '../util/is-digit-string';
-import isISODateString from '../util/is-iso-date-string';
-import isObject from '../util/is-object';
-import isString from '../util/is-string';
+import ColumnTable from '../table/column-table.js';
+import defaultTrue from '../util/default-true.js';
+import isArrayType from '../util/is-array-type.js';
+import isDigitString from '../util/is-digit-string.js';
+import isISODateString from '../util/is-iso-date-string.js';
+import isObject from '../util/is-object.js';
+import isString from '../util/is-string.js';
 
 /**
  * Options for JSON parsing.

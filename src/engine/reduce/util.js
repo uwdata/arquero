@@ -1,5 +1,5 @@
-import fieldReducer from './field-reducer';
-import repeat from '../../util/repeat';
+import fieldReducer from './field-reducer.js';
+import repeat from '../../util/repeat.js';
 
 export function aggregateGet(table, ops, get) {
   if (ops.length) {

@@ -1,7 +1,7 @@
-import ascending from '../../util/ascending';
-import bisector from '../../util/bisector';
-import concat from '../../util/concat';
-import unroll from '../../util/unroll';
+import ascending from '../../util/ascending.js';
+import bisector from '../../util/bisector.js';
+import concat from '../../util/concat.js';
+import unroll from '../../util/unroll.js';
 
 const bisect = bisector(ascending);
 

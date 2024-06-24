@@ -1,7 +1,7 @@
-const tape = require('tape');
-const time = require('./time');
-const { floats, ints, sample, strings } = require('./data-gen');
-const { from, table } = require('..');
+import tape from 'tape';
+import { time } from './time.js';
+import { floats, ints, sample, strings } from './data-gen.js';
+import { from, table } from '../src/index.js';
 
 function run(N, nulls, msg) {
   const dt = table({

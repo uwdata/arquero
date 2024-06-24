@@ -1,7 +1,7 @@
-const tape = require('tape');
-const time = require('./time');
-const { bools, dates, floats, ints, sample, strings } = require('./data-gen');
-const { fromCSV, table } = require('..');
+import tape from 'tape';
+import { time } from './time.js';
+import { bools, dates, floats, ints, sample, strings } from './data-gen.js';
+import { fromCSV, table } from '../src/index.js';
 
 function toCSV(...values) {
   const cols = values.map((v, i) => [`col${i}`, v]);

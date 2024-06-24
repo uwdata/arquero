@@ -1,4 +1,4 @@
-import isFunction from '../util/is-function';
+import isFunction from '../util/is-function.js';
 
 /**
  * Class representing an array-backed data column.

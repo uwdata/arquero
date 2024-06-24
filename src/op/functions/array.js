@@ -1,7 +1,7 @@
-import NULL from '../../util/null';
-import isArrayType from '../../util/is-array-type';
-import isString from '../../util/is-string';
-import isValid from '../../util/is-valid';
+import NULL from '../../util/null.js';
+import isArrayType from '../../util/is-array-type.js';
+import isString from '../../util/is-string.js';
+import isValid from '../../util/is-valid.js';
 
 const isSeq = (seq) => isArrayType(seq) || isString(seq);
 

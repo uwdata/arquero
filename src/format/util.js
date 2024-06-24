@@ -1,11 +1,9 @@
-import Table from '../table/table'; // eslint-disable-line no-unused-vars
-
-import inferFormat from './infer';
-import isFunction from '../util/is-function';
+import inferFormat from './infer.js';
+import isFunction from '../util/is-function.js';
 
 /**
  * Column selection function.
- * @typedef {(table: Table) => string[]} ColumnSelectFunction
+ * @typedef {(table: import('../table/table.js').Table) => string[]} ColumnSelectFunction
  */
 
 /**

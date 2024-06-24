@@ -1,5 +1,5 @@
-import { aggregateGet } from './reduce/util';
-import keyFunction from '../util/key-function';
+import { aggregateGet } from './reduce/util.js';
+import keyFunction from '../util/key-function.js';
 
 export default function(table, exprs) {
   return table.create({

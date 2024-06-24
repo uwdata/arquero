@@ -1,4 +1,4 @@
-import BitSet from '../table/bit-set';
+import BitSet from '../table/bit-set.js';
 
 export default function(table, predicate) {
   const n = table.totalRows();

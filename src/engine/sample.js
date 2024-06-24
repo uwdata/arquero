@@ -1,5 +1,5 @@
-import sample from '../util/sample';
-import _shuffle from '../util/shuffle';
+import sample from '../util/sample.js';
+import _shuffle from '../util/shuffle.js';
 
 export default function(table, size, weight, options = {}) {
   const { replace, shuffle } = options;

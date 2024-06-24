@@ -1,4 +1,3 @@
-import json from '@rollup/plugin-json';
 import bundleSize from 'rollup-plugin-bundle-size';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
@@ -13,7 +12,6 @@ const name = 'aq';
 const external = [ 'apache-arrow', 'node-fetch' ];
 const globals = { 'apache-arrow': 'Arrow' };
 const plugins = [
-  json(),
   bundleSize(),
   nodeResolve({ modulesOnly: true })
 ];

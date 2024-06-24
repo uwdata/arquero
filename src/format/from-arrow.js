@@ -1,8 +1,8 @@
-import { fromIPC } from '../arrow/arrow-table';
-import arrowColumn from '../arrow/arrow-column';
-import resolve, { all } from '../helpers/selection';
-import columnSet from '../table/column-set';
-import ColumnTable from '../table/column-table';
+import { fromIPC } from '../arrow/arrow-table.js';
+import arrowColumn from '../arrow/arrow-column.js';
+import resolve, { all } from '../helpers/selection.js';
+import columnSet from '../table/column-set.js';
+import ColumnTable from '../table/column-table.js';
 
 /**
  * Options for Apache Arrow import.

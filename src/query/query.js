@@ -1,6 +1,6 @@
-import Transformable from '../table/transformable';
-import { Query as QueryType } from './constants';
-import { Verb, Verbs } from './verb';
+import Transformable from '../table/transformable.js';
+import { Query as QueryType } from './constants.js';
+import { Verb, Verbs } from './verb.js';
 
 /**
  * Create a new query instance. The query interface provides

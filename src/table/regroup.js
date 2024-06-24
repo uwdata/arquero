@@ -1,6 +1,6 @@
-import { array_agg, entries_agg, map_agg, object_agg } from '../op/op-api';
-import error from '../util/error';
-import uniqueName from '../util/unique-name';
+import { array_agg, entries_agg, map_agg, object_agg } from '../op/op-api.js';
+import error from '../util/error.js';
+import uniqueName from '../util/unique-name.js';
 
 /**
  * Regroup table rows in response to a BitSet filter.

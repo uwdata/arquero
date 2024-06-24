@@ -1,4 +1,4 @@
-import pad from './pad';
+import pad from './pad.js';
 
 const pad2 = v => (v < 10 ? '0' : '') + v;
 

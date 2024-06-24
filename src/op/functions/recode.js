@@ -1,4 +1,4 @@
-import has from '../../util/has';
+import has from '../../util/has.js';
 
 /**
  * Recodes an input value to an alternative value, based on a provided

@@ -1,5 +1,5 @@
-import Reducer from './reducer';
-import toArray from '../../util/to-array';
+import Reducer from './reducer.js';
+import toArray from '../../util/to-array.js';
 
 export default function(fields, as, pattern) {
   return new CountPattern(fields, as, pattern);

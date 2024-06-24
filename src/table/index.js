@@ -1,5 +1,5 @@
-import ColumnTable from './column-table';
-import verbs from '../verbs';
+import ColumnTable from './column-table.js';
+import verbs from '../verbs/index.js';
 
 // Add verb implementations to ColumnTable prototype
 Object.assign(ColumnTable.prototype, verbs);

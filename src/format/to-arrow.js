@@ -1,5 +1,5 @@
-import toArrow from '../arrow/encode';
 import { tableToIPC } from 'apache-arrow';
+import toArrow from '../arrow/encode/index.js';
 
 export default toArrow;
 

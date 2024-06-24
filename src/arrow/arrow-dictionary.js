@@ -1,4 +1,4 @@
-import sequence from '../op/functions/sequence';
+import sequence from '../op/functions/sequence.js';
 
 /**
  * Create a new Arquero column that proxies access to an

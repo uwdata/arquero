@@ -1,13 +1,11 @@
-import aggregateFunctions from './aggregate-functions';
-import windowFunctions from './window-functions';
-import functions from './functions';
-import has from '../util/has';
+import aggregateFunctions from './aggregate-functions.js';
+import windowFunctions from './window-functions.js';
+import functions from './functions/index.js';
+import has from '../util/has.js';
 
-export {
-  functions,
-  aggregateFunctions,
-  windowFunctions
-};
+export { default as aggregateFunctions } from './aggregate-functions.js';
+export { default as windowFunctions } from './window-functions.js';
+export { default as functions } from './functions/index.js';
 
 /**
  * Check if an aggregate function with the given name exists.

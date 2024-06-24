@@ -1,9 +1,9 @@
-import { rowLookup } from './join/lookup';
-import { aggregateGet } from './reduce/util';
-import columnSet from '../table/column-set';
-import NULL from '../util/null';
-import concat from '../util/concat';
-import unroll from '../util/unroll';
+import { rowLookup } from './join/lookup.js';
+import { aggregateGet } from './reduce/util.js';
+import columnSet from '../table/column-set.js';
+import NULL from '../util/null.js';
+import concat from '../util/concat.js';
+import unroll from '../util/unroll.js';
 
 export default function(tableL, tableR, [keyL, keyR], { names, exprs, ops }) {
   // instantiate output data

@@ -1,12 +1,12 @@
 import { Table } from 'apache-arrow'; // eslint-disable-line no-unused-vars
 
-import dataFromObjects from './data-from-objects';
-import dataFromTable from './data-from-table';
-import { scanArray, scanTable } from './scan';
-import { table } from '../arrow-table';
-import error from '../../util/error';
-import isArray from '../../util/is-array';
-import isFunction from '../../util/is-function';
+import dataFromObjects from './data-from-objects.js';
+import dataFromTable from './data-from-table.js';
+import { scanArray, scanTable } from './scan.js';
+import { table } from '../arrow-table.js';
+import error from '../../util/error.js';
+import isArray from '../../util/is-array.js';
+import isFunction from '../../util/is-function.js';
 
 /**
  * Options for Arrow encoding.

@@ -1,7 +1,7 @@
-import NULL from '../../util/null';
-import has from '../../util/has';
-import isMap from '../../util/is-map';
-import isMapOrSet from '../../util/is-map-or-set';
+import NULL from '../../util/null.js';
+import has from '../../util/has.js';
+import isMap from '../../util/is-map.js';
+import isMapOrSet from '../../util/is-map-or-set.js';
 
 function array(iter) {
   return Array.from(iter);

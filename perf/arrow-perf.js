@@ -1,11 +1,11 @@
-const tape = require('tape');
-const time = require('./time');
-const { bools, floats, ints, sample, strings } = require('./data-gen');
-const { fromArrow, table } = require('..');
-const {
+import tape from 'tape';
+import { time } from './time.js';
+import { bools, floats, ints, sample, strings } from './data-gen.js';
+import { fromArrow, table } from '../src/index.js';
+import {
   Bool, Dictionary, Float64, Int32, Table, Uint32, Utf8,
-  vectorFromArray, tableToIPC
-} = require('apache-arrow');
+  tableToIPC, vectorFromArray
+} from 'apache-arrow';
 
 function process(N, nulls, msg) {
   const vectors = {

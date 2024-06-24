@@ -1,16 +1,16 @@
-import desc from '../helpers/desc';
-import field from '../helpers/field';
-import rolling from '../helpers/rolling';
-import { all, matches, not, range } from '../helpers/selection';
-import Query from './query';
-import error from '../util/error';
-import isArray from '../util/is-array';
-import isFunction from '../util/is-function';
-import isNumber from '../util/is-number';
-import isObject from '../util/is-object';
-import isString from '../util/is-string';
-import map from '../util/map-object';
-import toArray from '../util/to-array';
+import desc from '../helpers/desc.js';
+import field from '../helpers/field.js';
+import rolling from '../helpers/rolling.js';
+import { all, matches, not, range } from '../helpers/selection.js';
+import Query from './query.js';
+import error from '../util/error.js';
+import isArray from '../util/is-array.js';
+import isFunction from '../util/is-function.js';
+import isNumber from '../util/is-number.js';
+import isObject from '../util/is-object.js';
+import isString from '../util/is-string.js';
+import map from '../util/map-object.js';
+import toArray from '../util/to-array.js';
 
 function func(expr) {
   const f = d => d;

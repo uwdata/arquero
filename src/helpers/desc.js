@@ -1,4 +1,4 @@
-import wrap from './wrap';
+import wrap from './wrap.js';
 
 /**
  * Annotate a table expression to indicate descending sort order.

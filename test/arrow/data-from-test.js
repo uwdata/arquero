@@ -1,12 +1,12 @@
-import tape from 'tape';
+import assert from 'node:assert';
 import {
   Bool, DateDay, DateMillisecond, Dictionary, Field, FixedSizeList,
   Float32, Float64, Int16, Int32, Int64, Int8, List, Struct, Table,
   Uint16, Uint32, Uint64, Uint8, Utf8, tableToIPC, vectorFromArray
 } from 'apache-arrow';
-import { dataFromScan } from '../../src/arrow/encode/data-from';
-import { scanTable } from '../../src/arrow/encode/scan';
-import { table } from '../../src/table';
+import { dataFromScan } from '../../src/arrow/encode/data-from.js';
+import { scanTable } from '../../src/arrow/encode/scan.js';
+import { table } from '../../src/table/index.js';
 
 function dataFromTable(table, column, type, nullable) {
   const nrows = table.numRows();
@@ -14,25 +14,25 @@ function dataFromTable(table, column, type, nullable) {
   return dataFromScan(nrows, scan, column, type, nullable);
 }
 
-function integerTest(t, type) {
+function integerTest(type) {
   const values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-  valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, null], ', with nulls');
+  valueTest(type, values, ', without nulls');
+  valueTest(type, [null, ...values, null], ', with nulls');
 }
 
-function floatTest(t, type) {
+function floatTest(type) {
   const values = [0, NaN, 1/3, Math.PI, 7, Infinity, -Infinity];
-  valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, null], ', with nulls');
+  valueTest(type, values, ', without nulls');
+  valueTest(type, [null, ...values, null], ', with nulls');
 }
 
-function bigintTest(t, type) {
+function bigintTest(type) {
   const values = [0n, 1n, 10n, 100n, 1000n, 10n ** 10n];
-  valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, null], ', with nulls');
+  valueTest(type, values, ', without nulls');
+  valueTest(type, [null, ...values, null], ', with nulls');
 }
 
-function dateTest(t, type) {
+function dateTest(type) {
   const date = (y, m = 0, d = 1) => new Date(Date.UTC(y, m, d));
   const values = [
     date(2000, 0, 1),
@@ -46,122 +46,108 @@ function dateTest(t, type) {
     date(2000, 0, 1),
     date(2004, 10, 12)
   ];
-  valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, null], ', with nulls');
+  valueTest(type, values, ', without nulls');
+  valueTest(type, [null, ...values, null], ', with nulls');
 }
 
-function valueTest(t, type, values, msg) {
+function valueTest(type, values, msg) {
   const dt = table({ values });
   const u = dataFromTable(dt, dt.column('values'), type);
   const v = vectorFromArray(values, type);
   const tu = new Table({ values: u });
   const tv = new Table({ values: v });
-  t.equal(
+
+  assert.equal(
     tableToIPC(tu).join(' '),
     tableToIPC(tv).join(' '),
     'serialized data matches' + msg
   );
 }
 
-tape('dataFrom encodes dictionary data', t => {
-  const type = new Dictionary(new Utf8(), new Uint32(), 0);
-  const values = ['a', 'b', 'FOO', 'b', 'a'];
-  valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, null], ', with nulls');
-  t.end();
-});
+describe('dataFrom', () => {
+  it('encodes dictionary data', () => {
+    const type = new Dictionary(new Utf8(), new Uint32(), 0);
+    const values = ['a', 'b', 'FOO', 'b', 'a'];
+    valueTest(type, values, ', without nulls');
+    valueTest(type, [null, ...values, null], ', with nulls');
+  });
 
-tape('dataFrom encodes boolean data', t => {
-  const type = new Bool();
-  const values = [true, false, false, true, false];
-  valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, null], ', with nulls');
-  t.end();
-});
+  it('encodes boolean data', () => {
+    const type = new Bool();
+    const values = [true, false, false, true, false];
+    valueTest(type, values, ', without nulls');
+    valueTest(type, [null, ...values, null], ', with nulls');
+  });
 
-tape('dataFrom encodes date millis data', t => {
-  dateTest(t, new DateMillisecond());
-  t.end();
-});
+  it('encodes date millis data', () => {
+    dateTest(new DateMillisecond());
+  });
 
-tape('dataFrom encodes date day data', t => {
-  dateTest(t, new DateDay());
-  t.end();
-});
+  it('encodes date day data', () => {
+    dateTest(new DateDay());
+  });
 
-tape('dataFrom encodes int8 data', t => {
-  integerTest(t, new Int8());
-  t.end();
-});
+  it('encodes int8 data', () => {
+    integerTest(new Int8());
+  });
 
-tape('dataFrom encodes int16 data', t => {
-  integerTest(t, new Int16());
-  t.end();
-});
+  it('encodes int16 data', () => {
+    integerTest(new Int16());
+  });
 
-tape('dataFrom encodes int32 data', t => {
-  integerTest(t, new Int32());
-  t.end();
-});
+  it('encodes int32 data', () => {
+    integerTest(new Int32());
+  });
 
-tape('dataFrom encodes int64 data', t => {
-  bigintTest(t, new Int64());
-  t.end();
-});
+  it('encodes int64 data', () => {
+    bigintTest(new Int64());
+  });
 
-tape('dataFrom encodes uint8 data', t => {
-  integerTest(t, new Uint8());
-  t.end();
-});
+  it('encodes uint8 data', () => {
+    integerTest(new Uint8());
+  });
 
-tape('dataFrom encodes uint16 data', t => {
-  integerTest(t, new Uint16());
-  t.end();
-});
+  it('encodes uint16 data', () => {
+    integerTest(new Uint16());
+  });
 
-tape('dataFrom encodes uint32 data', t => {
-  integerTest(t, new Uint32());
-  t.end();
-});
+  it('encodes uint32 data', () => {
+    integerTest(new Uint32());
+  });
 
-tape('dataFrom encodes uint64 data', t => {
-  bigintTest(t, new Uint64());
-  t.end();
-});
+  it('encodes uint64 data', () => {
+    bigintTest(new Uint64());
+  });
 
-tape('dataFrom encodes float32 data', t => {
-  floatTest(t, new Float32());
-  t.end();
-});
+  it('encodes float32 data', () => {
+    floatTest(new Float32());
+  });
 
-tape('dataFrom encodes float64 data', t => {
-  floatTest(t, new Float64());
-  t.end();
-});
+  it('encodes float64 data', () => {
+    floatTest(new Float64());
+  });
 
-tape('dataFrom encodes list data', t => {
-  const field = Field.new({ name: 'value', type: new Int32() });
-  const type = new List(field);
-  const values = [[1, 2], [3], [4, 5, 6], [7]];
-  valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, null], ', with nulls');
-  t.end();
-});
+  it('encodes list data', () => {
+    const field = Field.new({ name: 'value', type: new Int32() });
+    const type = new List(field);
+    const values = [[1, 2], [3], [4, 5, 6], [7]];
+    valueTest(type, values, ', without nulls');
+    valueTest(type, [null, ...values, null], ', with nulls');
+  });
 
-tape('dataFrom encodes fixed size list data', t => {
-  const field = Field.new({ name: 'value', type: new Int32() });
-  const type = new FixedSizeList(1, field);
-  const values = [[1], [2], [3], [4], [5], [6]];
-  valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, null], ', with nulls');
-  t.end();
-});
+  it('encodes fixed size list data', () => {
+    const field = Field.new({ name: 'value', type: new Int32() });
+    const type = new FixedSizeList(1, field);
+    const values = [[1], [2], [3], [4], [5], [6]];
+    valueTest(type, values, ', without nulls');
+    valueTest(type, [null, ...values, null], ', with nulls');
+  });
 
-tape('dataFrom encodes struct data', t => {
-  const key = Field.new({ name: 'key', type: new Int32() });
-  const type = new Struct([key]);
-  const values = [1, 2, 3, null, 5, 6].map(key => ({ key }));
-  valueTest(t, type, values, ', without nulls');
-  valueTest(t, type, [null, ...values, null], ', with nulls');
-  t.end();
+  it('encodes struct data', () => {
+    const key = Field.new({ name: 'key', type: new Int32() });
+    const type = new Struct([key]);
+    const values = [1, 2, 3, null, 5, 6].map(key => ({ key }));
+    valueTest(type, values, ', without nulls');
+    valueTest(type, [null, ...values, null], ', with nulls');
+  });
 });

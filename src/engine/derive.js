@@ -1,8 +1,8 @@
-import { window } from './window/window';
-import { aggregate } from './reduce/util';
-import { hasWindow } from '../op';
-import columnSet from '../table/column-set';
-import repeat from '../util/repeat';
+import { window } from './window/window.js';
+import { aggregate } from './reduce/util.js';
+import { hasWindow } from '../op/index.js';
+import columnSet from '../table/column-set.js';
+import repeat from '../util/repeat.js';
 
 function isWindowed(op) {
   return hasWindow(op.name) ||

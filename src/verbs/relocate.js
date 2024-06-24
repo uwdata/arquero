@@ -1,6 +1,6 @@
-import _select from '../engine/select';
-import resolve from '../helpers/selection';
-import error from '../util/error';
+import _select from '../engine/select.js';
+import resolve from '../helpers/selection.js';
+import error from '../util/error.js';
 
 export default function(table, columns, { before, after } = {}) {
   const bef = before != null;

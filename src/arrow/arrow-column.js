@@ -1,9 +1,9 @@
-import arrowDictionary from './arrow-dictionary';
-import error from '../util/error';
-import repeat from '../util/repeat';
-import toString from '../util/to-string';
-import unroll from '../util/unroll';
-import { isDict, isFixedSizeList, isList, isStruct, isUtf8 } from './arrow-types';
+import arrowDictionary from './arrow-dictionary.js';
+import error from '../util/error.js';
+import repeat from '../util/repeat.js';
+import toString from '../util/to-string.js';
+import unroll from '../util/unroll.js';
+import { isDict, isFixedSizeList, isList, isStruct, isUtf8 } from './arrow-types.js';
 
 const isListType = type => isList(type) || isFixedSizeList(type);
 

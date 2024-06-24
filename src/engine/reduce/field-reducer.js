@@ -1,10 +1,10 @@
-import Reducer from './reducer';
-import { getAggregate } from '../../op';
-import concat from '../../util/concat';
-import error from '../../util/error';
-import isValid from '../../util/is-valid';
-import unroll from '../../util/unroll';
-import ValueList from '../../util/value-list';
+import Reducer from './reducer.js';
+import { getAggregate } from '../../op/index.js';
+import concat from '../../util/concat.js';
+import error from '../../util/error.js';
+import isValid from '../../util/is-valid.js';
+import unroll from '../../util/unroll.js';
+import ValueList from '../../util/value-list.js';
 
 const update = (ops, args, fn) => unroll(
   args,

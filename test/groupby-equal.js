@@ -1,4 +1,6 @@
-export default function(t, table1, table2, msg) {
+import assert from 'node:assert';
+
+export default function(table1, table2, msg) {
   const extract = g => ({
     keys: g.keys,
     names: g.names,
@@ -6,7 +8,7 @@ export default function(t, table1, table2, msg) {
     size: g.size
   });
 
-  t.deepEqual(
+  assert.deepEqual(
     extract(table1.groups()),
     extract(table2.groups()),
     msg

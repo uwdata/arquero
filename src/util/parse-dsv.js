@@ -1,4 +1,4 @@
-import error from './error';
+import error from './error.js';
 
 const EOL = {};
 const EOF = {};

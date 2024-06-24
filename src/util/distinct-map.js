@@ -1,4 +1,4 @@
-import { key } from './key-function';
+import { key } from './key-function.js';
 
 export default function() {
   const map = new Map();

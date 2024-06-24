@@ -1,4 +1,4 @@
-import NULL from './null';
+import NULL from './null.js';
 
 export default function(values, start = 0, stop = values.length) {
   let max = stop ? values[start++] : NULL;

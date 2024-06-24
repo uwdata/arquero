@@ -1,7 +1,7 @@
-import _lookup from '../engine/lookup';
-import { inferKeys } from './util/join-keys';
-import parseKey from './util/parse-key';
-import parseValues from './util/parse';
+import _lookup from '../engine/lookup.js';
+import { inferKeys } from './util/join-keys.js';
+import parseKey from './util/parse-key.js';
+import parseValues from './util/parse.js';
 
 export default function(tableL, tableR, on, values) {
   on = inferKeys(tableL, tableR, on);

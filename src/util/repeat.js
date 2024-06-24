@@ -1,4 +1,4 @@
-import isFunction from './is-function';
+import isFunction from './is-function.js';
 
 export default function(reps, value) {
   const result = Array(reps);

@@ -1,5 +1,5 @@
-import { aggregate, groupOutput } from './reduce/util';
-import columnSet from '../table/column-set';
+import { aggregate, groupOutput } from './reduce/util.js';
+import columnSet from '../table/column-set.js';
 
 export default function(table, { names, exprs, ops }) {
   // output data

@@ -1,15 +1,15 @@
-import ColumnTable from './table/column-table';
-import aggregateFunctions from './op/aggregate-functions';
-import windowFunctions from './op/window-functions';
-import functions from './op/functions';
-import op from './op/op';
-import ops from './op/op-api';
-import Query, { addQueryVerb } from './query/query';
-import { Verbs, createVerb } from './query/verb';
-import { ROW_OBJECT } from './expression/row-object';
-import error from './util/error';
-import has from './util/has';
-import toString from './util/to-string';
+import ColumnTable from './table/column-table.js';
+import aggregateFunctions from './op/aggregate-functions.js';
+import windowFunctions from './op/window-functions.js';
+import functions from './op/functions/index.js';
+import op from './op/op.js';
+import ops from './op/op-api.js';
+import Query, { addQueryVerb } from './query/query.js';
+import { Verbs, createVerb } from './query/verb.js';
+import { ROW_OBJECT } from './expression/row-object.js';
+import error from './util/error.js';
+import has from './util/has.js';
+import toString from './util/to-string.js';
 
 const onIllegal = (name, type) =>
   error(`Illegal ${type} name: ${toString(name)}`);

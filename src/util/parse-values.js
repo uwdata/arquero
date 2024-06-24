@@ -1,5 +1,5 @@
-import identity from './identity';
-import isISODateString from './is-iso-date-string';
+import identity from './identity.js';
+import isISODateString from './is-iso-date-string.js';
 
 const parseBoolean = [ // boolean
   v => (v === 'true') || (v === 'false'),

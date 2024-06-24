@@ -1,7 +1,7 @@
-import { aggregateGet } from './reduce/util';
-import columnSet from '../table/column-set';
-import NULL from '../util/null';
-import toArray from '../util/to-array';
+import { aggregateGet } from './reduce/util.js';
+import columnSet from '../table/column-set.js';
+import NULL from '../util/null.js';
+import toArray from '../util/to-array.js';
 
 export default function(table, { names, exprs, ops = [] }, options = {}) {
   if (names.length === 0) return table;

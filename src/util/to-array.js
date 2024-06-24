@@ -1,4 +1,4 @@
-import isArray from './is-array';
+import isArray from './is-array.js';
 
 export default function(value) {
   return value != null
