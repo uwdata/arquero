@@ -18,7 +18,7 @@ export function scanTable(table, limit, offset) {
     scanAll && isArrayType(column.data)
       ? column.data.forEach(visit)
       : table.scan(
-          row => visit(column.get(row), ++i),
+          row => visit(column.at(row), ++i),
           true, limit, offset
         );
   };

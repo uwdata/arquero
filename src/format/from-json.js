@@ -1,4 +1,4 @@
-import ColumnTable from '../table/column-table.js';
+import { ColumnTable } from '../table/ColumnTable.js';
 import defaultTrue from '../util/default-true.js';
 import isArrayType from '../util/is-array-type.js';
 import isDigitString from '../util/is-digit-string.js';
@@ -27,7 +27,7 @@ import isString from '../util/is-string.js';
  * The data payload can also be provided as the "data" property of an
  * enclosing object, with an optional "schema" property containing table
  * metadata such as a "fields" array of ordered column information.
- * @param {string|object} data A string in JSON format, or pre-parsed object.
+ * @param {string|object} json A string in JSON format, or pre-parsed object.
  * @param {JSONParseOptions} options The formatting options.
  * @return {ColumnTable} A new table containing the parsed values.
  */

@@ -1,32 +1,41 @@
-import Transformable from './transformable.js';
+import { nest, regroup, reindex } from './regroup.js';
+import { rowObjectBuilder } from '../expression/row-object.js';
+import resolve, { all } from '../helpers/selection.js';
+import arrayType from '../util/array-type.js';
 import error from '../util/error.js';
 import isNumber from '../util/is-number.js';
 import repeat from '../util/repeat.js';
 
 /**
- * Abstract class representing a data table.
+ * Base class representing a column-oriented data table.
  */
-export default class Table extends Transformable {
+export class Table {
 
   /**
-   * Instantiate a new Table instance.
-   * @param {string[]} names An ordered list of column names.
-   * @param {number} nrows The number of rows.
-   * @param {TableData} data The backing data, which can vary by implementation.
-   * @param {BitSet} [filter] A bit mask for which rows to include.
-   * @param {GroupBySpec} [groups] A groupby specification for grouping ows.
-   * @param {RowComparator} [order] A comparator function for sorting rows.
-   * @param {Params} [params] Parameter values for table expressions.
+   * Instantiate a BaeTable instance.
+   * @param {object} columns An object mapping column names to values.
+   * @param {string[]} [names] An ordered list of column names.
+   * @param {import('./BitSet.js').BitSet} [filter]
+   *  A filtering BitSet.
+   * @param {import('./types.js').GroupBySpec} [group]
+   *  A groupby specification.
+   * @param {import('./types.js').RowComparator} [order]
+   *  A row comparator function.
+   * @param {import('./types.js').Params} [params]
+   *  An object mapping parameter names to values.
    */
-  constructor(names, nrows, data, filter, groups, order, params) {
-    super(params);
+  constructor(columns, names, filter, group, order, params) {
+    const data = { ...columns };
+    names = names || Object.keys(data);
+    const nrows = names.length ? data[names[0]].length : 0;
     this._names = Object.freeze(names);
     this._data = data;
     this._total = nrows;
     this._nrows = filter ? filter.count() : nrows;
     this._mask = (nrows !== this._nrows && filter) || null;
-    this._group = groups || null;
+    this._group = group || null;
     this._order = order || null;
+    this._params = params;
   }
 
   /**
@@ -34,11 +43,49 @@ export default class Table extends Transformable {
    * The new table may have different data, filter, grouping, or ordering
    * based on the values of the optional configuration argument. If a
    * setting is not specified, it is inherited from the current table.
-   * @param {CreateOptions} [options] Creation options for the new table.
+   * @param {import('./types.js').CreateOptions} [options]
+   *  Creation options for the new table.
    * @return {this} A newly created table.
    */
-  create(options) { // eslint-disable-line no-unused-vars
-    error('Not implemented');
+  create({
+    data = undefined,
+    names = undefined,
+    filter = undefined,
+    groups = undefined,
+    order = undefined
+  } = {}) {
+    const f = filter !== undefined ? filter : this.mask();
+    // @ts-ignore
+    return new this.constructor(
+      data || this._data,
+      names || (!data ? this._names : null),
+      f,
+      groups !== undefined ? groups : regroup(this._group, filter && f),
+      order !== undefined ? order : this._order,
+      this._params
+    );
+  }
+
+  /**
+   * Get or set table expression parameter values.
+   * If called with no arguments, returns the current parameter values
+   * as an object. Otherwise, adds the provided parameters to this
+   * table's parameter set and returns the table. Any prior parameters
+   * with names matching the input parameters are overridden.
+   * @param {import('./types.js').Params} [values]
+   *  The parameter values.
+   * @return {this|import('./types.js').Params}
+   *  The current parameter values (if called with no arguments) or this table.
+   */
+  params(values) {
+    if (arguments.length) {
+      if (values) {
+        this._params = { ...this._params, ...values };
+      }
+      return this;
+    } else {
+      return this._params;
+    }
   }
 
   /**
@@ -80,7 +127,8 @@ export default class Table extends Transformable {
 
   /**
    * Returns the internal table storage data structure.
-   * @return {TableData} The backing table storage data structure.
+   * @return {import('./types.js').TableData}
+   *  The backing table storage data structure.
    */
   data() {
     return this._data;
@@ -88,7 +136,7 @@ export default class Table extends Transformable {
 
   /**
    * Returns the filter bitset mask, if defined.
-   * @return {BitSet} The filter bitset mask.
+   * @return {import('./BitSet.js').BitSet} The filter bitset mask.
    */
   mask() {
     return this._mask;
@@ -96,7 +144,7 @@ export default class Table extends Transformable {
 
   /**
    * Returns the groupby specification, if defined.
-   * @return {GroupBySpec} The groupby specification.
+   * @return {import('./types.js').GroupBySpec} The groupby specification.
    */
   groups() {
     return this._group;
@@ -104,7 +152,8 @@ export default class Table extends Transformable {
 
   /**
    * Returns the row order comparator function, if specified.
-   * @return {RowComparator} The row order comparator function.
+   * @return {import('./types.js').RowComparator}
+   *  The row order comparator function.
    */
   comparator() {
     return this._order;
@@ -121,8 +170,7 @@ export default class Table extends Transformable {
 
   /**
    * The number of active rows in this table. This number may be
-   * less than the total rows if the table has been filtered.
-   * @see Table.totalRows
+   * less than the *totalRows* if the table has been filtered.
    * @return {number} The number of rows.
    */
   numRows() {
@@ -131,8 +179,7 @@ export default class Table extends Transformable {
 
   /**
    * The number of active rows in this table. This number may be
-   * less than the total rows if the table has been filtered.
-   * @see Table.totalRows
+   * less than the *totalRows* if the table has been filtered.
    * @return {number} The number of rows.
    */
   get size() {
@@ -186,28 +233,130 @@ export default class Table extends Transformable {
   }
 
   /**
-   * Deprecated alias for the table array() method: use table.array()
-   * instead. Get an array of values contained in a column. The resulting
-   * array respects any table filter or orderby criteria.
-   * @param {string} name The column name.
-   * @param {ArrayConstructor|TypedArrayConstructor} [constructor=Array]
-   *  The array constructor for instantiating the output array.
-   * @return {DataValue[]|TypedArray} The array of column values.
+   * Get the backing set of columns for this table.
+   * @return {import('./types.js').ColumnData}
+   *  Object of named column instances.
    */
-  columnArray(name, constructor) {
-    return this.array(name, constructor);
+  columns() {
+    return this._data;
+  }
+
+  /**
+   * Get the column instance with the given name.
+   * @param {string} name The column name.
+   * @return {import('./types.js').ColumnType | undefined}
+   *  The named column, or undefined if it does not exist.
+   */
+  column(name) {
+    return this._data[name];
+  }
+
+  /**
+   * Get the column instance at the given index position.
+   * @param {number} index The zero-based column index.
+   * @return {import('./types.js').ColumnType | undefined}
+   *  The column, or undefined if it does not exist.
+   */
+  columnAt(index) {
+    return this._data[this._names[index]];
   }
 
   /**
    * Get an array of values contained in a column. The resulting array
    * respects any table filter or orderby criteria.
    * @param {string} name The column name.
-   * @param {ArrayConstructor|TypedArrayConstructor} [constructor=Array]
+   * @param {ArrayConstructor | import('./types.js').TypedArrayConstructor} [constructor=Array]
    *  The array constructor for instantiating the output array.
-   * @return {DataValue[]|TypedArray} The array of column values.
+   * @return {import('./types.js').DataValue[] | import('./types.js').TypedArray}
+   *  The array of column values.
    */
-  array(name, constructor) { // eslint-disable-line no-unused-vars
-    error('Not implemented');
+  array(name, constructor = Array) {
+    const column = this.column(name);
+    const array = new constructor(this.numRows());
+    let idx = -1;
+    this.scan(row => array[++idx] = column.at(row), true);
+    return array;
+  }
+
+  /**
+   * Get the value for the given column and row.
+   * @param {string} name The column name.
+   * @param {number} [row=0] The row index, defaults to zero if not specified.
+   * @return {import('./types.js').DataValue} The table value at (column, row).
+   */
+  get(name, row = 0) {
+    const column = this.column(name);
+    return this.isFiltered() || this.isOrdered()
+      ? column.at(this.indices()[row])
+      : column.at(row);
+  }
+
+  /**
+   * Returns an accessor ("getter") function for a column. The returned
+   * function takes a row index as its single argument and returns the
+   * corresponding column value.
+   * @param {string} name The column name.
+   * @return {import('./types.js').ColumnGetter} The column getter function.
+   */
+  getter(name) {
+    const column = this.column(name);
+    const indices = this.isFiltered() || this.isOrdered() ? this.indices() : null;
+    if (indices) {
+      return row => column.at(indices[row]);
+    } else if (column) {
+      return row => column.at(row);
+    } else {
+      error(`Unrecognized column: ${name}`);
+    }
+  }
+
+  /**
+   * Returns an object representing a table row.
+   * @param {number} [row=0] The row index, defaults to zero if not specified.
+   * @return {object} A row object with named properties for each column.
+   */
+  object(row = 0) {
+    return objectBuilder(this)(row);
+  }
+
+  /**
+   * Returns an array of objects representing table rows.
+   * @param {import('./types.js').ObjectsOptions} [options]
+   *  The options for row object generation.
+   * @return {object[]} An array of row objects.
+   */
+  objects(options = {}) {
+    const { grouped, limit, offset } = options;
+
+    // generate array of row objects
+    const names = resolve(this, options.columns || all());
+    const create = rowObjectBuilder(names);
+    const obj = [];
+    this.scan(
+      (row, data) => obj.push(create(row, data)),
+      true, limit, offset
+    );
+
+    // produce nested output as requested
+    if (grouped && this.isGrouped()) {
+      const idx = [];
+      this.scan(row => idx.push(row), true, limit, offset);
+      return nest(this, idx, obj, grouped);
+    }
+
+    return obj;
+  }
+
+  /**
+   * Returns an iterator over objects representing table rows.
+   * @return {Iterator<object>} An iterator over row objects.
+   */
+  *[Symbol.iterator]() {
+    const create = objectBuilder(this);
+    const n = this.numRows();
+    for (let i = 0; i < n; ++i) {
+      yield create(i);
+    }
   }
 
   /**
@@ -223,67 +372,19 @@ export default class Table extends Transformable {
   }
 
   /**
-   * Get the value for the given column and row.
-   * @param {string} name The column name.
-   * @param {number} [row=0] The row index, defaults to zero if not specified.
-   * @return {DataValue} The data value at (column, row).
-   */
-  get(name, row = 0) { // eslint-disable-line no-unused-vars
-    error('Not implemented');
-  }
-
-  /**
-   * Returns an accessor ("getter") function for a column. The returned
-   * function takes a row index as its single argument and returns the
-   * corresponding column value.
-   * @param {string} name The column name.
-   * @return {ColumnGetter} The column getter function.
-   */
-  getter(name) { // eslint-disable-line no-unused-vars
-    error('Not implemented');
-  }
-
-  /**
-   * Returns an array of objects representing table rows.
-   * @param {ObjectsOptions} [options] The options for row object generation.
-   * @return {RowObject[]} An array of row objects.
-   */
-  objects(options) { // eslint-disable-line no-unused-vars
-    error('Not implemented');
-  }
-
-  /**
-   * Returns an object representing a table row.
-   * @param {number} [row=0] The row index, defaults to zero if not specified.
-   * @return {object} A row object with named properties for each column.
-   */
-   object(row) { // eslint-disable-line no-unused-vars
-    error('Not implemented');
-  }
-
-  /**
-   * Returns an iterator over objects representing table rows.
-   * @return {Iterator<object>} An iterator over row objects.
-   */
-  [Symbol.iterator]() {
-    error('Not implemented');
-  }
-
-  /**
    * Print the contents of this table using the console.table() method.
-   * @param {PrintOptions|number} options The options for row object
-   *  generation, determining which rows and columns are printed. If
-   *  number-valued, specifies the row limit.
+   * @param {import('./types.js').PrintOptions|number} options
+   *  The options for row object generation, determining which rows and
+   *  columns are printed. If number-valued, specifies the row limit.
    * @return {this} The table instance.
    */
   print(options = {}) {
-    if (isNumber(options)) {
-      options = { limit: options };
-    } else if (options.limit == null) {
-      options.limit = 10;
-    }
+    const opt = isNumber(options)
+      ? { limit: +options }
+      // @ts-ignore
+      : { ...options, limit: 10 };
 
-    const obj = this.objects({ ...options, grouped: false });
+    const obj = this.objects({ ...opt, grouped: false });
     const msg = `${this[Symbol.toStringTag]}. Showing ${obj.length} rows.`;
 
     console.log(msg);   // eslint-disable-line no-console
@@ -337,12 +438,12 @@ export default class Table extends Transformable {
   /**
    * Returns an array of indices for each group in the table.
    * If the table is not grouped, the result is the same as
-   * {@link indices}, but wrapped within an array.
+   * the *indices* method, but wrapped within an array.
    * @param {boolean} [order=true] A flag indicating if the returned
    *  indices should be sorted if this table is ordered. If false, the
    *  returned indices may or may not be sorted.
-   * @return {number[][]} An array of row index arrays, one per group.
-   *  The indices will be filtered if the table is filtered.
+   * @return {number[][] | Uint32Array[]} An array of row index arrays, one
+   *  per group. The indices will be filtered if the table is filtered.
    */
   partitions(order = true) {
     // return partitions if already generated
@@ -398,6 +499,48 @@ export default class Table extends Transformable {
   }
 
   /**
+   * Create a new fully-materialized instance of this table.
+   * All filter and orderby settings are removed from the new table.
+   * Instead, the backing data itself is filtered and ordered as needed.
+   * @param {number[]} [indices] Ordered row indices to materialize.
+   *  If unspecified, all rows passing the table filter are used.
+   * @return {this} A reified table.
+   */
+  reify(indices) {
+    const nrows = indices ? indices.length : this.numRows();
+    const names = this._names;
+    let data, groups;
+
+    if (!indices && !this.isOrdered()) {
+      if (!this.isFiltered()) {
+        return this; // data already reified
+      } else if (nrows === this.totalRows()) {
+        data = this.data(); // all rows pass filter, skip copy
+      }
+    }
+
+    if (!data) {
+      const scan = indices ? f => indices.forEach(f) : f => this.scan(f, true);
+      const ncols = names.length;
+      data = {};
+
+      for (let i = 0; i < ncols; ++i) {
+        const name = names[i];
+        const prev = this.column(name);
+        const curr = data[name] = new (arrayType(prev))(nrows);
+        let r = -1;
+        scan(row => curr[++r] = prev.at(row));
+      }
+
+      if (this.isGrouped()) {
+        groups = reindex(this.groups(), scan, !!indices, nrows);
+      }
+    }
+
+    return this.create({ data, names, groups, filter: null, order: null });
+  }
+
+  /**
    * Callback function to cancel a table scan.
    * @callback ScanStop
    * @return {void}
@@ -407,7 +550,8 @@ export default class Table extends Transformable {
    * Callback function invoked for each row of a table scan.
    * @callback ScanVisitor
    * @param {number} [row] The table row index.
-   * @param {TableData} [data] The backing table data store.
+   * @param {import('./types.js').TableData} [data]
+   *  The backing table data store.
    * @param {ScanStop} [stop] Function to stop the scan early.
    *  Callees can invoke this function to prevent future calls.
    * @return {void}
@@ -418,10 +562,12 @@ export default class Table extends Transformable {
    * If this table is filtered, only rows passing the filter are visited.
    * @param {ScanVisitor} fn Callback invoked for each row of the table.
    * @param {boolean} [order=false] Indicates if the table should be
-   *  scanned in the order determined by {@link Table#orderby}. This
+   *  scanned in the order determined by *orderby*. This
    *  argument has no effect if the table is unordered.
-   * @property {number} [limit=Infinity] The maximum number of objects to create.
-   * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
+   * @property {number} [limit=Infinity] The maximum number of
+   *  objects to create.
+   * @property {number} [offset=0] The row offset indicating how many
+   *  initial rows to skip.
    */
   scan(fn, order, limit = Infinity, offset = 0) {
     const filter = this._mask;
@@ -451,157 +597,22 @@ export default class Table extends Transformable {
       }
     }
   }
-
-  /**
-   * Extract rows with indices from start to end (end not included), where
-   * start and end represent per-group ordered row numbers in the table.
-   * @param {number} [start] Zero-based index at which to start extraction.
-   *  A negative index indicates an offset from the end of the group.
-   *  If start is undefined, slice starts from the index 0.
-   * @param {number} [end] Zero-based index before which to end extraction.
-   *  A negative index indicates an offset from the end of the group.
-   *  If end is omitted, slice extracts through the end of the group.
-   * @return {this} A new table with sliced rows.
-   * @example table.slice(1, -1)
-   */
-  slice(start = 0, end = Infinity) {
-    if (this.isGrouped()) return super.slice(start, end);
-
-    // if not grouped, scan table directly
-    const indices = [];
-    const nrows = this.numRows();
-    start = Math.max(0, start + (start < 0 ? nrows : 0));
-    end = Math.min(nrows, Math.max(0, end + (end < 0 ? nrows : 0)));
-    this.scan(row => indices.push(row), true, end - start, start);
-    return this.reify(indices);
-  }
-
-  /**
-   * Reduce a table, processing all rows to produce a new table.
-   * To produce standard aggregate summaries, use {@link rollup}.
-   * This method allows the use of custom reducer implementations,
-   * for example to produce multiple rows for an aggregate.
-   * @param {Reducer} reducer The reducer to apply.
-   * @return {Table} A new table of reducer outputs.
-   */
-  reduce(reducer) {
-    return this.__reduce(this, reducer);
-  }
 }
 
-/**
- * A typed array constructor.
- * @typedef {Uint8ArrayConstructor|Uint16ArrayConstructor|Uint32ArrayConstructor|BigUint64ArrayConstructor|Int8ArrayConstructor|Int16ArrayConstructor|Int32ArrayConstructor|BigInt64ArrayConstructor|Float32ArrayConstructor|Float64ArrayConstructor} TypedArrayConstructor
- */
+function objectBuilder(table) {
+  let b = table._builder;
 
-/**
- * A typed array instance.
- * @typedef {Uint8Array|Uint16Array|Uint32Array|BigUint64Array|Int8Array|Int16Array|Int32Array|BigInt64Array|Float32Array|Float64Array} TypedArray
- */
+  if (!b) {
+    const create = rowObjectBuilder(table.columnNames());
+    const data = table.data();
+    if (table.isOrdered() || table.isFiltered()) {
+      const indices = table.indices();
+      b = row => create(indices[row], data);
+    } else {
+      b = row => create(row, data);
+    }
+    table._builder = b;
+  }
 
-/**
- * Backing table data.
- * @typedef {object|Array} TableData
- */
-
-/**
- * Table value.
- * @typedef {*} DataValue
- */
-
-/**
- * Table row object.
- * @typedef {Object.<string, DataValue>} RowObject
- */
-
-/**
- * Table expression parameters.
- * @typedef {import('./transformable').Params} Params
- */
-
-/**
- * Proxy type for BitSet class.
- * @typedef {import('./bit-set').default} BitSet
- */
-
-/**
- * Abstract class for custom aggregation operations.
- * @typedef {import('../engine/reduce/reducer').default} Reducer
- */
-
-/**
- * A table groupby specification.
- * @typedef {object} GroupBySpec
- * @property {number} size The number of groups.
- * @property {string[]} names Column names for each group.
- * @property {RowExpression[]} get Value accessor functions for each group.
- * @property {number[]} rows Indices of an example table row for each group.
- * @property {number[]} keys Per-row group indices, length is total rows of table.
- */
-
-/**
- * Column value accessor.
- * @callback ColumnGetter
- * @param {number} [row] The table row.
- * @return {DataValue}
- */
-
-/**
- * An expression evaluated over a table row.
- * @callback RowExpression
- * @param {number} [row] The table row.
- * @param {TableData} [data] The backing table data store.
- * @return {DataValue}
- */
-
-/**
- * Comparator function for sorting table rows.
- * @callback RowComparator
- * @param {number} rowA The table row index for the first row.
- * @param {number} rowB The table row index for the second row.
- * @param {TableData} data The backing table data store.
- * @return {number} Negative if rowA < rowB, positive if
- *  rowA > rowB, otherwise zero.
- */
-
-/**
- * Options for derived table creation.
- * @typedef {object} CreateOptions
- * @property {TableData} [data] The backing column data.
- * @property {string[]} [names] An ordered list of column names.
- * @property {BitSet} [filter] An additional filter BitSet to apply.
- * @property {GroupBySpec} [groups] The groupby specification to use, or null for no groups.
- * @property {RowComparator} [order] The orderby comparator function to use, or null for no order.
- */
-
-/**
- * Options for generating row objects.
- * @typedef {object} PrintOptions
- * @property {number} [limit=Infinity] The maximum number of objects to create.
- * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
- * @property {import('../table/transformable').Select} [columns]
- *  An ordered set of columns to include. The input may consist of column name
- *  strings, column integer indices, objects with current column names as keys
- *  and new column names as values (for renaming), or selection helper
- *  functions such as {@link all}, {@link not}, or {@link range}.
- */
-
-/**
- * Options for generating row objects.
- * @typedef {object} ObjectsOptions
- * @property {number} [limit=Infinity] The maximum number of objects to create.
- * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
- * @property {import('../table/transformable').Select} [columns]
- *  An ordered set of columns to include. The input may consist of column name
- *  strings, column integer indices, objects with current column names as keys
- *  and new column names as values (for renaming), or selection helper
- *  functions such as {@link all}, {@link not}, or {@link range}.
- * @property {'map'|'entries'|'object'|boolean} [grouped=false]
- *  The export format for groups of rows. The default (false) is to ignore
- *  groups, returning a flat array of objects. The valid values are 'map' or
- *  true (for Map instances), 'object' (for standard objects), or 'entries'
- *  (for arrays in the style of Object.entries). For the 'object' format,
- *  groupby keys are coerced to strings to use as object property names; note
- *  that this can lead to undesirable behavior if the groupby keys are object
- *  values. The 'map' and 'entries' options preserve the groupby key values.
- */
+  return b;
+}

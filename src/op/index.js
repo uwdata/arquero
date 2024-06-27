@@ -37,8 +37,8 @@ export function hasWindow(name) {
 /**
  * Get an aggregate function definition.
  * @param {string} name The name of the aggregate function.
- * @return {AggregateDef} The aggregate function definition,
- *  or undefined if not found.
+ * @return {import('./aggregate-functions.js').AggregateDef}
+ *  The aggregate function definition, or undefined if not found.
  */
 export function getAggregate(name) {
   return hasAggregate(name) && aggregateFunctions[name];
@@ -47,8 +47,8 @@ export function getAggregate(name) {
 /**
  * Get a window function definition.
  * @param {string} name The name of the window function.
- * @return {WindowDef} The window function definition,
- *  or undefined if not found.
+ * @return {import('./window-functions.js').WindowDef}
+ *  The window function definition, or undefined if not found.
  */
 export function getWindow(name) {
   return hasWindow(name) && windowFunctions[name];

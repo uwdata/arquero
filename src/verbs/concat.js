@@ -1,7 +1,7 @@
 import columnSet from '../table/column-set.js';
 import NULL from '../util/null.js';
 
-export default function(table, others) {
+export function concat(table, others) {
   const trows = table.numRows();
   const nrows = trows + others.reduce((n, t) => n + t.numRows(), 0);
   if (trows === nrows) return table;
@@ -13,8 +13,8 @@ export default function(table, others) {
     const arr = Array(nrows);
     let row = 0;
     tables.forEach(table => {
-      const col = table.column(name) || { get: () => NULL };
-      table.scan(trow => arr[row++] = col.get(trow));
+      const col = table.column(name) || { at: () => NULL };
+      table.scan(trow => arr[row++] = col.at(trow));
     });
     cols.add(name, arr);
   });

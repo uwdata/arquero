@@ -93,9 +93,10 @@ function parseAST(expr) {
     const code = expr.field ? fieldRef(expr)
       : isArray(expr) ? toString(expr)
       : expr;
+    // @ts-ignore
     return parse(`expr=(${code})`, PARSER_OPT).body[0].expression.right;
-  } catch (err) {
-    error(`Expression parse error: ${expr+''}`, err);
+  } catch (err) { // eslint-disable-line no-unused-vars
+    error(`Expression parse error: ${expr+''}`);
   }
 }
 

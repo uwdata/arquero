@@ -9,8 +9,10 @@ const isListType = type => isList(type) || isFixedSizeList(type);
 
 /**
  * Create an Arquero column that proxies access to an Arrow column.
- * @param {object} arrow An Apache Arrow column.
- * @return {import('../table/column').ColumnType} An Arquero-compatible column.
+ * @param {object} vector An Apache Arrow column.
+ * @param {boolean} [nested] A flag indicating a nested data type.
+ * @return {import('../table/types.js').ColumnType}
+ *  An Arquero-compatible column.
  */
 export default function arrowColumn(vector, nested) {
   const { type, length, numChildren } = vector;
@@ -22,7 +24,7 @@ export default function arrowColumn(vector, nested) {
     : null;
 
   return get
-    ? { vector, length, get, [Symbol.iterator]: () => iterator(length, get) }
+    ? { vector, length, at: get, [Symbol.iterator]: () => iterator(length, get) }
     : vector;
 }
 
@@ -58,7 +60,7 @@ function getStruct(vector) {
   const code = [];
   vector.type.children.forEach((field, i) => {
     props.push(arrowColumn(vector.getChildAt(i), true));
-    code.push(`${toString(field.name)}:_${i}.get(row)`);
+    code.push(`${toString(field.name)}:_${i}.at(row)`);
   });
   const get = unroll('row', '({' + code + '})', props);
 

@@ -1,23 +1,14 @@
 // export internal class definitions
-import Table from './table/table.js';
-import { columnFactory } from './table/column.js';
-import ColumnTable from './table/column-table.js';
-import Transformable from './table/transformable.js';
-import Reducer from './engine/reduce/reducer.js';
+import { Table } from './table/Table.js';
+import { ColumnTable } from './table/ColumnTable.js';
+import Reducer from './verbs/reduce/reducer.js';
 import parse from './expression/parse.js';
 import walk_ast from './expression/ast/walk.js';
-import Query from './query/query.js';
-import { Verb, Verbs } from './query/verb.js';
 
 export const internal = {
   Table,
   ColumnTable,
-  Transformable,
-  Query,
   Reducer,
-  Verb,
-  Verbs,
-  columnFactory,
   parse,
   walk_ast
 };
@@ -30,6 +21,10 @@ export { default as fromFixed } from './format/from-fixed.js';
 export { default as fromJSON } from './format/from-json.js';
 export { load, loadArrow, loadCSV, loadFixed, loadJSON } from './format/load-url.js';
 export { default as toArrow } from './arrow/encode/index.js';
+export { default as toCSV } from './format/to-csv.js';
+export { default as toHTML } from './format/to-html.js';
+export { default as toJSON } from './format/to-json.js';
+export { default as toMarkdown } from './format/to-markdown.js';
 export { default as bin } from './helpers/bin.js';
 export { default as escape } from './helpers/escape.js';
 export { default as desc } from './helpers/desc.js';
@@ -40,6 +35,5 @@ export { default as rolling } from './helpers/rolling.js';
 export { all, endswith, matches, not, range, startswith } from './helpers/selection.js';
 export { default as agg } from './verbs/helpers/agg.js';
 export { default as op } from './op/op-api.js';
-export { query, queryFrom } from './query/query.js';
-export * from './register.js';
+export * from './op/register.js';
 export * from './table/index.js';

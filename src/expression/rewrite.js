@@ -13,11 +13,11 @@ const dictOps = {
  * Additionally optimizes dictionary column operations.
  * @param {object} ref AST node to rewrite to a column reference.
  * @param {string} name The name of the column.
- * @param {number} index The table index of the column.
- * @param {object} col The actual table column instance.
- * @param {object} op Parent AST node operating on the column reference.
+ * @param {number} [index] The table index of the column.
+ * @param {object} [col] The actual table column instance.
+ * @param {object} [op] Parent AST node operating on the column reference.
  */
-export default function(ref, name, index = 0, col, op) {
+export default function(ref, name, index = 0, col = undefined, op = undefined) {
   ref.type = Column;
   ref.name = name;
   ref.table = index;

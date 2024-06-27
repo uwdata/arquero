@@ -100,6 +100,7 @@ function infer(p) {
     return Type.Float64;
   }
   else if (p.bigints === valid) {
+    // @ts-ignore
     const v = -p.min > p.max ? -p.min - 1n : p.max;
     return p.min < 0
       ? v < 2 ** 63 ? Type.Int64

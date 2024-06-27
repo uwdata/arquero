@@ -6,7 +6,7 @@ export default function(table) {
     : new ColumnSet();
 }
 
-class ColumnSet {
+export class ColumnSet {
   constructor(data, names) {
     this.data = data || {};
     this.names = names || [];

@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import ColumnTable from '../../src/table/column-table.js';
+import { ColumnTable } from '../../src/table/ColumnTable.js';
 import toHTML from '../../src/format/to-html.js';
 
 describe('toHTML', () => {

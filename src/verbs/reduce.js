@@ -1,7 +1,7 @@
 import { reduceFlat, reduceGroups } from './reduce/util.js';
 import columnSet from '../table/column-set.js';
 
-export default function(table, reducer) {
+export function reduce(table, reducer) {
   const cols = columnSet();
   const groups = table.groups();
 
