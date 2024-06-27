@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import tableEqual from '../table-equal.js';
-import { escape, op, query, table } from '../../src/index.js';
+import { escape, op, table } from '../../src/index.js';
 
 describe('escape', () => {
   it('derive supports escaped functions', () => {
@@ -78,20 +78,6 @@ describe('escape', () => {
     assert.throws(
       () => table({ g: [1, 2], a: [3, 4] }).pivot('g', { v: escape(d => -d.a) }),
       'pivot throws on escaped function'
-    );
-  });
-
-  it('query serialization throws for escaped functions', () => {
-    const sq = d => d.a * d.a;
-
-    assert.throws(
-      () => query().derive({ z: escape(sq) }).toObject(),
-      'query toObject throws on escaped function'
-    );
-
-    assert.throws(
-      () => query().derive({ z: escape(sq) }).toAST(),
-      'query toAST throws on escape function'
     );
   });
 });

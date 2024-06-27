@@ -1,8 +1,11 @@
-import _select from '../engine/select.js';
+import { _select } from './select.js';
 import resolve from '../helpers/selection.js';
 import error from '../util/error.js';
 
-export default function(table, columns, { before, after } = {}) {
+export function relocate(table, columns, {
+  before = undefined,
+  after = undefined
+} = {}) {
   const bef = before != null;
   const aft = after != null;
 

@@ -91,6 +91,6 @@ describe('fromJSON', () => {
     ];
     const json = '{"v":' + JSON.stringify(str) + '}';
     const table = fromJSON(json);
-    assert.deepEqual(table.column('v').data, values, 'column values');
+    assert.deepEqual(table.column('v'), values, 'column values');
   });
 });

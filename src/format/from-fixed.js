@@ -32,7 +32,7 @@ import error from '../util/error.js';
  * parsing of input column values, use the parse option.
  * @param {string} text A string in a fixed-width file format.
  * @param {FixedParseOptions} options The formatting options.
- * @return {import('../table/column-table.js').ColumnTable} A new table
+ * @return {import('../table/ColumnTable.js').ColumnTable} A new table
  *  containing the parsed values.
  */
 export default function(text, options = {}) {
@@ -50,7 +50,7 @@ export default function(text, options = {}) {
   );
 }
 
-function positions({ positions, widths }) {
+function positions({ positions = undefined, widths = undefined }) {
   if (!positions && !widths) {
     error('Fixed width files require a "positions" or "widths" option');
   }

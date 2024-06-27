@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import fromArrow from '../../src/format/from-arrow.js';
+import toArrow from '../../src/format/to-arrow.js';
 import { desc, op, table } from '../../src/index.js';
 
 describe('groupby', () => {
@@ -145,12 +146,12 @@ describe('groupby', () => {
   });
 
   it('optimizes Arrow dictionary columns', () => {
-    const dt = fromArrow(
+    const dt = fromArrow(toArrow(
       table({
         d: ['a', 'a', 'b', 'b'],
         v: [1, 2, 3, 4]
-      }).toArrow()
-    );
+      })
+    ));
 
     const gt = dt.groupby('d');
     assert.equal(

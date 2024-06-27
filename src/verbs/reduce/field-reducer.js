@@ -20,6 +20,7 @@ export default function(oplist, stream) {
     : n === 1 ? Field1Reducer
     : n === 2 ? Field2Reducer
     : error('Unsupported field count: ' + n);
+  // @ts-ignore
   return new cls(fields, ops, output, stream);
 }
 

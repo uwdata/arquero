@@ -4,7 +4,8 @@ import { Int8, Type, tableFromIPC, tableToIPC, vectorFromArray } from 'apache-ar
 import fromArrow from '../../src/format/from-arrow.js';
 import fromCSV from '../../src/format/from-csv.js';
 import fromJSON from '../../src/format/from-json.js';
-import toArrow from '../../src/format/to-arrow.js';
+import toArrow, { toArrowIPC } from '../../src/format/to-arrow.js';
+import toJSON from '../../src/format/to-json.js';
 import { table } from '../../src/table/index.js';
 
 function date(year, month=0, date=1, hours=0, minutes=0, seconds=0, ms=0) {
@@ -38,8 +39,8 @@ function compareColumns(name, aqt, art) {
   const arc = art.getChild(name);
   const err = [];
   for (let i = 0; i < idx.length; ++i) {
-    let v1 = normalize(aqc.get(idx[i]));
-    let v2 = normalize(arc.get(i));
+    let v1 = normalize(aqc.at(idx[i]));
+    let v2 = normalize(arc.at(i));
     if (isArrayType(v1)) {
       v1 = v1.join();
       v2 = [...v2].join();
@@ -71,7 +72,7 @@ describe('toArrow', () => {
       o: [1, 2, 3, null, 5, 6].map(v => v ? { key: v } : null)
     });
 
-    const at = dt.toArrow();
+    const at = toArrow(dt);
 
     assert.equal(
       compareTables(dt, at), 0,
@@ -100,7 +101,7 @@ describe('toArrow', () => {
   it('produces Arrow data for an input CSV', async () => {
     const dt = fromCSV(readFileSync('test/format/data/beers.csv', 'utf8'));
     const st = dt.derive({ name: d => d.name + '' });
-    const at = dt.toArrow();
+    const at = toArrow(dt);
 
     assert.equal(
       compareTables(st, at), 0,
@@ -126,7 +127,7 @@ describe('toArrow', () => {
   });
 
   it('handles ambiguously typed data', async () => {
-    const at = table({ x: [1, 2, 3, 'foo'] }).toArrow();
+    const at = toArrow(table({ x: [1, 2, 3, 'foo'] }));
     assert.deepEqual(
       [...at.getChild('x')],
       ['1', '2', '3', 'foo'],
@@ -134,7 +135,7 @@ describe('toArrow', () => {
     );
 
     assert.throws(
-      () => table({ x: [1, 2, 3, true] }).toArrow(),
+      () => toArrow(table({ x: [1, 2, 3, true] })),
       'fail on mixed types'
     );
   });
@@ -143,14 +144,14 @@ describe('toArrow', () => {
     const dt = fromCSV(readFileSync('test/format/data/beers.csv', 'utf8'))
       .derive({ name: d => d.name + '' });
 
-    const json = dt.toJSON();
+    const json = toJSON(dt);
     const jt = fromJSON(json);
 
-    const bytes = tableToIPC(dt.toArrow());
+    const bytes = tableToIPC(toArrow(dt));
     const bt = fromArrow(tableFromIPC(bytes));
 
     assert.deepEqual(
-      [bt.toJSON(), jt.toJSON()],
+      [toJSON(bt), toJSON(jt)],
       [json, json],
       'arrow and json round trips match'
     );
@@ -164,7 +165,7 @@ describe('toArrow', () => {
       z: [true, true, false]
     });
 
-    const at = dt.toArrow({ columns: ['w', 'y'] });
+    const at = toArrow(dt, { columns: ['w', 'y'] });
 
     assert.deepEqual(
       at.schema.fields.map(f => f.name),
@@ -182,17 +183,17 @@ describe('toArrow', () => {
     });
 
     assert.equal(
-      JSON.stringify([...dt.toArrow({ limit: 2 })]),
+      JSON.stringify([...toArrow(dt, { limit: 2 })]),
       '[{"w":"a","x":1,"y":1.6181,"z":true},{"w":"b","x":2,"y":2.7182,"z":true}]',
       'limit'
     );
     assert.equal(
-      JSON.stringify([...dt.toArrow({ offset: 1 })]),
+      JSON.stringify([...toArrow(dt, { offset: 1 })]),
       '[{"w":"b","x":2,"y":2.7182,"z":true},{"w":"a","x":3,"y":3.1415,"z":false}]',
       'offset'
     );
     assert.equal(
-      JSON.stringify([...dt.toArrow({ offset: 1, limit: 1 })]),
+      JSON.stringify([...toArrow(dt, { offset: 1, limit: 1 })]),
       '[{"w":"b","x":2,"y":2.7182,"z":true}]',
       'limit and offset'
     );
@@ -206,7 +207,7 @@ describe('toArrow', () => {
       z: [true, true, false]
     });
 
-    const at = dt.toArrow({
+    const at = toArrow(dt, {
       types: { w: Type.Utf8, x: Type.Int32, y: Type.Float32 }
     });
 
@@ -222,7 +223,7 @@ describe('toArrow', () => {
   });
 });
 
-describe('toArrowBuffer', () => {
+describe('toArrowIPC', () => {
   it('generates the correct output for file option', () => {
     const dt = table({
       w: ['a', 'b', 'a'],
@@ -231,7 +232,7 @@ describe('toArrowBuffer', () => {
       z: [true, true, false]
     });
 
-    const buffer = dt.toArrowBuffer({ format: 'file' });
+    const buffer = toArrowIPC(dt, { format: 'file' });
 
     assert.deepEqual(
       buffer.slice(0, 8),
@@ -247,7 +248,7 @@ describe('toArrowBuffer', () => {
       z: [true, true, false]
     });
 
-    const buffer = dt.toArrowBuffer({ format: 'stream' });
+    const buffer = toArrowIPC(dt, { format: 'stream' });
 
     assert.deepEqual(
       buffer.slice(0, 8),
@@ -263,7 +264,7 @@ describe('toArrowBuffer', () => {
       z: [true, true, false]
     });
 
-    const buffer = dt.toArrowBuffer();
+    const buffer = toArrowIPC(dt);
 
     assert.deepEqual(
       buffer.slice(0, 8),
@@ -279,7 +280,7 @@ describe('toArrowBuffer', () => {
         y: [1.6181, 2.7182, 3.1415],
         z: [true, true, false]
       });
-      dt.toArrowBuffer({ format: 'nonsense' });
+      toArrowIPC(dt, { format: 'nonsense' });
     }, 'Unrecognized output format');
   });
 });

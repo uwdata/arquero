@@ -134,8 +134,7 @@ describe('rollup', () => {
     const dt = table(data).groupby('g');
 
     assert.deepEqual(
-      dt.rollup({ o: op.object_agg('k', 'v') })
-        .columnArray('o'),
+      dt.rollup({ o: op.object_agg('k', 'v') }).array('o'),
       [
         { a: 1, b: 2 },
         { a: 5, b: 4 }
@@ -144,8 +143,7 @@ describe('rollup', () => {
     );
 
     assert.deepEqual(
-      dt.rollup({ o: op.entries_agg('k', 'v') })
-        .columnArray('o'),
+      dt.rollup({ o: op.entries_agg('k', 'v') }).array('o'),
       [
         [['a', 1], ['b', 2]],
         [['a', 3], ['b', 4], ['a', 5]]
@@ -154,8 +152,7 @@ describe('rollup', () => {
     );
 
     assert.deepEqual(
-      dt.rollup({ o: op.map_agg('k', 'v') })
-        .columnArray('o'),
+      dt.rollup({ o: op.map_agg('k', 'v') }).array('o'),
       [
         new Map([['a', 1], ['b', 2]]),
         new Map([['a', 5], ['b', 4]])

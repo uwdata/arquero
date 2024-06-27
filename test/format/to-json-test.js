@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import ColumnTable from '../../src/table/column-table.js';
+import { ColumnTable } from '../../src/table/ColumnTable.js';
 import toJSON from '../../src/format/to-json.js';
 
 function data() {

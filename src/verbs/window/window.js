@@ -11,10 +11,11 @@ const peersValue = op => !!op.peers;
 
 function windowOp(spec) {
   const { id, name, fields = [], params = [] } = spec;
-  const op = getWindow(name).create(...params);
-  if (fields.length) op.get = fields[0];
-  op.id = id;
-  return op;
+  return {
+    ...getWindow(name).create(...params),
+    get: fields.length ? fields[0] : null,
+    id
+  };
 }
 
 export function window(table, cols, exprs, result = {}, ops) {

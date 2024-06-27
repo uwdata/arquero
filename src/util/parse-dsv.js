@@ -31,7 +31,7 @@ const RETURN = 13;
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 export default function(
   text,
-  { delimiter = ',', comment, skip } = {}
+  { delimiter = ',', comment = undefined, skip = 0 } = {}
 ) {
   if (delimiter.length !== 1) {
     error(`Text delimiter should be a single character: "${delimiter}"`);

@@ -32,8 +32,8 @@ import parseDelimited from './parse/parse-delimited.js';
  * behavior, set the autoType option to false. To perform custom parsing
  * of input column values, use the parse option.
  * @param {string} text A string in a delimited-value format.
- * @param {CSVParseOptions} options The formatting options.
- * @return {import('../table/column-table.js').ColumnTable} A new table
+ * @param {CSVParseOptions} [options] The formatting options.
+ * @return {import('../table/ColumnTable.js').ColumnTable} A new table
  *  containing the parsed values.
  */
 export default function(text, options = {}) {

@@ -39,7 +39,7 @@ function toObject(value) {
 
 /**
  * Proxy type for SelectHelper function.
- * @typedef {import('../table/transformable').SelectHelper} SelectHelper
+ * @typedef {import('../table/types.js').SelectHelper} SelectHelper
  */
 
 /**
@@ -98,7 +98,9 @@ export function range(start, end) {
 export function matches(pattern) {
   if (isString(pattern)) pattern = RegExp(escapeRegExp(pattern));
   return decorate(
+    // @ts-ignore
     table => table.columnNames(name => pattern.test(name)),
+    // @ts-ignore
     () => ({ matches: [pattern.source, pattern.flags] })
   );
 }

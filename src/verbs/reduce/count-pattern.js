@@ -6,7 +6,7 @@ export default function(fields, as, pattern) {
 }
 
 function columnGetter(column) {
-  return (row, data) => data[column].get(row);
+  return (row, data) => data[column].at(row);
 }
 
 export class CountPattern extends Reducer {
