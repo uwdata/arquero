@@ -35,7 +35,7 @@ const ref = (node, opt, method) => {
 
 const visitors = {
   Constant: node => node.raw,
-  Column: (node, opt) => ref(node, opt, 'get'),
+  Column: (node, opt) => ref(node, opt, 'at'),
   Dictionary: (node, opt) => ref(node, opt, 'key'),
   Function: node => `fn.${node.name}`,
   Parameter: node => `$${name(node)}`,

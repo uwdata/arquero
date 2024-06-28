@@ -54,8 +54,8 @@ function initProduct(s, value) {
  * An operator instance for an aggregate function.
  * @typedef {object} AggregateOperator
  * @property {AggregateInit} init Initialize the operator.
- * @property {AggregateAdd} add Add a value to the operator state.
- * @property {AggregateRem} rem Remove a value from the operator state.
+ * @property {AggregateAdd} [add] Add a value to the operator state.
+ * @property {AggregateRem} [rem] Remove a value from the operator state.
  * @property {AggregateValue} value Retrieve an output value.
  */
 

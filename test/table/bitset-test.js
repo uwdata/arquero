@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import BitSet from '../../src/table/bit-set.js';
+import { BitSet } from '../../src/table/BitSet.js';
 
 describe('BitSet', () => {
   it('manages a set of bits', () => {

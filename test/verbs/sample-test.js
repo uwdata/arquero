@@ -6,7 +6,7 @@ function check(table, replace, prefix = '') {
   const vals = [];
   const cnts = {};
   table.scan((row, data) => {
-    const val = data.a.get(row);
+    const val = data.a.at(row);
     vals.push(val);
     cnts[val] = (cnts[val] || 0) + 1;
   });
@@ -141,7 +141,7 @@ describe('sample', () => {
     assert.equal(ft.numRows(), 2, 'num rows');
     assert.equal(ft.numCols(), 2, 'num cols');
     assert.deepEqual(
-      ft.column('b').data.sort((a, b) => a - b),
+      ft.column('b').sort((a, b) => a - b),
       [2, 4],
       'stratify keys'
     );

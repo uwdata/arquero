@@ -1,4 +1,3 @@
-import _orderby from '../engine/orderby.js';
 import parse from '../expression/compare.js';
 import field from '../helpers/field.js';
 import error from '../util/error.js';
@@ -7,7 +6,7 @@ import isObject from '../util/is-object.js';
 import isNumber from '../util/is-number.js';
 import isString from '../util/is-string.js';
 
-export default function(table, values) {
+export function orderby(table, values) {
   return _orderby(table, parseValues(table, values));
 }
 
@@ -32,4 +31,8 @@ function parseValues(table, params) {
   });
 
   return parse(table, exprs);
+}
+
+export function _orderby(table, comparator) {
+  return table.create({ order: comparator });
 }

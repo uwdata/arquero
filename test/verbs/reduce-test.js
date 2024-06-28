@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import tableEqual from '../table-equal.js';
 import { table } from '../../src/index.js';
-import countPattern from '../../src/engine/reduce/count-pattern.js';
+import countPattern from '../../src/verbs/reduce/count-pattern.js';
 
 describe('reduce', () => {
   it('produces multiple aggregates', () => {

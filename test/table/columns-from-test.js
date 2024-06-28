@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import columnsFrom from '../../src/table/columns-from.js';
+import { columnsFrom } from '../../src/table/columns-from.js';
 
 describe('columnsFrom', () => {
   it('supports array input', () => {

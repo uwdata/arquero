@@ -55,8 +55,7 @@ import mapObject from '../util/map-object.js';
 
 /**
  * Format a table as an HTML table string.
- * @param {import('../table/column-table.js').ColumnTable} table The table
- *  to format.
+ * @param {import('../table/Table.js').Table} table The table to format.
  * @param {HTMLFormatOptions} options The formatting options.
  * @return {string} An HTML table string.
  */

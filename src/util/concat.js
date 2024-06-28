@@ -1,4 +1,5 @@
-export default function(list, fn = (x => x), delim = '') {
+// eslint-disable-next-line no-unused-vars
+export default function(list, fn = ((x, i) => x), delim = '') {
   const n = list.length;
   if (!n) return '';
 

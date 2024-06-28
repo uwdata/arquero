@@ -27,8 +27,7 @@ const defaultFormatter = value => isDate(value)
 
 /**
  * Format a table as a JavaScript Object Notation (JSON) string.
- * @param {import('../table/column-table.js').ColumnTable} table The
- *  table to format.
+ * @param {import('../table/Table.js').Table} table The table to format.
  * @param {JSONFormatOptions} options The formatting options.
  * @return {string} A JSON string.
  */
@@ -51,7 +50,7 @@ export default function(table, options = {}) {
     const formatter = format[name] || defaultFormatter;
     let r = -1;
     table.scan(row => {
-      const value = column.get(row);
+      const value = column.at(row);
       text += (++r ? ',' : '') + JSON.stringify(formatter(value));
     }, true, options.limit, options.offset);
 

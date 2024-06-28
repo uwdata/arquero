@@ -2,12 +2,13 @@ import assert from 'node:assert';
 import { Utf8 } from 'apache-arrow';
 import tableEqual from '../table-equal.js';
 import fromArrow from '../../src/format/from-arrow.js';
+import toArrow from '../../src/format/to-arrow.js';
 import { not } from '../../src/helpers/selection.js';
 import { table } from '../../src/index.js';
 import { isFixedSizeList, isList, isStruct } from '../../src/arrow/arrow-types.js';
 
 function arrowTable(data, types) {
-  return table(data).toArrow({ types });
+  return toArrow(table(data), { types });
 }
 
 describe('fromArrow', () => {

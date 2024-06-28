@@ -1,6 +1,6 @@
 import assert from 'node:assert';
-import BitSet from '../../src/table/bit-set.js';
-import ColumnTable from '../../src/table/column-table.js';
+import { BitSet } from '../../src/table/BitSet.js';
+import { ColumnTable } from '../../src/table/ColumnTable.js';
 import toCSV from '../../src/format/to-csv.js';
 
 function data() {

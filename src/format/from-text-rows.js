@@ -1,4 +1,4 @@
-import ColumnTable from '../table/column-table.js';
+import { ColumnTable } from '../table/ColumnTable.js';
 import identity from '../util/identity.js';
 import isFunction from '../util/is-function.js';
 import repeat from '../util/repeat.js';

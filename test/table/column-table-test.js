@@ -1,8 +1,7 @@
 import assert from 'node:assert';
-import tableEqual from '../table-equal.js';
 import { not } from '../../src/helpers/selection.js';
-import BitSet from '../../src/table/bit-set.js';
-import ColumnTable from '../../src/table/column-table.js';
+import { BitSet } from '../../src/table/BitSet.js';
+import { ColumnTable } from '../../src/table/ColumnTable.js';
 
 describe('ColumnTable', () => {
   it('supports varied column types', () => {
@@ -47,7 +46,7 @@ describe('ColumnTable', () => {
     };
     assert.deepEqual(getter, ref, 'extracted getter values match');
 
-    const arrays = ['int', 'num', 'str', 'chr', 'obj'].map(name => ct.columnArray(name));
+    const arrays = ['int', 'num', 'str', 'chr', 'obj'].map(name => ct.array(name));
     const array = {
       int: rows.map(row => arrays[0][row]),
       num: rows.map(row => arrays[1][row]),
@@ -55,7 +54,7 @@ describe('ColumnTable', () => {
       chr: rows.map(row => arrays[3][row]),
       obj: rows.map(row => arrays[4][row])
     };
-    assert.deepEqual(array, ref, 'extracted columnArray values match');
+    assert.deepEqual(array, ref, 'extracted array values match');
 
     const scanned = {
       int: [],
@@ -66,7 +65,7 @@ describe('ColumnTable', () => {
     };
     ct.scan((row, data) => {
       for (const col in data) {
-        scanned[col].push(data[col].get(row));
+        scanned[col].push(data[col].at(row));
       }
     });
     assert.deepEqual(scanned, ref, 'scanned values match');
@@ -89,7 +88,7 @@ describe('ColumnTable', () => {
     ft.scan(row => idx.push(row), true);
     assert.deepEqual(idx, [1, 2, 4], 'filtered scan');
 
-    const order = (u, v, { b }) => b.get(u) - b.get(v);
+    const order = (u, v, { b }) => b.at(u) - b.at(v);
     const ot = table.create({ order });
     assert.ok(ot.isOrdered(), 'is ordered');
     idx = [];
@@ -121,7 +120,7 @@ describe('ColumnTable', () => {
     assert.equal(count, 2, 'filtered scan');
 
     count = 0;
-    const order = (u, v, { b }) => b.get(u) - b.get(v);
+    const order = (u, v, { b }) => b.at(u) - b.at(v);
     table.create({ order }).scan(visitor, true);
     assert.equal(count, 2, 'ordered scan');
   });
@@ -472,51 +471,6 @@ describe('ColumnTable', () => {
       dt.create({ filter, order, groups }).toString(),
       '[object Table: 2 cols x 3 rows (5 backing), 2 groups, ordered]',
       'filtered, grouped, ordered table toString'
-    );
-  });
-
-  it('assign merges tables', () => {
-    const t1 = new ColumnTable({ a: [1], b: [2], c: [3] });
-    const t2 = new ColumnTable({ b: [-2], d: [4] });
-    const t3 = new ColumnTable({ a: [-1], e: [5] });
-    const dt = t1.assign(t2, t3);
-
-    tableEqual(dt, {
-      a: [-1], b: [-2], c: [3], d: [4], e: [5]
-    }, 'assigned data');
-
-    assert.deepEqual(
-      dt.columnNames(),
-      ['a', 'b', 'c', 'd', 'e'],
-      'assigned names'
-    );
-
-    assert.throws(
-      () => t1.assign(new ColumnTable({ c: [1, 2, 3] })),
-      'throws on mismatched row counts'
-    );
-
-    tableEqual(t1.assign({ b: [-2], d: [4] }), {
-      a: [1], b: [-2], c: [3], d: [4]
-    }, 'assigned data from object');
-
-    assert.throws(
-      () => t1.assign({ c: [1, 2, 3] }),
-      'throws on mismatched row counts from object'
-    );
-  });
-
-  it('transform applies transformations', () => {
-    const dt = new ColumnTable({ a: [1, 2], b: [2, 3], c: [3, 4] });
-
-    tableEqual(
-      dt.transform(
-        t => t.filter(d => d.c > 3),
-        t => t.select('a', 'b'),
-        t => t.reify()
-      ),
-      { a: [2], b: [3] },
-      'transform pipeline'
     );
   });
 });

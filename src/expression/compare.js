@@ -1,6 +1,6 @@
 import codegen from './codegen.js';
 import parse from './parse.js';
-import { aggregate } from '../engine/reduce/util.js';
+import { aggregate } from '../verbs/reduce/util.js';
 
 // generate code to compare a single field
 const _compare = (u, v, lt, gt) =>

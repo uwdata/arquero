@@ -20,7 +20,7 @@ export default function(vector) {
     vector,
     length,
 
-    get: row => value(keys[row]),
+    at: row => value(keys[row]),
 
     key: row => keys[row],
 

@@ -1,3 +1,5 @@
-export default function(table, others) {
-  return table.concat(others).dedupe();
+import { dedupe } from './dedupe.js';
+
+export function union(table, others) {
+  return dedupe(table.concat(others));
 }

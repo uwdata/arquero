@@ -1,14 +1,11 @@
 {
-  "include": ["src/index.js", "src/index-node.js"],
+  "include": ["src/**/*"],
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "esModuleInterop": true,
+    "noEmit": true,
     "module": "node16",
     "moduleResolution": "node16",
-    "outDir": "dist/types",
     "target": "es6",
     "skipLibCheck": true
   }

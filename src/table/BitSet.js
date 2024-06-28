@@ -4,7 +4,7 @@ const ALL = 0xFFFFFFFF;
 /**
  * Represent an indexable set of bits.
  */
-export default class BitSet {
+export class BitSet {
   /**
    * Instantiate a new BitSet instance.
    * @param {number} size The number of bits.

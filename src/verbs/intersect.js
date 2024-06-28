@@ -1,6 +1,9 @@
-export default function(table, others) {
+import { dedupe } from './dedupe.js';
+import { semijoin } from './join-filter.js';
+
+export function intersect(table, others) {
   const names = table.columnNames();
   return others.length
-    ? others.reduce((a, b) => a.semijoin(b.select(names)), table).dedupe()
+    ? dedupe(others.reduce((a, b) => semijoin(a, b.select(names)), table))
     : table.reify([]);
 }

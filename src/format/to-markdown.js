@@ -25,7 +25,7 @@ import { columns, formats, scan } from './util.js';
 
 /**
  * Format a table as a GitHub-Flavored Markdown table string.
- * @param {import('../table/column-table.js').ColumnTable} table The table to format.
+ * @param {import('../table/Table.js').Table} table The table to format.
  * @param {MarkdownFormatOptions} options The formatting options.
  * @return {string} A GitHub-Flavored Markdown table string.
  */

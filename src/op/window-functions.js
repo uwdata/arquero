@@ -11,7 +11,7 @@ import NULL from '../util/null.js';
 
 /**
  * A storage object for the state of the window.
- * @typedef {import('../engine/window/window-state').default} WindowState
+ * @typedef {import('../verbs/window/window-state.js').default} WindowState
  */
 
 /**
@@ -23,12 +23,12 @@ import NULL from '../util/null.js';
 
 /**
  * Initialize an aggregate operator.
- * @typedef {import('./aggregate-functions').AggregateInit} AggregateInit
+ * @typedef {import('./aggregate-functions.js').AggregateInit} AggregateInit
  */
 
 /**
  * Retrive an output value from an aggregate operator.
- * @typedef {import('./aggregate-functions').AggregateValue} AggregateValue
+ * @typedef {import('./aggregate-functions.js').AggregateValue} AggregateValue
  */
 
 /**
@@ -47,7 +47,7 @@ import NULL from '../util/null.js';
 
 /**
  * Create a new aggregate operator instance.
- * @typedef {import('./aggregate-functions').AggregateCreate} AggregateCreate
+ * @typedef {import('./aggregate-functions.js').AggregateCreate} AggregateCreate
  */
 
 /**

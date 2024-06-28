@@ -1,5 +1,33 @@
 import functions from './functions/index.js';
-import op from './op.js';
+import toArray from '../util/to-array.js';
+import toString from '../util/to-string.js';
+
+export class Op {
+  constructor(name, fields, params) {
+    this.name = name;
+    this.fields = fields;
+    this.params = params;
+  }
+  toString() {
+    const args = [
+      ...this.fields.map(f => `d[${toString(f)}]`),
+      ...this.params.map(toString)
+    ];
+    return `d => op.${this.name}(${args})`;
+  }
+  toObject() {
+    return { expr: this.toString(), func: true };
+  }
+}
+
+/**
+ * @param {string} name
+ * @param {any | any[]} [fields]
+ * @param {any | any[]} [params]
+ */
+export function op(name, fields = [], params = []) {
+  return new Op(name, toArray(fields), toArray(params));
+}
 
 export const any = (field) => op('any', field);
 export const count = () => op('count');
@@ -10,7 +38,7 @@ export const object_agg = (key, value) => op('object_agg', [key, value]);
 export const entries_agg = (key, value) => op('entries_agg', [key, value]);
 
 /**
- * @typedef {import('../table/transformable').Struct} Struct
+ * @typedef {import('../table/types.js').Struct} Struct
  */
 
 /**
@@ -24,13 +52,13 @@ export default {
    * Generate an object representing the current table row.
    * @param {...string} names The column names to include in the object.
    *  If unspecified, all columns are included.
-   * @return {Struct} The generated row object.
+   * @return {Op|Struct} The generated row object.
    */
   row_object: (...names) => op('row_object', null, names.flat()),
 
   /**
    * Aggregate function to count the number of records (rows).
-   * @returns {number} The count of records.
+   * @returns {Op|number} The count of records.
    */
   count,
 
@@ -44,14 +72,14 @@ export default {
   /**
    * Aggregate function to collect an array of values.
    * @param {*} field The data field.
-   * @return {Array} A list of values.
+   * @return {Op|Array} A list of values.
    */
   array_agg,
 
   /**
    * Aggregate function to collect an array of distinct (unique) values.
    * @param {*} field The data field.
-   * @return {Array} An array of unique values.
+   * @return {Op|Array} An array of unique values.
    */
   array_agg_distinct,
 
@@ -59,7 +87,7 @@ export default {
    * Aggregate function to create an object given input key and value fields.
    * @param {*} key The object key field.
    * @param {*} value The object value field.
-   * @return {Struct} An object of key-value pairs.
+   * @return {Op|Struct} An object of key-value pairs.
    */
   object_agg,
 
@@ -67,7 +95,7 @@ export default {
    * Aggregate function to create a Map given input key and value fields.
    * @param {*} key The object key field.
    * @param {*} value The object value field.
-   * @return {Map} A Map of key-value pairs.
+   * @return {Op|Map} A Map of key-value pairs.
    */
   map_agg,
 
@@ -76,7 +104,7 @@ export default {
    * given input key and value fields.
    * @param {*} key The object key field.
    * @param {*} value The object value field.
-   * @return {[[any, any]]} An array of [key, value] arrays.
+   * @return {Op|[[any, any]]} An array of [key, value] arrays.
    */
   entries_agg,
 
@@ -84,7 +112,7 @@ export default {
    * Aggregate function to count the number of valid values.
    * Invalid values are null, undefined, or NaN.
    * @param {*} field The data field.
-   * @return {number} The count of valid values.
+   * @return {Op|number} The count of valid values.
    */
   valid: (field) => op('valid', field),
 
@@ -92,91 +120,91 @@ export default {
    * Aggregate function to count the number of invalid values.
    * Invalid values are null, undefined, or NaN.
    * @param {*} field The data field.
-   * @return {number} The count of invalid values.
+   * @return {Op|number} The count of invalid values.
    */
   invalid: (field) => op('invalid', field),
 
   /**
    * Aggregate function to count the number of distinct values.
    * @param {*} field The data field.
-   * @return {number} The count of distinct values.
+   * @return {Op|number} The count of distinct values.
    */
   distinct: (field) => op('distinct', field),
 
   /**
    * Aggregate function to determine the mode (most frequent) value.
    * @param {*} field The data field.
-   * @return {number} The mode value.
+   * @return {Op|number} The mode value.
    */
   mode: (field) => op('mode', field),
 
   /**
    * Aggregate function to sum values.
    * @param {string} field The data field.
-   * @return {number} The sum of the values.
+   * @return {Op|number} The sum of the values.
    */
   sum: (field) => op('sum', field),
 
   /**
    * Aggregate function to multiply values.
    * @param {*} field The data field.
-   * @return {number} The product of the values.
+   * @return {Op|number} The product of the values.
    */
   product: (field) => op('product', field),
 
   /**
    * Aggregate function for the mean (average) value.
    * @param {*} field The data field.
-   * @return {number} The mean (average) of the values.
+   * @return {Op|number} The mean (average) of the values.
    */
   mean: (field) => op('mean', field),
 
   /**
    * Aggregate function for the average (mean) value.
    * @param {*} field The data field.
-   * @return {number} The average (mean) of the values.
+   * @return {Op|number} The average (mean) of the values.
    */
   average: (field) => op('average', field),
 
   /**
    * Aggregate function for the sample variance.
    * @param {*} field The data field.
-   * @return {number} The sample variance of the values.
+   * @return {Op|number} The sample variance of the values.
    */
   variance: (field) => op('variance', field),
 
   /**
    * Aggregate function for the population variance.
    * @param {*} field The data field.
-   * @return {number} The population variance of the values.
+   * @return {Op|number} The population variance of the values.
    */
   variancep: (field) => op('variancep', field),
 
   /**
    * Aggregate function for the sample standard deviation.
    * @param {*} field The data field.
-   * @return {number} The sample standard deviation of the values.
+   * @return {Op|number} The sample standard deviation of the values.
    */
   stdev: (field) => op('stdev', field),
 
   /**
    * Aggregate function for the population standard deviation.
    * @param {*} field The data field.
-   * @return {number} The population standard deviation of the values.
+   * @return {Op|number} The population standard deviation of the values.
    */
   stdevp: (field) => op('stdevp', field),
 
   /**
    * Aggregate function for the minimum value.
    * @param {*} field The data field.
-   * @return {number} The minimum value.
+   * @return {Op|number} The minimum value.
    */
   min: (field) => op('min', field),
 
   /**
    * Aggregate function for the maximum value.
    * @param {*} field The data field.
-   * @return {number} The maximum value.
+   * @return {Op|number} The maximum value.
    */
   max: (field) => op('max', field),
 
@@ -185,7 +213,7 @@ export default {
    * of a data field for a probability threshold.
    * @param {*} field The data field.
    * @param {number} p The probability threshold.
-   * @return {number} The quantile value.
+   * @return {Op|number} The quantile value.
    */
   quantile: (field, p) => op('quantile', field, p),
 
@@ -193,7 +221,7 @@ export default {
    * Aggregate function for the median value.
    * This is a shorthand for the 0.5 quantile value.
    * @param {*} field The data field.
-   * @return {number} The median value.
+   * @return {Op|number} The median value.
    */
   median: (field) => op('median', field),
 
@@ -201,7 +229,7 @@ export default {
    * Aggregate function for the sample covariance between two variables.
    * @param {*} field1 The first data field.
    * @param {*} field2 The second data field.
-   * @return {number} The sample covariance of the values.
+   * @return {Op|number} The sample covariance of the values.
    */
   covariance: (field1, field2) => op('covariance', [field1, field2]),
 
@@ -209,7 +237,7 @@ export default {
    * Aggregate function for the population covariance between two variables.
    * @param {*} field1 The first data field.
    * @param {*} field2 The second data field.
-   * @return {number} The population covariance of the values.
+   * @return {Op|number} The population covariance of the values.
    */
   covariancep: (field1, field2) => op('covariancep', [field1, field2]),
 
@@ -219,7 +247,7 @@ export default {
    * variable and then apply this function to the result.
    * @param {*} field1 The first data field.
    * @param {*} field2 The second data field.
-   * @return {number} The correlation between the field values.
+   * @return {Op|number} The correlation between the field values.
    */
   corr: (field1, field2) => op('corr', [field1, field2]),
 
@@ -233,14 +261,14 @@ export default {
    * @param {number} [minstep] The minimum allowed step size between bins.
    * @param {number} [step] The exact step size to use between bins.
    *  If specified, the maxbins and minstep arguments are ignored.
-   * @return {[number, number, number]} The bin [min, max, and step] values.
+   * @return {Op|[number, number, number]} The bin [min, max, and step] values.
    */
-  bins: (field, maxbins, nice, minstep) =>
-    op('bins', field, [maxbins, nice, minstep]),
+  bins: (field, maxbins, nice, minstep, step) =>
+    op('bins', field, [maxbins, nice, minstep, step]),
 
   /**
    * Window function to assign consecutive row numbers, starting from 1.
-   * @return {number} The row number value.
+   * @return {Op|number} The row number value.
    */
   row_number: () => op('row_number'),
 
@@ -249,7 +277,7 @@ export default {
    * from 1. Peer values are assigned the same rank. Subsequent ranks
    * reflect the number of prior values: if the first two values tie for
    * rank 1, the third value is assigned rank 3.
-   * @return {number} The rank value.
+   * @return {Op|number} The rank value.
    */
   rank: () => op('rank'),
 
@@ -257,7 +285,7 @@ export default {
    * Window function to assign a fractional (average) rank to each value in
    * a group, starting from 1. Peer values are assigned the average of their
    * indices: if the first two values tie, both will be assigned rank 1.5.
-   * @return {number} The peer-averaged rank value.
+   * @return {Op|number} The peer-averaged rank value.
    */
   avg_rank: () => op('avg_rank'),
 
@@ -266,21 +294,21 @@ export default {
    * starting from 1. Peer values are assigned the same rank. Subsequent
    * ranks do not reflect the number of prior values: if the first two
    * values tie for rank 1, the third value is assigned rank 2.
-   * @return {number} The dense rank value.
+   * @return {Op|number} The dense rank value.
    */
   dense_rank: () => op('dense_rank'),
 
   /**
    * Window function to assign a percentage rank to each value in a group.
    * The percent is calculated as (rank - 1) / (group_size - 1).
-   * @return {number} The percentage rank value.
+   * @return {Op|number} The percentage rank value.
    */
   percent_rank: () => op('percent_rank'),
 
   /**
    * Window function to assign a cumulative distribution value between 0 and 1
    * to each value in a group.
-   * @return {number} The cumulative distribution value.
+   * @return {Op|number} The cumulative distribution value.
    */
   cume_dist: () => op('cume_dist'),
 
@@ -289,7 +317,7 @@ export default {
    * value in a group. Accepts an integer parameter indicating the number of
    * buckets to use (e.g., 100 for percentiles, 5 for quintiles).
    * @param {number} num The number of buckets for ntile calculation.
-   * @return {number} The quantile value.
+   * @return {*} The quantile value.
    */
   ntile: (num) => op('ntile', null, num),
 

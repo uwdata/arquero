@@ -10,11 +10,11 @@ function test(input) {
   const { ops, names, exprs } = parse(input, { compiler });
 
   assert.deepEqual(ops, [
-    { name: 'mean', fields: ['data.a.get(row)'], params: [], id: 0 },
-    { name: 'corr', fields: ['data.a.get(row)', 'data.b.get(row)'], params: [], id: 1},
-    { name: 'quantile', fields: ['(-data.bar.get(row))'], params: ['(0.5 / 2)'], id: 2},
-    { name: 'lag', fields: ['data.value.get(row)'], params: [2], id: 3 },
-    { name: 'mean', fields: ['data.value.get(row)'], params: [], frame: [-3, 3], peers: false, id: 4 },
+    { name: 'mean', fields: ['data.a.at(row)'], params: [], id: 0 },
+    { name: 'corr', fields: ['data.a.at(row)', 'data.b.at(row)'], params: [], id: 1},
+    { name: 'quantile', fields: ['(-data.bar.at(row))'], params: ['(0.5 / 2)'], id: 2},
+    { name: 'lag', fields: ['data.value.at(row)'], params: [2], id: 3 },
+    { name: 'mean', fields: ['data.value.at(row)'], params: [], frame: [-3, 3], peers: false, id: 4 },
     { name: 'count', fields: [], params: [], frame: [-3, 3], peers: true, id: 5 }
   ], 'parsed operators');
 
@@ -31,11 +31,11 @@ function test(input) {
 
   assert.deepEqual(exprs, [
     '(1 + 1)',
-    '(data.a.get(row) * data.b.get(row))',
+    '(data.a.at(row) * data.b.at(row))',
     'op(0,row)',
     'op(1,row)',
     '(1 + op(2,row))',
-    '(data.value.get(row) - op(3,row))',
+    '(data.value.at(row) - op(3,row))',
     'op(4,row)',
     'op(5,row)'
   ], 'parsed output expressions');
@@ -87,19 +87,19 @@ describe('parse', () => {
   it('parses expressions with Math object', () => {
     assert.equal(
       parse({ f: d => Math.sqrt(d.x) }).exprs[0] + '',
-      '(row,data,op)=>fn.sqrt(data.x.get(row))',
+      '(row,data,op)=>fn.sqrt(data.x.at(row))',
       'parse Math.sqrt'
     );
 
     assert.equal(
       parse({ f: d => Math.max(d.x) }).exprs[0] + '',
-      '(row,data,op)=>fn.greatest(data.x.get(row))',
+      '(row,data,op)=>fn.greatest(data.x.at(row))',
       'parse Math.max, rewrite as greatest'
     );
 
     assert.equal(
       parse({ f: d => Math.min(d.x) }).exprs[0] + '',
-      '(row,data,op)=>fn.least(data.x.get(row))',
+      '(row,data,op)=>fn.least(data.x.at(row))',
       'parse Math.min, rewrite as least'
     );
   });
@@ -163,19 +163,19 @@ describe('parse', () => {
   it('parses column references with nested properties', () => {
     assert.equal(
       parse({ f: d => d.x.y }).exprs[0] + '',
-      '(row,data,op)=>data.x.get(row).y',
+      '(row,data,op)=>data.x.at(row).y',
       'parsed nested members'
     );
 
     assert.equal(
       parse({ f: d => d['x'].y }).exprs[0] + '',
-      '(row,data,op)=>data["x"].get(row).y',
+      '(row,data,op)=>data["x"].at(row).y',
       'parsed nested members'
     );
 
     assert.equal(
       parse({ f: d => d['x']['y'] }).exprs[0] + '',
-      '(row,data,op)=>data["x"].get(row)[\'y\']',
+      '(row,data,op)=>data["x"].at(row)[\'y\']',
       'parsed nested members'
     );
   });
@@ -184,7 +184,7 @@ describe('parse', () => {
     // direct expression
     assert.equal(
       parse({ f: d => d['x' + 'y'] }).exprs[0] + '',
-      '(row,data,op)=>data["xy"].get(row)',
+      '(row,data,op)=>data["xy"].at(row)',
       'parsed indirect member as expression'
     );
 
@@ -197,7 +197,7 @@ describe('parse', () => {
     };
     assert.equal(
       parse({ f: (d, $) => d[$.col] }, opt).exprs[0] + '',
-      '(row,data,op)=>data["a"].get(row)',
+      '(row,data,op)=>data["a"].at(row)',
       'parsed indirect member as param'
     );
 
@@ -257,7 +257,7 @@ describe('parse', () => {
     const { exprs } = parse({ f: d => ({ [d.x]: d.y }) });
     assert.equal(
       exprs[0] + '',
-      '(row,data,op)=>({[data.x.get(row)]:data.y.get(row)})',
+      '(row,data,op)=>({[data.x.at(row)]:data.y.at(row)})',
       'parsed computed object property'
     );
   });
@@ -266,7 +266,7 @@ describe('parse', () => {
     const { exprs } = parse({ f: d => `${d.x} + ${d.y}` });
     assert.equal(
       exprs[0] + '',
-      '(row,data,op)=>`${data.x.get(row)} + ${data.y.get(row)}`',
+      '(row,data,op)=>`${data.x.at(row)} + ${data.y.at(row)}`',
       'parsed template literal'
     );
   });
@@ -282,7 +282,7 @@ describe('parse', () => {
         names: [ 'val' ],
         exprs: [ '{const s=op(0,row);return (s * s);}' ],
         ops: [
-          { name: 'sum', fields: [ 'data.a.get(row)' ], params: [], id: 0 }
+          { name: 'sum', fields: [ 'data.a.at(row)' ], params: [], id: 0 }
         ]
       },
       'parsed block'
@@ -686,11 +686,11 @@ describe('parse', () => {
       {
         names: [ 'ref', 'nest', 'destr', 'l_lte', 'r_lte' ],
         exprs: [
-          'data.v.get(row)',
-          "(data.v.get(row).x === 'a')",
-          "(data.v.get(row).x === 'a')",
-          "(data.v.get(row) <= 'a')",
-          "('a' <= data.v.get(row))"
+          'data.v.at(row)',
+          "(data.v.at(row).x === 'a')",
+          "(data.v.at(row).x === 'a')",
+          "(data.v.at(row) <= 'a')",
+          "('a' <= data.v.at(row))"
         ],
         ops: []
       },

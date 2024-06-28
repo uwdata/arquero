@@ -34,6 +34,7 @@
     "perf": "TZ=America/Los_Angeles tape 'perf/**/*-perf.js'",
     "lint": "eslint src test",
     "test": "TZ=America/Los_Angeles mocha 'test/**/*-test.js'",
+    "posttest": "tsc --project jsconfig.json",
     "prepublishOnly": "npm test && npm run lint && npm run build"
   },
   "dependencies": {

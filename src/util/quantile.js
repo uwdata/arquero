@@ -14,5 +14,6 @@ export default function quantile(values, p) {
   const v0 = toNumeric(values[i0]);
   return isBigInt(v0)
     ? v0
+    // @ts-ignore
     : v0 + (toNumeric(values[i0 + 1]) - v0) * (i - i0);
 }

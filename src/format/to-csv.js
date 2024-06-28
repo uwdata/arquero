@@ -21,8 +21,7 @@ import isDate from '../util/is-date.js';
  * Format a table as a comma-separated values (CSV) string. Other
  * delimiters, such as tabs or pipes ('|'), can be specified using
  * the options argument.
- * @param {import('../table/column-table.js').ColumnTable} table The table
- *  to format.
+ * @param {import('../table/Table.js').Table} table The table to format.
  * @param {CSVFormatOptions} options The formatting options.
  * @return {string} A delimited-value format string.
  */

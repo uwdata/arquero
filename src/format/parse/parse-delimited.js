@@ -26,7 +26,11 @@ import error from '../../util/error.js';
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-export default function(text, { delimiter = ',', skip, comment }) {
+export default function(text, {
+  delimiter = ',',
+  skip = 0,
+  comment = undefined
+}) {
   if (delimiter.length !== 1) {
     error(`Text "delimiter" should be a single character, found "${delimiter}"`);
   }
