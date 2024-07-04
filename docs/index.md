@@ -93,13 +93,9 @@ Arquero uses modern JavaScript features, and so will not work with some outdated
 
 ### In Node.js or Application Bundles
 
-First install `arquero` as a dependency, for example via `npm install arquero --save`. Arquero assumes Node version 12 or higher.
-
-Import using CommonJS module syntax:
-
-```js
-const aq = require('arquero');
-```
+First install `arquero` as a dependency, for example via `npm install arquero --save`.
+Arquero assumes Node version 18 or higher.
+As of Arquero version 6, the library uses type `module` and should be loaded using ES module syntax.
 
 Import using ES module syntax, import all exports into a single object:
 
@@ -111,6 +107,12 @@ Import using ES module syntax, with targeted imports:
 
 ```js
 import { op, table } from 'arquero';
+```
+
+Dynamic import (e.g., within a Node.js REPL):
+
+```js
+aq = await import('arquero');
 ```
 
 ## Build Instructions

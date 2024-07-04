@@ -14,6 +14,7 @@ title: Extensibility \| Arquero API Reference
   * [addVerb](#addVerb)
 * [Package Bundles](#packages)
   * [addPackage](#addPackage)
+* [Table Methods](#table-methods)
 
 <br/>
 
@@ -123,158 +124,21 @@ aq.table({ x: [4, 3, 2, 1] })
 
 ## <a id="table-methods">Table Methods</a>
 
-Add new table-level methods or verbs. The [addTableMethod](#addTableMethod) function registers a new function as an instance method of tables only. The [addVerb](#addVerb) method registers a new transformation verb with both tables and serializable [queries](./#query).
-
-<hr/><a id="addTableMethod" href="#addTableMethod">#</a>
-<em>aq</em>.<b>addTableMethod</b>(<i>name</i>, <i>method</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/register.js)
-
-Register a custom table method, adding a new method with the given *name* to all table instances. The provided *method* must take a table as its first argument, followed by any additional arguments.
-
-This method throws an error if the *name* argument is not a legal string value.
-To protect Arquero internals, the *name* can not start with an underscore (`_`) character. If a custom method with the same name is already registered, the override option must be specified to overwrite it. In no case may a built-in method be overridden.
-
-* *name*: The name to use for the table method.
-* *method*: A function implementing the table method. This function should accept a table as its first argument, followed by any additional arguments.
-* *options*: Function registration options.
-  * *override*: Boolean flag (default `false`) indicating if the added method is allowed to override an existing method with the same name. Built-in table methods can **not** be overridden; this flag applies only to methods previously added using the extensibility API.
+To add new table-level methods, including transformation verbs, simply assign new methods to the `ColumnTable` class prototype.
 
 *Examples*
 
 ```js
-// add a table method named size, returning an array of row and column counts
-aq.addTableMethod('size', table => [table.numRows(), table.numCols()]);
-aq.table({ a: [1,2,3], b: [4,5,6] }).size() // [3, 2]
-```
+import { ColumnTable, op } from 'arquero';
 
-<hr/><a id="addVerb" href="#addVerb">#</a>
-<em>aq</em>.<b>addVerb</b>(<i>name</i>, <i>method</i>, <i>params</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/register.js)
-
-Register a custom transformation verb with the given *name*, adding both a table method and serializable [query](./#query) support. The provided *method* must take a table as its first argument, followed by any additional arguments. The required *params* argument describes the parameters the verb accepts. If you wish to add a verb to tables but do not require query serialization support, use [addTableMethod](#addTableMethod).
-
-This method throws an error if the *name* argument is not a legal string value.
-To protect Arquero internals, the *name* can not start with an underscore (`_`) character. If a custom method with the same name is already registered, the override option must be specified to overwrite it. In no case may a built-in method be overridden.
-
-* *name*: The name to use for the table method.
-* *method*: A function implementing the table method. This function should accept a table as its first argument, followed by any additional arguments.
-* *params*: An array of schema descriptions for the verb parameters. These descriptors are needed to support query serialization. Each descriptor is an object with *name* (string-valued parameter name) and *type* properties (string-valued parameter type, see below). If a parameter has type `"Options"`, the descriptor can include an additional object-valued *props* property to describe any non-literal values, for which the keys are property names and the values are parameter types.
-* *options*: Function registration options.
-  * *override*: Boolean flag (default `false`) indicating if the added method is allowed to override an existing method with the same name. Built-in verbs can **not** be overridden; this flag applies only to methods previously added using the extensibility API.
-
-*Parameter Types*. The supported parameter types are:
-
-* `"Expr"`: A single table expression, such as the input to [`filter()`](verbs/#filter).
-* `"ExprList"`: A list of column references or expressions, such as the input to [`groupby()`](verbs/#groupby).
-* `"ExprNumber"`: A number literal or numeric table expression, such as the *weight* option of [`sample()`](verbs/#sample).
-* `"ExprObject"`: An object containing a set of expressions, such as the input to [`rollup()`](verbs/#rollup).
-* `"JoinKeys"`: Input join keys, as in [`join()`](verbs/#join).
-* `"JoinValues"`: Output join values, as in [`join()`](verbs/#join).
-* `"Options"`: An options object of key-value pairs. If any of the option values are column references or table expressions, the descriptor should include a *props* property with property names as keys and parameter types as values.
-* `"OrderKeys"`: A list of ordering criteria, as in [`orderby`](verbs/#orderby).
-* `"SelectionList"`: A set of columns to select and potentially rename, as in [`select`](verbs/#select).
-* `"TableRef"`: A reference to an additional input table, as in [`join()`](verbs/#join).
-* `"TableRefList"`: A list of one or more additional input tables, as in [`concat()`](verbs/#concat).
-
-*Examples*
-
-```js
-// add a bootstrapped confidence interval verb that
-// accepts an aggregate expression plus options
-aq.addVerb(
-  'bootstrap_ci',
-  (table, expr, options = {}) => table
-    .params({ frac: options.frac || 1000 })
-    .sample((d, $) => op.round($.frac * op.count()), { replace: true })
-    .derive({ id: (d, $) => op.row_number() % $.frac })
-    .groupby('id')
-    .rollup({ bs: expr })
-    .rollup({
-      lo: op.quantile('bs', options.lo || 0.025),
-      hi: op.quantile('bs', options.hi || 0.975)
-    }),
-  [
-    { name: 'expr', type: 'Expr' },
-    { name: 'options', type: 'Options' }
-  ]
+// add a sum verb, which returns a new table containing summed
+// values (potentially grouped) for a given column name
+Object.assign(
+  ColumnTable.prototype,
+  {
+    sum(column, { as = 'sum' } = {}) {
+      return this.rollup({ [as]: op.sum(column) });
+    }
+  }
 );
-
-// apply the new verb
-aq.table({ x: [1, 2, 3, 4, 6, 8, 9, 10] })
-  .bootstrap_ci(op.mean('x'))
-```
-
-<br/>
-
-## <a id="packages">Package Bundles</a>
-
-Extend Arquero with a bundle of functions, table methods, and/or verbs.
-
-<hr/><a id="addPackage" href="#addPackage">#</a>
-<em>aq</em>.<b>addPackage</b>(<i>bundle</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/register.js)
-
-Register a *bundle* of extensions, which may include standard functions, aggregate functions, window functions, table methods, and verbs. If the input *bundle* has a key named `"arquero_package"`, the value of that property is used; otherwise the *bundle* object is used directly. This method is particularly useful for publishing separate packages of Arquero extensions and then installing them with a single method call.
-
-A package bundle has the following structure:
-
-```js
-const bundle = {
-  functions: { ... },
-  aggregateFunctions: { ... },
-  windowFunctions: { ... },
-  tableMethods: { ... },
-  verbs: { ... }
-};
-```
-
-All keys are optional. For example, `functions` or `verbs` may be omitted. Each sub-bundle is an object of key-value pairs, where the key is the name of the function and the value is the function to add.
-
-The lone exception is the `verbs` bundle, which instead uses an object format with *method* and *params* keys, corresponding to the *method* and *params* arguments of [addVerb](#addVerb):
-
-```js
-const bundle = {
-  verbs: {
-    name: {
-      method: (table, expr) => { ... },
-      params: [ { name: 'expr': type: 'Expr' } ]
-    }
-  }
-};
-```
-
-The package method performs validation prior to adding any package content. The method will throw an error if any of the package items fail validation. See the [addFunction](#addFunction), [addAggregateFunction](#addAggregateFunction), [addWindowFunction](#windowFunction), [addTableMethod](#addTableMethod), and [addVerb](#addVerb) methods for specific validation criteria. The *options* argument can be used to specify if method overriding is permitted, as supported by each of the aforementioned methods.
-
-* *bundle*: The package bundle of extensions.
-* *options*: Function registration options.
-  * *override*: Boolean flag (default `false`) indicating if the added method is allowed to override an existing method with the same name. Built-in table methods or verbs can **not** be overridden; for table methods and verbs this flag applies only to methods previously added using the extensibility API.
-
-*Examples*
-
-```js
-// add a package
-aq.addPackage({
-  functions: {
-    square: x => x * x,
-  },
-  tableMethods: {
-    size: table => [table.numRows(), table.numCols()]
-  }
-});
-```
-
-```js
-// add a package, ignores any content outside of "arquero_package"
-aq.addPackage({
-  arquero_package: {
-    functions: {
-      square: x => x * x,
-    },
-    tableMethods: {
-      size: table => [table.numRows(), table.numCols()]
-    }
-  }
-});
-```
-
-```js
-// add a package from a separate library
-aq.addPackage(require('arquero-arrow'));
 ```
