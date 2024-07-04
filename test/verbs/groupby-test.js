@@ -1,6 +1,6 @@
 import assert from 'node:assert';
-import fromArrow from '../../src/format/from-arrow.js';
-import toArrow from '../../src/format/to-arrow.js';
+import fromArrow from '../../src/arrow/from-arrow.js';
+import toArrow from '../../src/arrow/to-arrow.js';
 import { desc, op, table } from '../../src/index.js';
 
 describe('groupby', () => {

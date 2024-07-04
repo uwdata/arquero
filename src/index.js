@@ -1,26 +1,20 @@
-// export internal class definitions
-import { Table } from './table/Table.js';
-import { ColumnTable } from './table/ColumnTable.js';
-import Reducer from './verbs/reduce/reducer.js';
-import parse from './expression/parse.js';
-import walk_ast from './expression/ast/walk.js';
+// export internal class and method definitions
+export { BitSet } from './table/BitSet.js';
+export { Table } from './table/Table.js';
+export { ColumnTable } from './table/ColumnTable.js';
+export { default as Reducer } from './verbs/reduce/reducer.js';
+export { default as parse } from './expression/parse.js';
+export { default as walk_ast } from './expression/ast/walk.js';
 
-export const internal = {
-  Table,
-  ColumnTable,
-  Reducer,
-  parse,
-  walk_ast
-};
-
-// export public API
+// public API
 export { seed } from './util/random.js';
-export { default as fromArrow } from './format/from-arrow.js';
+export { default as fromArrow } from './arrow/from-arrow.js';
 export { default as fromCSV } from './format/from-csv.js';
 export { default as fromFixed } from './format/from-fixed.js';
 export { default as fromJSON } from './format/from-json.js';
 export { load, loadArrow, loadCSV, loadFixed, loadJSON } from './format/load-url.js';
-export { default as toArrow } from './arrow/encode/index.js';
+export { default as toArrow } from './arrow/to-arrow.js';
+export { default as toArrowIPC } from './arrow/to-arrow-ipc.js';
 export { default as toCSV } from './format/to-csv.js';
 export { default as toHTML } from './format/to-html.js';
 export { default as toJSON } from './format/to-json.js';

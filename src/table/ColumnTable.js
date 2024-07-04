@@ -1,35 +1,43 @@
 import { Table } from './Table.js';
 import toArray from '../util/to-array.js';
-
-import { assign } from '../verbs/assign.js';
+import {
+  antijoin,
+  assign,
+  concat,
+  cross,
+  dedupe,
+  derive,
+  except,
+  filter,
+  fold,
+  groupby,
+  impute,
+  intersect,
+  join,
+  lookup,
+  orderby,
+  pivot,
+  reduce,
+  relocate,
+  rename,
+  rollup,
+  sample,
+  select,
+  semijoin,
+  slice,
+  spread,
+  ungroup,
+  union,
+  unorder,
+  unroll
+} from '../verbs/index.js';
 import { count } from '../op/op-api.js';
-import { derive } from '../verbs/derive.js';
-import { filter } from '../verbs/filter.js';
-import { groupby } from '../verbs/groupby.js';
-import { orderby } from '../verbs/orderby.js';
-import { relocate } from '../verbs/relocate.js';
-import { rename } from '../verbs/rename.js';
-import { rollup } from '../verbs/rollup.js';
-import { sample } from '../verbs/sample.js';
-import { select } from '../verbs/select.js';
-import { slice } from '../verbs/slice.js';
-import { ungroup } from '../verbs/ungroup.js';
-import { unorder } from '../verbs/unorder.js';
-import { dedupe } from '../verbs/dedupe.js';
-import { impute } from '../verbs/impute.js';
-import { fold } from '../verbs/fold.js';
-import { pivot } from '../verbs/pivot.js';
-import { spread } from '../verbs/spread.js';
-import { unroll } from '../verbs/unroll.js';
-import { lookup } from '../verbs/lookup.js';
-import { cross, join } from '../verbs/join.js';
-import { antijoin, semijoin } from '../verbs/join-filter.js';
-import { concat } from '../verbs/concat.js';
-import { union } from '../verbs/union.js';
-import { intersect } from '../verbs/intersect.js';
-import { except } from '../verbs/except.js';
-import { reduce } from '../verbs/reduce.js';
-
+import toArrow from '../arrow/to-arrow.js';
+import toArrowIPC from '../arrow/to-arrow-ipc.js';
+import toCSV from '../format/to-csv.js';
+import toHTML from '../format/to-html.js';
+import toJSON from '../format/to-json.js';
+import toMarkdown from '../format/to-markdown.js';
 
 /**
  * A data table with transformation verbs.
@@ -772,5 +780,69 @@ export class ColumnTable extends Table {
    */
   except(...tables) {
     return except(this, tables.flat());
+  }
+
+  // -- Table Output Formats ------------------------------------------------
+
+  /**
+   * Format this table as an Apache Arrow table.
+   * @param {import('../arrow/types.js').ArrowFormatOptions} [options]
+   *  The Arrow formatting options.
+   * @return {import('apache-arrow').Table} An Apache Arrow table.
+   */
+  toArrow(options) {
+    return toArrow(this, options);
+  }
+
+  /**
+   * Format this table as binary data in the Apache Arrow IPC format.
+   * @param {import('../arrow/types.js').ArrowIPCFormatOptions} [options]
+   *  The Arrow IPC formatting options.
+   * @return {Uint8Array} A new Uint8Array of Arrow-encoded binary data.
+   */
+  toArrowIPC(options) {
+    return toArrowIPC(this, options);
+  }
+
+  /**
+   * Format this table as a comma-separated values (CSV) string. Other
+   * delimiters, such as tabs or pipes ('|'), can be specified using
+   * the options argument.
+   * @param {import('../format/to-csv.js').CSVFormatOptions} [options]
+   *   The CSV formatting options.
+   * @return {string} A delimited value string.
+   */
+  toCSV(options) {
+    return toCSV(this, options);
+  }
+
+  /**
+   * Format this table as an HTML table string.
+   * @param {import('../format/to-html.js').HTMLFormatOptions} [options]
+   *  The HTML formatting options.
+   * @return {string} An HTML table string.
+   */
+  toHTML(options) {
+    return toHTML(this, options);
+  }
+
+  /**
+   * Format this table as a JavaScript Object Notation (JSON) string.
+   * @param {import('../format/to-json.js').JSONFormatOptions} [options]
+   *  The JSON formatting options.
+   * @return {string} A JSON string.
+   */
+  toJSON(options) {
+    return toJSON(this, options);
+  }
+
+  /**
+   * Format this table as a GitHub-Flavored Markdown table string.
+   * @param {import('../format/to-markdown.js').MarkdownFormatOptions} [options]
+   *  The Markdown formatting options.
+   * @return {string} A GitHub-Flavored Markdown table string.
+   */
+  toMarkdown(options) {
+    return toMarkdown(this, options);
   }
 }

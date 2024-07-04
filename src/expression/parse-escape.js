@@ -9,9 +9,7 @@ export default function(ctx, spec, params) {
   if (ctx.aggronly) error(ERROR_ESC_AGGRONLY);
 
   // generate escaped function invocation code
-  const code = '(row,data)=>fn('
-    + rowObjectCode(ctx.table.columnNames())
-    + ',$)';
+  const code = `(row,data)=>fn(${rowObjectCode(ctx.table)},$)`;
 
   return { escape: compile.escape(code, toFunction(spec.expr), params) };
 }

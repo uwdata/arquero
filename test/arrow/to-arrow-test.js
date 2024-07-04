@@ -1,10 +1,11 @@
 import assert from 'node:assert';
 import { readFileSync } from 'node:fs';
 import { Int8, Type, tableFromIPC, tableToIPC, vectorFromArray } from 'apache-arrow';
-import fromArrow from '../../src/format/from-arrow.js';
+import fromArrow from '../../src/arrow/from-arrow.js';
+import toArrow from '../../src/arrow/to-arrow.js';
+import toArrowIPC from '../../src/arrow/to-arrow-ipc.js';
 import fromCSV from '../../src/format/from-csv.js';
 import fromJSON from '../../src/format/from-json.js';
-import toArrow, { toArrowIPC } from '../../src/format/to-arrow.js';
 import toJSON from '../../src/format/to-json.js';
 import { table } from '../../src/table/index.js';
 

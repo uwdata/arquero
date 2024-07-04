@@ -14,11 +14,15 @@ export function scanTable(table, limit, offset) {
                && !table.isFiltered() && !table.isOrdered();
 
   return (column, visit) => {
+    const isArray = isArrayType(column);
     let i = -1;
-    scanAll && isArrayType(column.data)
-      ? column.data.forEach(visit)
+    scanAll && isArray
+      ? column.forEach(visit)
       : table.scan(
-          row => visit(column.at(row), ++i),
+          // optimize column value access
+          isArray
+            ? row => visit(column[row], ++i)
+            : row => visit(column.at(row), ++i),
           true, limit, offset
         );
   };

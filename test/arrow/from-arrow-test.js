@@ -1,11 +1,10 @@
 import assert from 'node:assert';
 import { Utf8 } from 'apache-arrow';
 import tableEqual from '../table-equal.js';
-import fromArrow from '../../src/format/from-arrow.js';
-import toArrow from '../../src/format/to-arrow.js';
+import fromArrow from '../../src/arrow/from-arrow.js';
+import toArrow from '../../src/arrow/to-arrow.js';
 import { not } from '../../src/helpers/selection.js';
 import { table } from '../../src/index.js';
-import { isFixedSizeList, isList, isStruct } from '../../src/arrow/arrow-types.js';
 
 function arrowTable(data, types) {
   return toArrow(table(data), { types });
@@ -67,7 +66,7 @@ describe('fromArrow', () => {
     const l = [[1, 2, 3], null, [4, 5]];
     const at = arrowTable({ l });
 
-    if (!isList(at.getChild('l').type)) {
+    if (at.getChild('l').type.typeId !== 12) {
       assert.fail('Arrow column should have List type');
     }
     tableEqual(fromArrow(at), { l }, 'extract Arrow list');
@@ -77,7 +76,7 @@ describe('fromArrow', () => {
     const l = [[1, 2], null, [4, 5]];
     const at = arrowTable({ l });
 
-    if (!isFixedSizeList(at.getChild('l').type)) {
+    if (at.getChild('l').type.typeId !== 16) {
       assert.fail('Arrow column should have FixedSizeList type');
     }
     tableEqual(fromArrow(at), { l }, 'extract Arrow list');
@@ -87,7 +86,7 @@ describe('fromArrow', () => {
     const s = [{ foo: 1, bar: [2, 3] }, null, { foo: 2, bar: [4] }];
     const at = arrowTable({ s });
 
-    if (!isStruct(at.getChild('s').type)) {
+    if (at.getChild('s').type.typeId !== 13) {
       assert.fail('Arrow column should have Struct type');
     }
     tableEqual(fromArrow(at), { s }, 'extract Arrow struct');
@@ -97,7 +96,7 @@ describe('fromArrow', () => {
     const s = [{ foo: 1, bar: { bop: 2 } }, { foo: 2, bar: { bop: 3 } }];
     const at = arrowTable({ s });
 
-    if (!isStruct(at.getChild('s').type)) {
+    if (at.getChild('s').type.typeId !== 13) {
       assert.fail('Arrow column should have Struct type');
     }
     tableEqual(fromArrow(at), { s }, 'extract nested Arrow struct');

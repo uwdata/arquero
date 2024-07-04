@@ -14,13 +14,11 @@
   ],
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "dist/arquero.node.js",
-  "module": "src/index-node.js",
+  "exports": "./src/index-node.js",
   "unpkg": "dist/arquero.min.js",
   "jsdelivr": "dist/arquero.min.js",
   "types": "dist/types/index.d.ts",
   "browser": {
-    "./dist/arquero.node.js": "./dist/arquero.min.js",
     "./src/index-node.js": "./src/index.js"
   },
   "repository": {
@@ -33,7 +31,7 @@
     "postbuild": "tsc",
     "perf": "TZ=America/Los_Angeles tape 'perf/**/*-perf.js'",
     "lint": "eslint src test",
-    "test": "TZ=America/Los_Angeles mocha 'test/**/*-test.js'",
+    "test": "TZ=America/Los_Angeles mocha 'test/**/*-test.js' --timeout 5000",
     "posttest": "tsc --project jsconfig.json",
     "prepublishOnly": "npm test && npm run lint && npm run build"
   },

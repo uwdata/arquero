@@ -35,9 +35,9 @@ describe('reify', () => {
         b: ['a', 'b', 'd'],
         c: [[1], [2], [4]],
         d: [
-          +(new Date(2000, 0, 1, 1)),
-          +(new Date(2001, 1, 1, 2)),
-          +(new Date(2003, 3, 1, 4))
+          new Date(2000, 0, 1, 1),
+          new Date(2001, 1, 1, 2),
+          new Date(2003, 3, 1, 4)
         ]
       },
       'reify data'
