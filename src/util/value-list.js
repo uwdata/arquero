@@ -1,6 +1,6 @@
 import ascending from './ascending.js';
-import min from './min.js';
 import max from './max.js';
+import min from './min.js';
 import quantile from './quantile.js';
 
 export default class ValueList {

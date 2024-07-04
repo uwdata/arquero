@@ -1,6 +1,6 @@
 import { aggregateGet } from './reduce/util.js';
 import parse from './util/parse.js';
-import columnSet from '../table/column-set.js';
+import { columnSet } from '../table/ColumnSet.js';
 import NULL from '../util/null.js';
 import toArray from '../util/to-array.js';
 
@@ -42,7 +42,7 @@ export function _spread(table, { names, exprs, ops = [] }, options = {}) {
 
   map.forEach(add);
 
-  return table.create(cols);
+  return cols.derive(table);
 }
 
 function spreadCols(table, get, limit) {

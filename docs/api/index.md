@@ -100,6 +100,11 @@ This method performs parsing only. To both load and parse an Arrow file, use [lo
 * *arrowTable*: An [Apache Arrow](https://arrow.apache.org/docs/js/) data table or a byte array (e.g., [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) or [Uint8Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)) in the Arrow IPC format.
 * *options*: An Arrow import options object:
   * *columns*: An ordered set of columns to import. The input may consist of: column name strings, column integer indices, objects with current column names as keys and new column names as values (for renaming), or a selection helper function such as [all](#all), [not](#not), or [range](#range)).
+  * *convertDate*: Boolean flag (default `true`) to convert Arrow date values to JavaScript Date objects. If false, defaults to what the Arrow implementation provides, typically timestamps as number values.
+  * *convertDecimal*: Boolean flag (default `true`) to convert Arrow fixed point decimal values to JavaScript numbers. If false, defaults to what the Arrow implementation provides, typically byte arrays. The conversion will be lossy if the decimal can not be exactly represented as a double-precision floating point number.
+  *convertTimestamp*: Boolean flag (default `true`) to convert Arrow timestamp values to JavaScript Date objects. If false, defaults to what the Arrow implementation provides, typically timestamps as number values.
+  *convertBigInt*: Boolean flag (default `false`) to convert Arrow integers with bit widths of 64 bits or higher to JavaScript numbers. If false, defaults to what the Arrow implementation provides, typically `BigInt` values. The conversion will be lossy if the integer is so large it can not be exactly represented as a double-precision floating point number.
+  *memoize*: Boolean hint (default `true`) to enable memoization of expensive conversions. If true, memoization is applied for string and nested (list, struct) types, caching extracted values to enable faster access. Memoization is also applied to converted Date values, in part to ensure exact object equality. This hint is ignored for dictionary columns, whose values are always memoized.
 
 *Examples*
 

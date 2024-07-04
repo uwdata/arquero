@@ -1,7 +1,7 @@
 import { arrowTableFromIPC } from './arrow-table.js';
 import arrowColumn from './arrow-column.js';
 import resolve, { all } from '../helpers/selection.js';
-import columnSet from '../table/column-set.js';
+import { columnSet } from '../table/ColumnSet.js';
 import { ColumnTable } from '../table/ColumnTable.js';
 
 /**

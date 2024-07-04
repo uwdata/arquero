@@ -3,7 +3,7 @@ import { aggregate } from './reduce/util.js';
 import { window } from './window/window.js';
 import parse from '../expression/parse.js';
 import { hasWindow } from '../op/index.js';
-import columnSet from '../table/column-set.js';
+import { columnSet } from '../table/ColumnSet.js';
 import repeat from '../util/repeat.js';
 
 function isWindowed(op) {
@@ -46,7 +46,7 @@ export function _derive(table, { names, exprs, ops = [] }, options = {}) {
     ? window(table, data, exprs, result, winOps)
     : output(table, data, exprs, result);
 
-  return table.create(cols);
+  return cols.derive(table);
 }
 
 function segmentOps(ops) {

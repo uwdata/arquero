@@ -1,6 +1,6 @@
 import { aggregateGet } from './reduce/util.js';
 import parse from './util/parse.js';
-import columnSet from '../table/column-set.js';
+import { columnSet } from '../table/ColumnSet.js';
 import toArray from '../util/to-array.js';
 
 export function unroll(table, values, options) {
@@ -124,5 +124,5 @@ export function _unroll(table, { names = [], exprs = [], ops = [] }, options = {
     });
   }
 
-  return table.create(cols.new());
+  return cols.new(table);
 }

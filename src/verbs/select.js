@@ -1,5 +1,5 @@
 import resolve from '../helpers/selection.js';
-import columnSet from '../table/column-set.js';
+import { columnSet } from '../table/ColumnSet.js';
 import error from '../util/error.js';
 import isString from '../util/is-string.js';
 
@@ -18,5 +18,5 @@ export function _select(table, columns) {
     }
   });
 
-  return table.create(cols);
+  return cols.derive(table);
 }

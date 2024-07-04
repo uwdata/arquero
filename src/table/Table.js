@@ -128,7 +128,7 @@ export class Table {
 
   /**
    * Returns the internal table storage data structure.
-   * @return {import('./types.js').TableData}
+   * @return {import('./types.js').ColumnData}
    *  The backing table storage data structure.
    */
   data() {
@@ -554,7 +554,7 @@ export class Table {
    * Callback function invoked for each row of a table scan.
    * @callback ScanVisitor
    * @param {number} [row] The table row index.
-   * @param {import('./types.js').TableData} [data]
+   * @param {import('./types.js').ColumnData} [data]
    *  The backing table data store.
    * @param {ScanStop} [stop] Function to stop the scan early.
    *  Callees can invoke this function to prevent future calls.

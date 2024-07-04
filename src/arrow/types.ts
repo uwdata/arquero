@@ -7,23 +7,12 @@ export type ArrowInput =
   | TypedArray
   | Table;
 
-/** Options for Apache Arrow import. */
-export interface ArrowOptions {
-  /**
-   * An ordered set of columns to import. The input may consist of column name
-   * strings, column integer indices, objects with current column names as
-   * keys and new column names as values (for renaming), or selection helper
-   * functions such as *all*, *not*, or *range*.
-   */
-  columns?: Select;
-}
-
 /** Options for Apache Arrow column conversion. */
 export interface ArrowColumnOptions {
   /**
    * Flag (default `true`) to convert Arrow date values to JavaScript Date
    * objects. If false, defaults to what the Arrow implementation provides,
-   * typically numeric timestamps as number values.
+   * typically timestamps as number values.
    */
   convertDate?: boolean;
   /**
@@ -37,11 +26,11 @@ export interface ArrowColumnOptions {
   /**
    * Flag (default `true`) to convert Arrow timestamp values to JavaScript
    * Date objects. If false, defaults to what the Arrow implementation
-   * provides, typically numeric timestamps as number values.
+   * provides, typically timestamps as number values.
    */
   convertTimestamp?: boolean;
   /**
-   * Flag (default `false`) to convert Arrow integers with bitwidths of 64
+   * Flag (default `false`) to convert Arrow integers with bit widths of 64
    * bits or higher to JavaScript numbers. If false, defaults to what the
    * Arrow implementation provides, typically `BigInt` values. The conversion
    * will be lossy if the integer is so large it can not be exactly
@@ -49,7 +38,7 @@ export interface ArrowColumnOptions {
    */
   convertBigInt?: boolean;
   /**
-   * A hint (default `true`) to enable memoization of expensive conversion.
+   * A hint (default `true`) to enable memoization of expensive conversions.
    * If true, memoization is applied for string and nested (list, struct)
    * types, caching extracted values to enable faster access. Memoization
    * is also applied to converted Date values, in part to ensure exact object
@@ -57,6 +46,17 @@ export interface ArrowColumnOptions {
    * always memoized.
    */
   memoize?: boolean;
+}
+
+/** Options for Apache Arrow import. */
+export interface ArrowOptions extends ArrowColumnOptions {
+  /**
+   * An ordered set of columns to import. The input may consist of column name
+   * strings, column integer indices, objects with current column names as
+   * keys and new column names as values (for renaming), or selection helper
+   * functions such as *all*, *not*, or *range*.
+   */
+  columns?: Select;
 }
 
 /** Options for Arrow encoding. */

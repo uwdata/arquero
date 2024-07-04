@@ -1,5 +1,5 @@
 import { reduceFlat, reduceGroups } from './reduce/util.js';
-import columnSet from '../table/column-set.js';
+import { columnSet } from '../table/ColumnSet.js';
 
 export function reduce(table, reducer) {
   const cols = columnSet();
@@ -37,5 +37,5 @@ export function reduce(table, reducer) {
     });
   }
 
-  return table.create(cols.new());
+  return cols.new(table);
 }

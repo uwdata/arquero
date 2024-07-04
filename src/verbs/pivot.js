@@ -1,7 +1,7 @@
 import { aggregate, aggregateGet, groupOutput } from './reduce/util.js';
 import parse from './util/parse.js';
 import { any } from '../op/op-api.js';
-import columnSet from '../table/column-set.js';
+import { columnSet } from '../table/ColumnSet.js';
 
 // TODO: enforce aggregates only (no output changes) for values
 export function pivot(table, on, values, options) {
@@ -48,7 +48,7 @@ export function _pivot(table, on, values, options = {}) {
     }))
   );
 
-  return table.create(output(values, namefn, table.groups(), results));
+  return output(values, namefn, table.groups(), results).new(table);
 }
 
 function pivotKeys(table, on, options) {
@@ -124,5 +124,5 @@ function output({ names, exprs }, namefn, groups, results) {
     }
   }
 
-  return cols.new();
+  return cols;
 }

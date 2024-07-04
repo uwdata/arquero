@@ -3,7 +3,7 @@ import { _rollup } from './rollup.js';
 import parse from '../expression/parse.js';
 import parseValues from './util/parse.js';
 import { array_agg_distinct } from '../op/op-api.js';
-import columnSet from '../table/column-set.js';
+import { columnSet } from '../table/ColumnSet.js';
 import error from '../util/error.js';
 import isValid from '../util/is-valid.js';
 import keyFunction from '../util/key-function.js';
@@ -109,7 +109,7 @@ function expand(table, keys, values) {
     });
   }
 
-  return table.create(cols.new());
+  return cols.new(table);
 }
 
 function enumerate(groups, values, callback) {
