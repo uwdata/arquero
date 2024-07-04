@@ -1,6 +1,6 @@
 import { aggregate, groupOutput } from './reduce/util.js';
 import parse from '../expression/parse.js';
-import columnSet from '../table/column-set.js';
+import { columnSet } from '../table/ColumnSet.js';
 
 export function rollup(table, values) {
   return _rollup(table, parse(values, { table, aggronly: true, window: false }));
@@ -18,7 +18,7 @@ export function _rollup(table, { names, exprs, ops = [] }) {
   output(names, exprs, groups, aggregate(table, ops), cols);
 
   // return output table
-  return table.create(cols.new());
+  return cols.new(table);
 }
 
 function output(names, exprs, groups, result = [], cols) {

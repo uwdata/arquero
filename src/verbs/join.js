@@ -3,7 +3,7 @@ import { inferKeys, keyPredicate } from './util/join-keys.js';
 import parseValue from './util/parse.js';
 import parse from '../expression/parse.js';
 import { all, not } from '../helpers/selection.js';
-import columnSet from '../table/column-set.js';
+import { columnSet } from '../table/ColumnSet.js';
 import concat from '../util/concat.js';
 import isArray from '../util/is-array.js';
 import isString from '../util/is-string.js';
@@ -172,7 +172,7 @@ export function _join(tableL, tableR, predicate, { names, exprs }, options = {})
     }
   }
 
-  return tableL.create(cols.new());
+  return cols.new(tableL);
 }
 
 function loopJoin(emit, predicate, dataL, dataR, idxL, idxR, hitL, hitR, nL, nR) {

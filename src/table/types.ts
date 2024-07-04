@@ -15,9 +15,7 @@ export interface ColumnType<T> {
 }
 
 /** A named collection of columns. */
-export interface ColumnData {
-  [key: string]: ColumnType<DataValue>;
-}
+export type ColumnData = Record<string, ColumnType<DataValue>>;
 
 /** Table expression parameters. */
 export type Params = Record<string, any>;
@@ -48,9 +46,6 @@ export type TypedArray =
   | Float32Array
   | Float64Array;
 
-/** Backing table data. */
-export type TableData = object | any[];
-
 /** Table row object. */
 export type RowObject = Record<string, DataValue>;
 
@@ -73,7 +68,7 @@ export type RowExpression = (
   /** The table row. */
   row: number,
   /** The backing table data store. */
-  data: TableData
+  data: ColumnData
 ) => DataValue;
 
 /** Column value accessor. */
@@ -92,13 +87,13 @@ export type RowComparator = (
   /** The table row index for the second row. */
   rowB: number,
   /** The backing table data store. */
-  data: TableData
+  data: ColumnData
 ) => number;
 
 /** Options for derived table creation. */
 export interface CreateOptions {
   /** The backing column data. */
-  data?: TableData;
+  data?: ColumnData;
   /** An ordered list of column names. */
   names?: readonly string[];
   /** An additional filter BitSet to apply. */

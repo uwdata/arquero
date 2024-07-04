@@ -3,7 +3,7 @@ import { aggregateGet } from './reduce/util.js';
 import { inferKeys } from './util/join-keys.js';
 import parseKey from './util/parse-key.js';
 import parseValues from './util/parse.js';
-import columnSet from '../table/column-set.js';
+import { columnSet } from '../table/ColumnSet.js';
 import NULL from '../util/null.js';
 import concat from '../util/concat.js';
 import unroll from '../util/unroll.js';
@@ -42,5 +42,5 @@ export function _lookup(tableL, tableR, [keyL, keyR], { names, exprs, ops = [] }
     if (rrow >= 0) set(lrow, rrow, dataR);
   });
 
-  return tableL.create(cols);
+  return cols.derive(tableL);
 }

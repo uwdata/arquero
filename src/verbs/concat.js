@@ -1,4 +1,4 @@
-import columnSet from '../table/column-set.js';
+import { columnSet } from '../table/ColumnSet.js';
 import NULL from '../util/null.js';
 
 export function concat(table, others) {
@@ -19,5 +19,5 @@ export function concat(table, others) {
     cols.add(name, arr);
   });
 
-  return table.create(cols.new());
+  return cols.new(table);
 }

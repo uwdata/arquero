@@ -9,7 +9,7 @@
     "module": "node16",
     "moduleResolution": "node16",
     "outDir": "dist/types",
-    "target": "es6",
+    "target": "es2022",
     "skipLibCheck": true
   }
 }

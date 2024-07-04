@@ -1,4 +1,4 @@
-import columnSet from '../table/column-set.js';
+import { columnSet } from '../table/ColumnSet.js';
 import { table as newTable } from '../table/index.js';
 import error from '../util/error.js';
 
@@ -12,5 +12,5 @@ export function assign(table, others) {
     input = input.reify();
     input.columnNames(name => cols.add(name, input.column(name)));
   });
-  return table.create(cols.new());
+  return cols.new(table);
 }
