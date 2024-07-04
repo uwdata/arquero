@@ -33,9 +33,14 @@ const ref = (node, opt, method) => {
   return `data${table}${name(node)}.${method}(${opt.index}${table})`;
 };
 
+const get = (node, opt) => {
+  const table = node.table || '';
+  return `data${table}${name(node)}[${opt.index}${table}]`;
+};
+
 const visitors = {
   Constant: node => node.raw,
-  Column: (node, opt) => ref(node, opt, 'at'),
+  Column: (node, opt) => node.array ? get(node, opt) : ref(node, opt, 'at'),
   Dictionary: (node, opt) => ref(node, opt, 'key'),
   Function: node => `fn.${node.name}`,
   Parameter: node => `$${name(node)}`,

@@ -5,6 +5,7 @@ import arrayType from '../util/array-type.js';
 import error from '../util/error.js';
 import isNumber from '../util/is-number.js';
 import repeat from '../util/repeat.js';
+import isArrayType from '../util/is-array-type.js';
 
 /**
  * Base class representing a column-oriented data table.
@@ -12,7 +13,7 @@ import repeat from '../util/repeat.js';
 export class Table {
 
   /**
-   * Instantiate a BaeTable instance.
+   * Instantiate a Table instance.
    * @param {object} columns An object mapping column names to values.
    * @param {string[]} [names] An ordered list of column names.
    * @param {import('./BitSet.js').BitSet} [filter]
@@ -26,15 +27,15 @@ export class Table {
    */
   constructor(columns, names, filter, group, order, params) {
     const data = { ...columns };
-    names = names || Object.keys(data);
+    names = names ?? Object.keys(data);
     const nrows = names.length ? data[names[0]].length : 0;
     this._names = Object.freeze(names);
     this._data = data;
     this._total = nrows;
-    this._nrows = filter ? filter.count() : nrows;
-    this._mask = (nrows !== this._nrows && filter) || null;
-    this._group = group || null;
-    this._order = order || null;
+    this._nrows = filter?.count() ?? nrows;
+    this._mask = filter ?? null;
+    this._group = group ?? null;
+    this._order = order ?? null;
     this._params = params;
   }
 
@@ -330,10 +331,10 @@ export class Table {
 
     // generate array of row objects
     const names = resolve(this, options.columns || all());
-    const create = rowObjectBuilder(names);
+    const createRow = rowObjectBuilder(this, names);
     const obj = [];
     this.scan(
-      (row, data) => obj.push(create(row, data)),
+      (row, data) => obj.push(createRow(row, data)),
       true, limit, offset
     );
 
@@ -352,10 +353,10 @@ export class Table {
    * @return {Iterator<object>} An iterator over row objects.
    */
   *[Symbol.iterator]() {
-    const create = objectBuilder(this);
+    const createRow = objectBuilder(this);
     const n = this.numRows();
     for (let i = 0; i < n; ++i) {
-      yield create(i);
+      yield createRow(i);
     }
   }
 
@@ -529,7 +530,10 @@ export class Table {
         const prev = this.column(name);
         const curr = data[name] = new (arrayType(prev))(nrows);
         let r = -1;
-        scan(row => curr[++r] = prev.at(row));
+        // optimize array access
+        isArrayType(prev)
+          ? scan(row => curr[++r] = prev[row])
+          : scan(row => curr[++r] = prev.at(row));
       }
 
       if (this.isGrouped()) {
@@ -603,13 +607,13 @@ function objectBuilder(table) {
   let b = table._builder;
 
   if (!b) {
-    const create = rowObjectBuilder(table.columnNames());
+    const createRow = rowObjectBuilder(table);
     const data = table.data();
     if (table.isOrdered() || table.isFiltered()) {
       const indices = table.indices();
-      b = row => create(indices[row], data);
+      b = row => createRow(indices[row], data);
     } else {
-      b = row => create(row, data);
+      b = row => createRow(row, data);
     }
     table._builder = b;
   }

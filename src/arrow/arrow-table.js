@@ -1,27 +1,38 @@
-import { Table, tableFromIPC } from 'apache-arrow';
+import { Table, tableFromIPC, tableToIPC } from 'apache-arrow';
 import error from '../util/error.js';
 
-const fail = () => error(
+const fail = (cause) => error(
   'Apache Arrow not imported, ' +
-  'see https://github.com/uwdata/arquero#usage'
+  'see https://github.com/uwdata/arquero#usage',
+  cause
 );
 
-export function table() {
+export function arrowTable(...args) {
   // trap access to provide a helpful message
   // when Apache Arrow has not been imported
   try {
-    return Table;
-  } catch (err) { // eslint-disable-line no-unused-vars
-    fail();
+    return new Table(...args);
+  } catch (err) {
+    fail(err);
   }
 }
 
-export function fromIPC() {
+export function arrowTableFromIPC(bytes) {
   // trap access to provide a helpful message
   // when Apache Arrow has not been imported
   try {
-    return tableFromIPC;
-  } catch (err) { // eslint-disable-line no-unused-vars
-    fail();
+    return tableFromIPC(bytes);
+  } catch (err) {
+    fail(err);
+  }
+}
+
+export function arrowTableToIPC(table, format) {
+  // trap access to provide a helpful message
+  // when Apache Arrow has not been imported
+  try {
+    return tableToIPC(table, format);
+  } catch (err) {
+    fail(err);
   }
 }

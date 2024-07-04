@@ -1,4 +1,5 @@
 import { Column, Dictionary, Literal } from './ast/constants.js';
+import isArrayType from '../util/is-array-type.js';
 import isFunction from '../util/is-function.js';
 
 const dictOps = {
@@ -21,6 +22,11 @@ export default function(ref, name, index = 0, col = undefined, op = undefined) {
   ref.type = Column;
   ref.name = name;
   ref.table = index;
+
+  // annotate arrays as such for optimized access
+  if (isArrayType(col)) {
+    ref.array = true;
+  }
 
   // proceed only if has parent op and is a dictionary column
   if (op && col && isFunction(col.keyFor)) {

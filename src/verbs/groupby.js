@@ -36,14 +36,12 @@ function createGroups(table, { names = [], exprs = [], ops = [] }) {
   if (bits) {
     for (let i = bits.next(0); i >= 0; i = bits.next(i + 1)) {
       const key = getKey(i, data) + '';
-      const val = index[key];
-      keys[i] = val != null ? val : (index[key] = rows.push(i) - 1);
+      keys[i] = (index[key] ??= rows.push(i) - 1);
     }
   } else {
     for (let i = 0; i < nrows; ++i) {
       const key = getKey(i, data) + '';
-      const val = index[key];
-      keys[i] = val != null ? val : (index[key] = rows.push(i) - 1);
+      keys[i] = (index[key] ??= rows.push(i) - 1);
     }
   }
 

@@ -21,15 +21,13 @@ export class ColumnSet {
     return has(this.data, name);
   }
 
-  new() {
-    this.filter = null;
-    this.groups = this.groups || null;
-    this.order = null;
-    return this;
-  }
-
   groupby(groups) {
     this.groups = groups;
     return this;
+  }
+
+  new() {
+    const { data, names, groups = null } = this;
+    return { data, names, groups, filter: null, order: null };
   }
 }

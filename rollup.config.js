@@ -18,19 +18,6 @@ const plugins = [
 
 export default [
   {
-    input: 'src/index-node.js',
-    external: ['acorn'].concat(external),
-    plugins,
-    onwarn,
-    output: [
-      {
-        file: 'dist/arquero.node.js',
-        format: 'cjs',
-        name
-      }
-    ]
-  },
-  {
     input: 'src/index.js',
     external,
     plugins,

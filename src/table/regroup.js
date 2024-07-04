@@ -15,7 +15,7 @@ export function regroup(groups, filter) {
 
   // check for presence of rows for each group
   const { keys, rows, size } = groups;
-  const map = new Int32Array(size);
+  const map = new Uint32Array(size);
   filter.scan(row => map[keys[row]] = 1);
 
   // check sum, exit early if all groups occur

@@ -1,4 +1,4 @@
-import fromArrow from './from-arrow.js';
+import fromArrow from '../arrow/from-arrow.js';
 import fromCSV from './from-csv.js';
 import fromFixed from './from-fixed.js';
 import fromJSON from './from-json.js';
@@ -43,7 +43,8 @@ export function load(url, options = {}) {
 /**
  * Load an Arrow file from a URL and return a Promise for an Arquero table.
  * @param {string} url The URL to load.
- * @param {LoadOptions & import('./from-arrow.js').ArrowOptions} options Arrow format options.
+ * @param {LoadOptions & import('../arrow/types.js').ArrowOptions} [options]
+ *  Arrow format options.
  * @return {Promise<ColumnTable>} A Promise for an Arquero table.
  * @example aq.loadArrow('data/table.arrow')
  */
@@ -54,7 +55,8 @@ export function loadArrow(url, options) {
 /**
  * Load a CSV file from a URL and return a Promise for an Arquero table.
  * @param {string} url The URL to load.
- * @param {LoadOptions & import('./from-csv.js').CSVParseOptions} options CSV format options.
+ * @param {LoadOptions & import('./from-csv.js').CSVParseOptions} [options]
+ *  CSV format options.
  * @return {Promise<ColumnTable>} A Promise for an Arquero table.
  * @example aq.loadCSV('data/table.csv')
  * @example aq.loadTSV('data/table.tsv', { delimiter: '\t' })
@@ -66,7 +68,8 @@ export function loadCSV(url, options) {
 /**
  * Load a fixed width file from a URL and return a Promise for an Arquero table.
  * @param {string} url The URL to load.
- * @param {LoadOptions & import('./from-fixed.js').FixedParseOptions} options Fixed width format options.
+ * @param {LoadOptions & import('./from-fixed.js').FixedParseOptions} [options]
+ *  Fixed width format options.
  * @return {Promise<ColumnTable>} A Promise for an Arquero table.
  * @example aq.loadFixedWidth('data/table.txt', { names: ['name', 'city', state'], widths: [10, 20, 2] })
  */
@@ -80,7 +83,8 @@ export function loadCSV(url, options) {
  * and the aq.from method is used to construct the table. Otherwise, a
  * column object format is assumed and aq.fromJSON is applied.
  * @param {string} url The URL to load.
- * @param {LoadOptions & import('./from-json.js').JSONParseOptions} options JSON format options.
+ * @param {LoadOptions & import('./from-json.js').JSONParseOptions} [options]
+ *  JSON format options.
  * @return {Promise<ColumnTable>} A Promise for an Arquero table.
  * @example aq.loadJSON('data/table.json')
  */

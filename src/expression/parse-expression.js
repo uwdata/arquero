@@ -379,7 +379,7 @@ function updateFunctionNode(node, name, ctx) {
   if (name === ROW_OBJECT) {
     const t = ctx.table;
     if (!t) ctx.error(node, ERROR_ROW_OBJECT);
-    rowObjectExpression(node,
+    rowObjectExpression(node, t,
       node.arguments.length
         ? node.arguments.map(node => {
             const col = ctx.param(node);
