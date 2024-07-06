@@ -29,7 +29,7 @@ export class Table {
    */
   constructor(columns, names, filter, group, order, params) {
     const data = Object.freeze({ ...columns });
-    names = names ?? Object.keys(data);
+    names = names?.slice() ?? Object.keys(data);
     const nrows = names.length ? data[names[0]].length : 0;
     /** @private */
     this._names = Object.freeze(names);

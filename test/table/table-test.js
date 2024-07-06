@@ -70,6 +70,25 @@ describe('Table', () => {
     assert.deepEqual(scanned, ref, 'scanned values match');
   });
 
+  it('copies and freezes column object', () => {
+    const cols = { x: [1, 2, 3 ]};
+    const table = new Table(cols);
+    const data = table.data();
+    assert.notStrictEqual(data, cols, 'is copied');
+    assert.strictEqual(data, table._data, 'is direct');
+    assert.ok(Object.isFrozen(data), 'is frozen');
+    assert.throws(() => data.y = [4, 5, 6], 'throws on edit');
+  });
+
+  it('copies and freezes column name list', () => {
+    const names = ['y', 'x'];
+    const cols = { x: [1, 2, 3 ], y: [4, 5, 6]};
+    const table = new Table(cols, names);
+    assert.notStrictEqual(table._names, names, 'is copied');
+    assert.ok(Object.isFrozen(table._names), 'is frozen');
+    assert.throws(() => table._names.push('z'), 'throws on edit');
+  });
+
   it('scan supports filtering and ordering', () => {
     const table = new Table({
       a: ['a', 'a', 'a', 'b', 'b'],
