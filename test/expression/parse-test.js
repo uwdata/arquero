@@ -1,7 +1,5 @@
 import assert from 'node:assert';
-import parse from '../../src/expression/parse.js';
-import op from '../../src/op/op-api.js';
-import rolling from '../../src/helpers/rolling.js';
+import { op, parse, rolling } from '../../src/index.js';
 
 // pass code through for testing
 const compiler = { param: x => x, expr: x => x };

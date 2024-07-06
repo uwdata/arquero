@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import fetch from 'node-fetch';
-import { load, loadArrow, loadCSV, loadJSON } from '../../src/format/load-url.js';
+import { load, loadArrow, loadCSV, loadJSON } from '../../src/index-browser.js';
 
 // add global fetch to emulate DOM environment
 global.fetch = fetch;

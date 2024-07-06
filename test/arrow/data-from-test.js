@@ -6,7 +6,7 @@ import {
 } from 'apache-arrow';
 import { dataFromScan } from '../../src/arrow/encode/data-from.js';
 import { scanTable } from '../../src/arrow/encode/scan.js';
-import { table } from '../../src/table/index.js';
+import { table } from '../../src/index.js';
 
 function dataFromTable(table, column, type, nullable) {
   const nrows = table.numRows();

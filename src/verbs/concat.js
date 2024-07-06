@@ -1,7 +1,8 @@
 import { columnSet } from '../table/ColumnSet.js';
 import NULL from '../util/null.js';
 
-export function concat(table, others) {
+export function concat(table, ...others) {
+  others = others.flat();
   const trows = table.numRows();
   const nrows = trows + others.reduce((n, t) => n + t.numRows(), 0);
   if (trows === nrows) return table;

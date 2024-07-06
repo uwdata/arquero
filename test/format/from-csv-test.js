@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import tableEqual from '../table-equal.js';
-import fromCSV from '../../src/format/from-csv.js';
+import { fromCSV } from '../../src/index.js';
 
 function data() {
   return {

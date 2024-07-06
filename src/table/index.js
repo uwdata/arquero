@@ -17,6 +17,7 @@ import { columnsFrom } from './columns-from.js';
  */
 export function table(columns, names) {
   if (columns instanceof ColumnTable) return columns;
+  /** @type {import('./types.js').ColumnData} */
   const data = {};
   const keys = [];
   for (const [key, value] of entries(columns)) {

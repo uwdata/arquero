@@ -6,8 +6,12 @@ import isObject from '../util/is-object.js';
 import isRegExp from '../util/is-regexp.js';
 import isString from '../util/is-string.js';
 
+/**
+ * @return {import('./types.js').ColumnData}
+ */
 export function columnsFrom(values, names) {
   const raise = type => error(`Illegal argument type: ${type || typeof values}`);
+  // @ts-ignore
   return values instanceof Map ? fromKeyValuePairs(values.entries(), names)
     : isDate(values) ? raise('Date')
     : isRegExp(values) ? raise('RegExp')

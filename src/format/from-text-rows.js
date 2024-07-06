@@ -44,6 +44,7 @@ export default function(next, names, options) {
     }
   }
 
+  /** @type {import('../table/types.js').ColumnData} */
   const columns = {};
   names.forEach((name, i) => columns[name] = values[i]);
   return new ColumnTable(columns, names);

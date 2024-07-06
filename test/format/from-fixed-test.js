@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import tableEqual from '../table-equal.js';
-import fromFixed from '../../src/format/from-fixed.js';
+import { fromFixed } from '../../src/index.js';
 
 function data() {
   return {

@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import tableEqual from '../table-equal.js';
-import fromJSON from '../../src/format/from-json.js';
+import { fromJSON } from '../../src/index.js';
 
 function data() {
   return {

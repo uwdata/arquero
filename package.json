@@ -14,12 +14,12 @@
   ],
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "exports": "./src/index-node.js",
+  "exports": "./src/index.js",
   "unpkg": "dist/arquero.min.js",
   "jsdelivr": "dist/arquero.min.js",
   "types": "dist/types/index.d.ts",
   "browser": {
-    "./src/index-node.js": "./src/index.js"
+    "./src/index.js": "./src/index-browser.js"
   },
   "repository": {
     "type": "git",

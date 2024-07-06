@@ -2,14 +2,8 @@ import bundleSize from 'rollup-plugin-bundle-size';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 
-function onwarn(warning, defaultHandler) {
-  if (warning.code !== 'CIRCULAR_DEPENDENCY') {
-    defaultHandler(warning);
-  }
-}
-
 const name = 'aq';
-const external = [ 'apache-arrow', 'node-fetch' ];
+const external = [ 'apache-arrow' ];
 const globals = { 'apache-arrow': 'Arrow' };
 const plugins = [
   bundleSize(),
@@ -18,10 +12,9 @@ const plugins = [
 
 export default [
   {
-    input: 'src/index.js',
+    input: 'src/index-browser.js',
     external,
     plugins,
-    onwarn,
     output: [
       {
         file: 'dist/arquero.js',

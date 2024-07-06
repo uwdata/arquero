@@ -8,13 +8,13 @@ import NULL from '../util/null.js';
 import concat from '../util/concat.js';
 import unroll from '../util/unroll.js';
 
-export function lookup(tableL, tableR, on, values) {
+export function lookup(tableL, tableR, on, ...values) {
   on = inferKeys(tableL, tableR, on);
   return _lookup(
     tableL,
     tableR,
     [ parseKey('lookup', tableL, on[0]), parseKey('lookup', tableR, on[1]) ],
-    parseValues('lookup', tableR, values)
+    parseValues('lookup', tableR, values.flat())
   );
 }
 

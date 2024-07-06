@@ -359,7 +359,7 @@ const colValues = Array.from(table.values('colA'));
 <hr/><a id="data" href="#data">#</a>
 <em>table</em>.<b>data</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
-Returns the internal table storage data structure: an object with column names for keys and column arrays for values.
+Returns the internal table storage data structure: an object with column names for keys and column arrays for values. This method returns the same structure used by the Table (not a copy) and its contents should not be modified.
 
 <hr/><a id="get" href="#get">#</a>
 <em>table</em>.<b>get</b>(<i>name</i>[, <i>row</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
@@ -428,7 +428,7 @@ Perform a table scan, invoking the provided *callback* function for each row of 
 
 * *callback*: Function invoked for each row of the table. The callback is invoked with the following arguments:
   * *row*: The table row index.
-  * *data*: The backing table data store.
+  * *data*: The backing table data store (as returned by table [`data`](#data) method).
   * *stop*: A function to stop the scan early. The callback can invoke *stop()* to prevent future scan calls.
 * *order*: A boolean flag (default `false`), indicating if the table should be scanned in the order determined by [orderby](verbs#orderby). This argument has no effect if the table is unordered.
 

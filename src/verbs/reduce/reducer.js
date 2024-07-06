@@ -14,18 +14,22 @@ export default class Reducer {
     return this._outputs;
   }
 
-  init(/* columns */) {
+  // eslint-disable-next-line no-unused-vars
+  init(columns) {
     return {};
   }
 
-  add(/* state, row, data */) {
+  // eslint-disable-next-line no-unused-vars
+  add(state, row, data) {
     // no-op, subclasses should override
   }
 
-  rem(/* state, row, data */) {
+  // eslint-disable-next-line no-unused-vars
+  rem(state, row, data) {
     // no-op, subclasses should override
   }
 
-  write(/* state, values, index */) {
+  // eslint-disable-next-line no-unused-vars
+  write(state, values, index) {
   }
 }

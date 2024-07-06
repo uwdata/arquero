@@ -6,8 +6,8 @@ import isObject from '../util/is-object.js';
 import isNumber from '../util/is-number.js';
 import isString from '../util/is-string.js';
 
-export function orderby(table, values) {
-  return _orderby(table, parseValues(table, values));
+export function orderby(table, ...values) {
+  return _orderby(table, parseValues(table, values.flat()));
 }
 
 function parseValues(table, params) {
