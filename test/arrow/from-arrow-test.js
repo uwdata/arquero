@@ -4,7 +4,7 @@ import tableEqual from '../table-equal.js';
 import fromArrow from '../../src/arrow/from-arrow.js';
 import toArrow from '../../src/arrow/to-arrow.js';
 import { not } from '../../src/helpers/selection.js';
-import { table } from '../../src/index.js';
+import { table } from '../../src/index-browser.js';
 
 function arrowTable(data, types) {
   return toArrow(table(data), { types });

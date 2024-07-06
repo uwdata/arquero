@@ -14,8 +14,10 @@ export class Table {
 
   /**
    * Instantiate a Table instance.
-   * @param {object} columns An object mapping column names to values.
-   * @param {string[]} [names] An ordered list of column names.
+   * @param {import('./types.js').ColumnData} columns
+   *  An object mapping column names to values.
+   * @param {string[]} [names]
+   *  An ordered list of column names.
    * @param {import('./BitSet.js').BitSet} [filter]
    *  A filtering BitSet.
    * @param {import('./types.js').GroupBySpec} [group]
@@ -26,17 +28,29 @@ export class Table {
    *  An object mapping parameter names to values.
    */
   constructor(columns, names, filter, group, order, params) {
-    const data = { ...columns };
+    const data = Object.freeze({ ...columns });
     names = names ?? Object.keys(data);
     const nrows = names.length ? data[names[0]].length : 0;
+    /** @private */
     this._names = Object.freeze(names);
+    /** @private */
     this._data = data;
+    /** @private */
     this._total = nrows;
+    /** @private */
     this._nrows = filter?.count() ?? nrows;
+    /** @private */
     this._mask = filter ?? null;
+    /** @private */
     this._group = group ?? null;
+    /** @private */
     this._order = order ?? null;
+    /** @private */
     this._params = params;
+    /** @private */
+    this._index = null;
+    /** @private */
+    this._partitions = null;
   }
 
   /**
@@ -94,9 +108,10 @@ export class Table {
    */
   get [Symbol.toStringTag]() {
     if (!this._names) return 'Object'; // bail if called on prototype
-    const nr = this.numRows() + ' row' + (this.numRows() !== 1 ? 's' : '');
-    const nc = this.numCols() + ' col' + (this.numCols() !== 1 ? 's' : '');
-    return `Table: ${nc} x ${nr}`
+    const nr = this.numRows();
+    const nc = this.numCols();
+    const plural = v => v !== 1 ? 's' : '';
+    return `Table: ${nc} col${plural(nc)} x ${nr} row${plural(nr)}`
       + (this.isFiltered() ? ` (${this.totalRows()} backing)` : '')
       + (this.isGrouped() ? `, ${this._group.size} groups` : '')
       + (this.isOrdered() ? ', ordered' : '');
@@ -127,9 +142,9 @@ export class Table {
   }
 
   /**
-   * Returns the internal table storage data structure.
+   * Get the backing column data for this table.
    * @return {import('./types.js').ColumnData}
-   *  The backing table storage data structure.
+   *  Object of named column instances.
    */
   data() {
     return this._data;
@@ -231,15 +246,6 @@ export class Table {
    */
   columnIndex(name) {
     return this._names.indexOf(name);
-  }
-
-  /**
-   * Get the backing set of columns for this table.
-   * @return {import('./types.js').ColumnData}
-   *  Object of named column instances.
-   */
-  columns() {
-    return this._data;
   }
 
   /**

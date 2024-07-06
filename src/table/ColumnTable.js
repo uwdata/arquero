@@ -54,7 +54,7 @@ export class ColumnTable extends Table {
    * @example table.assign(table1, table2)
    */
   assign(...tables) {
-    return assign(this, tables.flat());
+    return assign(this, ...tables);
   }
 
   /**
@@ -140,7 +140,7 @@ export class ColumnTable extends Table {
    * @example table.groupby({ key: d => d.colA + d.colB })
    */
   groupby(...keys) {
-    return groupby(this, keys.flat());
+    return groupby(this, ...keys);
   }
 
   /**
@@ -168,7 +168,7 @@ export class ColumnTable extends Table {
    * @example table.orderby(desc(d => d.a))
    */
   orderby(...keys) {
-    return orderby(this, keys.flat());
+    return orderby(this, ...keys);
   }
 
   /**
@@ -204,7 +204,7 @@ export class ColumnTable extends Table {
    * @example table.rename({ a: 'a2', b: 'b2' })
    */
   rename(...columns) {
-    return rename(this, columns.flat());
+    return rename(this, ...columns);
   }
 
   /**
@@ -273,7 +273,7 @@ export class ColumnTable extends Table {
    * @example table.select({ colA: 'newA', colB: 'newB' })
    */
   select(...columns) {
-    return select(this, columns.flat());
+    return select(this, ...columns);
   }
 
   /**
@@ -313,7 +313,7 @@ export class ColumnTable extends Table {
    * @example table.dedupe({ abs: d => op.abs(d.a) })
    */
   dedupe(...keys) {
-    return dedupe(this, keys.flat());
+    return dedupe(this, ...keys);
   }
 
   /**
@@ -460,7 +460,7 @@ export class ColumnTable extends Table {
    * @example table.lookup(other, ['key1', 'key2'], 'value1', 'value2')
    */
   lookup(other, on, ...values) {
-    return lookup(this, other, on, values.flat());
+    return lookup(this, other, on, ...values);
   }
 
   /**
@@ -730,7 +730,7 @@ export class ColumnTable extends Table {
    * @example table.concat([other1, other2])
    */
   concat(...tables) {
-    return concat(this, tables.flat());
+    return concat(this, ...tables);
   }
 
   /**
@@ -747,7 +747,7 @@ export class ColumnTable extends Table {
    * @example table.union([other1, other2])
    */
   union(...tables) {
-    return union(this, tables.flat());
+    return union(this, ...tables);
   }
 
   /**
@@ -763,7 +763,7 @@ export class ColumnTable extends Table {
    * @example table.intersect([other1, other2])
    */
   intersect(...tables) {
-    return intersect(this, tables.flat());
+    return intersect(this, ...tables);
   }
 
   /**
@@ -779,7 +779,7 @@ export class ColumnTable extends Table {
    * @example table.except([other1, other2])
    */
   except(...tables) {
-    return except(this, tables.flat());
+    return except(this, ...tables);
   }
 
   // -- Table Output Formats ------------------------------------------------

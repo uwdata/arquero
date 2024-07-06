@@ -2,8 +2,8 @@ import { aggregateGet } from './reduce/util.js';
 import parse from './util/parse.js';
 import keyFunction from '../util/key-function.js';
 
-export function groupby(table, values) {
-  return _groupby(table, parse('groupby', table, values));
+export function groupby(table, ...values) {
+  return _groupby(table, parse('groupby', table, values.flat()));
 }
 
 export function _groupby(table, exprs) {

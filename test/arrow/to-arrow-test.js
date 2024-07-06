@@ -1,13 +1,11 @@
 import assert from 'node:assert';
 import { readFileSync } from 'node:fs';
-import { Int8, Type, tableFromIPC, tableToIPC, vectorFromArray } from 'apache-arrow';
-import fromArrow from '../../src/arrow/from-arrow.js';
-import toArrow from '../../src/arrow/to-arrow.js';
-import toArrowIPC from '../../src/arrow/to-arrow-ipc.js';
-import fromCSV from '../../src/format/from-csv.js';
-import fromJSON from '../../src/format/from-json.js';
-import toJSON from '../../src/format/to-json.js';
-import { table } from '../../src/table/index.js';
+import {
+  Int8, Type, tableFromIPC, tableToIPC, vectorFromArray
+} from 'apache-arrow';
+import {
+  fromArrow, fromCSV, fromJSON, table, toArrow, toArrowIPC, toJSON
+} from '../../src/index.js';
 
 function date(year, month=0, date=1, hours=0, minutes=0, seconds=0, ms=0) {
   return new Date(year, month, date, hours, minutes, seconds, ms);

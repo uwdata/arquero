@@ -1,7 +1,6 @@
 import assert from 'node:assert';
 import tableEqual from '../table-equal.js';
-import op from '../../src/op/op-api.js';
-import { table } from '../../src/table/index.js';
+import { op, table} from '../../src/index.js';
 
 describe('parse with params', () => {
   it('supports table expression with parameter arg', () => {

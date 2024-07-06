@@ -1,7 +1,8 @@
 import { aggregateGet } from './reduce/util.js';
 import { _rollup } from './rollup.js';
-import parse from '../expression/parse.js';
+import { ungroup } from './ungroup.js';
 import parseValues from './util/parse.js';
+import parse from '../expression/parse.js';
 import { array_agg_distinct } from '../op/op-api.js';
 import { columnSet } from '../table/ColumnSet.js';
 import error from '../util/error.js';
@@ -20,7 +21,7 @@ export function impute(table, values, options = {}) {
   if (options.expand) {
     const opt = { preparse, window: false, aggronly: true };
     const params = parseValues('impute', table, options.expand, opt);
-    const result = _rollup(table.ungroup(), params);
+    const result = _rollup(ungroup(table), params);
     return _impute(
       table, values, params.names,
       params.names.map(name => result.get(name, 0))

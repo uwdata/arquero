@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { load, loadArrow, loadCSV, loadJSON } from '../../src/format/load-file.js';
+import { load, loadArrow, loadCSV, loadJSON } from '../../src/index.js';
 
 describe('load file url', () => {
   it('loads from a URL', async () => {

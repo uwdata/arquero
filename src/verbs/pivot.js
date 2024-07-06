@@ -1,5 +1,6 @@
 import { aggregate, aggregateGet, groupOutput } from './reduce/util.js';
 import parse from './util/parse.js';
+import { ungroup } from './ungroup.js';
 import { any } from '../op/op-api.js';
 import { columnSet } from '../table/ColumnSet.js';
 
@@ -68,7 +69,7 @@ function pivotKeys(table, on, options) {
 
   // collect unique key values
   const uniq = aggregate(
-    table.ungroup(),
+    ungroup(table),
     [ {
       id: 0,
       name: 'array_agg_distinct',

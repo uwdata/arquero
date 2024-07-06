@@ -1,5 +1,5 @@
 {
-  "include": ["src/index.js", "src/index-node.js"],
+  "include": ["src/index-browser.js", "src/index.js"],
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
