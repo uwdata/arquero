@@ -45,6 +45,7 @@ export default function(v, options = {}) {
     } else {
       const s = JSON.stringify(
         v,
+        // @ts-ignore
         (k, v) => isTypedArray(v) ? Array.from(v) : v
       );
       // @ts-ignore

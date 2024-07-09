@@ -209,6 +209,9 @@ export type ExprList = ListEntry | ListEntry[];
 /** A reference to a data table instance. */
 export type TableRef = Table | string;
 
+/** A list of one or more table references. */
+export type TableRefList = TableRef | TableRef[];
+
 /**
  * One or more orderby sort criteria.
  * If a string, order by the column with that name.
@@ -228,7 +231,11 @@ export type OrderKeys = OrderKey | OrderKey[];
 export type JoinKey = ColumnRef | TableExprFunc;
 
 /** An ordered set of join keys. */
-export type JoinKeys = JoinKey | [JoinKey[]] | [JoinKey[], JoinKey[]];
+export type JoinKeys =
+  | JoinKey
+  | [JoinKey[]]
+  | [JoinKey, JoinKey]
+  | [JoinKey[], JoinKey[]];
 
 /** A predicate specification for joining two tables. */
 export type JoinPredicate = JoinKeys | TableExprFunc2 | null;
