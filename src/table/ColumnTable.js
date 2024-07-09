@@ -1,5 +1,4 @@
 import { Table } from './Table.js';
-import toArray from '../util/to-array.js';
 import {
   antijoin,
   assign,
@@ -38,18 +37,19 @@ import toCSV from '../format/to-csv.js';
 import toHTML from '../format/to-html.js';
 import toJSON from '../format/to-json.js';
 import toMarkdown from '../format/to-markdown.js';
+import toArray from '../util/to-array.js';
 
 /**
  * A data table with transformation verbs.
  */
 export class ColumnTable extends Table {
-
   /**
    * Create a new table with additional columns drawn from one or more input
    * tables. All tables must have the same numer of rows and are reified
    * prior to assignment. In the case of repeated column names, input table
    * columns overwrite existing columns.
-   * @param {...Table} tables The tables to merge with this table.
+   * @param {...(Table|import('./types.js').ColumnData)} tables
+   *  The tables to merge with this table.
    * @return {this} A new table with merged columns.
    * @example table.assign(table1, table2)
    */
@@ -395,7 +395,7 @@ export class ColumnTable extends Table {
    * @return {this} A new pivoted table.
    * @example table.pivot('key', 'value')
    * @example table.pivot(['keyA', 'keyB'], ['valueA', 'valueB'])
-   * @example table.pivot({ key: d => d.key }, { value: d => sum(d.value) })
+   * @example table.pivot({ key: d => d.key }, { value: d => op.sum(d.value) })
    */
   pivot(keys, values, options) {
     return pivot(this, keys, values, options);
@@ -412,7 +412,7 @@ export class ColumnTable extends Table {
    * @param {import('./types.js').SpreadOptions } [options]
    *  Options for spreading.
    * @return {this} A new table with the spread columns added.
-   * @example table.spread({ a: split(d.text, '') })
+   * @example table.spread({ a: d => op.split(d.text, '') })
    * @example table.spread('arrayCol', { limit: 100 })
    */
   spread(values, options) {
@@ -501,7 +501,7 @@ export class ColumnTable extends Table {
    *  Options for the join.
    * @return {this} A new joined table.
    * @example table.join(other, ['keyL', 'keyR'])
-   * @example table.join(other, (a, b) => equal(a.keyL, b.keyR))
+   * @example table.join(other, (a, b) => op.equal(a.keyL, b.keyR))
    */
   join(other, on, values, options) {
     return join(this, other, on, values, options);
@@ -542,7 +542,7 @@ export class ColumnTable extends Table {
    *  overridden with `{left: true, right: false}`.
    * @return {this} A new joined table.
    * @example table.join_left(other, ['keyL', 'keyR'])
-   * @example table.join_left(other, (a, b) => equal(a.keyL, b.keyR))
+   * @example table.join_left(other, (a, b) => op.equal(a.keyL, b.keyR))
    */
   join_left(other, on, values, options) {
     const opt = { ...options, left: true, right: false };
@@ -584,7 +584,7 @@ export class ColumnTable extends Table {
    *  with `{left: false, right: true}`.
    * @return {this} A new joined table.
    * @example table.join_right(other, ['keyL', 'keyR'])
-   * @example table.join_right(other, (a, b) => equal(a.keyL, b.keyR))
+   * @example table.join_right(other, (a, b) => op.equal(a.keyL, b.keyR))
    */
   join_right(other, on, values, options) {
     const opt = { ...options, left: false, right: true };
@@ -626,7 +626,7 @@ export class ColumnTable extends Table {
    *  with `{left: true, right: true}`.
    * @return {this} A new joined table.
    * @example table.join_full(other, ['keyL', 'keyR'])
-   * @example table.join_full(other, (a, b) => equal(a.keyL, b.keyR))
+   * @example table.join_full(other, (a, b) => op.equal(a.keyL, b.keyR))
    */
   join_full(other, on, values, options) {
     const opt = { ...options, left: true, right: true };
@@ -683,7 +683,7 @@ export class ColumnTable extends Table {
    * @return {this} A new filtered table.
    * @example table.semijoin(other)
    * @example table.semijoin(other, ['keyL', 'keyR'])
-   * @example table.semijoin(other, (a, b) => equal(a.keyL, b.keyR))
+   * @example table.semijoin(other, (a, b) => op.equal(a.keyL, b.keyR))
    */
   semijoin(other, on) {
     return semijoin(this, other, on);
@@ -710,7 +710,7 @@ export class ColumnTable extends Table {
    * @return {this} A new filtered table.
    * @example table.antijoin(other)
    * @example table.antijoin(other, ['keyL', 'keyR'])
-   * @example table.antijoin(other, (a, b) => equal(a.keyL, b.keyR))
+   * @example table.antijoin(other, (a, b) => op.equal(a.keyL, b.keyR))
    */
   antijoin(other, on) {
     return antijoin(this, other, on);
@@ -722,7 +722,7 @@ export class ColumnTable extends Table {
    * Concatenate multiple tables into a single table, preserving all rows.
    * This transformation mirrors the UNION_ALL operation in SQL.
    * Only named columns in this table are included in the output.
-   * @param  {...import('./types.js').TableRef} tables
+   * @param  {...import('./types.js').TableRefList} tables
    *  A list of tables to concatenate.
    * @return {this} A new concatenated table.
    * @example table.concat(other)
@@ -739,7 +739,7 @@ export class ColumnTable extends Table {
    * similar to *concat* but suppresses duplicate rows with
    * values identical to another row.
    * Only named columns in this table are included in the output.
-   * @param  {...import('./types.js').TableRef} tables
+   * @param  {...import('./types.js').TableRefList} tables
    *  A list of tables to union.
    * @return {this} A new unioned table.
    * @example table.union(other)
@@ -755,7 +755,7 @@ export class ColumnTable extends Table {
    * values for all columns in all tables, and deduplicates the rows.
    * This transformation is similar to a series of *semijoin*.
    * calls, but additionally suppresses duplicate rows.
-   * @param  {...import('./types.js').TableRef} tables
+   * @param  {...import('./types.js').TableRefList} tables
    *  A list of tables to intersect.
    * @return {this} A new filtered table.
    * @example table.intersect(other)
@@ -771,7 +771,7 @@ export class ColumnTable extends Table {
    * this table that whose values do not occur in the other tables.
    * This transformation is similar to a series of *anitjoin*
    * calls, but additionally suppresses duplicate rows.
-   * @param  {...import('./types.js').TableRef} tables
+   * @param  {...import('./types.js').TableRefList} tables
    *  A list of tables to difference.
    * @return {this} A new filtered table.
    * @example table.except(other)

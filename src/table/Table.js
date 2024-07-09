@@ -3,15 +3,14 @@ import { rowObjectBuilder } from '../expression/row-object.js';
 import resolve, { all } from '../helpers/selection.js';
 import arrayType from '../util/array-type.js';
 import error from '../util/error.js';
+import isArrayType from '../util/is-array-type.js';
 import isNumber from '../util/is-number.js';
 import repeat from '../util/repeat.js';
-import isArrayType from '../util/is-array-type.js';
 
 /**
  * Base class representing a column-oriented data table.
  */
 export class Table {
-
   /**
    * Instantiate a Table instance.
    * @param {import('./types.js').ColumnData} columns
@@ -31,25 +30,55 @@ export class Table {
     const data = Object.freeze({ ...columns });
     names = names?.slice() ?? Object.keys(data);
     const nrows = names.length ? data[names[0]].length : 0;
-    /** @private */
+    /**
+     * @private
+     * @type {readonly string[]}
+     */
     this._names = Object.freeze(names);
-    /** @private */
+    /**
+     * @private
+     * @type {import('./types.js').ColumnData}
+     */
     this._data = data;
-    /** @private */
+    /**
+     * @private
+     * @type {number}
+     */
     this._total = nrows;
-    /** @private */
+    /**
+     * @private
+     * @type {number}
+     */
     this._nrows = filter?.count() ?? nrows;
-    /** @private */
+    /**
+     * @private
+     * @type {import('./BitSet.js').BitSet}
+     */
     this._mask = filter ?? null;
-    /** @private */
+    /**
+     * @private
+     * @type {import('./types.js').GroupBySpec}
+     */
     this._group = group ?? null;
-    /** @private */
+    /**
+     * @private
+     * @type {import('./types.js').RowComparator}
+     */
     this._order = order ?? null;
-    /** @private */
+    /**
+     * @private
+     * @type {import('./types.js').Params}
+     */
     this._params = params;
-    /** @private */
+    /**
+     * @private
+     * @type {Uint32Array}
+     */
     this._index = null;
-    /** @private */
+    /**
+     * @private
+     * @type {number[][] | Uint32Array[]}
+     */
     this._partitions = null;
   }
 
@@ -429,9 +458,8 @@ export class Table {
 
     // sort index vector
     if (order && ordered) {
-      const compare = this._order;
-      const data = this._data;
-      index.sort((a, b) => compare(a, b, data));
+      const { _order, _data } = this;
+      index.sort((a, b) => _order(a, b, _data));
     }
 
     // save indices if they reflect table metadata
