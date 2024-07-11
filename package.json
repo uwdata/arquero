@@ -32,23 +32,23 @@
     "perf": "TZ=America/Los_Angeles tape 'perf/**/*-perf.js'",
     "lint": "eslint src test",
     "test": "TZ=America/Los_Angeles mocha 'test/**/*-test.js' --timeout 5000",
-    "posttest": "tsc --project jsconfig.json",
-    "prepublishOnly": "npm test && npm run lint && npm run build"
+    "posttest": "npm run lint && tsc --project jsconfig.json",
+    "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "acorn": "^8.12.0",
+    "acorn": "^8.12.1",
     "apache-arrow": "^16.1.0",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "eslint": "^9.5.0",
-    "mocha": "^10.5.0",
-    "rimraf": "^5.0.7",
-    "rollup": "^4.18.0",
+    "eslint": "^9.6.0",
+    "mocha": "^10.6.0",
+    "rimraf": "^6.0.1",
+    "rollup": "^4.18.1",
     "rollup-plugin-bundle-size": "^1.0.3",
     "tape": "^5.8.1",
-    "typescript": "^5.5.2"
+    "typescript": "^5.5.3"
   }
 }
