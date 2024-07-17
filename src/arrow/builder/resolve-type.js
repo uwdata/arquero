@@ -26,8 +26,8 @@ import {
   Uint8,
   Utf8
 } from 'apache-arrow';
-import error from '../../util/error';
-import toString from '../../util/to-string';
+import error from '../../util/error.js';
+import toString from '../../util/to-string.js';
 
 export default function(type) {
   if (type instanceof DataType || type == null) {

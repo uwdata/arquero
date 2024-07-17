@@ -1,7 +1,7 @@
-const tape = require('tape');
-const time = require('./time');
-const { floats, ints, sample, strings } = require('./data-gen');
-const { table } = require('..');
+import tape from 'tape';
+import { time } from './time.js';
+import { floats, ints, sample, strings } from './data-gen.js';
+import { table } from '../src/index.js';
 
 function run(N, nulls, msg) {
   const dt = table({
@@ -19,21 +19,21 @@ function run(N, nulls, msg) {
         table:  time(() => dt.filter('d.a > 0')),
         reify:  time(() => dt.filter('d.a > 0').reify()),
         object: time(a => a.filter(d => d.a > 0), dt.objects()),
-        array:  time(a => a.filter(v => v > 0), dt.column('a').data)
+        array:  time(a => a.filter(v => v > 0), dt.column('a'))
       },
       {
         type:  'float',
         table:  time(() => dt.filter('d.b > 0')),
         reify:  time(() => dt.filter('d.b > 0').reify()),
         object: time(a => a.filter(d => d.b > 0), dt.objects()),
-        array:  time(a => a.filter(v => v > 0), dt.column('b').data)
+        array:  time(a => a.filter(v => v > 0), dt.column('b'))
       },
       {
         type:  'string',
         table:  time(() => dt.filter(`d.c === '${str}'`)),
         reify:  time(() => dt.filter(`d.c === '${str}'`).reify()),
         object: time(a => a.filter(d => d.c === str), dt.objects()),
-        array:  time(a => a.filter(v => v === str), dt.column('c').data)
+        array:  time(a => a.filter(v => v === str), dt.column('c'))
       }
     ]);
     t.end();

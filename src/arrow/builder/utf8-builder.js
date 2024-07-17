@@ -1,4 +1,4 @@
-import { array, ceil64Bytes, writeUtf8 } from './util';
+import { array, ceil64Bytes, writeUtf8 } from './util.js';
 
 export default function(type, length, strlen) {
   const offset = array(Int32Array, length + 1);

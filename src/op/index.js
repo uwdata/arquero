@@ -1,13 +1,11 @@
-import aggregateFunctions from './aggregate-functions';
-import windowFunctions from './window-functions';
-import functions from './functions';
-import has from '../util/has';
+import aggregateFunctions from './aggregate-functions.js';
+import windowFunctions from './window-functions.js';
+import functions from './functions/index.js';
+import has from '../util/has.js';
 
-export {
-  functions,
-  aggregateFunctions,
-  windowFunctions
-};
+export { default as aggregateFunctions } from './aggregate-functions.js';
+export { default as windowFunctions } from './window-functions.js';
+export { default as functions } from './functions/index.js';
 
 /**
  * Check if an aggregate function with the given name exists.
@@ -39,8 +37,8 @@ export function hasWindow(name) {
 /**
  * Get an aggregate function definition.
  * @param {string} name The name of the aggregate function.
- * @return {AggregateDef} The aggregate function definition,
- *  or undefined if not found.
+ * @return {import('./aggregate-functions.js').AggregateDef}
+ *  The aggregate function definition, or undefined if not found.
  */
 export function getAggregate(name) {
   return hasAggregate(name) && aggregateFunctions[name];
@@ -49,8 +47,8 @@ export function getAggregate(name) {
 /**
  * Get a window function definition.
  * @param {string} name The name of the window function.
- * @return {WindowDef} The window function definition,
- *  or undefined if not found.
+ * @return {import('./window-functions.js').WindowDef}
+ *  The window function definition, or undefined if not found.
  */
 export function getWindow(name) {
   return hasWindow(name) && windowFunctions[name];

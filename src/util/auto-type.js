@@ -1,4 +1,4 @@
-import parseIsoDate from './parse-iso-date';
+import parseIsoDate from './parse-iso-date.js';
 
 export default function(input) {
   const value = input.trim();
@@ -9,6 +9,7 @@ export default function(input) {
     : value === 'false' ? false
     : value === 'NaN' ? NaN
     : !isNaN(parsed = +value) ? parsed
+    // @ts-ignore
     : (parsed = parseIsoDate(value, d => new Date(d))) !== value ? parsed
     : input;
 }

@@ -1,11 +1,11 @@
-const tape = require('tape');
-const time = require('./time');
-const { bools, floats, ints, sample, strings } = require('./data-gen');
-const { fromArrow, table } = require('..');
-const {
+import tape from 'tape';
+import { time } from './time.js';
+import { bools, floats, ints, sample, strings } from './data-gen.js';
+import { fromArrow, table, toArrow } from '../src/index.js';
+import {
   Bool, Dictionary, Float64, Int32, Table, Uint32, Utf8,
-  vectorFromArray, tableToIPC
-} = require('apache-arrow');
+  tableToIPC, vectorFromArray
+} from 'apache-arrow';
 
 function process(N, nulls, msg) {
   const vectors = {
@@ -76,7 +76,7 @@ function encode(name, type, values) {
   const dt = table({ values });
 
   // measure encoding times
-  const qt = time(() => tableToIPC(dt.toArrow({ types: { values: type } })));
+  const qt = time(() => tableToIPC(toArrow(dt, { types: { values: type } })));
   const at = time(
     () => tableToIPC(new Table({ values: vectorFromArray(values, type) }))
   );
@@ -86,7 +86,7 @@ function encode(name, type, values) {
   const ab = tableToIPC(new Table({
     values: vectorFromArray(values, type)
   })).length;
-  const qb = tableToIPC(dt.toArrow({ types: { values: type }})).length;
+  const qb = tableToIPC(toArrow(dt, { types: { values: type }})).length;
   const jb = (new TextEncoder().encode(JSON.stringify(values))).length;
 
   // check that arrow and arquero produce the same result

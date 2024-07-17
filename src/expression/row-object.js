@@ -1,14 +1,18 @@
-import { Literal, ObjectExpression, Property } from './ast/constants';
-import codegen from './codegen';
-import compile from './compile';
-import rewrite from './rewrite';
-import entries from '../util/entries';
-import isArray from '../util/is-array';
-import toString from '../util/to-string';
+import { Literal, ObjectExpression, Property } from './ast/constants.js';
+import codegen from './codegen.js';
+import compile from './compile.js';
+import rewrite from './rewrite.js';
+import entries from '../util/entries.js';
+import isArray from '../util/is-array.js';
+import toString from '../util/to-string.js';
 
 export const ROW_OBJECT = 'row_object';
 
-export function rowObjectExpression(node, props) {
+export function rowObjectExpression(
+  node,
+  table,
+  props = table.columnNames())
+{
   node.type = ObjectExpression;
 
   const p = node.properties = [];
@@ -17,17 +21,17 @@ export function rowObjectExpression(node, props) {
     p.push({
       type: Property,
       key: { type: Literal, raw: toString(key) },
-      value: rewrite({ computed: true }, name)
+      value: rewrite({ computed: true }, name, 0, table.column(name))
     });
   }
 
   return node;
 }
 
-export function rowObjectCode(props) {
-  return codegen(rowObjectExpression({}, props));
+export function rowObjectCode(table, props) {
+  return codegen(rowObjectExpression({}, table, props));
 }
 
-export function rowObjectBuilder(props) {
-  return compile.expr(rowObjectCode(props));
+export function rowObjectBuilder(table, props) {
+  return compile.expr(rowObjectCode(table, props));
 }

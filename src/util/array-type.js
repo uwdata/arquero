@@ -1,5 +1,10 @@
-import isTypedArray from './is-typed-array';
+import isTypedArray from './is-typed-array.js';
 
+/**
+ * @param {*} column
+ * @returns {ArrayConstructor | import('../table/types.js').TypedArrayConstructor}
+ */
 export default function(column) {
-  return isTypedArray(column.data) ? column.data.constructor : Array;
+  // @ts-ignore
+  return isTypedArray(column) ? column.constructor : Array;
 }

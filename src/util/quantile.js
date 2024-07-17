@@ -1,6 +1,6 @@
-import isBigInt from './is-bigint';
-import NULL from './null';
-import toNumeric from './to-numeric';
+import isBigInt from './is-bigint.js';
+import NULL from './null.js';
+import toNumeric from './to-numeric.js';
 
 export default function quantile(values, p) {
   const n = values.length;
@@ -14,5 +14,6 @@ export default function quantile(values, p) {
   const v0 = toNumeric(values[i0]);
   return isBigInt(v0)
     ? v0
+    // @ts-ignore
     : v0 + (toNumeric(values[i0 + 1]) - v0) * (i - i0);
 }

@@ -1,18 +1,21 @@
-import { array_agg, entries_agg, map_agg, object_agg } from '../op/op-api';
-import error from '../util/error';
-import uniqueName from '../util/unique-name';
+import { array_agg, entries_agg, map_agg, object_agg } from '../op/op-api.js';
+import error from '../util/error.js';
+import uniqueName from '../util/unique-name.js';
+import { groupby } from '../verbs/groupby.js';
+import { rollup } from '../verbs/rollup.js';
+import { select } from '../verbs/select.js';
 
 /**
  * Regroup table rows in response to a BitSet filter.
- * @param {GroupBySpec} groups The current groupby specification.
- * @param {BitSet} filter The filter to apply.
+ * @param {import('./types.js').GroupBySpec} groups The current groupby specification.
+ * @param {import('./BitSet.js').BitSet} filter The filter to apply.
  */
 export function regroup(groups, filter) {
   if (!groups || !filter) return groups;
 
   // check for presence of rows for each group
   const { keys, rows, size } = groups;
-  const map = new Int32Array(size);
+  const map = new Uint32Array(size);
   filter.scan(row => map[keys[row]] = 1);
 
   // check sum, exit early if all groups occur
@@ -36,7 +39,8 @@ export function regroup(groups, filter) {
 /**
  * Regroup table rows in response to a re-indexing.
  * This operation may or may not involve filtering of rows.
- * @param {GroupBySpec} groups The current groupby specification.
+ * @param {import('./types.js').GroupBySpec} groups
+ *  The current groupby specification.
  * @param {Function} scan Function to scan new row indices.
  * @param {boolean} filter Flag indicating if filtering may occur.
  * @param {number} nrows The number of rows in the new table.
@@ -86,17 +90,16 @@ export function nest(table, idx, obj, type) {
 
   // create table with one column of row objects
   // then aggregate into per-group arrays
-  let t = table
-    .select()
-    .reify(idx)
-    .create({ data: { [col]: obj } })
-    .rollup({ [col]: array_agg(col) });
+  let t = select(table, {}).reify(idx).create({ data: { [col]: obj } });
+  t = rollup(t, { [col]: array_agg(col) });
 
   // create nested structures for each level of grouping
   for (let i = names.length; --i >= 0;) {
-    t = t
-      .groupby(names.slice(0, i))
-      .rollup({ [col]: agg(names[i], col) });
+    t = rollup(
+        groupby(t, names.slice(0, i)),
+        // @ts-ignore
+        { [col]: agg(names[i], col) }
+      );
   }
 
   // return the final aggregated structure

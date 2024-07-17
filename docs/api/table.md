@@ -14,7 +14,7 @@ title: Table \| Arquero API Reference
   * [assign](#assign)
   * [transform](#transform)
 * [Table Columns](#columns)
-  * [column](#column), [columnAt](#columnAt), [columnArray](#columnArray)
+  * [column](#column), [columnAt](#columnAt)
   * [columnIndex](#columnIndex), [columnName](#columnName), [columnNames](#columnNames)
 * [Table Values](#table-values)
   * [array](#array), [values](#values)
@@ -23,7 +23,7 @@ title: Table \| Arquero API Reference
 * [Table Output](#output)
   * [objects](#objects), [object](#object), [Symbol.iterator](#@@iterator)
   * [print](#print), [toHTML](#toHTML), [toMarkdown](#toMarkdown)
-  * [toArrow](#toArrow), [toArrowBuffer](#toArrowBuffer), [toCSV](#toCSV), [toJSON](#toJSON)
+  * [toArrow](#toArrow), [toArrowIPC](#toArrowIPC), [toCSV](#toCSV), [toJSON](#toJSON)
 
 
 <br/>
@@ -235,7 +235,7 @@ aq.table({ a: [1, 2], b: [3, 4] })
 
 Get the column instance with the given *name*, or `undefined` if does not exist. The returned column object provides a lightweight abstraction over the column storage (such as a backing array), providing a *length* property and *get(row)* method.
 
-A column instance may be used across multiple tables and so does _not_ track a table's filter or orderby critera. To access filtered or ordered values, use the table [get](#get), [getter](#getter), or [columnArray](#columnArray) methods.
+A column instance may be used across multiple tables and so does _not_ track a table's filter or orderby critera. To access filtered or ordered values, use the table [get](#get), [getter](#getter), or [array](#array) methods.
 
 * *name*: The column name.
 
@@ -259,16 +259,6 @@ Get the column instance at the given index position, or `undefined` if does not 
 const dt = aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 dt.columnAt(1).get(1) // 5
 ```
-
-<hr/><a id="columnArray" href="#columnArray">#</a>
-<em>table</em>.<b>columnArray</b>(<i>name</i>[, <i>constructor</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
-
-_This method is a deprecated alias for the table [array()](#array) method. Please use [array()](#array) instead._
-
-Get an array of values contained in the column with the given *name*. Unlike direct access through the table [column](#column) method, the array returned by this method respects any table filter or orderby criteria. By default, a standard [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) is returned; use the *constructor* argument to specify a [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray).
-
-* *name*: The column name.
-* *constructor*: An optional array constructor (default [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Array)) to use to instantiate the output array. Note that errors or truncated values may occur when assigning to a typed array with an incompatible type.
 
 <hr/><a id="columnIndex" href="#columnIndex">#</a>
 <em>table</em>.<b>columnIndex</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
@@ -362,14 +352,14 @@ for (const value of table.values('colA')) {
 ```
 
 ```js
-// slightly less efficient version of table.columnArray('colA')
+// slightly less efficient version of table.array('colA')
 const colValues = Array.from(table.values('colA'));
 ```
 
 <hr/><a id="data" href="#data">#</a>
 <em>table</em>.<b>data</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
 
-Returns the internal table storage data structure.
+Returns the internal table storage data structure: an object with column names for keys and column arrays for values. This method returns the same structure used by the Table (not a copy) and its contents should not be modified.
 
 <hr/><a id="get" href="#get">#</a>
 <em>table</em>.<b>get</b>(<i>name</i>[, <i>row</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
@@ -438,7 +428,7 @@ Perform a table scan, invoking the provided *callback* function for each row of 
 
 * *callback*: Function invoked for each row of the table. The callback is invoked with the following arguments:
   * *row*: The table row index.
-  * *data*: The backing table data store.
+  * *data*: The backing table data store (as returned by table [`data`](#data) method).
   * *stop*: A function to stop the scan early. The callback can invoke *stop()* to prevent future scan calls.
 * *order*: A boolean flag (default `false`), indicating if the table should be scanned in the order determined by [orderby](verbs#orderby). This argument has no effect if the table is unordered.
 
@@ -629,14 +619,15 @@ const at2 = dt.toArrow({
 });
 ```
 
-<hr/><a id="toArrowBuffer" href="#toArrowBuffer">#</a>
+<hr/><a id="toArrowIPC" href="#toArrowIPC">#</a>
 <em>table</em>.<b>toArrowBuffer</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/encode/index.js)
 
 Format this table as binary data in the [Apache Arrow](https://arrow.apache.org/docs/js/) IPC format. The binary data may be saved to disk or passed between processes or tools. For example, when using [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers), the output of this method can be passed directly between threads (no data copy) as a [Transferable](https://developer.mozilla.org/en-US/docs/Web/API/Transferable) object. Additionally, Arrow binary data can be loaded in other language environments such as [Python](https://arrow.apache.org/docs/python/) or [R](https://arrow.apache.org/docs/r/).
 
-This method will throw an error if type inference fails or if the generated columns have differing lengths. This method is a shorthand for `table.toArrow().serialize()`.
+This method will throw an error if type inference fails or if the generated columns have differing lengths.
 
-* *options*: Options for Arrow encoding, same as [toArrow](#toArrow).
+* *options*: Options for Arrow encoding, same as [toArrow](#toArrow) but with an additional *format* option.
+  * *format*: The Arrow IPC byte format to use. One of `'stream'` (default) or `'file'`.
 
 *Examples*
 
@@ -652,7 +643,7 @@ const dt = table({
 
 // encode table as a transferable Arrow byte buffer
 // here, infers Uint8 for 'x' and Float64 for 'y'
-const bytes = dt.toArrowBuffer();
+const bytes = dt.toArrowIPC();
 ```
 
 <hr/><a id="toCSV" href="#toCSV">#</a>

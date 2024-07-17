@@ -1,14 +1,14 @@
-import { Column, Literal, Op } from './ast/constants';
-import clean from './ast/clean';
-import { is } from './ast/util';
-import codegen from './codegen';
-import compile from './compile';
-import entries from '../util/entries';
-import error from '../util/error';
-import isFunction from '../util/is-function';
-import isObject from '../util/is-object';
-import parseEscape from './parse-escape';
-import parseExpression from './parse-expression';
+import { Column, Literal, Op } from './ast/constants.js';
+import clean from './ast/clean.js';
+import { is } from './ast/util.js';
+import codegen from './codegen.js';
+import compile from './compile.js';
+import entries from '../util/entries.js';
+import error from '../util/error.js';
+import isFunction from '../util/is-function.js';
+import isObject from '../util/is-object.js';
+import parseEscape from './parse-escape.js';
+import parseExpression from './parse-expression.js';
 
 const ANNOTATE = { [Column]: 1, [Op]: 1 };
 

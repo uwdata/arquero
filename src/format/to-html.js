@@ -1,9 +1,7 @@
-import ColumnTable from '../table/column-table'; // eslint-disable-line no-unused-vars
-
-import formatValue from './value';
-import { columns, formats, scan } from './util';
-import isFunction from '../util/is-function';
-import mapObject from '../util/map-object';
+import formatValue from './value.js';
+import { columns, formats, scan } from './util.js';
+import isFunction from '../util/is-function.js';
+import mapObject from '../util/map-object.js';
 
 /**
  * Null format function.
@@ -30,14 +28,14 @@ import mapObject from '../util/map-object';
  * @typedef {object} HTMLFormatOptions
  * @property {number} [limit=Infinity] The maximum number of rows to print.
  * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
- * @property {import('./util').ColumnSelectOptions} [columns] Ordered list
+ * @property {import('./util.js').ColumnSelectOptions} [columns] Ordered list
  *  of column names to include. If function-valued, the function should
  *  accept a table as input and return an array of column name strings.
- * @property {import('./util').ColumnAlignOptions} [align] Object of column
+ * @property {import('./util.js').ColumnAlignOptions} [align] Object of column
  *  alignment options. The object keys should be column names. The object
  *  values should be aligment strings, one of 'l' (left), 'c' (center), or
  *  'r' (right). If specified, these override automatically inferred options.
- * @property {import('./util').ColumnFormatOptions} [format] Object of column
+ * @property {import('./util.js').ColumnFormatOptions} [format] Object of column
  *  format options. The object keys should be column names. The object values
  *  should be formatting functions or specification objects. If specified,
  *  these override automatically inferred options.
@@ -57,7 +55,7 @@ import mapObject from '../util/map-object';
 
 /**
  * Format a table as an HTML table string.
- * @param {ColumnTable} table The table to format.
+ * @param {import('../table/Table.js').Table} table The table to format.
  * @param {HTMLFormatOptions} options The formatting options.
  * @return {string} An HTML table string.
  */

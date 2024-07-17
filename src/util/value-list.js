@@ -1,7 +1,7 @@
-import ascending from './ascending';
-import min from './min';
-import max from './max';
-import quantile from './quantile';
+import ascending from './ascending.js';
+import max from './max.js';
+import min from './min.js';
+import quantile from './quantile.js';
 
 export default class ValueList {
   constructor(values) {

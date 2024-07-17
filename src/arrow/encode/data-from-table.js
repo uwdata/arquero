@@ -3,10 +3,10 @@ import {
   Int16, Int32, Int64, Int8,
   Uint16, Uint32, Uint64, Uint8, Vector
 } from 'apache-arrow';
-import { dataFromArray, dataFromScan } from './data-from';
-import { profile } from './profiler';
-import resolveType from '../builder/resolve-type';
-import isTypedArray from '../../util/is-typed-array';
+import { dataFromArray, dataFromScan } from './data-from.js';
+import { profile } from './profiler.js';
+import resolveType from '../builder/resolve-type.js';
+import isTypedArray from '../../util/is-typed-array.js';
 
 export default function(table, name, nrows, scan, type, nullable = true) {
   type = resolveType(type);

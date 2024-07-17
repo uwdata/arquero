@@ -1,6 +1,6 @@
-import { EOF, EOL, NEWLINE, QUOTE, RETURN } from './constants';
-import filter from './text-filter';
-import error from '../../util/error';
+import { EOF, EOL, NEWLINE, QUOTE, RETURN } from './constants.js';
+import filter from './text-filter.js';
+import error from '../../util/error.js';
 
 // Adapted from d3-dsv: https://github.com/d3/d3-dsv/blob/master/src/dsv.js
 // Copyright 2013-2016 Mike Bostock
@@ -26,7 +26,11 @@ import error from '../../util/error';
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-export default function(text, { delimiter = ',', skip, comment }) {
+export default function(text, {
+  delimiter = ',',
+  skip = 0,
+  comment = undefined
+}) {
   if (delimiter.length !== 1) {
     error(`Text "delimiter" should be a single character, found "${delimiter}"`);
   }

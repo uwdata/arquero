@@ -1,13 +1,17 @@
-import error from '../util/error';
-import isArray from '../util/is-array';
-import isDate from '../util/is-date';
-import isFunction from '../util/is-function';
-import isObject from '../util/is-object';
-import isRegExp from '../util/is-regexp';
-import isString from '../util/is-string';
+import error from '../util/error.js';
+import isArray from '../util/is-array.js';
+import isDate from '../util/is-date.js';
+import isFunction from '../util/is-function.js';
+import isObject from '../util/is-object.js';
+import isRegExp from '../util/is-regexp.js';
+import isString from '../util/is-string.js';
 
-export default function(values, names) {
+/**
+ * @return {import('./types.js').ColumnData}
+ */
+export function columnsFrom(values, names) {
   const raise = type => error(`Illegal argument type: ${type || typeof values}`);
+  // @ts-ignore
   return values instanceof Map ? fromKeyValuePairs(values.entries(), names)
     : isDate(values) ? raise('Date')
     : isRegExp(values) ? raise('RegExp')

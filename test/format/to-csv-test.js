@@ -1,7 +1,5 @@
-import tape from 'tape';
-import BitSet from '../../src/table/bit-set';
-import ColumnTable from '../../src/table/column-table';
-import toCSV from '../../src/format/to-csv';
+import assert from 'node:assert';
+import { BitSet, ColumnTable, toCSV } from '../../src/index.js';
 
 function data() {
   return {
@@ -22,53 +20,51 @@ const text = [
 
 const tabText = text.map(t => t.split(',').join('\t'));
 
-tape('toCSV formats delimited text', t => {
-  const dt = new ColumnTable(data());
-  t.equal(toCSV(dt), text.join('\n'), 'csv text');
-  t.equal(
-    toCSV(dt, { limit: 2, columns: ['str', 'int'] }),
-    text.slice(0, 3)
-      .map(s => s.split(',').slice(0, 2).join(','))
-      .join('\n'),
-    'csv text with limit'
-  );
-  t.end();
-});
+describe('toCSV', () => {
+  it('formats delimited text', () => {
+    const dt = new ColumnTable(data());
+    assert.equal(toCSV(dt), text.join('\n'), 'csv text');
+    assert.equal(
+      toCSV(dt, { limit: 2, columns: ['str', 'int'] }),
+      text.slice(0, 3)
+        .map(s => s.split(',').slice(0, 2).join(','))
+        .join('\n'),
+      'csv text with limit'
+    );
+  });
 
-tape('toCSV formats delimited text with delimiter option', t => {
-  const dt = new ColumnTable(data());
-  t.equal(
-    toCSV(dt,  { delimiter: '\t' }),
-    tabText.join('\n'),
-    'csv text with delimiter'
-  );
-  t.equal(
-    toCSV(dt, { limit: 2, delimiter: '\t', columns: ['str', 'int'] }),
-    text.slice(0, 3)
-      .map(s => s.split(',').slice(0, 2).join('\t'))
-      .join('\n'),
-    'csv text with delimiter and limit'
-  );
-  t.end();
-});
+  it('formats delimited text with delimiter option', () => {
+    const dt = new ColumnTable(data());
+    assert.equal(
+      toCSV(dt,  { delimiter: '\t' }),
+      tabText.join('\n'),
+      'csv text with delimiter'
+    );
+    assert.equal(
+      toCSV(dt, { limit: 2, delimiter: '\t', columns: ['str', 'int'] }),
+      text.slice(0, 3)
+        .map(s => s.split(',').slice(0, 2).join('\t'))
+        .join('\n'),
+      'csv text with delimiter and limit'
+    );
+  });
 
-tape('toCSV formats delimited text for filtered table', t => {
-  const bs = new BitSet(3).not(); bs.clear(1);
-  const dt = new ColumnTable(data(), null, bs);
-  t.equal(
-    toCSV(dt),
-    [ ...text.slice(0, 2), ...text.slice(3) ].join('\n'),
-    'csv text with limit'
-  );
-  t.end();
-});
+  it('formats delimited text for filtered table', () => {
+    const bs = new BitSet(3).not(); bs.clear(1);
+    const dt = new ColumnTable(data(), null, bs);
+    assert.equal(
+      toCSV(dt),
+      [ ...text.slice(0, 2), ...text.slice(3) ].join('\n'),
+      'csv text with limit'
+    );
+  });
 
-tape('toCSV formats delimited text with format option', t => {
-  const dt = new ColumnTable(data());
-  t.equal(
-    toCSV(dt, { limit: 2, columns: ['str'], format: { str: d => d + '!' } }),
-    ['str', 'a!', 'b!'].join('\n'),
-    'csv text with custom format'
-  );
-  t.end();
+  it('formats delimited text with format option', () => {
+    const dt = new ColumnTable(data());
+    assert.equal(
+      toCSV(dt, { limit: 2, columns: ['str'], format: { str: d => d + '!' } }),
+      ['str', 'a!', 'b!'].join('\n'),
+      'csv text with custom format'
+    );
+  });
 });

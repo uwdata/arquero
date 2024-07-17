@@ -10,7 +10,7 @@ title: Arquero API Reference
 * [Table Input](#input)
   * [load](#load), [loadArrow](#loadArrow), [loadCSV](#loadCSV), [loadFixed](#loadFixed), [loadJSON](#loadJSON)
 * [Table Output](#output)
-  * [toArrow](#toArrow)
+  * [toArrow](#toArrow), [toArrowIPC](#toArrowIPC)
 * [Expression Helpers](#expression-helpers)
   * [op](#op), [agg](#agg), [escape](#escape)
   * [bin](#bin), [desc](#desc), [frac](#frac), [rolling](#rolling), [seed](#seed)
@@ -18,8 +18,6 @@ title: Arquero API Reference
   * [all](#all), [not](#not), [range](#range)
   * [matches](#matches), [startswith](#startswith), [endswith](#endswith)
   * [names](#names)
-* [Queries](#queries)
-  * [query](#query), [queryFrom](#queryFrom)
 
 
 <br/>
@@ -102,6 +100,11 @@ This method performs parsing only. To both load and parse an Arrow file, use [lo
 * *arrowTable*: An [Apache Arrow](https://arrow.apache.org/docs/js/) data table or a byte array (e.g., [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) or [Uint8Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)) in the Arrow IPC format.
 * *options*: An Arrow import options object:
   * *columns*: An ordered set of columns to import. The input may consist of: column name strings, column integer indices, objects with current column names as keys and new column names as values (for renaming), or a selection helper function such as [all](#all), [not](#not), or [range](#range)).
+  * *convertDate*: Boolean flag (default `true`) to convert Arrow date values to JavaScript Date objects. If false, defaults to what the Arrow implementation provides, typically timestamps as number values.
+  * *convertDecimal*: Boolean flag (default `true`) to convert Arrow fixed point decimal values to JavaScript numbers. If false, defaults to what the Arrow implementation provides, typically byte arrays. The conversion will be lossy if the decimal can not be exactly represented as a double-precision floating point number.
+  *convertTimestamp*: Boolean flag (default `true`) to convert Arrow timestamp values to JavaScript Date objects. If false, defaults to what the Arrow implementation provides, typically timestamps as number values.
+  *convertBigInt*: Boolean flag (default `false`) to convert Arrow integers with bit widths of 64 bits or higher to JavaScript numbers. If false, defaults to what the Arrow implementation provides, typically `BigInt` values. The conversion will be lossy if the integer is so large it can not be exactly represented as a double-precision floating point number.
+  *memoize*: Boolean hint (default `true`) to enable memoization of expensive conversions. If true, memoization is applied for string and nested (list, struct) types, caching extracted values to enable faster access. Memoization is also applied to converted Date values, in part to ensure exact object equality. This hint is ignored for dictionary columns, whose values are always memoized.
 
 *Examples*
 
@@ -405,10 +408,10 @@ const dt = await aq.loadJSON('data/table.json', { autoType: false })
 
 ## <a id="output">Table Output</a>
 
-Methods for writing table data to an output format. Most output methods are defined as [table methods](table#output), not in the top level namespace.
+Methods for writing data to an output format. Most output methods are available as [table methods](table#output), in addition to the top level namespace.
 
 <hr/><a id="toArrow" href="#toArrow">#</a>
-<em>aq</em>.<b>toArrow</b>(<i>data</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/encode/index.js)
+<em>aq</em>.<b>toArrow</b>(<i>data</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/to-arrow.js)
 
 Create an [Apache Arrow](https://arrow.apache.org/docs/js/) table for the input *data*. The input data can be either an [Arquero table](#table) or an array of standard JavaScript objects. This method will throw an error if type inference fails or if the generated columns have differing lengths. For Arquero tables, this method can instead be invoked as [table.toArrow()](table#toArrow).
 
@@ -477,6 +480,34 @@ const at = toArrow([
 ]);
 ```
 
+<hr/><a id="toArrowIPC" href="#toArrowIPC">#</a>
+<em>table</em>.<b>toArrowBuffer</b>(<i>data</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/to-arrow-ipc.js)
+
+Format input data in the binary [Apache Arrow](https://arrow.apache.org/docs/js/) IPC format. The input data can be either an [Arquero table](#table) or an array of standard JavaScript objects. This method will throw an error if type inference fails or if the generated columns have differing lengths. For Arquero tables, this method can instead be invoked as [table.toArrowIPC()](table#toArrowIPC).
+
+The resulting binary data may be saved to disk or passed between processes or tools. For example, when using [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers), the output of this method can be passed directly between threads (no data copy) as a [Transferable](https://developer.mozilla.org/en-US/docs/Web/API/Transferable) object. Additionally, Arrow binary data can be loaded in other language environments such as [Python](https://arrow.apache.org/docs/python/) or [R](https://arrow.apache.org/docs/r/).
+
+This method will throw an error if type inference fails or if the generated columns have differing lengths.
+
+* *options*: Options for Arrow encoding, same as [toArrow](#toArrow) but with an additional *format* option.
+  * *format*: The Arrow IPC byte format to use. One of `'stream'` (default) or `'file'`.
+
+*Examples*
+
+Encode Arrow data from an input Arquero table:
+
+```js
+import { table, toArrowIPC } from 'arquero';
+
+const dt = table({
+  x: [1, 2, 3, 4, 5],
+  y: [3.4, 1.6, 5.4, 7.1, 2.9]
+});
+
+// encode table as a transferable Arrow byte buffer
+// here, infers Uint8 for 'x' and Float64 for 'y'
+const bytes = toArrowIPC(dt);
+```
 
 <br/>
 
@@ -775,59 +806,4 @@ table.rename(aq.names(['a', 'b', 'c']))
 ```js
 // select and rename the first three columns, all other columns are dropped
 table.select(aq.names(['a', 'b', 'c']))
-```
-
-
-<br/>
-
-
-## <a id="queries">Queries</a>
-
-Queries allow deferred processing. Rather than process a sequence of verbs immediately, they can be stored as a query. The query can then be *serialized* to be stored or transferred, or later *evaluated* against an Arquero table.
-
-<hr/><a id="query" href="#query">#</a>
-<em>aq</em>.<b>query</b>([<i>tableName</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/query/query.js)
-
-Create a new query builder instance. The optional *tableName* string argument indicates the default name of a table the query should process, and is used only when evaluating a query against a catalog of tables. The resulting query builder includes the same [verb](verbs) methods as a normal Arquero table. However, rather than evaluating verbs immediately, they are stored as a list of verbs to be evaluated later.
-
-The method *query.evaluate(table, catalog)* will evaluate the query against an Arquero table. If provided, the optional *catalog* argument should be a function that takes a table name string as input and returns a corresponding Arquero table instance. The catalog will be used to lookup tables referenced by name for multi-table operations such as joins, or to lookup the primary table to process when the *table* argument to evaluate is `null` or `undefined`.
-
-Use the query *toObject()* method to serialize a query to a JSON-compatible object. Use the top-level [queryFrom](#queryFrom) method to parse a serialized query and return a new "live" query instance.
-
-*Examples*
-
-```js
-// create a query, then evaluate it on an input table
-const q = aq.query()
-  .derive({ add1: d => d.value + 1 })
-  .filter(d => d.add1 > 5 );
-
-const t = q.evaluate(table);
-```
-
-```js
-// serialize a query to a JSON-compatible object
-// the query can be reconstructed using aq.queryFrom
-aq.query()
-  .derive({ add1: d => d.value + 1 })
-  .filter(d => d.add1 > 5 )
-  .toObject();
-```
-
-
-<hr/><a id="queryFrom" href="#queryFrom">#</a>
-<em>aq</em>.<b>queryFrom</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/query/query.js)
-
-Parse a serialized query *object* and return a new query instance. The input *object* should be a serialized query representation, such as those generated by the query *toObject()* method.
-
-*Examples*
-
-```js
-// round-trip a query to a serialized form and back again
-aq.queryFrom(
-  aq.query()
-    .derive({ add1: d => d.value + 1 })
-    .filter(d => d.add1 > 5 )
-    .toObject()
-)
 ```

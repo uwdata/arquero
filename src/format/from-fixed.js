@@ -1,8 +1,6 @@
-import ColumnTable from '../table/column-table'; // eslint-disable-line no-unused-vars
-
-import fromTextRows from './from-text-rows';
-import parseLines from './parse/parse-lines';
-import error from '../util/error';
+import fromTextRows from './from-text-rows.js';
+import parseLines from './parse/parse-lines.js';
+import error from '../util/error.js';
 
 /**
  * Options for fixed width file parsing.
@@ -34,7 +32,8 @@ import error from '../util/error';
  * parsing of input column values, use the parse option.
  * @param {string} text A string in a fixed-width file format.
  * @param {FixedParseOptions} options The formatting options.
- * @return {ColumnTable} A new table containing the parsed values.
+ * @return {import('../table/ColumnTable.js').ColumnTable} A new table
+ *  containing the parsed values.
  */
 export default function(text, options = {}) {
   const read = parseLines(text, options);
@@ -51,7 +50,7 @@ export default function(text, options = {}) {
   );
 }
 
-function positions({ positions, widths }) {
+function positions({ positions = undefined, widths = undefined }) {
   if (!positions && !widths) {
     error('Fixed width files require a "positions" or "widths" option');
   }

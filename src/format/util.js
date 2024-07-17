@@ -1,11 +1,9 @@
-import Table from '../table/table'; // eslint-disable-line no-unused-vars
-
-import inferFormat from './infer';
-import isFunction from '../util/is-function';
+import inferFormat from './infer.js';
+import isFunction from '../util/is-function.js';
 
 /**
  * Column selection function.
- * @typedef {(table: Table) => string[]} ColumnSelectFunction
+ * @typedef {(table: import('../table/Table.js').Table) => string[]} ColumnSelectFunction
  */
 
 /**
@@ -17,7 +15,7 @@ import isFunction from '../util/is-function';
  * Column format options. The object keys should be column names.
  * The object values should be formatting functions or objects.
  * If specified, these override any automatically inferred options.
- * @typedef {Object.<string, import('./value').ValueFormatOptions} ColumnFormatOptions
+ * @typedef {Object.<string, import('./value.js').ValueFormatOptions>} ColumnFormatOptions
  */
 
 /**
@@ -51,7 +49,7 @@ export function formats(table, names, options) {
 
 function values(table, columnName) {
   const column = table.column(columnName);
-  return fn => table.scan(row => fn(column.get(row)));
+  return fn => table.scan(row => fn(column.at(row)));
 }
 
 export function scan(table, names, limit = 100, offset, ctx) {
@@ -61,7 +59,7 @@ export function scan(table, names, limit = 100, offset, ctx) {
     ctx.row(row);
     for (let i = 0; i < n; ++i) {
       const name = names[i];
-      ctx.cell(data[names[i]].get(row), name, i);
+      ctx.cell(data[names[i]].at(row), name, i);
     }
   }, true, limit, offset);
 }

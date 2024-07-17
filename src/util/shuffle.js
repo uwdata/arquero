@@ -1,4 +1,4 @@
-import { random } from './random';
+import { random } from './random.js';
 
 export default function(array, lo = 0, hi = array.length) {
   let n = hi - (lo = +lo);

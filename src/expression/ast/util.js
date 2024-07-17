@@ -1,4 +1,4 @@
-import { ArrowFunctionExpression, FunctionExpression } from './constants';
+import { ArrowFunctionExpression, FunctionExpression } from './constants.js';
 
 export function is(type, node) {
   return node && node.type === type;

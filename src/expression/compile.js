@@ -1,4 +1,4 @@
-import { functions as fn } from '../op';
+import { functions as fn } from '../op/index.js';
 
 function compile(code, fn, params) {
   code = `"use strict"; return ${code};`;

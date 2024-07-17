@@ -1,17 +1,17 @@
-import tape from 'tape';
-import { frac, table } from '../../src';
+import assert from 'node:assert';
+import { frac, table } from '../../src/index.js';
 
-function check(t, table, replace, prefix = '') {
+function check(table, replace, prefix = '') {
   prefix = `${prefix}sample ${replace ? 'replace ' : ''}rows`;
   const vals = [];
   const cnts = {};
   table.scan((row, data) => {
-    const val = data.a.get(row);
+    const val = data.a.at(row);
     vals.push(val);
     cnts[val] = (cnts[val] || 0) + 1;
   });
 
-  t.ok(
+  assert.ok(
     vals.every(v => v === 1 || v === 3 || v === 5 || v === 7),
     `${prefix} valid`
   );
@@ -20,138 +20,131 @@ function check(t, table, replace, prefix = '') {
     ? Object.values(cnts).some(c => c > 1)
     : Object.values(cnts).every(c => c === 1);
 
-  t.ok(test, `${prefix} count`);
+  assert.ok(test, `${prefix} count`);
 }
 
-tape('sample draws a sample without replacement', t => {
-  const cols = {
-    a: [1, 3, 5, 7],
-    b: [2, 4, 6, 8]
-  };
+describe('sample', () => {
+  it('draws a sample without replacement', () => {
+    const cols = {
+      a: [1, 3, 5, 7],
+      b: [2, 4, 6, 8]
+    };
 
-  const ft = table(cols).sample(2);
+    const ft = table(cols).sample(2);
 
-  t.equal(ft.numRows(), 2, 'num rows');
-  t.equal(ft.numCols(), 2, 'num cols');
-  check(t, ft, false);
-  t.end();
-});
+    assert.equal(ft.numRows(), 2, 'num rows');
+    assert.equal(ft.numCols(), 2, 'num cols');
+    check(ft, false);
+  });
 
-tape('sample draws a maximal sample without replacement', t => {
-  const cols = {
-    a: [1, 3, 5, 7],
-    b: [2, 4, 6, 8]
-  };
+  it('draws a maximal sample without replacement', () => {
+    const cols = {
+      a: [1, 3, 5, 7],
+      b: [2, 4, 6, 8]
+    };
 
-  const ft = table(cols).sample(10);
+    const ft = table(cols).sample(10);
 
-  t.equal(ft.numRows(), 4, 'num rows');
-  t.equal(ft.numCols(), 2, 'num cols');
-  check(t, ft, false);
-  t.end();
-});
+    assert.equal(ft.numRows(), 4, 'num rows');
+    assert.equal(ft.numCols(), 2, 'num cols');
+    check(ft, false);
+  });
 
-tape('sample draws a sample with replacement', t => {
-  const cols = {
-    a: [1, 3, 5, 7],
-    b: [2, 4, 6, 8]
-  };
+  it('draws a sample with replacement', () => {
+    const cols = {
+      a: [1, 3, 5, 7],
+      b: [2, 4, 6, 8]
+    };
 
-  const ft = table(cols).sample(10, { replace: true });
+    const ft = table(cols).sample(10, { replace: true });
 
-  t.equal(ft.numRows(), 10, 'num rows');
-  t.equal(ft.numCols(), 2, 'num cols');
-  check(t, ft, true);
-  t.end();
-});
+    assert.equal(ft.numRows(), 10, 'num rows');
+    assert.equal(ft.numCols(), 2, 'num cols');
+    check(ft, true);
+  });
 
-tape('sample draws a column-weighted sample without replacement', t => {
-  const cols = {
-    a: [1, 3, 5, 7],
-    b: [2, 4, 6, 8]
-  };
+  it('draws a column-weighted sample without replacement', () => {
+    const cols = {
+      a: [1, 3, 5, 7],
+      b: [2, 4, 6, 8]
+    };
 
-  const ft = table(cols).sample(2, { weight: 'a' });
+    const ft = table(cols).sample(2, { weight: 'a' });
 
-  t.equal(ft.numRows(), 2, 'num rows');
-  t.equal(ft.numCols(), 2, 'num cols');
-  check(t, ft, false, 'weighted ');
-  t.end();
-});
+    assert.equal(ft.numRows(), 2, 'num rows');
+    assert.equal(ft.numCols(), 2, 'num cols');
+    check(ft, false, 'weighted ');
+  });
 
-tape('sample draws an expression-weighted sample without replacement', t => {
-  const cols = {
-    a: [1, 3, 5, 7],
-    b: [2, 4, 6, 8]
-  };
+  it('draws an expression-weighted sample without replacement', () => {
+    const cols = {
+      a: [1, 3, 5, 7],
+      b: [2, 4, 6, 8]
+    };
 
-  const ft = table(cols).sample(2, { weight: d => d.a });
+    const ft = table(cols).sample(2, { weight: d => d.a });
 
-  t.equal(ft.numRows(), 2, 'num rows');
-  t.equal(ft.numCols(), 2, 'num cols');
-  check(t, ft, false, 'expr weighted ');
-  t.end();
-});
+    assert.equal(ft.numRows(), 2, 'num rows');
+    assert.equal(ft.numCols(), 2, 'num cols');
+    check(ft, false, 'expr weighted ');
+  });
 
-tape('sample draws a weighted sample with replacement', t => {
-  const cols = {
-    a: [1, 3, 5, 7],
-    b: [2, 4, 6, 8]
-  };
+  it('draws a weighted sample with replacement', () => {
+    const cols = {
+      a: [1, 3, 5, 7],
+      b: [2, 4, 6, 8]
+    };
 
-  const ft = table(cols).sample(10, { weight: 'a', replace: true });
+    const ft = table(cols).sample(10, { weight: 'a', replace: true });
 
-  t.equal(ft.numRows(), 10, 'num rows');
-  t.equal(ft.numCols(), 2, 'num cols');
-  check(t, ft, true, 'weighted ');
-  t.end();
-});
+    assert.equal(ft.numRows(), 10, 'num rows');
+    assert.equal(ft.numCols(), 2, 'num cols');
+    check(ft, true, 'weighted ');
+  });
 
-tape('sample tables support downstream transforms', t => {
-  const cols = {
-    a: [1, 3, 5, 7],
-    b: [2, 4, 6, 8]
-  };
+  it('tables support downstream transforms', () => {
+    const cols = {
+      a: [1, 3, 5, 7],
+      b: [2, 4, 6, 8]
+    };
 
-  const dt = table(cols)
-    .sample(10, { weight: 'a', replace: true })
-    .filter(d => d.a > 1)
-    .groupby(['a', 'b'])
-    .count();
+    const dt = table(cols)
+      .sample(10, { weight: 'a', replace: true })
+      .filter(d => d.a > 1)
+      .groupby(['a', 'b'])
+      .count();
 
-  t.equal(dt.numCols(), 3, 'num cols');
-  t.end();
-});
+    assert.equal(dt.numCols(), 3, 'num cols');
+  });
 
-tape('sample supports dynamic sample size', t => {
-  const cols = {
-    a: [1, 3, 5, 7],
-    b: [2, 4, 6, 8]
-  };
+  it('supports dynamic sample size', () => {
+    const cols = {
+      a: [1, 3, 5, 7],
+      b: [2, 4, 6, 8]
+    };
 
-  const ft = table(cols).sample(frac(0.5));
+    const ft = table(cols).sample(frac(0.5));
 
-  t.equal(ft.numRows(), 2, 'num rows');
-  t.equal(ft.numCols(), 2, 'num cols');
-  check(t, ft, false);
-  t.end();
-});
+    assert.equal(ft.numRows(), 2, 'num rows');
+    assert.equal(ft.numCols(), 2, 'num cols');
+    check(ft, false);
+  });
 
-tape('sample supports stratified sample', t => {
-  const cols = {
-    a: [1, 3, 5, 7],
-    b: [2, 2, 4, 4]
-  };
+  it('supports stratified sample', () => {
+    const cols = {
+      a: [1, 3, 5, 7],
+      b: [2, 2, 4, 4]
+    };
 
-  const ft = table(cols).groupby('b').sample(1);
+    const ft = table(cols).groupby('b').sample(1);
 
-  t.equal(ft.numRows(), 2, 'num rows');
-  t.equal(ft.numCols(), 2, 'num cols');
-  t.deepEqual(
-    ft.column('b').data.sort((a, b) => a - b),
-    [2, 4],
-    'stratify keys'
-  );
-  check(t, ft, false);
-  t.end();
+    assert.equal(ft.numRows(), 2, 'num rows');
+    assert.equal(ft.numCols(), 2, 'num cols');
+    assert.deepEqual(
+      ft.column('b').sort((a, b) => a - b),
+      [2, 4],
+      'stratify keys'
+    );
+    check(ft, false);
+  });
 });

@@ -54,14 +54,6 @@ Merges two or more arrays in sequence, returning a new array.
 
 * *values*: The arrays to merge.
 
-<hr/><a id="join" href="#join">#</a>
-<em>op</em>.<b>join</b>(<i>array</i>[, <i>delimiter</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
-
-Creates and returns a new string by concatenating all of the elements in an *array* (or an array-like object), separated by commas or a specified *delimiter* string. If the *array* has only one item, then that item will be returned without using the delimiter.
-
-* *array*: The input array value.
-* *join*: The delimiter string (default `','`).
-
 <hr/><a id="includes" href="#includes">#</a>
 <em>op</em>.<b>includes</b>(<i>array</i>, <i>value</i>[, <i>index</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
 
@@ -78,6 +70,14 @@ Returns the first index at which a given *value* can be found in the *sequence* 
 
 * *sequence*: The input array or string value.
 * *value*: The value to search for.
+
+<hr/><a id="join" href="#join">#</a>
+<em>op</em>.<b>join</b>(<i>array</i>[, <i>delimiter</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
+
+Creates and returns a new string by concatenating all of the elements in an *array* (or an array-like object), separated by commas or a specified *delimiter* string. If the *array* has only one item, then that item will be returned without using the delimiter.
+
+* *array*: The input array value.
+* *delimiter*: The delimiter string (default `','`).
 
 <hr/><a id="lastindexof" href="#lastindexof">#</a>
 <em>op</em>.<b>lastindexof</b>(<i>sequence</i>, <i>value</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
@@ -102,21 +102,12 @@ Returns a new array in which the given *property* has been extracted for each el
 * *array*: The input array value.
 * *property*: The property name string to extract. Nested properties are not supported: the input `"a.b"` will indicates a property with that exact name, *not* a nested property `"b"` of the object `"a"`.
 
-<hr/><a id="slice" href="#slice">#</a>
-<em>op</em>.<b>slice</b>(<i>sequence</i>[, <i>start</i>, <i>end</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
+<hr/><a id="reverse" href="#reverse">#</a>
+<em>op</em>.<b>reverse</b>(<i>sequence</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
 
-Returns a copy of a portion of the input *sequence* (array or string) selected from *start* to *end* (*end* not included) where *start* and *end* represent the index of items in the sequence.
+Returns a new array or string with the element order reversed: the first *sequence* element becomes the last, and the last *sequence* element becomes the first. The input *sequence* is unchanged.
 
 * *sequence*: The input array or string value.
-* *start*: The starting integer index to copy from (inclusive, default `0`).
-* *end*: The ending integer index to copy from (exclusive, default `sequence.length`).
-
-<hr/><a id="reverse" href="#reverse">#</a>
-<em>op</em>.<b>reverse</b>(<i>array</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
-
-Returns a new array with the element order reversed: the first *array* element becomes the last, and the last *array* element becomes the first. The input *array* is unchanged.
-
-* *array*: The input array value.
 
 <hr/><a id="sequence" href="#sequence">#</a>
 <em>op</em>.<b>sequence</b>([<i>start</i>,] <i>stop</i>[, <i>step</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/sequence.js)
@@ -127,6 +118,14 @@ Returns an array containing an arithmetic sequence from the *start* value to the
 * *stop*: The stopping value of the sequence. The stop value is exclusive; it is not included in the result.
 * *step*: The step increment between sequence values (default `1`).
 
+<hr/><a id="slice" href="#slice">#</a>
+<em>op</em>.<b>slice</b>(<i>sequence</i>[, <i>start</i>, <i>end</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/array.js)
+
+Returns a copy of a portion of the input *sequence* (array or string) selected from *start* to *end* (*end* not included) where *start* and *end* represent the index of items in the sequence.
+
+* *sequence*: The input array or string value.
+* *start*: The starting integer index to copy from (inclusive, default `0`).
+* *end*: The ending integer index to copy from (exclusive, default `sequence.length`).
 
 <br>
 
@@ -683,7 +682,7 @@ Compare two values for equality, using join semantics in which `null !== null`. 
 Returns a boolean indicating whether the *object* has the specified *key* as its own property (as opposed to inheriting it). If the *object* is a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) or [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) instance, the `has` method will be invoked directly on the object, otherwise `Object.hasOwnProperty` is used.
 
 * *object*: The object, Map, or Set to test for property membership.
-* *property*: The string property name to test for.
+* *key*: The string key (property name) to test for.
 
 <hr/><a id="keys" href="#keys">#</a>
 <em>op</em>.<b>keys</b>(<i>object</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/functions/object.js)
@@ -811,6 +810,7 @@ If specified, the *index* looks up a value of the resulting match. If *index* is
 
 * *value*: The input string value.
 * *regexp*: The [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) to match against.
+* *index*: The index into the match result array or capture group.
 
 *Examples*
 

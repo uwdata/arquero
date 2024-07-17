@@ -1,6 +1,5 @@
-import tape from 'tape';
-import ColumnTable from '../../src/table/column-table';
-import toJSON from '../../src/format/to-json';
+import assert from 'node:assert';
+import { ColumnTable, toJSON } from '../../src/index.js';
 
 function data() {
   return {
@@ -30,51 +29,49 @@ function schema(names, text) {
     + '},"data":' + text + '}';
 }
 
-tape('toJSON formats JSON text with schema', t => {
-  const dt = new ColumnTable(data());
-  t.equal(toJSON(dt), schema(cols(), text), 'json text');
-  const names = ['str', 'int'];
-  t.equal(
-    toJSON(dt, { limit: 2, columns: names }),
-    schema(names, '{"str":["a","b"],"int":[1,2]}'),
-    'json text with limit'
-  );
-  t.end();
-});
+describe('toJSON', () => {
+  it('formats JSON text with schema', () => {
+    const dt = new ColumnTable(data());
+    assert.equal(toJSON(dt), schema(cols(), text), 'json text');
+    const names = ['str', 'int'];
+    assert.equal(
+      toJSON(dt, { limit: 2, columns: names }),
+      schema(names, '{"str":["a","b"],"int":[1,2]}'),
+      'json text with limit'
+    );
+  });
 
-tape('toJSON formats JSON text with format option with schema', t => {
-  const dt = new ColumnTable(data());
-  const names = ['str'];
-  t.equal(
-    toJSON(dt, { limit: 2, columns: names, format: { str: d => d + '!' } }),
-    schema(names, '{"str":["a!","b!"]}'),
-    'json text with custom format'
-  );
-  t.end();
-});
+  it('formats JSON text with format option with schema', () => {
+    const dt = new ColumnTable(data());
+    const names = ['str'];
+    assert.equal(
+      toJSON(dt, { limit: 2, columns: names, format: { str: d => d + '!' } }),
+      schema(names, '{"str":["a!","b!"]}'),
+      'json text with custom format'
+    );
+  });
 
-tape('toJSON formats JSON text without schema', t => {
-  const dt = new ColumnTable(data());
-  t.equal(toJSON(dt, { schema: false }), text, 'json text');
-  t.equal(
-    toJSON(dt, { limit: 2, columns: ['str', 'int'], schema: false }),
-    '{"str":["a","b"],"int":[1,2]}',
-    'json text with limit'
-  );
-  t.end();
-});
+  it('formats JSON text without schema', () => {
+    const dt = new ColumnTable(data());
+    assert.equal(toJSON(dt, { schema: false }), text, 'json text');
+    assert.equal(
+      toJSON(dt, { limit: 2, columns: ['str', 'int'], schema: false }),
+      '{"str":["a","b"],"int":[1,2]}',
+      'json text with limit'
+    );
+  });
 
-tape('toJSON formats JSON text with format option without schema', t => {
-  const dt = new ColumnTable(data());
-  t.equal(
-    toJSON(dt, {
-      schema: false,
-      limit: 2,
-      columns: ['str'],
-      format: { str: d => d + '!' }
-    }),
-    '{"str":["a!","b!"]}',
-    'json text with custom format'
-  );
-  t.end();
+  it('formats JSON text with format option without schema', () => {
+    const dt = new ColumnTable(data());
+    assert.equal(
+      toJSON(dt, {
+        schema: false,
+        limit: 2,
+        columns: ['str'],
+        format: { str: d => d + '!' }
+      }),
+      '{"str":["a!","b!"]}',
+      'json text with custom format'
+    );
+  });
 });

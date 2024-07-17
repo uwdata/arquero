@@ -1,8 +1,8 @@
-import ColumnTable from '../table/column-table';
-import identity from '../util/identity';
-import isFunction from '../util/is-function';
-import repeat from '../util/repeat';
-import valueParser from '../util/parse-values';
+import { ColumnTable } from '../table/ColumnTable.js';
+import identity from '../util/identity.js';
+import isFunction from '../util/is-function.js';
+import repeat from '../util/repeat.js';
+import valueParser from '../util/parse-values.js';
 
 function defaultNames(n, off = 0) {
   return repeat(n - off, i => `col${i + off + 1}`);
@@ -44,6 +44,7 @@ export default function(next, names, options) {
     }
   }
 
+  /** @type {import('../table/types.js').ColumnData} */
   const columns = {};
   names.forEach((name, i) => columns[name] = values[i]);
   return new ColumnTable(columns, names);

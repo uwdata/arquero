@@ -1,9 +1,9 @@
 import { Field, FixedSizeList, List, Struct, Type } from 'apache-arrow';
-import resolveType from '../builder/resolve-type';
-import error from '../../util/error';
-import isArrayType from '../../util/is-array-type';
-import isDate from '../../util/is-date';
-import isExactUTCDate from '../../util/is-exact-utc-date';
+import resolveType from '../builder/resolve-type.js';
+import error from '../../util/error.js';
+import isArrayType from '../../util/is-array-type.js';
+import isDate from '../../util/is-date.js';
+import isExactUTCDate from '../../util/is-exact-utc-date.js';
 
 export function profile(scan, column) {
   const p = profiler();
@@ -100,6 +100,7 @@ function infer(p) {
     return Type.Float64;
   }
   else if (p.bigints === valid) {
+    // @ts-ignore
     const v = -p.min > p.max ? -p.min - 1n : p.max;
     return p.min < 0
       ? v < 2 ** 63 ? Type.Int64

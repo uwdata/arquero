@@ -1,13 +1,13 @@
-import array from './array';
-import bin from './bin';
-import date from './date';
-import equal from './equal';
-import json from './json';
-import math from './math';
-import object from './object';
-import recode from './recode';
-import sequence from './sequence';
-import string from './string';
+import array from './array.js';
+import bin from './bin.js';
+import date from './date.js';
+import equal from './equal.js';
+import json from './json.js';
+import math from './math.js';
+import object from './object.js';
+import recode from './recode.js';
+import sequence from './sequence.js';
+import string from './string.js';
 
 export default {
   bin,

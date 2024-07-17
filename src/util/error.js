@@ -1,3 +1,4 @@
-export default function(message) {
-  throw Error(message);
+export default function(message, cause) {
+  // @ts-ignore
+  throw Error(message, { cause });
 }

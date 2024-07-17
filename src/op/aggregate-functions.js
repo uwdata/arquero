@@ -1,9 +1,9 @@
-import bins from '../util/bins';
-import distinctMap from '../util/distinct-map';
-import isBigInt from '../util/is-bigint';
-import noop from '../util/no-op';
-import NULL from '../util/null';
-import product from '../util/product';
+import bins from '../util/bins.js';
+import distinctMap from '../util/distinct-map.js';
+import isBigInt from '../util/is-bigint.js';
+import noop from '../util/no-op.js';
+import NULL from '../util/null.js';
+import product from '../util/product.js';
 
 /**
  * Initialize an aggregate operator.
@@ -54,8 +54,8 @@ function initProduct(s, value) {
  * An operator instance for an aggregate function.
  * @typedef {object} AggregateOperator
  * @property {AggregateInit} init Initialize the operator.
- * @property {AggregateAdd} add Add a value to the operator state.
- * @property {AggregateRem} rem Remove a value from the operator state.
+ * @property {AggregateAdd} [add] Add a value to the operator state.
+ * @property {AggregateRem} [rem] Remove a value from the operator state.
  * @property {AggregateValue} value Retrieve an output value.
  */
 
