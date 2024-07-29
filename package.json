@@ -1,7 +1,7 @@
 {
   "name": "arquero",
   "type": "module",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Query processing and transformation of array-backed data tables.",
   "keywords": [
     "data",
@@ -14,10 +14,11 @@
   ],
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "exports": "./src/index.js",
-  "unpkg": "dist/arquero.min.js",
-  "jsdelivr": "dist/arquero.min.js",
-  "types": "dist/types/index.d.ts",
+  "main": "./src/index.js",
+  "module": "./src/index.js",
+  "unpkg": "./dist/arquero.min.js",
+  "jsdelivr": "./dist/arquero.min.js",
+  "types": "./dist/types/index.d.ts",
   "browser": {
     "./src/index.js": "./src/index-browser.js"
   },
@@ -43,12 +44,12 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "eslint": "^9.7.0",
-    "mocha": "^10.6.0",
+    "eslint": "^9.8.0",
+    "mocha": "^10.7.0",
     "rimraf": "^6.0.1",
-    "rollup": "^4.18.1",
+    "rollup": "^4.19.1",
     "rollup-plugin-bundle-size": "^1.0.3",
     "tape": "^5.8.1",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.4"
   }
 }
