@@ -34,17 +34,16 @@ export default function(input, options) {
   const cols = columnSet();
   sel.forEach((name, key) => {
     const col = arrow.getChild(key);
-    const { typeId } = fields.find(f => f.name === key).type;
-    cols.add(name, typeId === -1 ? dictionaryColumn(col) : col);
+    cols.add(name, col.type.typeId === -1 ? dictionary(col) : col);
   });
 
   return new ColumnTable(cols.data, cols.names);
 }
 
-function dictionaryColumn(column) {
+function dictionary(column) {
   const { data, length, nullCount } = column;
   const batch = data[data.length - 1];
-  // flechette ?? arrow-js
+  // support both flechette and arrow-js
   const cache = batch.cache ?? batch.dictionary.toArray();
   const size = cache.length;
   const keys = dictKeys(data, length, nullCount, size);
@@ -120,7 +119,7 @@ function nullKeys(data, keys, key) {
   for (let i = 0, idx = 0, byte; i < n; ++i) {
     const batch = data[i];
     const { length } = batch;
-    // flechette ?? arrow-js
+    // support both flechette and arrow-js
     const validity = batch.validity ?? batch.nullBitmap;
     const m = length >> 3;
     if (validity && validity.length) {

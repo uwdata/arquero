@@ -9,6 +9,7 @@ export type ArrowInput =
   | ArrowTable;
 
 export interface ArrowColumn<T> extends ColumnType<T> {
+  type: ArrowDataType;
   nullCount: number;
   toArray(): ColumnType<T>
 }
