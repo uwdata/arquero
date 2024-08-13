@@ -4,7 +4,7 @@ import { bools, floats, ints, sample, strings } from './data-gen.js';
 import { fromArrow, table, toArrow } from '../src/index.js';
 import {
   Bool, Dictionary, Float64, Int32, Table, Uint32, Utf8,
-  tableToIPC, vectorFromArray
+  tableFromIPC, tableToIPC, vectorFromArray
 } from 'apache-arrow';
 
 function process(N, nulls, msg) {
@@ -18,39 +18,46 @@ function process(N, nulls, msg) {
       new Int32()
     )
     };
-  const at = new Table(vectors);
-  const dt = fromArrow(at);
+  const aa = new Table(vectors);
+  const buf = tableToIPC(aa, 'stream');
+  const ft = fromArrow(buf); // using flechette
+  const at = fromArrow(aa);  // using arrow-js
 
-  const arqueroFilterDict = val => time(() => {
+  const filterDict = (dt, val) => time(() => {
     dt.filter(`d.k === '${val}'`).numRows();
   });
 
-  const arqueroFilterValue = val => time(() => {
+  const filterValue = (dt, val) => time(() => {
     dt.filter(`d.v >= ${val}`).numRows();
   });
 
   tape(`arrow processing: ${msg}`, t => {
-    const k = at.getChild('k').get(50);
+    const k = aa.getChild('k').at(50);
     console.table([ // eslint-disable-line
       {
-        operation: 'init table',
-        arquero:    time(() => fromArrow(at))
+        operation:  'init table',
+        'arrow-js': time(() => fromArrow(tableFromIPC(buf))),
+        flechette:  time(() => fromArrow(buf))
       },
       {
-        operation: 'count dictionary',
-        arquero:    time(() => dt.groupby('k').count())
+        operation:  'count dictionary',
+        'arrow-js': time(() => at.groupby('k').count()),
+        flechette:  time(() => ft.groupby('k').count())
       },
       {
-        operation: 'filter dictionary',
-        arquero:    arqueroFilterDict(k)
+        operation:  'filter dictionary',
+        'arrow-js': filterDict(at, k),
+        flechette:  filterDict(ft, k)
       },
       {
-        operation: 'filter numbers 0',
-        arquero:    arqueroFilterValue(0)
+        operation:  'filter numbers 0',
+        'arrow-js': filterValue(at, 0),
+        flechette:  filterValue(ft, 0)
       },
       {
-        operation: 'filter numbers 1',
-        arquero:    arqueroFilterValue(1)
+        operation:  'filter numbers 1',
+        'arrow-js': filterValue(at, 1),
+        flechette:  filterValue(ft, 1)
       }
     ]);
     t.end();
