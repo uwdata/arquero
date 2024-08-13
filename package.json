@@ -37,7 +37,7 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "@uwdata/flechette": "~0.0.3",
+    "@uwdata/flechette": "~0.0.4",
     "acorn": "^8.12.1",
     "apache-arrow": "^17.0.0",
     "node-fetch": "^3.3.2"
