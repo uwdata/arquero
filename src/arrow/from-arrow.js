@@ -4,9 +4,6 @@ import { columnSet } from '../table/ColumnSet.js';
 import { ColumnTable } from '../table/ColumnTable.js';
 import sequence from '../op/functions/sequence.js';
 
-/** @type {import('./types.js').ArrowOptions} */
-const USE_DATE = { useDate: true };
-
 /**
  * Create a new table backed by an Apache Arrow table instance.
  * @param {import('./types.js').ArrowInput} input
@@ -16,9 +13,9 @@ const USE_DATE = { useDate: true };
  * @return {ColumnTable} A new table containing the imported values.
  */
 export default function(input, options) {
-  const { columns = all(), ...extractOptions } = options || USE_DATE;
+  const { columns = all(), ...rest } = options || {};
   const arrow = input instanceof ArrayBuffer || input instanceof Uint8Array
-    ? tableFromIPC(input, extractOptions)
+    ? tableFromIPC(input, { useDate: true, ...rest })
     : input;
 
   const { fields } = arrow.schema;

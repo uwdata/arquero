@@ -1,4 +1,4 @@
-import { Table, tableFromIPC, tableToIPC } from 'apache-arrow';
+import { Table, tableToIPC } from 'apache-arrow';
 import error from '../util/error.js';
 
 const fail = (cause) => error(
@@ -12,16 +12,6 @@ export function arrowTable(...args) {
   // when Apache Arrow has not been imported
   try {
     return new Table(...args);
-  } catch (err) {
-    fail(err);
-  }
-}
-
-export function arrowTableFromIPC(bytes) {
-  // trap access to provide a helpful message
-  // when Apache Arrow has not been imported
-  try {
-    return tableFromIPC(bytes);
   } catch (err) {
     fail(err);
   }

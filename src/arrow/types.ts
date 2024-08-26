@@ -8,16 +8,19 @@ export type ArrowInput =
   | Uint8Array
   | ArrowTable;
 
+/** A column in an Apache Arrow table. */
 export interface ArrowColumn<T> extends ColumnType<T> {
   type: ArrowDataType;
   nullCount: number;
   toArray(): ColumnType<T>
 }
 
+/** Minimal interface for an Arrow data type. */
 export interface ArrowDataType {
   typeId: number;
 }
 
+/** A field definition with an Arrow schema. */
 export interface ArrowField {
   name: string;
   nullable: boolean;
@@ -25,12 +28,17 @@ export interface ArrowField {
   metadata?: Map<string, string>;
 }
 
+/** An Apache Arrow table schema. */
 export interface ArrowSchema {
   version?: number;
   fields: ArrowField[];
   metadata?: Map<string, string>;
 }
 
+/**
+ * Interface for an Apache Arrow table.
+ * Compatible with both Flechette and Arrow-JS table instances.
+ */
 export interface ArrowTable {
   numRows: number;
   numCols: number;
@@ -38,47 +46,6 @@ export interface ArrowTable {
   getChild(name: string): ArrowColumn<any>;
   getChildAt(index: number): ArrowColumn<any>;
 }
-
-// /** Options for Apache Arrow column conversion. */
-// export interface ArrowColumnOptions {
-//   /**
-//    * Flag (default `true`) to convert Arrow date values to JavaScript Date
-//    * objects. If false, defaults to what the Arrow implementation provides,
-//    * typically timestamps as number values.
-//    */
-//   convertDate?: boolean;
-//   /**
-//    * Flag (default `true`) to convert Arrow fixed point decimal values to
-//    * JavaScript numbers. If false, defaults to what the Arrow implementation
-//    * provides, typically byte arrays. The conversion will be lossy if the
-//    * decimal can not be exactly represented as a double-precision floating
-//    * point number.
-//    */
-//   convertDecimal?: boolean;
-//   /**
-//    * Flag (default `true`) to convert Arrow timestamp values to JavaScript
-//    * Date objects. If false, defaults to what the Arrow implementation
-//    * provides, typically timestamps as number values.
-//    */
-//   convertTimestamp?: boolean;
-//   /**
-//    * Flag (default `false`) to convert Arrow integers with bit widths of 64
-//    * bits or higher to JavaScript numbers. If false, defaults to what the
-//    * Arrow implementation provides, typically `BigInt` values. The conversion
-//    * will be lossy if the integer is so large it can not be exactly
-//    * represented as a double-precision floating point number.
-//    */
-//   convertBigInt?: boolean;
-//   /**
-//    * A hint (default `true`) to enable memoization of expensive conversions.
-//    * If true, memoization is applied for string and nested (list, struct)
-//    * types, caching extracted values to enable faster access. Memoization
-//    * is also applied to converted Date values, in part to ensure exact object
-//    * equality. This hint is ignored for dictionary columns, whose values are
-//    * always memoized.
-//    */
-//   memoize?: boolean;
-// }
 
 /** Options for Apache Arrow import. */
 export interface ArrowOptions extends ExtractionOptions {
