@@ -37,7 +37,7 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "@uwdata/flechette": "~0.0.5",
+    "@uwdata/flechette": "~0.0.8",
     "acorn": "^8.12.1",
     "apache-arrow": "^17.0.0",
     "node-fetch": "^3.3.2"
@@ -45,10 +45,10 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "eslint": "^9.9.0",
+    "eslint": "^9.9.1",
     "mocha": "^10.7.3",
     "rimraf": "^6.0.1",
-    "rollup": "^4.20.0",
+    "rollup": "^4.21.0",
     "rollup-plugin-bundle-size": "^1.0.3",
     "tape": "^5.8.1",
     "typescript": "^5.5.4"
