@@ -91,20 +91,18 @@ aq.from(new Map([ ['d', 4], ['e', 5], ['f', 6] ])
 <hr/><a id="fromArrow" href="#fromArrow">#</a>
 <em>aq</em>.<b>fromArrow</b>(<i>arrowTable</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-arrow.js)
 
-Create a new <a href="table">table</a> backed by an [Apache Arrow](https://arrow.apache.org/docs/js/) table instance. The input *arrowTable* can either be an instantiated Arrow table instance or a byte array in the Arrow IPC format.
+Create a new <a href="table">table</a> backed by [Apache Arrow](https://arrow.apache.org/) binary data. The input *arrowTable* can be a byte array in the Arrow IPC format or an instantiated [Flechette](https://github.com/uwdata/flechette) or [Apache Arrow JS](https://arrow.apache.org/docs/js/) table instance. Byte array inputs are decoded using [Flechette](https://github.com/uwdata/flechette).
 
-For most data types, Arquero uses binary-encoded Arrow columns as-is with zero data copying. For columns containing string, list (array), or struct values, Arquero additionally memoizes value lookups to amortize access costs. For dictionary columns, Arquero unpacks columns with `null` entries or containing multiple record batches to optimize query performance.
+For many data types, Arquero uses binary-encoded Arrow columns as-is with zero data copying. For dictionary columns, Arquero unpacks columns with `null` entries or containing multiple record batches to optimize query performance.
 
 This method performs parsing only. To both load and parse an Arrow file, use [loadArrow](#loadArrow).
 
-* *arrowTable*: An [Apache Arrow](https://arrow.apache.org/docs/js/) data table or a byte array (e.g., [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) or [Uint8Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)) in the Arrow IPC format.
+* *arrowTable*: A byte array (e.g., [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) or [Uint8Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)) in the Arrow IPC format or a [Flechette](https://github.com/uwdata/flechette) or [Apache Arrow JS](https://arrow.apache.org/docs/js/) table instance.
 * *options*: An Arrow import options object:
   * *columns*: An ordered set of columns to import. The input may consist of: column name strings, column integer indices, objects with current column names as keys and new column names as values (for renaming), or a selection helper function such as [all](#all), [not](#not), or [range](#range)).
-  * *convertDate*: Boolean flag (default `true`) to convert Arrow date values to JavaScript Date objects. If false, defaults to what the Arrow implementation provides, typically timestamps as number values.
-  * *convertDecimal*: Boolean flag (default `true`) to convert Arrow fixed point decimal values to JavaScript numbers. If false, defaults to what the Arrow implementation provides, typically byte arrays. The conversion will be lossy if the decimal can not be exactly represented as a double-precision floating point number.
-  *convertTimestamp*: Boolean flag (default `true`) to convert Arrow timestamp values to JavaScript Date objects. If false, defaults to what the Arrow implementation provides, typically timestamps as number values.
-  *convertBigInt*: Boolean flag (default `false`) to convert Arrow integers with bit widths of 64 bits or higher to JavaScript numbers. If false, defaults to what the Arrow implementation provides, typically `BigInt` values. The conversion will be lossy if the integer is so large it can not be exactly represented as a double-precision floating point number.
-  *memoize*: Boolean hint (default `true`) to enable memoization of expensive conversions. If true, memoization is applied for string and nested (list, struct) types, caching extracted values to enable faster access. Memoization is also applied to converted Date values, in part to ensure exact object equality. This hint is ignored for dictionary columns, whose values are always memoized.
+  * *useDate*: Boolean flag (default `true`) to convert Arrow date and timestamp values to JavaScript Date objects. Otherwise, numeric timestamps are used. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
+  * *useBigInt*: Boolean flag (default `false`) to represent Arrow 64-bit integers as JavaScript `BigInt` values. For Flechette tables, the default is to coerce 64-bit integers to JavaScript numbers. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
+  * *useMap*: Boolean flag (default `false`) to represent Arrow Map data as JavaScript `Map` values. For Flechette tables, the default is to produce an array of `[key, value]` arrays. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
 
 *Examples*
 
