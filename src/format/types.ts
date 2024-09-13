@@ -1,6 +1,6 @@
-import { ExtractionOptions } from '@uwdata/flechette';
-import { DataType } from 'apache-arrow';
+import { ExtractionOptions, TableBuilderOptions } from '@uwdata/flechette';
 import type { ColumnType, Select } from '../table/types.js';
+import { ColumnSelectOptions } from './util.js';
 
 /** Arrow input data as bytes or loaded table. */
 export type ArrowInput =
@@ -59,26 +59,19 @@ export interface ArrowOptions extends ExtractionOptions {
 }
 
 /** Options for Arrow encoding. */
-export interface ArrowFormatOptions {
+export interface ArrowFormatOptions extends TableBuilderOptions {
+  /**
+   * Ordered list of column names to include. If function-valued, the
+   * function should accept a dataset as input and return an array of
+   * column name strings. If unspecified all columns are included.
+   */
+  columns?: ColumnSelectOptions;
   /** The maximum number of rows to include (default `Infinity`). */
   limit?: number;
   /**
    * The row offset (default `0`) indicating how many initial rows to skip.
    */
   offset?: number;
-  /**
-   * Ordered list of column names to include. If function-valued, the
-   * function should accept a dataset as input and return an array of
-   * column name strings. If unspecified all columns are included.
-   */
-  columns?: string[] | ((data: any) => string[]);
-  /**
-   * The Arrow data types to use. If specified, the input should be an
-   * object with column names for keys and Arrow data types for values.
-   * If a column type is not explicitly provided, type inference will be
-   * performed to guess an appropriate type.
-   */
-  types?: Record<string, DataType>;
 }
 
 /** Options for Arrow IPC encoding. */

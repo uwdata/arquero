@@ -31,8 +31,8 @@ import {
   unroll
 } from '../verbs/index.js';
 import { count } from '../op/op-api.js';
-import toArrow from '../arrow/to-arrow.js';
-import toArrowIPC from '../arrow/to-arrow-ipc.js';
+import toArrow from '../format/to-arrow.js';
+import toArrowIPC from '../format/to-arrow-ipc.js';
 import toCSV from '../format/to-csv.js';
 import toHTML from '../format/to-html.js';
 import toJSON from '../format/to-json.js';
@@ -785,10 +785,10 @@ export class ColumnTable extends Table {
   // -- Table Output Formats ------------------------------------------------
 
   /**
-   * Format this table as an Apache Arrow table.
-   * @param {import('../arrow/types.js').ArrowFormatOptions} [options]
+   * Format this table as an Flechette Arrow table.
+   * @param {import('../format/types.js').ArrowFormatOptions} [options]
    *  The Arrow formatting options.
-   * @return {import('apache-arrow').Table} An Apache Arrow table.
+   * @return {import('@uwdata/flechette').Table} A Flechette Arrow table.
    */
   toArrow(options) {
     return toArrow(this, options);
@@ -796,7 +796,7 @@ export class ColumnTable extends Table {
 
   /**
    * Format this table as binary data in the Apache Arrow IPC format.
-   * @param {import('../arrow/types.js').ArrowIPCFormatOptions} [options]
+   * @param {import('../format/types.js').ArrowIPCFormatOptions} [options]
    *  The Arrow IPC formatting options.
    * @return {Uint8Array} A new Uint8Array of Arrow-encoded binary data.
    */

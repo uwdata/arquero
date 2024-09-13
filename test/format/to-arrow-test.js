@@ -1,10 +1,13 @@
 import assert from 'node:assert';
 import { readFileSync } from 'node:fs';
 import {
-  Int8, Type, tableFromIPC, tableToIPC, vectorFromArray
-} from 'apache-arrow';
+  Type, bool, columnFromArray, dateDay, dateMillisecond, dictionary,
+  fixedSizeList, float32, float64, int16, int32, int64, int8, list, struct,
+  tableFromColumns, tableFromIPC, tableToIPC, uint16, uint32, uint64, uint8,
+  utf8
+} from '@uwdata/flechette';
 import {
-  fromArrow, fromCSV, fromJSON, table, toArrow, toArrowIPC, toJSON
+  fromArrow, fromCSV, fromJSON, table, toArrow, toJSON
 } from '../../src/index.js';
 
 function date(year, month=0, date=1, hours=0, minutes=0, seconds=0, ms=0) {
@@ -15,8 +18,8 @@ function utc(year, month=0, date=1, hours=0, minutes=0, seconds=0, ms=0) {
   return new Date(Date.UTC(year, month, date, hours, minutes, seconds, ms));
 }
 
-function Int8Vector(data) {
-  return vectorFromArray(data, new Int8);
+function Int8Column(data) {
+  return columnFromArray(data, int8());
 }
 
 function isArrayType(value) {
@@ -54,6 +57,61 @@ function compareColumns(name, aqt, art) {
   return err;
 }
 
+function columnFromTable(table, name, type) {
+  const at = toArrow(table, { types: { [name]: type } });
+  return at.getChild(name);
+}
+
+function integerTest(type) {
+  const values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  valueTest(type, values, ', without nulls');
+  valueTest(type, [null, ...values, null], ', with nulls');
+}
+
+function floatTest(type) {
+  const values = [0, NaN, 1/3, Math.PI, 7, Infinity, -Infinity];
+  valueTest(type, values, ', without nulls');
+  valueTest(type, [null, ...values, null], ', with nulls');
+}
+
+function bigintTest(type) {
+  const values = [0n, 1n, 10n, 100n, 1000n, 10n ** 10n];
+  valueTest(type, values, ', without nulls');
+  valueTest(type, [null, ...values, null], ', with nulls');
+}
+
+function dateTest(type) {
+  const date = (y, m = 0, d = 1) => new Date(Date.UTC(y, m, d));
+  const values = [
+    date(2000, 0, 1),
+    date(2004, 10, 12),
+    date(2007, 3, 14),
+    date(2009, 6, 26),
+    date(2000, 0, 1),
+    date(2004, 10, 12),
+    date(2007, 3, 14),
+    date(2009, 6, 26),
+    date(2000, 0, 1),
+    date(2004, 10, 12)
+  ];
+  valueTest(type, values, ', without nulls');
+  valueTest(type, [null, ...values, null], ', with nulls');
+}
+
+function valueTest(type, values, msg) {
+  const dt = table({ values });
+  const u = columnFromTable(dt, 'values', type);
+  const v = columnFromArray(values, type);
+  const tu = tableFromColumns({ values: u });
+  const tv = tableFromColumns({ values: v });
+
+  assert.equal(
+    tableToIPC(tu).join(' '),
+    tableToIPC(tv).join(' '),
+    'serialized data matches' + msg
+  );
+}
+
 describe('toArrow', () => {
   it('produces Arrow data for an input table', () => {
     const dt = table({
@@ -65,7 +123,7 @@ describe('toArrow', () => {
       d: [date(2000,0,1), date(2000,1,2), null, date(2010,6,9), date(2018,0,1), date(2020,10,3)],
       u: [utc(2000,0,1), utc(2000,1,2), null, utc(2010,6,9), utc(2018,0,1), utc(2020,10,3)],
       e: [null, null, null, null, null, null],
-      v: Int8Vector([10, 9, 8, 7, 6, 5]),
+      v: Int8Column([10, 9, 8, 7, 6, 5]),
       a: [[1, null, 3], [4, 5], null, [6, 7], [8, 9], []],
       l: [[1], [2], [3], [4], [5], [6]],
       o: [1, 2, 3, null, 5, 6].map(v => v ? { key: v } : null)
@@ -76,11 +134,6 @@ describe('toArrow', () => {
     assert.equal(
       compareTables(dt, at), 0,
       'arquero and arrow tables match'
-    );
-
-    assert.equal(
-      compareTables(dt, toArrow(dt.objects())), 0,
-      'object array and arrow tables match'
     );
 
     const buffer = tableToIPC(at);
@@ -107,11 +160,6 @@ describe('toArrow', () => {
       'arquero and arrow tables match'
     );
 
-    assert.equal(
-      compareTables(st, toArrow(st.objects())), 0,
-      'object array and arrow tables match'
-    );
-
     const buffer = tableToIPC(at);
 
     assert.equal(
@@ -125,12 +173,10 @@ describe('toArrow', () => {
     );
   });
 
-  it('handles ambiguously typed data', async () => {
-    const at = toArrow(table({ x: [1, 2, 3, 'foo'] }));
-    assert.deepEqual(
-      [...at.getChild('x')],
-      ['1', '2', '3', 'foo'],
-      'fallback to string type if a string is observed'
+  it('throws on ambiguously typed data', async () => {
+    assert.throws(
+      () => toArrow(table({ x: [1, 2, 3, 'foo'] })),
+      'fail on mixed types'
     );
 
     assert.throws(
@@ -207,7 +253,7 @@ describe('toArrow', () => {
     });
 
     const at = toArrow(dt, {
-      types: { w: Type.Utf8, x: Type.Int32, y: Type.Float32 }
+      types: { w: utf8(), x: int32(), y: float32() }
     });
 
     const types = ['w', 'x', 'y', 'z'].map(name => at.getChild(name).type);
@@ -220,66 +266,87 @@ describe('toArrow', () => {
     assert.equal(types[1].bitWidth, 32, 'int32');
     assert.equal(types[2].precision, 1, 'float32');
   });
-});
 
-describe('toArrowIPC', () => {
-  it('generates the correct output for file option', () => {
-    const dt = table({
-      w: ['a', 'b', 'a'],
-      x: [1, 2, 3],
-      y: [1.6181, 2.7182, 3.1415],
-      z: [true, true, false]
-    });
-
-    const buffer = toArrowIPC(dt, { format: 'file' });
-
-    assert.deepEqual(
-      buffer.slice(0, 8),
-      new Uint8Array([65, 82, 82, 79, 87, 49, 0, 0])
-    );
+  it('encodes dictionary data', () => {
+    const type = dictionary(utf8(), int32());
+    const values = ['a', 'b', 'FOO', 'b', 'a'];
+    valueTest(type, values, ', without nulls');
+    valueTest(type, [null, ...values, null], ', with nulls');
   });
 
-  it('generates the correct output for stream option', () => {
-    const dt = table({
-      w: ['a', 'b', 'a'],
-      x: [1, 2, 3],
-      y: [1.6181, 2.7182, 3.1415],
-      z: [true, true, false]
-    });
-
-    const buffer = toArrowIPC(dt, { format: 'stream' });
-
-    assert.deepEqual(
-      buffer.slice(0, 8),
-      new Uint8Array([255, 255, 255, 255, 88, 1, 0, 0])
-    );
+  it('encodes boolean data', () => {
+    const type = bool();
+    const values = [true, false, false, true, false];
+    valueTest(type, values, ', without nulls');
+    valueTest(type, [null, ...values, null], ', with nulls');
   });
 
-  it('defaults to using stream option', () => {
-    const dt = table({
-      w: ['a', 'b', 'a'],
-      x: [1, 2, 3],
-      y: [1.6181, 2.7182, 3.1415],
-      z: [true, true, false]
-    });
-
-    const buffer = toArrowIPC(dt);
-
-    assert.deepEqual(
-      buffer.slice(0, 8),
-      new Uint8Array([255, 255, 255, 255, 88, 1, 0, 0])
-    );
+  it('encodes date millis data', () => {
+    dateTest(dateMillisecond());
   });
 
-  it('throws an error if the format is not stream or file', () => {
-    assert.throws(() => {
-      const dt = table({
-        w: ['a', 'b', 'a'],
-        x: [1, 2, 3],
-        y: [1.6181, 2.7182, 3.1415],
-        z: [true, true, false]
-      });
-      toArrowIPC(dt, { format: 'nonsense' });
-    }, 'Unrecognized output format');
+  it('encodes date day data', () => {
+    dateTest(dateDay());
+  });
+
+  it('encodes int8 data', () => {
+    integerTest(int8());
+  });
+
+  it('encodes int16 data', () => {
+    integerTest(int16());
+  });
+
+  it('encodes int32 data', () => {
+    integerTest(int32());
+  });
+
+  it('encodes int64 data', () => {
+    bigintTest(int64());
+  });
+
+  it('encodes uint8 data', () => {
+    integerTest(uint8());
+  });
+
+  it('encodes uint16 data', () => {
+    integerTest(uint16());
+  });
+
+  it('encodes uint32 data', () => {
+    integerTest(uint32());
+  });
+
+  it('encodes uint64 data', () => {
+    bigintTest(uint64());
+  });
+
+  it('encodes float32 data', () => {
+    floatTest(float32());
+  });
+
+  it('encodes float64 data', () => {
+    floatTest(float64());
+  });
+
+  it('encodes list data', () => {
+    const type = list(int32());
+    const values = [[1, 2], [3], [4, 5, 6], [7]];
+    valueTest(type, values, ', without nulls');
+    valueTest(type, [null, ...values, null], ', with nulls');
+  });
+
+  it('encodes fixed size list data', () => {
+    const type = fixedSizeList(int32(), 1);
+    const values = [[1], [2], [3], [4], [5], [6]];
+    valueTest(type, values, ', without nulls');
+    valueTest(type, [null, ...values, null], ', with nulls');
+  });
+
+  it('encodes struct data', () => {
+    const type = struct({ key: int32() });
+    const values = [1, 2, 3, null, 5, 6].map(key => ({ key }));
+    valueTest(type, values, ', without nulls');
+    valueTest(type, [null, ...values, null], ', with nulls');
   });
 });

@@ -1,23 +1,18 @@
 import assert from 'node:assert';
-import { Utf8 } from 'apache-arrow';
+import { tableFromArrays } from 'apache-arrow';
 import tableEqual from '../table-equal.js';
-import fromArrow from '../../src/arrow/from-arrow.js';
-import toArrow from '../../src/arrow/to-arrow.js';
-import toArrowIPC from '../../src/arrow/to-arrow-ipc.js';
+import fromArrow from '../../src/format/from-arrow.js';
+import toArrow from '../../src/format/to-arrow.js';
 import { not } from '../../src/helpers/selection.js';
 import { table } from '../../src/index-browser.js';
-import { tableFromIPC } from '@uwdata/flechette';
+import { Type, utf8 } from '@uwdata/flechette';
 
-function arrowTable(data, types) {
-  return toArrow(table(data), { types });
-}
-
-function arrowIPC(data, types) {
-  return toArrowIPC(table(data), { types });
+function arrowTable(data) {
+  return tableFromArrays(data);
 }
 
 function flechetteTable(data, types) {
-  return tableFromIPC(arrowIPC(data, types));
+  return toArrow(table(data), { types });
 }
 
 function getType(table, name) {
@@ -42,7 +37,7 @@ describe('fromArrow', () => {
       x: ['cc', 'dd', 'cc', 'dd', 'cc'],
       y: ['aa', 'aa', null, 'bb', 'bb']
     };
-    const at = arrowTable(data, { v: new Utf8() });
+    const at = arrowTable(data);
     const dt = fromArrow(at);
 
     tableEqual(dt, data, 'arrow data');
@@ -92,7 +87,7 @@ describe('fromArrow', () => {
       x: ['cc', 'dd', 'cc', 'dd', 'cc'],
       y: ['aa', 'aa', null, 'bb', 'bb']
     };
-    const at = flechetteTable(data, { v: new Utf8() });
+    const at = flechetteTable(data, { v: utf8() });
     const dt = fromArrow(at);
 
     tableEqual(dt, data, 'arrow data');
@@ -130,7 +125,7 @@ describe('fromArrow', () => {
     const l = [[1, 2, 3], null, [4, 5]];
     const at = flechetteTable({ l });
 
-    if (getType(at, 'l').typeId !== 12) {
+    if (getType(at, 'l').typeId !== Type.List) {
       assert.fail('Arrow column should have List type');
     }
     tableEqual(fromArrow(at), { l }, 'extract Arrow list');
@@ -140,7 +135,7 @@ describe('fromArrow', () => {
     const l = [[1, 2], null, [4, 5]];
     const at = flechetteTable({ l });
 
-    if (getType(at, 'l').typeId !== 16) {
+    if (getType(at, 'l').typeId !== Type.FixedSizeList) {
       assert.fail('Arrow column should have FixedSizeList type');
     }
     tableEqual(fromArrow(at), { l }, 'extract Arrow list');
@@ -150,7 +145,7 @@ describe('fromArrow', () => {
     const s = [{ foo: 1, bar: [2, 3] }, null, { foo: 2, bar: [4] }];
     const at = flechetteTable({ s });
 
-    if (getType(at, 's').typeId !== 13) {
+    if (getType(at, 's').typeId !== Type.Struct) {
       assert.fail('Arrow column should have Struct type');
     }
     tableEqual(fromArrow(at), { s }, 'extract Arrow struct');
@@ -160,7 +155,7 @@ describe('fromArrow', () => {
     const s = [{ foo: 1, bar: { bop: 2 } }, { foo: 2, bar: { bop: 3 } }];
     const at = flechetteTable({ s });
 
-    if (getType(at, 's').typeId !== 13) {
+    if (getType(at, 's').typeId !== Type.Struct) {
       assert.fail('Arrow column should have Struct type');
     }
     tableEqual(fromArrow(at), { s }, 'extract nested Arrow struct');

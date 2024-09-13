@@ -573,32 +573,26 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toMarkdown()
 <hr/><a id="toArrow" href="#toArrow">#</a>
 <em>table</em>.<b>toArrow</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/encode/index.js)
 
-Format this table as an [Apache Arrow](https://arrow.apache.org/docs/js/) table instance. This method will throw an error if type inference fails or if the generated columns have differing lengths.
+Format this table as an [Apache Arrow](https://arrow.apache.org/overview/) table instance using [Flechette](https://idl.uw.edu/flechette/). This method will throw an error if type inference fails or if the generated columns have differing lengths.
 
 * *options*: Options for Arrow encoding.
   * *columns*: Ordered list of column names to include. If function-valued, the function should accept this table as a single argument and return an array of column name strings.
   * *limit*: The maximum number of rows to include (default `Infinity`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
-  * *types*: An optional object indicating the [Arrow data type](https://arrow.apache.org/docs/js/enums/Arrow_dom.Type.html) to use for named columns. If specified, the input should be an object with column names for keys and Arrow data types for values. If a column's data type is not explicitly provided, type inference will be performed.
-
-    Type values can either be instantiated Arrow [DataType](https://arrow.apache.org/docs/js/classes/Arrow_dom.DataType.html) instances (for example, `new Float64()`,`new DateMilliseconds()`, *etc.*) or type enum codes (`Type.Float64`, `Type.Date`, `Type.Dictionary`). High-level types map to specific data type instances as follows:
-
-    * `Type.Date` → `new DateMilliseconds()`
-    * `Type.Dictionary` → `new Dictionary(new Utf8(), new Int32())`
-    * `Type.Float` → `new Float64()`
-    * `Type.Int` → `new Int32()`
-    * `Type.Interval` → `new IntervalYearMonth()`
-    * `Type.Time` → `new TimeMillisecond()`
-
-    Types that require additional parameters (including `List`, `Struct`, and `Timestamp`) can not be specified using type codes. Instead, use data type constructors from apache-arrow, such as `new List(new Int32())`.
+  * *types*: An optional object indicating the [Arrow data type](https://idl.uw.edu/flechette/api/data-types) to use for named columns. If specified, the input should be an object with column names for keys and Arrow data types for values. Type values must be instantiated Flechette [DataType](https://idl.uw.edu/flechette/api/data-types) instances (for example, `float64()`,`dateDay()`, `list(int32())` *etc.*). If a column's data type is not explicitly provided, type inference will be performed.
+  * *useBigInt*: Boolean flag (default `false`) to extract 64-bit integer types as JavaScript `BigInt` values. For Flechette tables, the default is to coerce 64-bit integers to JavaScript numbers and raise an error if the number is out of range. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
+  * *useDecimalBigInt*: Boolean flag (default `false`) to extract Arrow decimal-type data as BigInt values, where fractional digits are scaled to integers. Otherwise, decimals are (sometimes lossily) converted to floating-point numbers (default). This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
+  * *useDate*: Boolean flag (default `true`) to convert Arrow date and timestamp values to JavaScript Date objects. Otherwise, numeric timestamps are used. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
+  * *useMap*: Boolean flag (default `false`) to represent Arrow Map data as JavaScript `Map` values. For Flechette tables, the default is to produce an array of `[key, value]` arrays. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
+  * *useProxy*: Boolean flag (default `false`) to extract Arrow Struct values and table row objects using zero-copy proxy objects that extract data from underlying Arrow batches. The proxy objects can improve performance and reduce memory usage, but do not support property enumeration (`Object.keys`, `Object.values`, `Object.entries`) or spreading (`{ ...object }`). This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
 
 *Examples*
 
 Encode Arrow data from an input Arquero table:
 
 ```js
+import { float32, uint16 } from '@uwdata/flechette';
 import { table } from 'arquero';
-import { Type } from 'apache-arrow';
 
 // create Arquero table
 const dt = table({
@@ -613,8 +607,8 @@ const at1 = dt.toArrow();
 // encode into Arrow table (set explicit data types)
 const at2 = dt.toArrow({
   types: {
-    x: Type.Uint16,
-    y: Type.Float32
+    x: uint16(),
+    y: float32()
   }
 });
 ```
@@ -622,12 +616,12 @@ const at2 = dt.toArrow({
 <hr/><a id="toArrowIPC" href="#toArrowIPC">#</a>
 <em>table</em>.<b>toArrowBuffer</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/encode/index.js)
 
-Format this table as binary data in the [Apache Arrow](https://arrow.apache.org/docs/js/) IPC format. The binary data may be saved to disk or passed between processes or tools. For example, when using [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers), the output of this method can be passed directly between threads (no data copy) as a [Transferable](https://developer.mozilla.org/en-US/docs/Web/API/Transferable) object. Additionally, Arrow binary data can be loaded in other language environments such as [Python](https://arrow.apache.org/docs/python/) or [R](https://arrow.apache.org/docs/r/).
+Format this table as binary data in the [Apache Arrow](https://arrow.apache.org/overview/) IPC format using [Flechette](https://idl.uw.edu/flechette/). The binary data may be saved to disk or passed between processes or tools. For example, when using [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers), the output of this method can be passed directly between threads (no data copy) as a [Transferable](https://developer.mozilla.org/en-US/docs/Web/API/Transferable) object. Additionally, Arrow binary data can be loaded in other language environments such as [Python](https://arrow.apache.org/docs/python/) or [R](https://arrow.apache.org/docs/r/).
 
 This method will throw an error if type inference fails or if the generated columns have differing lengths.
 
 * *options*: Options for Arrow encoding, same as [toArrow](#toArrow) but with an additional *format* option.
-  * *format*: The Arrow IPC byte format to use. One of `'stream'` (default) or `'file'`.
+  * *format*: The Arrow IPC byte format to use. One of `'stream'` (default) or `'file'`. For more details on these formats, see the [Apache Arrow format documentation](https://arrow.apache.org/docs/format/Columnar.html#ipc-streaming-format).
 
 *Examples*
 

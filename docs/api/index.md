@@ -9,8 +9,6 @@ title: Arquero API Reference
   * [table](#table), [from](#from), [fromArrow](#fromArrow), [fromCSV](#fromCSV), [fromFixed](#fromFixed), [fromJSON](#fromJSON)
 * [Table Input](#input)
   * [load](#load), [loadArrow](#loadArrow), [loadCSV](#loadCSV), [loadFixed](#loadFixed), [loadJSON](#loadJSON)
-* [Table Output](#output)
-  * [toArrow](#toArrow), [toArrowIPC](#toArrowIPC)
 * [Expression Helpers](#expression-helpers)
   * [op](#op), [agg](#agg), [escape](#escape)
   * [bin](#bin), [desc](#desc), [frac](#frac), [rolling](#rolling), [seed](#seed)
@@ -99,10 +97,12 @@ This method performs parsing only. To both load and parse an Arrow file, use [lo
 
 * *arrowTable*: A byte array (e.g., [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) or [Uint8Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)) in the Arrow IPC format or a [Flechette](https://github.com/uwdata/flechette) or [Apache Arrow JS](https://arrow.apache.org/docs/js/) table instance.
 * *options*: An Arrow import options object:
-  * *columns*: An ordered set of columns to import. The input may consist of: column name strings, column integer indices, objects with current column names as keys and new column names as values (for renaming), or a selection helper function such as [all](#all), [not](#not), or [range](#range)).
+  * *columns*: An ordered set of columns to import. The input may consist of: column name strings, column integer indices, objects with current column names as keys and new column names as values (for renaming), or a selection helper function such as [all](#all), [not](#not), or [range](#range).
+  * *useBigInt*: Boolean flag (default `false`) to extract 64-bit integer types as JavaScript `BigInt` values. For Flechette tables, the default is to coerce 64-bit integers to JavaScript numbers and raise an error if the number is out of range. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
   * *useDate*: Boolean flag (default `true`) to convert Arrow date and timestamp values to JavaScript Date objects. Otherwise, numeric timestamps are used. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
-  * *useBigInt*: Boolean flag (default `false`) to represent Arrow 64-bit integers as JavaScript `BigInt` values. For Flechette tables, the default is to coerce 64-bit integers to JavaScript numbers. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
+  * *useDecimalBigInt*: Boolean flag (default `false`) to extract Arrow decimal-type data as BigInt values, where fractional digits are scaled to integers. Otherwise, decimals are (sometimes lossily) converted to floating-point numbers (default). This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
   * *useMap*: Boolean flag (default `false`) to represent Arrow Map data as JavaScript `Map` values. For Flechette tables, the default is to produce an array of `[key, value]` arrays. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
+  * *useProxy*: Boolean flag (default `false`) to extract Arrow Struct values and table row objects using zero-copy proxy objects that extract data from underlying Arrow batches. The proxy objects can improve performance and reduce memory usage, but do not support property enumeration (`Object.keys`, `Object.values`, `Object.entries`) or spreading (`{ ...object }`). This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
 
 *Examples*
 
@@ -313,7 +313,7 @@ const dt = await aq.load('data/table.json', { as: 'json', using: aq.from })
 <hr/><a id="loadArrow" href="#loadArrow">#</a>
 <em>aq</em>.<b>loadArrow</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load-file.js)
 
-Load a file in the [Apache Arrow](https://arrow.apache.org/docs/js/) IPC format from a *url* and return a Promise for a <a href="table">table</a>.
+Load a file in the [Apache Arrow](https://arrow.apache.org/overview/) IPC binary format from a *url* and return a Promise for a <a href="table">table</a>.
 
 This method performs both loading and parsing, and is equivalent to `aq.load(url, { as: 'arrayBuffer', using: aq.fromArrow })`. To instead create an Arquero table for an Apache Arrow dataset that has already been loaded, use [fromArrow](#fromArrow).
 
@@ -404,110 +404,6 @@ const dt = await aq.loadJSON('data/table.json', { autoType: false })
 
 <br/>
 
-## <a id="output">Table Output</a>
-
-Methods for writing data to an output format. Most output methods are available as [table methods](table#output), in addition to the top level namespace.
-
-<hr/><a id="toArrow" href="#toArrow">#</a>
-<em>aq</em>.<b>toArrow</b>(<i>data</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/to-arrow.js)
-
-Create an [Apache Arrow](https://arrow.apache.org/docs/js/) table for the input *data*. The input data can be either an [Arquero table](#table) or an array of standard JavaScript objects. This method will throw an error if type inference fails or if the generated columns have differing lengths. For Arquero tables, this method can instead be invoked as [table.toArrow()](table#toArrow).
-
-* *data*: An input dataset to convert to Arrow format. If array-valued, the data should consist of an array of objects where each entry represents a row and named properties represent columns. Otherwise, the input data should be an [Arquero table](#table).
-* *options*: Options for Arrow encoding.
-  * *columns*: Ordered list of column names to include. If function-valued, the function should accept the input *data* as a single argument and return an array of column name strings.
-  * *limit*: The maximum number of rows to include (default `Infinity`).
-  * *offset*: The row offset indicating how many initial rows to skip (default `0`).
-  * *types*: An optional object indicating the [Arrow data type](https://arrow.apache.org/docs/js/enums/Arrow_dom.Type.html) to use for named columns. If specified, the input should be an object with column names for keys and Arrow data types for values. If a column's data type is not explicitly provided, type inference will be performed.
-
-    Type values can either be instantiated Arrow [DataType](https://arrow.apache.org/docs/js/classes/Arrow_dom.DataType.html) instances (for example, `new Float64()`,`new DateMilliseconds()`, *etc.*) or type enum codes (`Type.Float64`, `Type.Date`, `Type.Dictionary`). High-level types map to specific data type instances as follows:
-
-    * `Type.Date` → `new DateMilliseconds()`
-    * `Type.Dictionary` → `new Dictionary(new Utf8(), new Int32())`
-    * `Type.Float` → `new Float64()`
-    * `Type.Int` → `new Int32()`
-    * `Type.Interval` → `new IntervalYearMonth()`
-    * `Type.Time` → `new TimeMillisecond()`
-
-    Types that require additional parameters (including `List`, `Struct`, and `Timestamp`) can not be specified using type codes. Instead, use data type constructors from apache-arrow, such as `new List(new Int32())`.
-
-*Examples*
-
-Encode Arrow data from an input Arquero table:
-
-```js
-import { table, toArrow } from 'arquero';
-import { Type } from 'apache-arrow';
-
-// create Arquero table
-const dt = table({
-  x: [1, 2, 3, 4, 5],
-  y: [3.4, 1.6, 5.4, 7.1, 2.9]
-});
-
-// encode as an Arrow table (infer data types)
-// here, infers Uint8 for 'x' and Float64 for 'y'
-// equivalent to dt.toArrow()
-const at1 = toArrow(dt);
-
-// encode into Arrow table (set explicit data types)
-// equivalent to dt.toArrow({ types: { ... } })
-const at2 = toArrow(dt, {
-  types: {
-    x: Type.Uint16,
-    y: Type.Float32
-  }
-});
-
-// serialize Arrow table to a transferable byte array
-const bytes = at1.serialize();
-```
-
-Encode Arrow data from an input object array:
-
-```js
-import { toArrow } from 'arquero';
-
-// encode object array as an Arrow table (infer data types)
-const at = toArrow([
-  { x: 1, y: 3.4 },
-  { x: 2, y: 1.6 },
-  { x: 3, y: 5.4 },
-  { x: 4, y: 7.1 },
-  { x: 5, y: 2.9 }
-]);
-```
-
-<hr/><a id="toArrowIPC" href="#toArrowIPC">#</a>
-<em>table</em>.<b>toArrowBuffer</b>(<i>data</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/to-arrow-ipc.js)
-
-Format input data in the binary [Apache Arrow](https://arrow.apache.org/docs/js/) IPC format. The input data can be either an [Arquero table](#table) or an array of standard JavaScript objects. This method will throw an error if type inference fails or if the generated columns have differing lengths. For Arquero tables, this method can instead be invoked as [table.toArrowIPC()](table#toArrowIPC).
-
-The resulting binary data may be saved to disk or passed between processes or tools. For example, when using [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers), the output of this method can be passed directly between threads (no data copy) as a [Transferable](https://developer.mozilla.org/en-US/docs/Web/API/Transferable) object. Additionally, Arrow binary data can be loaded in other language environments such as [Python](https://arrow.apache.org/docs/python/) or [R](https://arrow.apache.org/docs/r/).
-
-This method will throw an error if type inference fails or if the generated columns have differing lengths.
-
-* *options*: Options for Arrow encoding, same as [toArrow](#toArrow) but with an additional *format* option.
-  * *format*: The Arrow IPC byte format to use. One of `'stream'` (default) or `'file'`.
-
-*Examples*
-
-Encode Arrow data from an input Arquero table:
-
-```js
-import { table, toArrowIPC } from 'arquero';
-
-const dt = table({
-  x: [1, 2, 3, 4, 5],
-  y: [3.4, 1.6, 5.4, 7.1, 2.9]
-});
-
-// encode table as a transferable Arrow byte buffer
-// here, infers Uint8 for 'x' and Float64 for 'y'
-const bytes = toArrowIPC(dt);
-```
-
-<br/>
 
 ## <a id="expression-helpers">Expression Helpers</a>
 

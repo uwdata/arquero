@@ -80,12 +80,7 @@ To use in the browser, you can load Arquero from a content delivery network:
 <script src="https://cdn.jsdelivr.net/npm/arquero@latest"></script>
 ```
 
-Arquero will be imported into the `aq` global object. The default browser bundle does not include the [Apache Arrow](https://arrow.apache.org/) library. To perform Arrow encoding using [toArrow()](api/#toArrow) or binary file loading using [loadArrow()](api/#loadArrow), import Apache Arrow first:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/apache-arrow@latest"></script>
-<script src="https://cdn.jsdelivr.net/npm/arquero@latest"></script>
-```
+Arquero will be imported into the `aq` global object. The default browser bundle also includes the [Flechette](https://idl.uw.edu/flechette/) library for processing [Apache Arrow](https://arrow.apache.org/overview/) data.
 
 Alternatively, you can build and import `arquero.min.js` from the `dist` directory, or build your own application bundle. When building custom application bundles for the browser, the module bundler should draw from the `browser` property of Arquero's `package.json` file. For example, if using [rollup](https://rollupjs.org/), pass the `browser: true` option to the [node-resolve](https://github.com/rollup/plugins/tree/master/packages/node-resolve) plugin.
 

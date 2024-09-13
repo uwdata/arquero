@@ -26,9 +26,15 @@ import isFunction from '../util/is-function.js';
  * @typedef {Object.<string, 'l'|'c'|'r'>} ColumnAlignOptions
  */
 
+/**
+ * Return a potentially filtered list of column names.
+ * @param {import('../table/Table.js').Table} table A data table.
+ * @param {ColumnSelectOptions} names The column names to select.
+ * @returns {string[]} The selected column names.
+ */
 export function columns(table, names) {
-  return isFunction(names)
-    ? names(table)
+  // @ts-ignore
+  return isFunction(names) ? names(table)
     : names || table.columnNames();
 }
 
