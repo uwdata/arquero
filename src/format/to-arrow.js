@@ -14,7 +14,6 @@ import isFunction from '../util/is-function.js';
 export default function(table, options = {}) {
   const { columns, limit = Infinity, offset = 0, types = {}, ...opt } = options;
   const names = select(table, columns);
-  const length = table.size;
   const data = table.data();
 
   // make a full table scan with no indirection?
@@ -37,7 +36,6 @@ export default function(table, options = {}) {
         ? row => values[row]
         : row => values.at(row);
       col = columnFromValues(
-        length,
         visit => table.scan(row => visit(get(row)), true, limit, offset),
         type,
         opt
