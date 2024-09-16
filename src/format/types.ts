@@ -12,7 +12,7 @@ export type ArrowInput =
 export interface ArrowColumn<T> extends ColumnType<T> {
   type: ArrowDataType;
   nullCount: number;
-  toArray(): ColumnType<T>
+  toArray(): ColumnType<T>;
 }
 
 /** Minimal interface for an Arrow data type. */

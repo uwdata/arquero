@@ -15,6 +15,8 @@ export interface ColumnType<T> {
   at(row: number): T;
   /** Return a column value iterator. */
   [Symbol.iterator]() : Iterator<T>;
+  /** Optional toArray method. */
+  toArray?() : ColumnType<T>;
 }
 
 /** A named collection of columns. */

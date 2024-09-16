@@ -30,7 +30,7 @@ export default function(input, options) {
   // build Arquero columns for backing Arrow columns
   const cols = columnSet();
   sel.forEach((name, key) => {
-    const col = arrow.getChild(key);
+    const col = /** @type {import('./types.js').ArrowColumn} */ (arrow.getChild(key));
     cols.add(name, col.type.typeId === -1 ? dictionary(col) : col);
   });
 

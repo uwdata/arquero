@@ -1,6 +1,7 @@
 import { columnFromArray, columnFromValues, tableFromColumns } from '@uwdata/flechette';
 import { columns as select } from './util.js';
 import isArrayType from '../util/is-array-type.js';
+import isFunction from '../util/is-function.js';
 
 /**
  * Create an Apache Arrow table for an input table.
@@ -11,7 +12,7 @@ import isArrayType from '../util/is-array-type.js';
  * @return {import('@uwdata/flechette').Table} An Arrow Table instance.
  */
 export default function(table, options = {}) {
-  const { columns, limit, offset, types = {}, ...opt } = options;
+  const { columns, limit = Infinity, offset = 0, types = {}, ...opt } = options;
   const names = select(table, columns);
   const length = table.size;
   const data = table.data();
@@ -27,9 +28,9 @@ export default function(table, options = {}) {
     const type = types[name];
     const isArray = isArrayType(values);
     let col;
-    if (fullScan && isArray) {
-      // use faster path, take advantange of any typed arrays
-      col = columnFromArray(values, type, opt);
+    if (fullScan && (isArray || isFunction(values.toArray))) {
+      // @ts-ignore - use faster path, takes advantange of typed arrays
+      col = columnFromArray(isArray ? values : values.toArray(), type, opt);
     } else {
       // use table scan method to visit column values
       const get = isArray

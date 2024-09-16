@@ -116,7 +116,7 @@ describe('toArrow', () => {
   it('produces Arrow data for an input table', () => {
     const dt = table({
       i: [1, 2, 3, undefined, 4, 5],
-      f: Float32Array.from([1.2, 2.3, 3.0, 3.4, null, 4.5]),
+      f: Float32Array.from([1.2, 2.3, 3.0, 3.4, -1.3, 4.5]),
       n: [4.5, 4.4, 3.4, 3.0, 2.3, 1.2],
       b: [true, true, false, true, null, false],
       s: ['foo', null, 'bar', 'baz', 'baz', 'bar'],
@@ -169,6 +169,70 @@ describe('toArrow', () => {
 
     assert.equal(
       compareTables(fromArrow(tableFromIPC(buffer)), at), 0,
+      'serialized arquero and arrow tables match'
+    );
+  });
+
+  it('produces Arrow data from mixed inputs', () => {
+    const dt0 = table({
+      i: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      f: Float32Array.from([1.2, 2.3, 3.0, 3.4, 4.5, 5.4, 6.5, 7.6, 8.7, 9.2])
+    });
+
+    // create an arrow table with multiple record batches
+    // then derive a new table
+    const at0 = toArrow(dt0, { maxBatchRows: 4 });
+    const dt = fromArrow(at0).derive({ sum: d => d.i + d.f });
+    const at = toArrow(dt);
+
+    assert.equal(
+      compareTables(dt, at), 0,
+      'arquero and arrow tables match'
+    );
+
+    const buffer = tableToIPC(at);
+    const bt = tableFromIPC(buffer);
+
+    assert.equal(
+      compareTables(dt, bt), 0,
+      'arquero and serialized arrow tables match'
+    );
+
+    assert.equal(
+      compareTables(fromArrow(bt), at), 0,
+      'serialized arquero and arrow tables match'
+    );
+  });
+
+  it('produces Arrow data from filtered mixed inputs', () => {
+    const dt0 = table({
+      i: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      f: Float32Array.from([1.2, 2.3, 3.0, 3.4, 4.5, 5.4, 6.5, 7.6, 8.7, 9.2])
+    });
+
+    // create an arrow table with multiple record batches
+    // then derive a new table
+    const at0 = toArrow(dt0, { maxBatchRows: 4 });
+    const dt = fromArrow(at0)
+      .derive({ sum: d => d.i + d.f })
+      .filter(d => d.i % 2 === 0);
+    const at = toArrow(dt);
+
+    assert.equal(
+      compareTables(dt, at), 0,
+      'arquero and arrow tables match'
+    );
+
+    const buffer = tableToIPC(at);
+    const bt = tableFromIPC(buffer);
+
+    assert.equal(
+      compareTables(dt, bt), 0,
+      'arquero and serialized arrow tables match'
+    );
+
+    assert.equal(
+      compareTables(fromArrow(bt), at), 0,
       'serialized arquero and arrow tables match'
     );
   });
