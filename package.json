@@ -37,7 +37,7 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "@uwdata/flechette": "1.0.0-beta.2",
+    "@uwdata/flechette": "^1.0.0",
     "acorn": "^8.12.1",
     "node-fetch": "^3.3.2"
   },
@@ -50,7 +50,7 @@
     "rimraf": "^6.0.1",
     "rollup": "^4.21.3",
     "rollup-plugin-bundle-size": "^1.0.3",
-    "tape": "^5.8.1",
+    "tape": "^5.9.0",
     "typescript": "^5.6.2"
   }
 }
