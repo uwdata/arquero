@@ -1,56 +1,60 @@
 import tape from 'tape';
 import { time } from './time.js';
 import { bools, floats, ints, sample, strings } from './data-gen.js';
-import { fromArrow, table, toArrow } from '../src/index.js';
-import {
-  Bool, Dictionary, Float64, Int32, Table, Uint32, Utf8,
-  tableToIPC, vectorFromArray
-} from 'apache-arrow';
+import { fromArrow, table, toArrowIPC } from '../src/index.js';
+import { bool, columnFromArray, dictionary, float64, int32, tableFromColumns, tableToIPC, uint32, utf8 } from '@uwdata/flechette';
+import { tableFromIPC } from 'apache-arrow';
 
 function process(N, nulls, msg) {
-  const vectors = {
-    k: vectorFromArray(
-      sample(N, strings(100), nulls),
-      new Dictionary(new Utf8(), new Int32())
-    ),
-    v: vectorFromArray(
-      ints(N, -10000, 10000, nulls),
-      new Int32()
-    )
-    };
-  const at = new Table(vectors);
-  const dt = fromArrow(at);
+  const aa = tableFromColumns({
+    k: columnFromArray(
+        sample(N, strings(100), nulls),
+        dictionary(utf8(), int32())
+      ),
+    v: columnFromArray(
+        ints(N, -10000, 10000, nulls),
+        int32()
+      )
+  });
+  const buf = tableToIPC(aa);
+  const at = fromArrow(tableFromIPC(buf)); // using arrow-js
+  const ft = fromArrow(aa); // using flechette
 
-  const arqueroFilterDict = val => time(() => {
+  const filterDict = (dt, val) => time(() => {
     dt.filter(`d.k === '${val}'`).numRows();
   });
 
-  const arqueroFilterValue = val => time(() => {
+  const filterValue = (dt, val) => time(() => {
     dt.filter(`d.v >= ${val}`).numRows();
   });
 
   tape(`arrow processing: ${msg}`, t => {
-    const k = at.getChild('k').get(50);
+    const k = aa.getChild('k').at(50);
     console.table([ // eslint-disable-line
       {
-        operation: 'init table',
-        arquero:    time(() => fromArrow(at))
+        operation:  'init table',
+        'arrow-js': time(() => fromArrow(tableFromIPC(buf))),
+        flechette:  time(() => fromArrow(buf))
       },
       {
-        operation: 'count dictionary',
-        arquero:    time(() => dt.groupby('k').count())
+        operation:  'count dictionary',
+        'arrow-js': time(() => at.groupby('k').count()),
+        flechette:  time(() => ft.groupby('k').count())
       },
       {
-        operation: 'filter dictionary',
-        arquero:    arqueroFilterDict(k)
+        operation:  'filter dictionary',
+        'arrow-js': filterDict(at, k),
+        flechette:  filterDict(ft, k)
       },
       {
-        operation: 'filter numbers 0',
-        arquero:    arqueroFilterValue(0)
+        operation:  'filter numbers 0',
+        'arrow-js': filterValue(at, 0),
+        flechette:  filterValue(ft, 0)
       },
       {
-        operation: 'filter numbers 1',
-        arquero:    arqueroFilterValue(1)
+        operation:  'filter numbers 1',
+        'arrow-js': filterValue(at, 1),
+        flechette:  filterValue(ft, 1)
       }
     ]);
     t.end();
@@ -60,11 +64,11 @@ function process(N, nulls, msg) {
 function serialize(N, nulls, msg) {
   tape(`arrow serialization: ${msg}`, t => {
     console.table([ // eslint-disable-line
-      encode('boolean', new Bool(), bools(N, nulls)),
-      encode('integer', new Int32(), ints(N, -10000, 10000, nulls)),
-      encode('float', new Float64(), floats(N, -10000, 10000, nulls)),
+      encode('boolean', bool(), bools(N, nulls)),
+      encode('integer', int32(), ints(N, -10000, 10000, nulls)),
+      encode('float', float64(), floats(N, -10000, 10000, nulls)),
       encode('dictionary',
-        new Dictionary(new Utf8(), new Uint32(), 0),
+        dictionary(utf8(), uint32()),
         sample(N, strings(100), nulls)
       )
     ]);
@@ -76,17 +80,21 @@ function encode(name, type, values) {
   const dt = table({ values });
 
   // measure encoding times
-  const qt = time(() => tableToIPC(toArrow(dt, { types: { values: type } })));
+  const qt = time(() => toArrowIPC(dt, { types: { values: type } }));
   const at = time(
-    () => tableToIPC(new Table({ values: vectorFromArray(values, type) }))
+    () => tableToIPC(
+      tableFromColumns({
+        values: columnFromArray(values, type)
+      })
+    )
   );
   const jt = time(() => JSON.stringify(values));
 
   // measure serialized byte size
-  const ab = tableToIPC(new Table({
-    values: vectorFromArray(values, type)
+  const ab = tableToIPC(tableFromColumns({
+    values: columnFromArray(values, type)
   })).length;
-  const qb = tableToIPC(toArrow(dt, { types: { values: type }})).length;
+  const qb = toArrowIPC(dt, { types: { values: type }}).length;
   const jb = (new TextEncoder().encode(JSON.stringify(values))).length;
 
   // check that arrow and arquero produce the same result
@@ -97,7 +105,7 @@ function encode(name, type, values) {
 
   return {
     'data type':  name,
-    'arrow-js':   at,
+    'flechette':  at,
     'arquero':    qt,
     'json':       jt,
     'size-arrow': ab,

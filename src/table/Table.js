@@ -602,8 +602,7 @@ export class Table {
    * @param {boolean} [order=false] Indicates if the table should be
    *  scanned in the order determined by *orderby*. This
    *  argument has no effect if the table is unordered.
-   * @property {number} [limit=Infinity] The maximum number of
-   *  objects to create.
+   * @property {number} [limit=Infinity] The maximum number of rows to scan.
    * @property {number} [offset=0] The row offset indicating how many
    *  initial rows to skip.
    */

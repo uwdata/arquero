@@ -4,14 +4,19 @@ import { BitSet } from './BitSet.js';
 /** A table column value. */
 export type DataValue = any;
 
-/** Interface for table columns. */
+/**
+ * Interface for table columns.
+ * Compatible with arrays, typed arrays, and Arrow columns.
+ */
 export interface ColumnType<T> {
   /** The number of rows in the column. */
   length: number;
-  /** Retrieve the values at the given row index. */
+  /** Retrieve the value at the given row index. */
   at(row: number): T;
   /** Return a column value iterator. */
   [Symbol.iterator]() : Iterator<T>;
+  /** Optional toArray method. */
+  toArray?() : ColumnType<T>;
 }
 
 /** A named collection of columns. */

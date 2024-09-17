@@ -3,8 +3,6 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 
 const name = 'aq';
-const external = [ 'apache-arrow' ];
-const globals = { 'apache-arrow': 'Arrow' };
 const plugins = [
   bundleSize(),
   nodeResolve({ modulesOnly: true })
@@ -13,13 +11,11 @@ const plugins = [
 export default [
   {
     input: 'src/index-browser.js',
-    external,
     plugins,
     output: [
       {
         file: 'dist/arquero.js',
         format: 'umd',
-        globals,
         name
       },
       {
@@ -27,7 +23,6 @@ export default [
         format: 'umd',
         sourcemap: true,
         plugins: [ terser({ ecma: 2018 }) ],
-        globals,
         name
       }
     ]

@@ -28,7 +28,7 @@ describe('load file url', () => {
 
   it('fails on non-existent path', async () => {
     try {
-      await load('https://foo.bar.baz/does.not.exist');
+      await load('https://foo.bar.test/does.not.exist');
       assert.fail('did not fail');
     } catch (err) { // eslint-disable-line no-unused-vars
       assert.ok(true, 'failed appropriately');

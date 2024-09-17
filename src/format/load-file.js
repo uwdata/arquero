@@ -3,7 +3,7 @@ import { readFile } from 'fs';
 import fromCSV from './from-csv.js';
 import fromFixed from './from-fixed.js';
 import fromJSON from './from-json.js';
-import fromArrow from '../arrow/from-arrow.js';
+import fromArrow from './from-arrow.js';
 import { from } from '../table/index.js';
 import isArray from '../util/is-array.js';
 
@@ -67,7 +67,7 @@ function loadFile(file, options, parse) {
 /**
  * Load an Arrow file from a URL and return a Promise for an Arquero table.
  * @param {string} path The URL or file path to load.
- * @param {LoadOptions & import('../arrow/types.js').ArrowOptions} [options]
+ * @param {LoadOptions & import('../format/types.js').ArrowOptions} [options]
  *  Arrow format options.
  * @return {Promise<ColumnTable>} A Promise for an Arquero table.
  * @example aq.loadArrow('data/table.arrow')
