@@ -785,7 +785,7 @@ export class ColumnTable extends Table {
   // -- Table Output Formats ------------------------------------------------
 
   /**
-   * Format this table as an Flechette Arrow table.
+   * Format this table as a Flechette Arrow table.
    * @param {import('../format/types.js').ArrowFormatOptions} [options]
    *  The Arrow formatting options.
    * @return {import('@uwdata/flechette').Table} A Flechette Arrow table.
