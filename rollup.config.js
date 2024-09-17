@@ -8,18 +8,10 @@ const plugins = [
   nodeResolve({ modulesOnly: true })
 ];
 
-function onwarn(warning) {
-  if (warning.code !== 'CIRCULAR_DEPENDENCY') {
-    // eslint-disable-next-line
-    console.error(`(!) ${warning.message}`);
-  }
-}
-
 export default [
   {
     input: 'src/index-browser.js',
     plugins,
-    onwarn,
     output: [
       {
         file: 'dist/arquero.js',
