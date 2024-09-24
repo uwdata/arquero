@@ -647,6 +647,7 @@ Format this table as a comma-separated values (CSV) string. Other delimiters, su
 
 * *options*: A formatting options object:
   * *delimiter*: The delimiter between values (default `","`).
+  * *header*: Boolean flag (default `true`) to specify the presence of a header row. If `true`, includes a header row with column names. If `false`, the header is omitted.
   * *limit*: The maximum number of rows to print (default `Infinity`).
   * *offset*: The row offset indicating how many initial rows to skip (default `0`).
   * *columns*: Ordered list of column names to include. If function-valued, the function should accept a table as input and return an array of column name strings. Otherwise, should be an array of name strings.
