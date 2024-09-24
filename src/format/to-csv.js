@@ -6,6 +6,9 @@ import isDate from '../util/is-date.js';
  * Options for CSV formatting.
  * @typedef {object} CSVFormatOptions
  * @property {string} [delimiter=','] The delimiter between values.
+ * @property {boolean} [header=true] Flag to specify presence of header row.
+ *  If true, includes a header row with column names.
+ *  If false, the header is omitted.
  * @property {number} [limit=Infinity] The maximum number of rows to print.
  * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
  * @property {import('./util.js').ColumnSelectOptions} [columns] Ordered list
@@ -29,6 +32,7 @@ export default function(table, options = {}) {
   const names = columns(table, options.columns);
   const format = options.format || {};
   const delim = options.delimiter || ',';
+  const header = options.header ?? true;
   const reFormat = new RegExp(`["${delim}\n\r]`);
 
   const formatValue = value => value == null ? ''
@@ -37,16 +41,16 @@ export default function(table, options = {}) {
     : value;
 
   const vals = names.map(formatValue);
-  let text = '';
+  let text = header ? (vals.join(delim) + '\n') : '';
 
   scan(table, names, options.limit || Infinity, options.offset, {
-    row() {
-      text += vals.join(delim) + '\n';
-    },
     cell(value, name, index) {
       vals[index] = formatValue(format[name] ? format[name](value) : value);
+    },
+    end() {
+      text += vals.join(delim) + '\n';
     }
   });
 
-  return text + vals.join(delim);
+  return text;
 }

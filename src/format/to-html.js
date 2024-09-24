@@ -92,18 +92,22 @@ export default function(table, options = {}) {
     + tag('tbody');
 
   scan(table, names, options.limit, options.offset, {
-    row(row) {
+    start(row) {
       r = row;
-      text += (++idx ? '</tr>' : '') + tag('tr');
+      ++idx;
+      text += tag('tr');
     },
     cell(value, name) {
       text += tag('td', name, 1)
         + formatter(value, format[name])
         + '</td>';
+    },
+    end() {
+      text += '</tr>';
     }
   });
 
-  return text + '</tr></tbody></table>';
+  return text + '</tbody></table>';
 }
 
 function styles(options) {
