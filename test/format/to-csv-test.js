@@ -23,12 +23,12 @@ const tabText = text.map(t => t.split(',').join('\t'));
 describe('toCSV', () => {
   it('formats delimited text', () => {
     const dt = new ColumnTable(data());
-    assert.equal(toCSV(dt), text.join('\n'), 'csv text');
+    assert.equal(toCSV(dt), text.join('\n') + '\n', 'csv text');
     assert.equal(
       toCSV(dt, { limit: 2, columns: ['str', 'int'] }),
       text.slice(0, 3)
         .map(s => s.split(',').slice(0, 2).join(','))
-        .join('\n'),
+        .join('\n') + '\n',
       'csv text with limit'
     );
   });
@@ -37,15 +37,31 @@ describe('toCSV', () => {
     const dt = new ColumnTable(data());
     assert.equal(
       toCSV(dt,  { delimiter: '\t' }),
-      tabText.join('\n'),
+      tabText.join('\n') + '\n',
       'csv text with delimiter'
     );
     assert.equal(
       toCSV(dt, { limit: 2, delimiter: '\t', columns: ['str', 'int'] }),
       text.slice(0, 3)
         .map(s => s.split(',').slice(0, 2).join('\t'))
-        .join('\n'),
+        .join('\n') + '\n',
       'csv text with delimiter and limit'
+    );
+  });
+
+  it('formats delimited text with header option', () => {
+    const dt = new ColumnTable(data());
+    assert.equal(
+      toCSV(dt, { header: false }),
+      text.slice(1).join('\n') + '\n',
+      'csv text without header'
+    );
+    assert.equal(
+      toCSV(dt, { header: false, limit: 2, columns: ['str', 'int'] }),
+      text.slice(1, 3)
+        .map(s => s.split(',').slice(0, 2).join(','))
+        .join('\n') + '\n',
+      'csv text without header and with limit'
     );
   });
 
@@ -54,7 +70,7 @@ describe('toCSV', () => {
     const dt = new ColumnTable(data(), null, bs);
     assert.equal(
       toCSV(dt),
-      [ ...text.slice(0, 2), ...text.slice(3) ].join('\n'),
+      [ ...text.slice(0, 2), ...text.slice(3) ].join('\n') + '\n',
       'csv text with limit'
     );
   });
@@ -63,7 +79,7 @@ describe('toCSV', () => {
     const dt = new ColumnTable(data());
     assert.equal(
       toCSV(dt, { limit: 2, columns: ['str'], format: { str: d => d + '!' } }),
-      ['str', 'a!', 'b!'].join('\n'),
+      ['str', 'a!', 'b!'].join('\n') + '\n',
       'csv text with custom format'
     );
   });

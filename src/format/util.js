@@ -1,5 +1,6 @@
 import inferFormat from './infer.js';
 import isFunction from '../util/is-function.js';
+import identity from '../util/identity.js';
 
 /**
  * Column selection function.
@@ -59,13 +60,15 @@ function values(table, columnName) {
 }
 
 export function scan(table, names, limit = 100, offset, ctx) {
+  const { start = identity, cell, end = identity } = ctx;
   const data = table.data();
   const n = names.length;
   table.scan(row => {
-    ctx.row(row);
+    start(row);
     for (let i = 0; i < n; ++i) {
       const name = names[i];
-      ctx.cell(data[names[i]].at(row), name, i);
+      cell(data[name].at(row), name, i);
     }
+    end(row);
   }, true, limit, offset);
 }

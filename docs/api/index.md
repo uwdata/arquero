@@ -132,7 +132,7 @@ This method performs parsing only. To both load and parse a CSV file, use [loadC
 * *options*: A CSV format options object:
   * *delimiter*: A single-character delimiter string between column values (default `','`).
   * *decimal*: A single-character numeric decimal separator (default `'.'`).
-  * *header*: Boolean flag (default `true`) to specify the presence of a  header row. If `true`, indicates the CSV contains a header row with column names. If `false`, indicates the CSV does not contain a header row and the columns are given the names `'col1'`, `'col2'`, etc unless the *names* option is specified.
+  * *header*: Boolean flag (default `true`) to specify the presence of a header row. If `true`, indicates the CSV contains a header row with column names. If `false`, indicates the CSV does not contain a header row and the columns are given the names `'col1'`, `'col2'`, etc unless the *names* option is specified.
   * *names*: An array of column names to use for header-less CSV files. This option is ignored if the *header* option is `true`.
   * *skip*: The number of lines to skip (default `0`) before reading data.
   * *comment*: A string used to identify comment lines. Any lines that start with the comment pattern are skipped.

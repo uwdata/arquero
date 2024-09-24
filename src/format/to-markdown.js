@@ -40,16 +40,19 @@ export default function(table, options = {}) {
     + names.map(escape).join('|')
     + '|\n|'
     + names.map(name => alignValue(align[name])).join('|')
-    + '|';
+    + '|\n';
 
   scan(table, names, options.limit, options.offset, {
-    row() {
-      text += '\n|';
+    start() {
+      text += '|';
     },
     cell(value, name) {
       text += escape(formatValue(value, format[name])) + '|';
+    },
+    end() {
+      text += '\n';
     }
   });
 
-  return text + '\n';
+  return text;
 }
