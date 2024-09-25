@@ -20,6 +20,7 @@ export { default as toJSON } from './format/to-json.js';
 export { default as toMarkdown } from './format/to-markdown.js';
 export { default as bin } from './helpers/bin.js';
 export { default as escape } from './helpers/escape.js';
+export { default as collate } from './helpers/collate.js';
 export { default as desc } from './helpers/desc.js';
 export { default as field } from './helpers/field.js';
 export { default as frac } from './helpers/frac.js';

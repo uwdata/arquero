@@ -120,7 +120,7 @@ table.ungroup()
 
 Order table rows based on a set of column values. Subsequent operations sensitive to ordering (such as window functions) will operate over sorted values. The resulting table provides an view over the original data, without any copying. To create a table with sorted data copied to new data strucures, call [reify](#reify) on the result of this method. To undo ordering, use [unorder](#unorder).
 
-* *keys*: Key values to sort by, in precedence order. By default, sorting is done in ascending order. To sort in descending order, wrap values using [desc](./#desc). If a string, order by the column with that name. If a number, order by the column with that index. If a function, must be a valid table expression; aggregate functions are permitted, but window functions are not. If an object, object values must be valid values parameters with output column names for keys and table expressions for values (the output names will be ignored). If an array, array values must be valid key parameters.
+* *keys*: Key values to sort by, in precedence order. By default, sorting is done in ascending order. To sort in descending order, wrap values using [desc](./#desc). To provide a custom sort order for a key (such as for locale-specific string comparison), wrap the key value using [collate](./#collate). If a key is a string, order by the column with that name. If a number, order by the column with that index. If a function, the key must be a valid table expression; aggregate functions are permitted, but window functions are not. If an object, object values must be valid values parameters with output column names for keys and table expressions for values (the output names will be ignored). If an array, array values must be valid key parameters.
 
 *Examples*
 
@@ -136,8 +136,18 @@ table.orderby({ a: 'a', b: aq.desc('b') )})
 ```
 
 ```js
+// order by column 'a' according to German locale settings
+table.orderby(aq.collate('a', 'de'))
+```
+
+```js
 // orderby accepts table expressions as well as column names
-table.orderby(aq.desc(d => d.a))
+table.orderby(d => d.a)
+```
+
+```js
+// the configurations above can be combined
+table.orderby(aq.desc(aq.collate(d => d.a, 'de')))
 ```
 
 <hr/><a id="unorder" href="#unorder">#</a>
