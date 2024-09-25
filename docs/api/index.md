@@ -11,7 +11,7 @@ title: Arquero API Reference
   * [load](#load), [loadArrow](#loadArrow), [loadCSV](#loadCSV), [loadFixed](#loadFixed), [loadJSON](#loadJSON)
 * [Expression Helpers](#expression-helpers)
   * [op](#op), [agg](#agg), [escape](#escape)
-  * [bin](#bin), [desc](#desc), [frac](#frac), [rolling](#rolling), [seed](#seed)
+  * [bin](#bin), [collate](#collate), [desc](#desc), [frac](#frac), [rolling](#rolling), [seed](#seed)
 * [Selection Helpers](#selection-helpers)
   * [all](#all), [not](#not), [range](#range)
   * [matches](#matches), [startswith](#startswith), [endswith](#endswith)
@@ -491,6 +491,26 @@ Generate a table expression that performs uniform binning of number values. The 
  aq.bin('colA', { maxbins: 20 })
  ```
 
+<hr/><a id="collate" href="#collate">#</a>
+<em>aq</em>.<b>collate</b>(<i>expr</i>, <i>comparator</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/collate.js)
+
+Annotate a table expression with collation metadata, indicating how expression values should be compared and sorted. The [orderby](verbs#orderby) verb uses collation metadata to determine sort order. The collate helper is particularly useful for locale-specific string comparisons. The collation information can either take the form a standard two-argument comparator function, or as locale and option arguments compatible with [`Intl.Collator`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator).
+
+* *expr*: The table expression to annotate with collation metadata.
+* *comparator*: A comparator function or the locale(s) to use. For locales, both string (e.g., `'de'`, `'tr'`, etc.) and [`Intl.Locale`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale) objects (or an array with either) is supported.
+* *options*: Collation options compatible with [`Intl.Collator`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator). This argument only applies if locales are provided as the second argument.
+
+*Examples*
+
+```js
+// order colA using a German locale
+aq.collate('colA', 'de')
+```
+
+```js
+// order colA using a provided comparator function
+aq.collate('colA', new Intl.Collator('de').compare)
+```
 
 <hr/><a id="desc" href="#desc">#</a>
 <em>aq</em>.<b>desc</b>(<i>expr</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/helpers/desc.js)

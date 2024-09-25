@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import tableEqual from '../table-equal.js';
-import { desc, op, table } from '../../src/index.js';
+import { collate, desc, op, table } from '../../src/index.js';
 
 describe('orderby', () => {
   it('orders a table', () => {
@@ -21,6 +21,92 @@ describe('orderby', () => {
     assert.deepEqual(rows, [5, 4, 1, 0, 3, 2], 'orderby scan');
 
     tableEqual(dt, ordered, 'orderby data');
+  });
+
+  it('orders a table with collate comparator', () => {
+    const cmp = new Intl.Collator('tr-TR').compare;
+
+    const data = {
+      a: ['çilek', 'şeftali', 'erik', 'armut', 'üzüm', 'erik'],
+      b: [1, 2, 1, 2, 1, 2]
+    };
+
+    const dt = table(data).orderby(collate('a', cmp), desc('b'));
+
+    const rows = [];
+    dt.scan(row => rows.push(row), true);
+    assert.deepEqual(rows, [3, 0, 5, 2, 1, 4], 'orderby scan');
+
+    tableEqual(
+      dt,
+      {
+        a: ['armut', 'çilek', 'erik', 'erik', 'şeftali', 'üzüm'],
+        b: [2, 1, 2, 1, 2, 1]
+      },
+      'orderby data'
+    );
+
+    tableEqual(
+      table(data).orderby(desc(collate('a', cmp)), desc('b')),
+      {
+        a: ['üzüm', 'şeftali', 'erik', 'erik', 'çilek', 'armut'],
+        b: [1, 2, 2, 1, 1, 2]
+      },
+      'orderby data'
+    );
+  });
+
+  it('orders a table with collate locale', () => {
+    const data = {
+      a: ['çilek', 'şeftali', 'erik', 'armut', 'üzüm', 'erik'],
+      b: [1, 2, 1, 2, 1, 2]
+    };
+
+    const dt = table(data).orderby(collate('a', 'tr-TR'), desc('b'));
+
+    const rows = [];
+    dt.scan(row => rows.push(row), true);
+    assert.deepEqual(rows, [3, 0, 5, 2, 1, 4], 'orderby scan');
+
+    tableEqual(
+      dt,
+      {
+        a: ['armut', 'çilek', 'erik', 'erik', 'şeftali', 'üzüm'],
+        b: [2, 1, 2, 1, 2, 1]
+      },
+      'orderby data'
+    );
+
+    tableEqual(
+      table(data).orderby(desc(collate('a', 'tr-TR')), desc('b')),
+      {
+        a: ['üzüm', 'şeftali', 'erik', 'erik', 'çilek', 'armut'],
+        b: [1, 2, 2, 1, 1, 2]
+      },
+      'orderby data'
+    );
+  });
+
+  it('orders a table with combined annotations', () => {
+    const data = {
+      a: ['çilek', 'şeftali', 'erik', 'armut', 'üzüm', 'erik'],
+      b: [1, 2, 1, 2, 1, 2]
+    };
+
+    const dt = table(data).orderby(desc(collate(d => d.a, 'tr-TR')), 'b');
+
+    const rows = [];
+    dt.scan(row => rows.push(row), true);
+    assert.deepEqual(rows, [4, 1, 2, 5, 0, 3], 'orderby scan');
+
+    tableEqual(
+      dt,
+      {
+        a: ['üzüm', 'şeftali', 'erik', 'erik', 'çilek', 'armut'],
+        b: [1, 2, 1, 2, 1, 2]
+      },
+      'orderby data'
+    );
   });
 
   it('supports aggregate functions', () => {
