@@ -165,13 +165,13 @@ export type TableExprString = string | Stringable;
 export type Struct = Record<string, any>;
 
 /** A function defined over a table row. */
-export type TableExprFunc = (d?: Struct, $?: Params) => any;
+export type TableExprFunc = (d: Struct, $: Params) => any;
 
 /** A table expression defined over a single table. */
 export type TableExpr = TableExprFunc | TableExprString;
 
 /** A function defined over rows from two tables. */
-export type TableExprFunc2 = (a?: Struct, b?: Struct, $?: Params) => any;
+export type TableExprFunc2 = (a: Struct, b: Struct, $: Params) => any;
 
 /** A table expression defined over two tables. */
 export type TableExpr2 = TableExprFunc2 | TableExprString;
