@@ -5,7 +5,7 @@ title: Verbs \| Arquero API Reference
 
 [Top-Level](/arquero/api) | [Table](table) | [**Verbs**](verbs) | [Op Functions](op) | [Expressions](expressions) | [Extensibility](extensibility)
 
-* [Core Verbs](#verbs)
+* [Core Verbs](#core-verbs)
   * [derive](#derive)
   * [filter](#filter), [slice](#slice)
   * [groupby](#groupby), [ungroup](#ungroup)
