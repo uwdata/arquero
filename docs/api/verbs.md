@@ -6,6 +6,7 @@ title: Verbs \| Arquero API Reference
 [Top-Level](/arquero/api) | [Table](table) | [**Verbs**](verbs) | [Op Functions](op) | [Expressions](expressions) | [Extensibility](extensibility)
 
 * [Core Verbs](#core-verbs)
+  * [assign](#assign)
   * [derive](#derive)
   * [filter](#filter), [slice](#slice)
   * [groupby](#groupby), [ungroup](#ungroup)
@@ -31,6 +32,21 @@ title: Verbs \| Arquero API Reference
 <br/>
 
 ## <a id="core">Core Verbs</a>
+
+<hr/><a id="assign" href="#assign">#</a>
+<em>table</em>.<b>assign</b>(<i>...tables</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/assign.js)
+
+Create a new table with additional columns drawn from one or more input *tables*. All tables must have the same numer of rows and will be [reified](#reify) prior to assignment. In the case of repeated column names, input table columns overwrite existing columns.
+
+* *tables*: The input tables to merge.
+
+*Examples*
+
+```js
+const t1 = aq.table({ a: [1, 2], b: [3, 4] });
+const t2 = aq.table({ c: [5, 6], b: [7, 8] });
+t1.assign(t2); // { a: [1, 2], b: [7, 8], c: [5, 6] }
+```
 
 <hr/><a id="derive" href="#derive">#</a>
 <em>table</em>.<b>derive</b>(<i>values</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/derive.js)
@@ -67,7 +83,7 @@ table.filter(d => op.abs(d.value) < 5)
 ```
 
 <hr/><a id="slice" href="#slice">#</a>
-<em>table</em>.<b>slice</b>([<i>start</i>, <i>end</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>slice</b>([<i>start</i>, <i>end</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/slice.js)
 
 Extract rows with indices from *start* to *end* (*end* not included), where *start* and *end* represent per-group ordered row numbers in the table. The table row indices are determined by the current [orderby](#orderby) settings. The *start* and *end* arguments are applied separately to each group, as determined by [groupby](#groupby).
 
@@ -104,7 +120,7 @@ table.groupby({ key: d => d.colA + d.colB })
 ```
 
 <hr/><a id="ungroup" href="#ungroup">#</a>
-<em>table</em>.<b>ungroup</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/engine/ungroup.js)
+<em>table</em>.<b>ungroup</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/ungroup.js)
 
 Ungroup a table, removing any grouping criteria. Undoes the effects of [groupby](#groupby).
 
@@ -151,7 +167,7 @@ table.orderby(aq.desc(aq.collate(d => d.a, 'de')))
 ```
 
 <hr/><a id="unorder" href="#unorder">#</a>
-<em>table</em>.<b>unorder</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/engine/unorder.js)
+<em>table</em>.<b>unorder</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/unorder.js)
 
 Unorder a table, removing any sorting criteria. Undoes the effects of [orderby](#orderby).
 
@@ -180,7 +196,7 @@ table.groupby('colA').rollup({ mean: op.median('colB') })
 ```
 
 <hr/><a id="count" href="#count">#</a>
-<em>table</em>.<b>count</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>table</em>.<b>count</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/ColumnTable.js)
 
 Count the number of values in a group. This method is a shorthand for [rollup](#rollup) with a [count](op#count) aggregate function.
 
@@ -319,7 +335,7 @@ table.rename(aq.names('colA2', 'colB2'))
 
 
 <hr/><a id="reify" href="#reify">#</a>
-<em>table</em>.<b>reify</b>([<i>indices</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+<em>table</em>.<b>reify</b>([<i>indices</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Create a new fully-materialized instance of this table. All filter and orderby settings are removed from the new table. Instead, the data itself is filtered and ordered as needed to produce new backing data columns.
 
@@ -338,7 +354,7 @@ table.reify()
 ## <a id="joins">Join Verbs</a>
 
 <hr/><a id="cross" href="#cross">#</a>
-<em>table</em>.<b>cross</b>(<i>other</i>[, <i>values</i>, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/index.js)
+<em>table</em>.<b>cross</b>(<i>other</i>[, <i>values</i>, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/join.js)
 
 Produce the [Cartesian cross product](https://en.wikipedia.org/wiki/Join_%28SQL%29#Cross_join) of two tables. The output table has one row for every pair of input table rows. Beware that outputs may be quite large, as the number of output rows is the product of the input row counts. This method is a convenient shorthand for a [join](#join) in which the join criteria is always true.
 
@@ -386,7 +402,7 @@ table.join(other, (a, b) => op.equal(a.keyL, b.keyR))
 
 
 <hr/><a id="join_left" href="#join_left">#</a>
-<em>table</em>.<b>join_left</b>(<i>other</i>[, <i>on</i>, <i>values</i>, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/join.js)
+<em>table</em>.<b>join_left</b>(<i>other</i>[, <i>on</i>, <i>values</i>, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/ColumnTable.js)
 
 Perform a [left outer join](https://en.wikipedia.org/wiki/Join_%28SQL%29#Left_outer_join) on two tables. Rows in the left table that do not match a row in the right table will be preserved. This method is a convenient shorthand with fixed options `{left: true, right: false}` passed to [join](#join).
 
@@ -412,7 +428,7 @@ table.join_left(other, (a, b) => op.equal(a.keyL, b.keyR))
 
 
 <hr/><a id="join_right" href="#join_right">#</a>
-<em>table</em>.<b>join_right</b>(<i>other</i>[, <i>on</i>, <i>values</i>, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/join.js)
+<em>table</em>.<b>join_right</b>(<i>other</i>[, <i>on</i>, <i>values</i>, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/ColumnTable.js)
 
 Perform a [right outer join](https://en.wikipedia.org/wiki/Join_%28SQL%29#Right_outer_join) on two tables. Rows in the right table that do not match a row in the left table will be preserved. This method is a convenient shorthand with fixed options `{left: false, right: true}` passed to [join](#join).
 
@@ -437,7 +453,7 @@ table.join_right(other, (a, b) => op.equal(a.keyL, b.keyR))
 ```
 
 <hr/><a id="join_full" href="#join_full">#</a>
-<em>table</em>.<b>join_full</b>(<i>other</i>[, <i>on</i>, <i>values</i>, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/join.js)
+<em>table</em>.<b>join_full</b>(<i>other</i>[, <i>on</i>, <i>values</i>, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/ColumnTable.js)
 
 Perform a [full outer join](https://en.wikipedia.org/wiki/Join_%28SQL%29#Full_outer_join) on two tables. Rows in either the left or right table that do not match a row in the other will be preserved. This method is a convenient shorthand with fixed options `{left: true, right: true}` passed to [join](#join).
 
@@ -730,7 +746,7 @@ table.unroll('colA', { limit: 1000, index: 'idxnum' })
 ## <a id="sets">Set Verbs</a>
 
 <hr/><a id="concat" href="#concat">#</a>
-<em>table</em>.<b>concat</b>(<i>...tables</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/engine/concat.js)
+<em>table</em>.<b>concat</b>(<i>...tables</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/concat.js)
 
 Concatenate multiple tables into a single table, preserving all rows. This transformation mirrors the [UNION_ALL](https://en.wikipedia.org/wiki/Set_operations_%28SQL%29#UNION_operator) operation in SQL. It is similar to [union](#union) but retains all rows, without removing duplicates. Only named columns in this table are included in the output.
 

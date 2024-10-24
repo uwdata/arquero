@@ -12,7 +12,6 @@ title: Table \| Arquero API Reference
   * [params](#params)
 * [Table Transformation](#transformation)
   * [assign](#assign)
-  * [transform](#transform)
 * [Table Columns](#columns)
   * [column](#column), [columnAt](#columnAt)
   * [columnIndex](#columnIndex), [columnName](#columnName), [columnNames](#columnNames)
@@ -31,7 +30,7 @@ title: Table \| Arquero API Reference
 ## <a id="metadata">Table Metadata</a>
 
 <hr/><a id="numCols" href="#numCols">#</a>
-<em>table</em>.<b>numCols</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>numCols</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 The number of columns in this table.
 
@@ -43,7 +42,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 ```
 
 <hr/><a id="numRows" href="#numRows">#</a>
-<em>table</em>.<b>numRows</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>numRows</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 The number of active (non-filtered) rows in this table. This number may be less than the [total rows](#totalRows) if the table has been filtered.
 
@@ -61,7 +60,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 ```
 
 <hr/><a id="size" href="#size">#</a>
-<em>table</em>.<b>size</b> · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>size</b> · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 The number of active (non-filtered) rows in this table. This number is the same as [numRows()](#numRows), and may be less than the [total rows](#totalRows) if the table has been filtered.
 
@@ -79,7 +78,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 ```
 
 <hr/><a id="totalRows" href="#totalRows">#</a>
-<em>table</em>.<b>totalRows</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>totalRows</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 The total number of rows in this table, including both filtered and unfiltered rows.
 
@@ -97,7 +96,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 ```
 
 <hr/><a id="isFiltered" href="#isFiltered">#</a>
-<em>table</em>.<b>isFiltered</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>isFiltered</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Indicates if the table has a filter applied.
 
@@ -115,7 +114,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 ```
 
 <hr/><a id="isGrouped" href="#isGrouped">#</a>
-<em>table</em>.<b>isGrouped</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>isGrouped</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Indicates if the table has a groupby specification.
 
@@ -133,7 +132,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 ```
 
 <hr/><a id="isOrdered" href="#isOrdered">#</a>
-<em>table</em>.<b>isOrdered</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>isOrdered</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Indicates if the table has a row order comparator.
 
@@ -151,12 +150,12 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 ```
 
 <hr/><a id="comparator" href="#comparator">#</a>
-<em>table</em>.<b>comparator</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>comparator</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Returns the row order comparator function, if specified.
 
 <hr/><a id="groups" href="#groups">#</a>
-<em>table</em>.<b>groups</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>groups</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Returns the groupby specification, if defined. A groupby specification is an object with the following properties:
 
@@ -167,12 +166,12 @@ Returns the groupby specification, if defined. A groupby specification is an obj
 * *keys*: Per-row group indices for every row in the table.
 
 <hr/><a id="mask" href="#mask">#</a>
-<em>table</em>.<b>mask</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>mask</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Returns the bitset mask for filtered rows, or null if there is no filter.
 
 <hr/><a id="params" href="#params">#</a>
-<em>table</em>.<b>params</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/transformable.js)
+<em>table</em>.<b>params</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Get or set table expression parameter values. If called with no arguments, returns the current parameter values as an object. Otherwise, adds the provided parameters to this table's parameter set and returns the table. Any prior parameters with names matching the input parameters are overridden.
 
@@ -186,52 +185,12 @@ Also see the [`escape()` expression helper](./#escape) for a lightweight alterna
 table.params({ hi: 5 }).filter((d, $) => abs(d.value) < $.hi)
 ```
 
-
-<br/>
-
-## <a id="transformation">Table Transformation</a>
-
-For a variety of additional transformations, see the [Verbs API Reference](verbs).
-
-<hr/><a id="assign" href="#assign">#</a>
-<em>table</em>.<b>assign</b>(<i>...tables</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
-
-Create a new table with additional columns drawn from one or more input *tables*. All tables must have the same numer of rows and will be [reified](verbs/#reify) prior to assignment. In the case of repeated column names, input table columns overwrite existing columns.
-
-* *tables*: The input tables to merge.
-
-*Examples*
-
-```js
-const t1 = aq.table({ a: [1, 2], b: [3, 4] });
-const t2 = aq.table({ c: [5, 6], b: [7, 8] });
-t1.assign(t2); // { a: [1, 2], b: [7, 8], c: [5, 6] }
-```
-
-<hr/><a id="transform" href="#transform">#</a>
-<em>table</em>.<b>transform</b>(<i>...transforms</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
-
-Apply a sequence of transformations to this table. The output of each transform is passed as input to the next transform, and the output of the last transform is then returned. This method provides a lightweight mechanism for applying custom transformations to a table.
-
-* *transforms*: Transformation functions to apply to the table in sequence. Each function should take a single table as input and return a table as output.
-
-*Examples*
-
-```js
-aq.table({ a: [1, 2], b: [3, 4] })
-  .transform(
-    table => table.filter(d => d.b > 3),
-    table => table.select('a')
-  ) // { a: [2] }
-```
-
-
 <br/>
 
 ## <a id="columns">Table Columns</a>
 
 <hr/><a id="column" href="#column">#</a>
-<em>table</em>.<b>column</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+<em>table</em>.<b>column</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Get the column instance with the given *name*, or `undefined` if does not exist. The returned column object provides a lightweight abstraction over the column storage (such as a backing array), providing a *length* property and *get(row)* method.
 
@@ -247,7 +206,7 @@ dt.column('b').get(1) // 5
 ```
 
 <hr/><a id="columnAt" href="#columnAt">#</a>
-<em>table</em>.<b>columnAt</b>(<i>index</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+<em>table</em>.<b>columnAt</b>(<i>index</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Get the column instance at the given index position, or `undefined` if does not exist. The returned column object provides a lightweight abstraction over the column storage (such as a backing array), providing a *length* property and *get(row)* method.
 
@@ -261,7 +220,7 @@ dt.columnAt(1).get(1) // 5
 ```
 
 <hr/><a id="columnIndex" href="#columnIndex">#</a>
-<em>table</em>.<b>columnIndex</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>columnIndex</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 The column index for the given name, or `-1` if the name is not found.
 
@@ -275,7 +234,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 ```
 
 <hr/><a id="columnName" href="#columnName">#</a>
-<em>table</em>.<b>columnName</b>(<i>index</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>columnName</b>(<i>index</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 The column name at the given index, or `undefined` if the index is out of range.
 
@@ -289,7 +248,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 ```
 
 <hr/><a id="columnNames" href="#columnNames">#</a>
-<em>table</em>.<b>columnNames</b>([<i>filter</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>columnNames</b>([<i>filter</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Returns an array of table column names, optionally filtered.
 
@@ -311,7 +270,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 ## <a id="table-values">Table Values</a>
 
 <hr/><a id="array" href="#array">#</a>
-<em>table</em>.<b>array</b>(<i>name</i>[, <i>constructor</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+<em>table</em>.<b>array</b>(<i>name</i>[, <i>constructor</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Get an array of values contained in the column with the given *name*. Unlike direct access through the table [column](#column) method, the array returned by this method respects any table filter or orderby criteria. By default, a standard [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) is returned; use the *constructor* argument to specify a [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray).
 
@@ -337,7 +296,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] })
 ```
 
 <hr/><a id="values" href="#values">#</a>
-<em>table</em>.<b>values</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>values</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Returns an iterator over values in the column with the given *name*. The iterator returned by this method respects any table filter or orderby criteria.
 
@@ -357,12 +316,12 @@ const colValues = Array.from(table.values('colA'));
 ```
 
 <hr/><a id="data" href="#data">#</a>
-<em>table</em>.<b>data</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>data</b>() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Returns the internal table storage data structure: an object with column names for keys and column arrays for values. This method returns the same structure used by the Table (not a copy) and its contents should not be modified.
 
 <hr/><a id="get" href="#get">#</a>
-<em>table</em>.<b>get</b>(<i>name</i>[, <i>row</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+<em>table</em>.<b>get</b>(<i>name</i>[, <i>row</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Get the value for the given column and row. Row indices are relative to any filtering and ordering criteria, not the internal data layout.
 
@@ -385,7 +344,7 @@ dt.get('a', 2) // 1
 ```
 
 <hr/><a id="getter" href="#getter">#</a>
-<em>table</em>.<b>getter</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+<em>table</em>.<b>getter</b>(<i>name</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Returns an accessor ("getter") function for a column. The returned function takes a row index as its single argument and returns the corresponding column value. Row indices are relative to any filtering and ordering criteria, not the internal data layout.
 
@@ -408,21 +367,21 @@ get(2) // 1
 ```
 
 <hr/><a id="indices" href="#indices">#</a>
-<em>table</em>.<b>indices</b>([<i>order</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>indices</b>([<i>order</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Returns an array of indices for all rows passing the table filter.
 
 * *order*: A boolean flag (default `true`) indicating if the returned indices should be sorted if this table is ordered. If `false`, the returned indices may or may not be sorted.
 
 <hr/><a id="partitions" href="#partitions">#</a>
-<em>table</em>.<b>partitions</b>([<i>order</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>partitions</b>([<i>order</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Returns an array of indices for each group in the table. If the table is not grouped, the result is the same as [indices](#indices), but wrapped within an array. Otherwise returns an array of row index arrays, one per group. The indices will be filtered if the table has been filtered.
 
 * *order*: A boolean flag (default `true`) indicating if the returned indices should be sorted if this table is ordered. If `false`, the returned indices may or may not be sorted.
 
 <hr/><a id="scan" href="#scan">#</a>
-<em>table</em>.<b>scan</b>(<i>callback</i>[, <i>order</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>scan</b>(<i>callback</i>[, <i>order</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Perform a table scan, invoking the provided *callback* function for each row of the table. If this table is filtered, only rows passing the filter are visited.
 
@@ -438,7 +397,7 @@ Perform a table scan, invoking the provided *callback* function for each row of 
 ## <a id="output">Table Output</a>
 
 <hr/><a id="objects" href="#objects">#</a>
-<em>table</em>.<b>objects</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+<em>table</em>.<b>objects</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Returns an array of objects representing table rows. A new set of objects will be created, copying the backing table data.
 
@@ -466,7 +425,7 @@ aq.table({ k: ['a', 'b', 'a'], v: [1, 2, 3] })
 ```
 
 <hr/><a id="object" href="#object">#</a>
-<em>table</em>.<b>object</b>([<i>row</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+<em>table</em>.<b>object</b>([<i>row</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Returns an object representing a single table row. The *row* index is relative to any filtering and ordering criteria, not the internal data layout. If the *row* index is not specified, the first row in the table (index `0`) is returned.
 
@@ -483,7 +442,7 @@ const { min, max } = aq.table({ v: [1, 2, 3] })
 ```
 
 <hr/><a id="@@iterator" href="#@@iterator">#</a>
-<em>table</em>\[<b>Symbol.iterator</b>\]() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/column-table.js)
+<em>table</em>\[<b>Symbol.iterator</b>\]() · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Returns an iterator over generated row objects. Similar to the [objects](#objects) method, this method generates new row object instances; however, rather than returning an array, this method provides an iterator over row objects for each non-filtered row in the table.
 
@@ -501,7 +460,7 @@ const objects = [...table];
 ```
 
 <hr/><a id="print" href="#print">#</a>
-<em>table</em>.<b>print</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/table.js)
+<em>table</em>.<b>print</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/Table.js)
 
 Print the contents of this table using the `console.table()` method.
 
@@ -571,7 +530,7 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toMarkdown()
 ```
 
 <hr/><a id="toArrow" href="#toArrow">#</a>
-<em>table</em>.<b>toArrow</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/encode/index.js)
+<em>table</em>.<b>toArrow</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-arrow.js)
 
 Format this table as an [Apache Arrow](https://arrow.apache.org/overview/) table instance using [Flechette](https://idl.uw.edu/flechette/). This method will throw an error if type inference fails or if the generated columns have differing lengths.
 
@@ -614,7 +573,7 @@ const at2 = dt.toArrow({
 ```
 
 <hr/><a id="toArrowIPC" href="#toArrowIPC">#</a>
-<em>table</em>.<b>toArrowBuffer</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/arrow/encode/index.js)
+<em>table</em>.<b>toArrowIPC</b>([<i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/to-arrow-ipc.js)
 
 Format this table as binary data in the [Apache Arrow](https://arrow.apache.org/overview/) IPC format using [Flechette](https://idl.uw.edu/flechette/). The binary data may be saved to disk or passed between processes or tools. For example, when using [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers), the output of this method can be passed directly between threads (no data copy) as a [Transferable](https://developer.mozilla.org/en-US/docs/Web/API/Transferable) object. Additionally, Arrow binary data can be loaded in other language environments such as [Python](https://arrow.apache.org/docs/python/) or [R](https://arrow.apache.org/docs/r/).
 
