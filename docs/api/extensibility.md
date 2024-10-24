@@ -10,11 +10,6 @@ title: Extensibility \| Arquero API Reference
   * [addAggregateFunction](#addAggregateFunction)
   * [addWindowFunction](#addWindowFunction)
 * [Table Methods](#table-methods)
-  * [addTableMethod](#addTableMethod)
-  * [addVerb](#addVerb)
-* [Package Bundles](#packages)
-  * [addPackage](#addPackage)
-* [Table Methods](#table-methods)
 
 <br/>
 
@@ -23,7 +18,7 @@ title: Extensibility \| Arquero API Reference
 Add new functions for use in table expressions.
 
 <hr/><a id="addFunction" href="#addFunction">#</a>
-<em>aq</em>.<b>addFunction</b>([<i>name</i>,] <i>fn</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/register.js)
+<em>aq</em>.<b>addFunction</b>([<i>name</i>,] <i>fn</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/register.js)
 
 Register a function for use within table expressions. If only a single argument is provided, it will be assumed to be a function and the system will try to extract its name. Throws an error if a function with the same name is already registered and the override option is not specified, or if no name is provided and the input function is anonymous. After registration, the function will be accessible via the [`op`](#op) object.
 
@@ -54,7 +49,7 @@ aq.addFunction(function square(x) { return x * x; });
 
 
 <hr/><a id="addAggregateFunction" href="#addAggregateFunction">#</a>
-<em>aq</em>.<b>addAggregateFunction</b>(<i>name</i>, <i>def</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/register.js)
+<em>aq</em>.<b>addAggregateFunction</b>(<i>name</i>, <i>def</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/register.js)
 
 Register a custom aggregate function. Throws an error if a function with the same name is already registered and the override option is not specified. After registration, the operator will be accessible via the [`op`](#op) object.
 
@@ -92,7 +87,7 @@ aq.table({ x: [1, 2, 3] })
 
 
 <hr/><a id="addWindowFunction" href="#addWindowFunction">#</a>
-<em>aq</em>.<b>addWindowFunction</b>(<i>name</i>, <i>def</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/register.js)
+<em>aq</em>.<b>addWindowFunction</b>(<i>name</i>, <i>def</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/op/register.js)
 
 Register a custom window function. Throws an error if a function with the same name is already registered and the override option is not specified. After registration, the operator will be accessible via the [`op`](#op) object.
 
