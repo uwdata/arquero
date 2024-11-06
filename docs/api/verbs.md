@@ -478,13 +478,13 @@ table.join_full(other, (a, b) => op.equal(a.keyL, b.keyR))
 ```
 
 <hr/><a id="lookup" href="#lookup">#</a>
-<em>table</em>.<b>lookup</b>(<i>other</i>, <i>on</i>, <i>...values</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/lookup.js)
+<em>table</em>.<b>lookup</b>(<i>other</i>[, <i>on</i>, <i>...values</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/verbs/lookup.js)
 
-Lookup values from a secondary table and add them as new columns. A lookup occurs upon matching key values for rows in both tables. If the secondary table has multiple rows with the same key, only the last observed instance will be considered in the lookup. Lookup is similar to [join_left](#join_left), but with a streamlined syntax and the added constraint of allowing at most one match only.
+Lookup values from a secondary table (*other*) and add them as new columns. A lookup occurs upon matching key values for rows in both tables. If the secondary table has multiple rows with the same key, only the last observed instance will be considered in the lookup. Lookup is similar to [join_left](#join_left), but with a streamlined syntax and the added constraint of allowing at most one match only.
 
 * *other*: The secondary table to look up values from.
-* *on*: A two-element array of lookup keys (column name strings or table expressions) for this table and the secondary table, respectively.
-* *values*: The column values to add from the secondary table. Can be column name strings or objects with column names as keys and table expressions as values.
+* *on*: A lookup key or two-element array of lookup keys (column name strings or table expressions) for this table and the secondary table, respectively. If a single key value is provided, it is used as the lookup key for both tables. If unspecified, all columns with matching names are compared.
+* *values*: The column values to add from the secondary table. Can be column name strings or objects with column names as keys and table expressions as values. If unspecified, includes all columns from the secondary table whose names do no match any column in the primary table.
 
 *Example*
 
