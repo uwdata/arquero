@@ -451,11 +451,13 @@ export class ColumnTable extends Table {
    *  The secondary table to look up values from.
    * @param {import('./types.js').JoinKeys} [on]
    *  Lookup keys (column name strings or table expressions) for this table
-   *  and the secondary table, respectively.
-   * @param {...import('./types.js').ExprList} values
+   *  and the secondary table, respectively. If unspecified, the values of
+   *  all columns with matching names are compared.
+   * @param {...import('./types.js').ExprList} [values]
    *  The column values to add from the secondary table. Can be column name
    *  strings or objects with column names as keys and table expressions as
-   *  values.
+   *  values. If unspecified, includes all columns from the secondary table
+   *  whose names do no match any column in the primary table.
    * @return {this} A new table with lookup values added.
    * @example table.lookup(other, ['key1', 'key2'], 'value1', 'value2')
    */
