@@ -45,6 +45,13 @@ describe('parseJSON', () => {
     assert.deepEqual(table.columnNames(), names(), 'column names');
   });
 
+  it('parses JSON columns with selected column names', async () => {
+    const table = await parseJSON(colText, { columns: ['str', 'int']});
+    const { str, int } = cols();
+    tableEqual(table, { str, int }, 'json columns projected');
+    assert.deepEqual(table.columnNames(), ['str', 'int'], 'column names');
+  });
+
   it('parses JSON rows from text', async () => {
     const table = await parseJSON(rowText);
     tableEqual(table, cols(), 'json rows parsed data');
@@ -57,16 +64,30 @@ describe('parseJSON', () => {
     assert.deepEqual(table.columnNames(), names(), 'column names');
   });
 
-  it('parses JSON with custom parser', async () => {
-    const table = await parseJSON(rowText, { parse: { str: d => d + d } });
-    const d = { ...cols(), str: ['aa', 'bb', 'cc'] };
-    tableEqual(table, d, 'json parsed data with custom parser');
-    assert.deepEqual(table.columnNames(), names(), 'column names');
+  it('parses JSON rows with selected column names', async () => {
+    const table = await parseJSON(rowText, { columns: ['str', 'int']});
+    const { str, int } = cols();
+    tableEqual(table, { str, int }, 'json rows projected');
+    assert.deepEqual(table.columnNames(), ['str', 'int'], 'column names');
   });
 
   it('parses newline-delimited JSON', async () => {
     const table = await parseJSON(lines.join('\n'), { type: 'ndjson' });
     tableEqual(table, cols(), 'ndjson parsed data');
+    assert.deepEqual(table.columnNames(), names(), 'column names');
+  });
+
+  it('parses newline-delimited JSON rows with selected column names', async () => {
+    const table = await parseJSON(lines.join('\n'), { type: 'ndjson', columns: ['str', 'int']});
+    const { str, int } = cols();
+    tableEqual(table, { str, int }, 'ndjson projected');
+    assert.deepEqual(table.columnNames(), ['str', 'int'], 'column names');
+  });
+
+  it('parses JSON with custom parser', async () => {
+    const table = await parseJSON(rowText, { parse: { str: d => d + d } });
+    const d = { ...cols(), str: ['aa', 'bb', 'cc'] };
+    tableEqual(table, d, 'json parsed data with custom parser');
     assert.deepEqual(table.columnNames(), names(), 'column names');
   });
 

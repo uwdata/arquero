@@ -29,7 +29,7 @@ import { toTextStream } from './util/to-text-stream.js';
  * @property {Object.<string, (value: any) => any>} [parse] Object of column
  *  parsing options. The object keys should be column names. The object values
  *  should be parsing functions that transform values upon input.
- * @property {string[]} [names] An array of column names to include. JSON
+ * @property {string[]} [columns] An array of column names to include. JSON
  *  properties missing from this list are not included in the table.
  * @property {number} [skip=0] The number of lines to skip before reading data.
  *  Applicable to newline-delimited (NDJSON) data only.
@@ -71,7 +71,7 @@ export async function loadJSON(path, options) {
  *  parsed values.
  */
 export async function parseJSON(input, options = {}) {
-  const { type = undefined, names = undefined } = options;
+  const { type = undefined, columns = undefined } = options;
 
   let data;
   if (type === NDJSON) {
@@ -79,8 +79,8 @@ export async function parseJSON(input, options = {}) {
   } else {
     const json = await collectJSON(input);
     data = (type === COLUMNS || (!type && !isArray(json)))
-      ? parseJSONColumns(json, names)
-      : parseJSONRows(json, names);
+      ? parseJSONColumns(json, columns)
+      : parseJSONRows(json, columns);
   }
   return postprocessJSON(data.columns, data.names, options);
 }
@@ -142,11 +142,11 @@ function parseJSONRows(data, names) {
 function parseNDJSON(input, {
   skip = 0,
   comment = undefined,
-  names = undefined
+  columns = undefined
 } = {}) {
   return readNDJSON(
     pipeline(input, [new TextLineStream(), lineFilter(skip, comment)]),
-    names
+    columns
   );
 }
 
