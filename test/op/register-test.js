@@ -10,7 +10,7 @@ import {
   addFunction,
   addWindowFunction
 } from '../../src/op/register.js';
-import { op, table } from '../../src/index-browser.js';
+import { op, table } from '../../src/index.js';
 
 describe('register', () => {
   it('addFunction registers new function', () => {

@@ -1,14 +1,14 @@
 import assert from 'node:assert';
-import { readFileSync } from 'node:fs';
 import {
   Type, bool, columnFromArray, dateDay, dateMillisecond, dictionary,
   fixedSizeList, float32, float64, int16, int32, int64, int8, list, struct,
   tableFromColumns, tableFromIPC, tableToIPC, uint16, uint32, uint64, uint8,
   utf8
 } from '@uwdata/flechette';
-import {
-  fromArrow, fromCSV, fromJSON, table, toArrow, toJSON
-} from '../../src/index.js';
+import { readArrow } from '../../src/format/parse-arrow.js';
+import { loadCSV } from '../../src/format/parse-csv.js';
+import { parseJSON } from '../../src/format/parse-json.js';
+import { table, toArrow, toJSON } from '../../src/index.js';
 
 function date(year, month=0, date=1, hours=0, minutes=0, seconds=0, ms=0) {
   return new Date(year, month, date, hours, minutes, seconds, ms);
@@ -113,7 +113,7 @@ function valueTest(type, values, msg) {
 }
 
 describe('toArrow', () => {
-  it('produces Arrow data for an input table', () => {
+  it('produces Arrow data for an input table', async () => {
     const dt = table({
       i: [1, 2, 3, undefined, 4, 5],
       f: Float32Array.from([1.2, 2.3, 3.0, 3.4, -1.3, 4.5]),
@@ -145,13 +145,13 @@ describe('toArrow', () => {
     );
 
     assert.equal(
-      compareTables(fromArrow(bt), at), 0,
+      compareTables(readArrow(bt), at), 0,
       'serialized arquero and arrow tables match'
     );
   });
 
   it('produces Arrow data for an input CSV', async () => {
-    const dt = fromCSV(readFileSync('test/format/data/beers.csv', 'utf8'));
+    const dt = await loadCSV('test/format/data/beers.csv');
     const st = dt.derive({ name: d => d.name + '' });
     const at = toArrow(dt);
 
@@ -168,7 +168,7 @@ describe('toArrow', () => {
     );
 
     assert.equal(
-      compareTables(fromArrow(tableFromIPC(buffer)), at), 0,
+      compareTables(readArrow(tableFromIPC(buffer)), at), 0,
       'serialized arquero and arrow tables match'
     );
   });
@@ -182,7 +182,7 @@ describe('toArrow', () => {
     // create an arrow table with multiple record batches
     // then derive a new table
     const at0 = toArrow(dt0, { maxBatchRows: 4 });
-    const dt = fromArrow(at0).derive({ sum: d => d.i + d.f });
+    const dt = readArrow(at0).derive({ sum: d => d.i + d.f });
     const at = toArrow(dt);
 
     assert.equal(
@@ -199,7 +199,7 @@ describe('toArrow', () => {
     );
 
     assert.equal(
-      compareTables(fromArrow(bt), at), 0,
+      compareTables(readArrow(bt), at), 0,
       'serialized arquero and arrow tables match'
     );
   });
@@ -213,7 +213,7 @@ describe('toArrow', () => {
     // create an arrow table with multiple record batches
     // then derive a new table
     const at0 = toArrow(dt0, { maxBatchRows: 4 });
-    const dt = fromArrow(at0)
+    const dt = readArrow(at0)
       .derive({ sum: d => d.i + d.f })
       .filter(d => d.i % 2 === 0);
     const at = toArrow(dt);
@@ -232,7 +232,7 @@ describe('toArrow', () => {
     );
 
     assert.equal(
-      compareTables(fromArrow(bt), at), 0,
+      compareTables(readArrow(bt), at), 0,
       'serialized arquero and arrow tables match'
     );
   });
@@ -249,15 +249,15 @@ describe('toArrow', () => {
     );
   });
 
-  it('result produces serialized arrow data', () => {
-    const dt = fromCSV(readFileSync('test/format/data/beers.csv', 'utf8'))
+  it('result produces serialized arrow data', async () => {
+    const dt = (await loadCSV('test/format/data/beers.csv'))
       .derive({ name: d => d.name + '' });
 
     const json = toJSON(dt);
-    const jt = fromJSON(json);
+    const jt = await parseJSON(json);
 
     const bytes = tableToIPC(toArrow(dt));
-    const bt = fromArrow(tableFromIPC(bytes));
+    const bt = readArrow(tableFromIPC(bytes));
 
     assert.deepEqual(
       [toJSON(bt), toJSON(jt)],

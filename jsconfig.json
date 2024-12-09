@@ -1,12 +1,10 @@
 {
   "include": ["src/**/*"],
   "compilerOptions": {
-    "allowJs": true,
     "checkJs": true,
     "noEmit": true,
-    "module": "node16",
-    "moduleResolution": "node16",
-    "target": "es2022",
+    "noImplicitAny": false,
+    "module": "nodenext",
     "skipLibCheck": true
   }
 }

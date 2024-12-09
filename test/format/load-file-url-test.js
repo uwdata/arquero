@@ -1,10 +1,10 @@
 import assert from 'node:assert';
-import { load, loadArrow, loadCSV, loadJSON } from '../../src/index.js';
+import { loadArrow, loadCSV, loadJSON } from '../../src/index.js';
 
 describe('load file url', () => {
   it('loads from a URL', async () => {
     const url = 'https://vega.github.io/vega-datasets/data/airports.csv';
-    const dt = await load(url);
+    const dt = await loadCSV(url);
     assert.deepEqual([dt.numRows(), dt.numCols()], [3376, 7], 'load table');
   });
 
@@ -28,7 +28,7 @@ describe('load file url', () => {
 
   it('fails on non-existent path', async () => {
     try {
-      await load('https://foo.bar.test/does.not.exist');
+      await loadCSV('https://foo.bar.test/does.not.exist');
       assert.fail('did not fail');
     } catch (err) { // eslint-disable-line no-unused-vars
       assert.ok(true, 'failed appropriately');
@@ -37,7 +37,7 @@ describe('load file url', () => {
 
   it('fails on invalid protocol', async () => {
     try {
-      await load('htsp://vega.github.io/vega-datasets/data/airports.csv');
+      await loadCSV('htsp://vega.github.io/vega-datasets/data/airports.csv');
       assert.fail('did not fail');
     } catch (err) { // eslint-disable-line no-unused-vars
       assert.ok(true, 'failed appropriately');

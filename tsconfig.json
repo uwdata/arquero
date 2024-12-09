@@ -1,13 +1,13 @@
 {
-  "include": ["src/index-browser.js", "src/index.js"],
+  "include": ["src/index.js"],
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
     "declaration": true,
     "emitDeclarationOnly": true,
     "esModuleInterop": true,
-    "module": "node16",
-    "moduleResolution": "node16",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "outDir": "dist/types",
     "target": "es2022",
     "skipLibCheck": true

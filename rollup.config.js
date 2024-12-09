@@ -5,12 +5,12 @@ import terser from '@rollup/plugin-terser';
 const name = 'aq';
 const plugins = [
   bundleSize(),
-  nodeResolve({ modulesOnly: true })
+  nodeResolve({ browser: true, modulesOnly: true })
 ];
 
 export default [
   {
-    input: 'src/index-browser.js',
+    input: 'src/index.js',
     plugins,
     output: [
       {

@@ -1,5 +1,12 @@
-import fromTextRows from './from-text-rows.js';
-import parseDelimited from './parse/parse-delimited.js';
+import error from '../util/error.js';
+import isString from '../util/is-string.js';
+import { ColumnTable } from '../table/ColumnTable.js';
+import { DelimitedTextStream } from './util/delimited-text-stream.js';
+import { lineFilter } from './util/line-filter-stream.js';
+import { parseTextRows } from './util/parse-text-rows.js';
+import { pipeline } from './util/pipeline.js';
+import { textStream } from './util/text-stream.js';
+import { toTextStream } from './util/to-text-stream.js';
 
 /**
  * Options for CSV parsing.
@@ -24,6 +31,19 @@ import parseDelimited from './parse/parse-delimited.js';
  */
 
 /**
+ * Load a CSV file from a URL and return a Promise for an Arquero table.
+ * @param {string} path The URL or file path to load.
+ * @param {import('./types.js').LoadOptions & CSVParseOptions} [options]
+ *  CSV parse options.
+ * @return {Promise<ColumnTable>} A Promise to an Arquero table.
+ * @example aq.loadCSV('data/table.csv')
+ * @example aq.loadTSV('data/table.tsv', { delimiter: '\t' })
+ */
+export async function loadCSV(path, options) {
+ return parseCSV(await textStream(path, options), options);
+}
+
+/**
  * Parse a comma-separated values (CSV) string into a table. Other
  * delimiters, such as tabs or pipes ('|'), can be specified using
  * the options argument. By default, automatic type inference is performed
@@ -31,16 +51,29 @@ import parseDelimited from './parse/parse-delimited.js';
  * date format are parsed into JavaScript Date objects. To disable this
  * behavior, set the autoType option to false. To perform custom parsing
  * of input column values, use the parse option.
- * @param {string} text A string in a delimited-value format.
+ * @param {ReadableStream<string> | string} input The input text or stream.
  * @param {CSVParseOptions} [options] The formatting options.
- * @return {import('../table/ColumnTable.js').ColumnTable} A new table
- *  containing the parsed values.
+ * @return {Promise<ColumnTable>} A Promise to an Arquero table.
  */
-export default function(text, options = {}) {
-  const next = parseDelimited(text, options);
-  return fromTextRows(
-    next,
-    options.header !== false ? next() : options.names,
+export async function parseCSV(input, options) {
+  const stream = isString(input) ? toTextStream(input)
+    : input instanceof ReadableStream ? input
+    : error('parseCSV input must be a string or ReadableStream');
+  const { columns, names } = await streamCSV(stream, options);
+  return new ColumnTable(columns, names);
+}
+
+function streamCSV(input, {
+  delimiter = ',',
+  skip = 0,
+  comment = undefined,
+  ...options
+} = {}) {
+  return parseTextRows(
+    pipeline(input, [
+      new DelimitedTextStream(delimiter),
+      lineFilter(skip, comment, row => row[0])
+    ]),
     options
   );
 }

@@ -20,7 +20,7 @@
   "jsdelivr": "./dist/arquero.min.js",
   "types": "./dist/types/index.d.ts",
   "browser": {
-    "./src/index.js": "./src/index-browser.js"
+    "./src/format/util/byte-stream.js": "./src/format/util/byte-stream-web.js"
   },
   "repository": {
     "type": "git",
@@ -38,8 +38,7 @@
   },
   "dependencies": {
     "@uwdata/flechette": "^1.1.2",
-    "acorn": "^8.14.0",
-    "node-fetch": "^3.3.2"
+    "acorn": "^8.14.0"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.0",

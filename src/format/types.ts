@@ -2,6 +2,22 @@ import { ExtractionOptions, TableBuilderOptions } from '@uwdata/flechette';
 import type { ColumnType, Select } from '../table/types.js';
 import { ColumnSelectOptions } from './util.js';
 
+/**
+ * Options for loading data from files or URLs.
+ */
+export interface LoadOptions {
+  /**
+   * Options to pass to the HTTP fetch method when loading a URL.
+   */
+  fetch?: RequestInit;
+  /**
+   * Decompression format to apply. If unspecified, the decompression type
+   * isinferred from the file extenstion (.gz or .zz). If no matching extension
+   * is found, then no decompression is performed.
+   */
+  decompress?: 'gzip' | 'deflate' | null;
+}
+
 /** Arrow input data as bytes or loaded table. */
 export type ArrowInput =
   | ArrayBuffer
@@ -47,7 +63,7 @@ export interface ArrowTable {
   getChildAt(index: number): ArrowColumn<any>;
 }
 
-/** Options for Apache Arrow import. */
+/** Options for Arrow import. */
 export interface ArrowOptions extends ExtractionOptions {
   /**
    * An ordered set of columns to import. The input may consist of column name
@@ -66,7 +82,9 @@ export interface ArrowFormatOptions extends TableBuilderOptions {
    * column name strings. If unspecified all columns are included.
    */
   columns?: ColumnSelectOptions;
-  /** The maximum number of rows to include (default `Infinity`). */
+  /**
+   * The maximum number of rows to include (default `Infinity`).
+   */
   limit?: number;
   /**
    * The row offset (default `0`) indicating how many initial rows to skip.
