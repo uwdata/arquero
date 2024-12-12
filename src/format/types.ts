@@ -12,8 +12,8 @@ export interface LoadOptions {
   fetch?: RequestInit;
   /**
    * Decompression format to apply. If unspecified, the decompression type
-   * isinferred from the file extenstion (.gz or .zz). If no matching extension
-   * is found, then no decompression is performed.
+   * is inferred from the file extension (.gz or .zz). If no matching extension
+   * is found, no decompression is performed.
    */
   decompress?: 'gzip' | 'deflate' | null;
 }

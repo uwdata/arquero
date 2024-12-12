@@ -595,7 +595,7 @@ const dt = table({
 });
 
 // encode table as a transferable Arrow byte buffer
-// here, infers Uint8 for 'x' and Float64 for 'y'
+// here, infers int8 for 'x' and float64 for 'y'
 const bytes = dt.toArrowIPC();
 ```
 
@@ -626,22 +626,57 @@ aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toCSV()
 Format this table as a JavaScript Object Notation (JSON) string compatible with the [fromJSON](/#fromJSON) method.
 
 * *options*: A formatting options object:
-  * *limit*: The maximum number of rows to print (default `Infinity`).
-  * *offset*: The row offset indicating how many initial rows to skip (default `0`).
-  * *schema*: Boolean flag (default `true`) indicating if table schema metadata should be included in the JSON output. If `false`, only the data payload is included.
-  * *columns*: Ordered list of column names to print. If function-valued, the function should accept a table as input and return an array of column name strings. Otherwise, should be an array of name strings.
-  * *format*: Object of column format options. The object keys should be column names. The object values should be formatting functions that transform column values prior to output. If specified, a formatting function overrides any automatically inferred options.
+  * *type* (`'columns' | 'rows' | 'ndjson' | null`): The JSON format type. One of `'columns'` (for an object with named column arrays)`, 'rows'` (for an array for row objects), or `'ndjson'` for [newline-delimited JSON](https://github.com/ndjson/ndjson-spec) rows. For `'ndjson'`, each line of text will contain a JSON row object (with no trailing comma) and string properties will be stripped of any newline characters. If no format type is specified, defaults to `'rows'`.
+  * *limit* (`number`): The maximum number of rows to print (default `Infinity`).
+  * *offset* (`number`): The row offset indicating how many initial rows to skip (default `0`).
+  * *columns* (`string[] | function`): Ordered list of column names to include. If function-valued, the function should accept a table as input and return an array of column name strings. Otherwise, should be an array of name strings.
+  * *format* (`Record<string, function>`): Object of column format options. The object keys should be column names. The object values should be formatting functions that transform column values prior to output. If specified, a formatting function overrides any automatically inferred options.
+
+*JSON Format Types*
+
+`'columns'`: column-oriented JSON as an object-of-arrays.
+
+```json
+{
+  "colA": ["a", "b", "c"],
+  "colB": [1, 2, 3]
+}
+```
+
+`'rows'`: row-oriented JSON as an array-of-objects.
+
+```json
+[
+  {"colA": "a", "colB": 1},
+  {"colA": "b", "colB": 2},
+  {"colA": "c", "colB": 3}
+]
+```
+
+`'ndjson'`: newline-delimited JSON as individual objects separated by newline.
+
+```json
+{"colA": "a", "colB": 1}
+{"colA": "b", "colB": 2}
+{"colA": "c", "colB": 3}
+```
 
 *Examples*
 
 ```js
-// serialize a table as a JSON string with schema metadata
+// serialize a table as a row-oriented JSON string
 aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toJSON()
-// '{"schema":{"fields":[{"name":"a"},{"name":"b"}]},"data":{"a":[1,2,3],"b":[4,5,6]}}'
+// '[{"a":1,"b":4},{"a":2,"b":5},{"a":3,"b":6}]'
 ```
 
 ```js
-// serialize a table as a JSON string without schema metadata
-aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toJSON({ schema: false })
+// serialize a table as a column-oriented JSON string
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toJSON({ type: 'columns' })
 // '{"a":[1,2,3],"b":[4,5,6]}'
+```
+
+```js
+// serialize a table as a newline-delimited JSON string
+aq.table({ a: [1, 2, 3], b: [4, 5, 6] }).toJSON({ type: 'ndjson' })
+// '{"a":1,"b":4}\n{"a":2,"b":5}\n{"a":3,"b":6}'
 ```

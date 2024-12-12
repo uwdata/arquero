@@ -25,7 +25,7 @@ import { toTextStream } from './util/to-text-stream.js';
  * @property {boolean} [autoType=true] Flag for automatic type inference.
  * @property {number} [autoMax=1000] Maximum number of initial values to use
  *  for type inference.
- * @property {Object.<string, (value: string) => any>} [parse] Object of
+ * @property {Record<string, (value: string) => any>} [parse] Object of
  *  column parsing options. The object keys should be column names. The object
  *  values should be parsing functions that transform values upon input.
  */

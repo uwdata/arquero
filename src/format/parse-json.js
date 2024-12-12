@@ -26,7 +26,7 @@ import { toTextStream } from './util/to-text-stream.js';
  * @property {boolean} [autoType=true] Flag controlling automatic type
  *  inference for column values. If false, date parsing for input JSON
  *  strings is disabled.
- * @property {Object.<string, (value: any) => any>} [parse] Object of column
+ * @property {Record<string, (value: any) => any>} [parse] Object of column
  *  parsing options. The object keys should be column names. The object values
  *  should be parsing functions that transform values upon input.
  * @property {string[]} [columns] An array of column names to include. JSON
