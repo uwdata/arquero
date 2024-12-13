@@ -1,13 +1,13 @@
 import { not } from '../helpers/selection.js';
 import { columnSet } from '../table/ColumnSet.js';
-import concat from '../util/concat.js';
-import NULL from '../util/null.js';
-import unroll from '../util/unroll.js';
+import { concat } from '../util/concat.js';
+import { NULL } from '../util/null.js';
+import { unroll } from '../util/unroll.js';
 import { rowLookup } from './join/lookup.js';
 import { aggregateGet } from './reduce/util.js';
 import { inferKeys } from './util/join-keys.js';
-import parseKey from './util/parse-key.js';
-import parseValues from './util/parse.js';
+import { parseKey } from './util/parse-key.js';
+import { parseValue } from './util/parse.js';
 
 export function lookup(tableL, tableR, on, ...values) {
   on = inferKeys(tableL, tableR, on);
@@ -18,7 +18,7 @@ export function lookup(tableL, tableR, on, ...values) {
     tableL,
     tableR,
     [ parseKey('lookup', tableL, on[0]), parseKey('lookup', tableR, on[1]) ],
-    parseValues('lookup', tableR, values)
+    parseValue('lookup', tableR, values)
   );
 }
 

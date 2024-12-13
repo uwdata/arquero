@@ -1,8 +1,8 @@
 import { reducers } from '../reduce/util.js';
 import { getWindow, hasAggregate } from '../../op/index.js';
-import concat from '../../util/concat.js';
-import unroll from '../../util/unroll.js';
-import windowState from './window-state.js';
+import { concat } from '../../util/concat.js';
+import { unroll } from '../../util/unroll.js';
+import { windowState } from './window-state.js';
 
 const frameValue = op =>
   (op.frame || [null, null]).map(v => Number.isFinite(v) ? Math.abs(v) : null);

@@ -1,11 +1,11 @@
 import { aggregateGet } from './reduce/util.js';
-import parse from './util/parse.js';
+import { parseValue } from './util/parse.js';
 import { columnSet } from '../table/ColumnSet.js';
-import NULL from '../util/null.js';
-import toArray from '../util/to-array.js';
+import { NULL } from '../util/null.js';
+import { toArray } from '../util/to-array.js';
 
 export function spread(table, values, options) {
-  return _spread(table, parse('spread', table, values), options);
+  return _spread(table, parseValue('spread', table, values), options);
 }
 
 export function _spread(table, { names, exprs, ops = [] }, options = {}) {

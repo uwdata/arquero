@@ -1,6 +1,6 @@
 import { ExtractionOptions, TableBuilderOptions } from '@uwdata/flechette';
+import type { Table } from '../table/Table.js';
 import type { ColumnType, Select } from '../table/types.js';
-import { ColumnSelectOptions } from './util.js';
 
 /**
  * Options for loading data from files or URLs.
@@ -17,6 +17,61 @@ export interface LoadOptions {
    */
   decompress?: 'gzip' | 'deflate' | null;
 }
+
+/**
+ * Column format object.
+ */
+export interface ValueFormatObject {
+  /**
+   * If true, format dates in UTC time.
+   */
+  utc?: boolean;
+  /**
+   * The number of fractional digits to include when formatting numbers.
+   */
+  digits?: number;
+  /**
+   * The maximum string length for formatting nested object or array values.
+   */
+  maxlen?: number;
+}
+
+/**
+ * Callback function to format an individual value.
+ * @param {*} value The value to format.
+ * @return {*} A string-coercible or JSON-compatible formatted value.
+ */
+export type ValueFormatFunction = (value: any) => any;
+
+/**
+ * Value format options.
+ */
+export type ValueFormatOptions = ValueFormatObject | ValueFormatFunction;
+
+/**
+ * Column selection function.
+ */
+export type ColumnSelectFunction = (table: Table) => string[];
+
+/**
+ * Column selection options.
+ */
+export type ColumnSelectOptions = string[] | ColumnSelectFunction;
+
+/**
+ * Column format options. The object keys should be column names.
+ * The object values should be formatting functions or objects.
+ * If specified, these override any automatically inferred options.
+ */
+export type ColumnFormatOptions = Record<string, ValueFormatOptions>;
+
+/**
+ * Column alignment options. The object keys should be column names.
+ * The object values should be aligment strings, one of 'l' (left),
+ * 'c' (center), or 'r' (right).
+ * If specified, these override any automatically inferred options.
+ */
+export type ColumnAlignOptions = Record<string, 'l'|'c'|'r'>;
 
 /** Arrow input data as bytes or loaded table. */
 export type ArrowInput =

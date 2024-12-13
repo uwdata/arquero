@@ -1,6 +1,6 @@
 import { key } from './key-function.js';
 
-export default function() {
+export function distinctMap() {
   const map = new Map();
   return {
     count() {

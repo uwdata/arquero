@@ -1,5 +1,5 @@
-import error from '../util/error.js';
-import toString from '../util/to-string.js';
+import { error } from '../util/error.js';
+import { toString } from '../util/to-string.js';
 
 const visit = (node, opt) => {
   const f = visitors[node.type];
@@ -138,6 +138,6 @@ const visitors = {
   Program: (node, opt) => visit(node.body[0], opt)
 };
 
-export default function(node, opt = { index: 'row' }) {
+export function codegen(node, opt = { index: 'row' }) {
   return visit(node, opt);
 }

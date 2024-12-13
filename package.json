@@ -20,7 +20,7 @@
   "jsdelivr": "./dist/arquero.min.js",
   "types": "./dist/types/index.d.ts",
   "browser": {
-    "./src/format/util/byte-stream.js": "./src/format/util/byte-stream-web.js"
+    "./src/format/stream/byte-stream.js": "./src/format/stream/byte-stream-web.js"
   },
   "repository": {
     "type": "git",

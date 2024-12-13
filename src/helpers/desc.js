@@ -1,4 +1,4 @@
-import wrap from './wrap.js';
+import { wrap } from './wrap.js';
 
 /**
  * Annotate a table expression to indicate descending sort order.
@@ -7,6 +7,6 @@ import wrap from './wrap.js';
  * @example desc('colA')
  * @example desc(d => d.colA)
  */
-export default function(expr) {
+export function desc(expr) {
   return wrap(expr, { desc: true });
 }

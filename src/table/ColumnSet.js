@@ -1,5 +1,3 @@
-import has from '../util/has.js';
-
 /**
  * Return a new column set instance.
  * @param {import('./Table.js').Table} [table] A base table whose columns
@@ -43,7 +41,7 @@ export class ColumnSet {
    *  false otherwise.
    */
   has(name) {
-    return has(this.data, name);
+    return Object.hasOwn(this.data, name);
   }
 
   /**

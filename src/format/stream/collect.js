@@ -1,5 +1,5 @@
-import isReadableStream from '../../util/is-readable-stream.js';
-import isString from '../../util/is-string.js';
+import { isReadableStream } from '../../util/is-readable-stream.js';
+import { isString } from '../../util/is-string.js';
 
 /**
  * @param {ReadableStream<Uint8Array>} input

@@ -1,15 +1,15 @@
-import isArray from '../util/is-array.js';
-import isDigitString from '../util/is-digit-string.js';
-import isISODateString from '../util/is-iso-date-string.js';
-import isString from '../util/is-string.js';
 import { ColumnTable } from '../table/ColumnTable.js';
-import { collectJSON } from './util/collect.js';
-import { COLUMNS, NDJSON } from './util/constants.js';
-import { lineFilter } from './util/line-filter-stream.js';
-import { pipeline } from './util/pipeline.js';
-import { TextLineStream } from './util/text-line-stream.js';
-import { textStream } from './util/text-stream.js';
-import { toTextStream } from './util/to-text-stream.js';
+import { isArray } from '../util/is-array.js';
+import { isDigitString } from '../util/is-digit-string.js';
+import { isISODateString } from '../util/is-iso-date-string.js';
+import { isString } from '../util/is-string.js';
+import { collectJSON } from './stream/collect.js';
+import { COLUMNS, NDJSON } from './stream/constants.js';
+import { lineFilter } from './stream/line-filter-stream.js';
+import { pipeline } from './stream/pipeline.js';
+import { TextLineStream } from './stream/text-line-stream.js';
+import { textStream } from './stream/text-stream.js';
+import { toTextStream } from './stream/to-text-stream.js';
 
 /**
  * Options for JSON parsing.

@@ -1,12 +1,12 @@
-import codegen from './codegen.js';
-import parse from './parse.js';
+import { codegen } from './codegen.js';
+import { parse } from './parse.js';
 import { aggregate } from '../verbs/reduce/util.js';
 
 // generate code to compare a single field
 const _compare = (u, v, lt, gt) => `((u = ${u}) < (v = ${v}) || u == null) && v != null ? ${lt} : (u > v || v == null) && u != null ? ${gt} : ((v = v instanceof Date ? +v : v), (u = u instanceof Date ? +u : u)) !== u && v === v ? ${lt} : v !== v && u === u ? ${gt} : `;
 const _collate = (u, v, lt, gt, f) => `(v = ${v}, (u = ${u}) == null && v == null) ? 0 : v == null ? ${gt} : u == null ? ${lt} : (u = ${f}(u,v)) ? u : `;
 
-export default function(table, fields) {
+export function compare(table, fields) {
   // parse expressions, generate code for both a and b values
   const names = [];
   const exprs = [];

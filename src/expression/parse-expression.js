@@ -12,20 +12,19 @@ import {
   Property
 } from './ast/constants.js';
 import { is, isFunctionExpression } from './ast/util.js';
-import walk from './ast/walk.js';
-import constants from './constants.js';
-import rewrite from './rewrite.js';
+import { walk } from './ast/walk.js';
+import { constants } from './constants.js';
+import { rewrite } from './rewrite.js';
 import { ROW_OBJECT, rowObjectExpression } from './row-object.js';
 import {
   getAggregate, getWindow,
   hasAggregate, hasFunction, hasWindow
 } from '../op/index.js';
 
-import error from '../util/error.js';
-import has from '../util/has.js';
-import isArray from '../util/is-array.js';
-import isNumber from '../util/is-number.js';
-import toString from '../util/to-string.js';
+import { error } from '../util/error.js';
+import { isArray } from '../util/is-array.js';
+import { isNumber } from '../util/is-number.js';
+import { toString } from '../util/to-string.js';
 
 const PARSER_OPT = { ecmaVersion: 11 };
 const DEFAULT_PARAM_ID = '$';
@@ -55,7 +54,7 @@ const ERROR_VARIABLE_NOTE = `\nNote: ${ERROR_CLOSURE}. ${ERROR_ESCAPE}, or ${ERR
 const ERROR_FUNCTION_NOTE = `\nNote: ${ERROR_CLOSURE}. ${ERROR_ESCAPE}, or ${ERROR_ADD_FUNCTION}.`;
 const ERROR_ROW_OBJECT = `The ${ROW_OBJECT} method is not valid in multi-table expressions.`;
 
-export default function parseExpression(ctx, spec) {
+export function parseExpression(ctx, spec) {
   const ast = parseAST(spec);
   let node = ctx.root = ast;
   ctx.spec = spec;
@@ -168,7 +167,7 @@ const visitors = {
 
     // allow use of Math prefix to access constant values
     if (isMath(node) && is(Identifier, property)
-        && has(constants, property.name)) {
+        && Object.hasOwn(constants, property.name)) {
       updateConstantNode(node, property.name);
       return;
     }
@@ -188,7 +187,7 @@ const visitors = {
       updateParameterNode(node, ctx.paramsRef.get(name));
     } else if (ctx.columnRef.has(name)) {
       updateColumnNode(object, name, ctx, node);
-    } else if (has(ctx.params, name)) {
+    } else if (Object.hasOwn(ctx.params, name)) {
       updateParameterNode(object, name);
     }
   }
@@ -324,9 +323,9 @@ function handleIdentifier(node, ctx, parent) {
     updateParameterNode(node, ctx.paramsRef.get(name));
   } else if (ctx.columnRef.has(name)) {
     updateColumnNode(node, name, ctx, parent);
-  } else if (has(ctx.params, name)) {
+  } else if (Object.hasOwn(ctx.params, name)) {
     updateParameterNode(node, name);
-  } else if (has(constants, name)) {
+  } else if (Object.hasOwn(constants, name)) {
     updateConstantNode(node, name);
   } else {
     return true;
@@ -358,7 +357,7 @@ function updateColumnNode(node, key, ctx, parent) {
 }
 
 function checkParam(node, name, index, ctx) {
-  if (ctx.params && !has(ctx.params, name)) {
+  if (ctx.params && !Object.hasOwn(ctx.params, name)) {
     ctx.error(node, ERROR_PARAM);
   }
   updateParameterNode(node, name);

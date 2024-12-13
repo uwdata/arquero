@@ -31,13 +31,13 @@ import {
   unroll
 } from '../verbs/index.js';
 import { count } from '../op/op-api.js';
-import toArrow from '../format/to-arrow.js';
-import toArrowIPC from '../format/to-arrow-ipc.js';
-import toCSV from '../format/to-csv.js';
-import toHTML from '../format/to-html.js';
-import toJSON from '../format/to-json.js';
-import toMarkdown from '../format/to-markdown.js';
-import toArray from '../util/to-array.js';
+import { toArrow } from '../format/to-arrow.js';
+import { toArrowIPC } from '../format/to-arrow-ipc.js';
+import { toCSV } from '../format/to-csv.js';
+import { toHTML } from '../format/to-html.js';
+import { toJSON } from '../format/to-json.js';
+import { toMarkdown } from '../format/to-markdown.js';
+import { toArray } from '../util/to-array.js';
 
 /**
  * A data table with transformation verbs.
@@ -212,7 +212,7 @@ export class ColumnTable extends Table {
    * To produce standard aggregate summaries, use the rollup verb.
    * This method allows the use of custom reducer implementations,
    * for example to produce multiple rows for an aggregate.
-   * @param {import('../verbs/reduce/reducer.js').default} reducer
+   * @param {import('../verbs/reduce/reducer.js').Reducer} reducer
    *  The reducer to apply.
    * @return {this} A new table of reducer outputs.
    */

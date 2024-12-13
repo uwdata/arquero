@@ -1,4 +1,4 @@
-export default {
+export const constants = {
   undefined: 'void(0)',
   Infinity:  'Number.POSITIVE_INFINITY',
   NaN:       'Number.NaN',

@@ -1,7 +1,7 @@
-import isArray from './is-array.js';
-import isMap from './is-map.js';
+import { isArray } from './is-array.js';
+import { isMap } from './is-map.js';
 
-export default function(value) {
+export function entries(value) {
   return isArray(value) ? value
     : isMap(value) ? value.entries()
     : value ? Object.entries(value)

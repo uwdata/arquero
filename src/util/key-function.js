@@ -1,7 +1,7 @@
-import isArray from './is-array.js';
-import isDate from './is-date.js';
-import isRegExp from './is-regexp.js';
-import isTypedArray from './is-typed-array.js';
+import { isArray } from './is-array.js';
+import { isDate } from './is-date.js';
+import { isRegExp } from './is-regexp.js';
+import { isTypedArray } from './is-typed-array.js';
 
 export function key(value) {
   const type = typeof value;
@@ -24,7 +24,7 @@ function objectKey(value) {
   return s;
 }
 
-export default function(get, nulls) {
+export function keyFunction(get, nulls) {
   const n = get.length;
   return n === 1
     ? (row, data) => key(get[0](row, data))

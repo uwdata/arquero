@@ -1,9 +1,9 @@
 import { aggregateGet } from './reduce/util.js';
 import { _unroll } from './unroll.js';
-import parse from './util/parse.js';
+import { parseValue } from './util/parse.js';
 
 export function fold(table, values, options) {
-  return _fold(table, parse('fold', table, values), options);
+  return _fold(table, parseValue('fold', table, values), options);
 }
 
 export function _fold(table, { names = [], exprs = [], ops = [] }, options = {}) {

@@ -1,6 +1,6 @@
 import { array_agg, entries_agg, map_agg, object_agg } from '../op/op-api.js';
-import error from '../util/error.js';
-import uniqueName from '../util/unique-name.js';
+import { error } from '../util/error.js';
+import { uniqueName } from '../util/unique-name.js';
 import { groupby } from '../verbs/groupby.js';
 import { rollup } from '../verbs/rollup.js';
 import { select } from '../verbs/select.js';

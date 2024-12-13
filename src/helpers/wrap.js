@@ -1,4 +1,4 @@
-import isFunction from '../util/is-function.js';
+import { isFunction } from '../util/is-function.js';
 
 /**
  * Annotate an expression in an object wrapper.
@@ -6,7 +6,7 @@ import isFunction from '../util/is-function.js';
  * @param {object} properties The properties to annotate with.
  * @return {object} A new wrapped expression object.
  */
-export default function(expr, properties) {
+export function wrap(expr, properties) {
   return expr && expr.expr
     ? new Wrapper({ ...expr, ...properties })
     : new Wrapper(properties, expr);

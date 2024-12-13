@@ -1,5 +1,5 @@
 import { _derive } from './derive.js';
-import parse from '../expression/parse.js';
+import { parse } from '../expression/parse.js';
 import { BitSet } from '../table/BitSet.js';
 
 export function filter(table, criteria) {

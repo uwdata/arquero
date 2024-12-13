@@ -12,6 +12,6 @@ import { ungroup } from '../ungroup.js';
  * @example agg(table, op.max('colA'))
  * @example agg(table, d => [op.min('colA'), op.max('colA')])
  */
-export default function agg(table, expr) {
+export function agg(table, expr) {
   return rollup(ungroup(table), { _: expr }).get('_');
 }

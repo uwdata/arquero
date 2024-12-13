@@ -11,7 +11,6 @@ function run(N, nulls, msg) {
     c: floats(N, -10000, 10000, nulls)
   });
 
-  const g = time(() => dt.groupby('k'));
   const gt = dt.groupby('k');
   const sum1 = { a: op.sum('a') };
   const sum2 = { a: op.sum('a'), b: op.sum('b') };
@@ -21,9 +20,10 @@ function run(N, nulls, msg) {
   const avg2 = { a: op.mean('a'), b: op.mean('b') };
   const avg3 = { a: op.mean('a'), b: op.mean('b'), c: op.mean('c') };
 
-  tape(`rollup: ${msg}`, t => {
-    const fc = time(() => dt.count());
-    const gc = time(() => gt.count());
+  tape(`rollup: ${msg}`, async t => {
+    const g = await time(() => dt.groupby('k'));
+    const fc = await time(() => dt.count());
+    const gc = await time(() => gt.count());
     console.table([ // eslint-disable-line
       {
         op: 'group',
@@ -45,21 +45,21 @@ function run(N, nulls, msg) {
       },
       {
         op: 'sum',
-        'flat-1':   time(() => dt.rollup(sum1)),
-        'flat-2':   time(() => dt.rollup(sum2)),
-        'flat-3':   time(() => dt.rollup(sum3)),
-        'group-1':  time(() => dt.rollup(sum1)),
-        'group-2':  time(() => dt.rollup(sum2)),
-        'group-3':  time(() => dt.rollup(sum3))
+        'flat-1':   await time(() => dt.rollup(sum1)),
+        'flat-2':   await time(() => dt.rollup(sum2)),
+        'flat-3':   await time(() => dt.rollup(sum3)),
+        'group-1':  await time(() => dt.rollup(sum1)),
+        'group-2':  await time(() => dt.rollup(sum2)),
+        'group-3':  await time(() => dt.rollup(sum3))
       },
       {
         op: 'avg',
-        'flat-1':   time(() => dt.rollup(avg1)),
-        'flat-2':   time(() => dt.rollup(avg2)),
-        'flat-3':   time(() => dt.rollup(avg3)),
-        'group-1':  time(() => dt.rollup(avg1)),
-        'group-2':  time(() => dt.rollup(avg2)),
-        'group-3':  time(() => dt.rollup(avg3))
+        'flat-1':   await time(() => dt.rollup(avg1)),
+        'flat-2':   await time(() => dt.rollup(avg2)),
+        'flat-3':   await time(() => dt.rollup(avg3)),
+        'group-1':  await time(() => dt.rollup(avg1)),
+        'group-2':  await time(() => dt.rollup(avg2)),
+        'group-3':  await time(() => dt.rollup(avg3))
       }
     ]);
     t.end();

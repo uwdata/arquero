@@ -1,8 +1,8 @@
-import { columns } from './util.js';
 import { formatUTCDate } from '../util/format-date.js';
-import identity from '../util/identity.js';
-import isDate from '../util/is-date.js';
-import { COLUMNS, NDJSON } from './util/constants.js';
+import { identity } from '../util/identity.js';
+import { isDate } from '../util/is-date.js';
+import { COLUMNS, NDJSON } from './stream/constants.js';
+import { columns } from './util/columns.js';
 
 /**
  * Options for JSON formatting.
@@ -18,7 +18,7 @@ import { COLUMNS, NDJSON } from './util/constants.js';
  * @property {number} [limit=Infinity] The maximum number of rows to print.
  * @property {number} [offset=0] The row offset indicating how many initial
  *  rows to skip.
- * @property {import('./util.js').ColumnSelectOptions} [columns] Ordered list
+ * @property {import('./types.js').ColumnSelectOptions} [columns] Ordered list
  *  of column names to include. If function-valued, the function should
  *  accept a table as input and return an array of column name strings.
  * @property {Object.<string, (value: any) => any>} [format] Object of column
@@ -37,7 +37,7 @@ const defaultFormatter = value => isDate(value)
  * @param {JSONFormatOptions} options The formatting options.
  * @return {string} A JSON string.
  */
-export default function toJSON(table, {
+export function toJSON(table, {
   type,
   columns: cols,
   format = {},

@@ -1,4 +1,4 @@
-import wrap from './wrap.js';
+import { wrap } from './wrap.js';
 
 /**
  * Annotate a table expression to compute rolling aggregate or window
@@ -21,7 +21,7 @@ import wrap from './wrap.js';
  * @example rolling(d => mean(d.colA), [-3, 3])
  * @example rolling(d => last_value(d.colA), null, true)
  */
-export default function(expr, frame, includePeers) {
+export function rolling(expr, frame, includePeers) {
   return wrap(expr, {
     window: {
       frame: frame || [-Infinity, 0],

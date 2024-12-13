@@ -1,4 +1,4 @@
-import wrap from './wrap.js';
+import { wrap } from './wrap.js';
 
 /**
  * Annotate an expression to indicate it is a string field reference.
@@ -11,7 +11,7 @@ import wrap from './wrap.js';
  * @return A wrapped expression for a named column.
  * @example field('colA')
  */
-export default function(expr, name, table = 0) {
+export function field(expr, name, table = 0) {
   const props = table ? { field: true, table } : { field: true };
   return wrap(
     expr,

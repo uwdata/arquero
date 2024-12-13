@@ -1,14 +1,14 @@
 import { aggregateGet } from './reduce/util.js';
-import parse from './util/parse.js';
+import { parseValue } from './util/parse.js';
 import { columnSet } from '../table/ColumnSet.js';
-import toArray from '../util/to-array.js';
+import { toArray } from '../util/to-array.js';
 
 export function unroll(table, values, options) {
   return _unroll(
     table,
-    parse('unroll', table, values),
+    parseValue('unroll', table, values),
     options && options.drop
-      ? { ...options, drop: parse('unroll', table, options.drop).names }
+      ? { ...options, drop: parseValue('unroll', table, options.drop).names }
       : options
   );
 }

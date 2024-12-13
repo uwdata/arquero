@@ -1,6 +1,7 @@
-import { columns, scan } from './util.js';
 import { formatUTCDate } from '../util/format-date.js';
-import isDate from '../util/is-date.js';
+import { isDate } from '../util/is-date.js';
+import { columns } from './util/columns.js';
+import { scan } from './util/scan.js';
 
 /**
  * Options for CSV formatting.
@@ -11,7 +12,7 @@ import isDate from '../util/is-date.js';
  *  If false, the header is omitted.
  * @property {number} [limit=Infinity] The maximum number of rows to print.
  * @property {number} [offset=0] The row offset indicating how many initial rows to skip.
- * @property {import('./util.js').ColumnSelectOptions} [columns] Ordered list
+ * @property {import('./types.js').ColumnSelectOptions} [columns] Ordered list
  *  of column names to include. If function-valued, the function should
  *  accept a table as input and return an array of column name strings.
  * @property {Object.<string, (value: any) => any>} [format] Object of column
@@ -28,7 +29,7 @@ import isDate from '../util/is-date.js';
  * @param {CSVFormatOptions} options The formatting options.
  * @return {string} A delimited-value format string.
  */
-export default function(table, options = {}) {
+export function toCSV(table, options = {}) {
   const names = columns(table, options.columns);
   const format = options.format || {};
   const delim = options.delimiter || ',';

@@ -12,28 +12,28 @@ function run(N, nulls, msg) {
 
   const str = dt.get('c', 0);
 
-  tape(`filter: ${msg}`, t => {
+  tape(`filter: ${msg}`, async t => {
     console.table([ // eslint-disable-line
       {
         type:  'integer',
-        table:  time(() => dt.filter('d.a > 0')),
-        reify:  time(() => dt.filter('d.a > 0').reify()),
-        object: time(a => a.filter(d => d.a > 0), dt.objects()),
-        array:  time(a => a.filter(v => v > 0), dt.column('a'))
+        table:  await time(() => dt.filter('d.a > 0')),
+        reify:  await time(() => dt.filter('d.a > 0').reify()),
+        object: await time(a => a.filter(d => d.a > 0), dt.objects()),
+        array:  await time(a => a.filter(v => v > 0), dt.column('a'))
       },
       {
         type:  'float',
-        table:  time(() => dt.filter('d.b > 0')),
-        reify:  time(() => dt.filter('d.b > 0').reify()),
-        object: time(a => a.filter(d => d.b > 0), dt.objects()),
-        array:  time(a => a.filter(v => v > 0), dt.column('b'))
+        table:  await time(() => dt.filter('d.b > 0')),
+        reify:  await time(() => dt.filter('d.b > 0').reify()),
+        object: await time(a => a.filter(d => d.b > 0), dt.objects()),
+        array:  await time(a => a.filter(v => v > 0), dt.column('b'))
       },
       {
         type:  'string',
-        table:  time(() => dt.filter(`d.c === '${str}'`)),
-        reify:  time(() => dt.filter(`d.c === '${str}'`).reify()),
-        object: time(a => a.filter(d => d.c === str), dt.objects()),
-        array:  time(a => a.filter(v => v === str), dt.column('c'))
+        table:  await time(() => dt.filter(`d.c === '${str}'`)),
+        reify:  await time(() => dt.filter(`d.c === '${str}'`).reify()),
+        object: await time(a => a.filter(d => d.c === str), dt.objects()),
+        array:  await time(a => a.filter(v => v === str), dt.column('c'))
       }
     ]);
     t.end();

@@ -1,4 +1,4 @@
-export default function(value) {
+export function isDigitString(value) {
   const n = value.length;
   for (let i = 0; i < n; ++i) {
     const c = value.charCodeAt(i);

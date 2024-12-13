@@ -1,5 +1,5 @@
 import { BitSet } from '../../table/BitSet.js';
-import identity from '../../util/identity.js';
+import { identity } from '../../util/identity.js';
 
 /**
  * @template T

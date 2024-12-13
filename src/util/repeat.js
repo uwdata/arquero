@@ -1,6 +1,6 @@
-import isFunction from './is-function.js';
+import { isFunction } from './is-function.js';
 
-export default function(reps, value) {
+export function repeat(reps, value) {
   const result = Array(reps);
   if (isFunction(value)) {
     for (let i = 0; i < reps; ++i) {

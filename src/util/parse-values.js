@@ -1,5 +1,5 @@
-import identity from './identity.js';
-import isISODateString from './is-iso-date-string.js';
+import { identity } from './identity.js';
+import { isISODateString } from './is-iso-date-string.js';
 
 const parseBoolean = [ // boolean
   v => (v === 'true') || (v === 'false'),
@@ -22,7 +22,7 @@ function numberParser(decimal) {
     : parseNumber;
 }
 
-export default function(values, options) {
+export function parseValues(values, options) {
   const { decimal, limit = values.length } = options;
   const types = [parseBoolean, numberParser(decimal), parseDate];
   const n = types.length;

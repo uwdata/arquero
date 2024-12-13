@@ -1,11 +1,11 @@
 import { tableFromIPC } from '@uwdata/flechette';
-import resolve, { all } from '../helpers/selection.js';
+import { all, resolve } from '../helpers/selection.js';
+import { sequence } from '../op/functions/sequence.js';
 import { columnSet } from '../table/ColumnSet.js';
 import { ColumnTable } from '../table/ColumnTable.js';
-import sequence from '../op/functions/sequence.js';
-import isReadableStream from '../util/is-readable-stream.js';
-import { collectBytes } from './util/collect.js';
-import { byteStream } from './util/byte-stream.js';
+import { isReadableStream } from '../util/is-readable-stream.js';
+import { byteStream } from './stream/byte-stream.js';
+import { collectBytes } from './stream/collect.js';
 
 /**
  * Load an Arrow file from a URL and return a Promise for an Arquero table.

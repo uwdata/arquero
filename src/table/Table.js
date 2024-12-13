@@ -1,11 +1,11 @@
 import { nest, regroup, reindex } from './regroup.js';
 import { rowObjectBuilder } from '../expression/row-object.js';
-import resolve, { all } from '../helpers/selection.js';
-import arrayType from '../util/array-type.js';
-import error from '../util/error.js';
-import isArrayType from '../util/is-array-type.js';
-import isNumber from '../util/is-number.js';
-import repeat from '../util/repeat.js';
+import { all, resolve } from '../helpers/selection.js';
+import { arrayType } from '../util/array-type.js';
+import { error } from '../util/error.js';
+import { isArrayType } from '../util/is-array-type.js';
+import { isNumber } from '../util/is-number.js';
+import { repeat } from '../util/repeat.js';
 
 /**
  * Base class representing a column-oriented data table.

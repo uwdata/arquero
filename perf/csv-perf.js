@@ -1,7 +1,7 @@
 import tape from 'tape';
 import { time } from './time.js';
 import { bools, dates, floats, ints, sample, strings } from './data-gen.js';
-import { toCSV as _toCSV, fromCSV, table } from '../src/index.js';
+import { toCSV as _toCSV, parseCSV, table } from '../src/index.js';
 
 function toCSV(...values) {
   const cols = values.map((v, i) => [`col${i}`, v]);
@@ -9,7 +9,7 @@ function toCSV(...values) {
 }
 
 function parse(csv, opt) {
-  return time(() => fromCSV(csv, opt));
+  return time(() => parseCSV(csv, opt));
 }
 
 function run(N, nulls, msg) {
@@ -23,14 +23,14 @@ function run(N, nulls, msg) {
   const sv = sample(N, strings(100), nulls);
   const av = [bv, iv, fv, dv, sv];
 
-  tape(`parse csv: ${msg}`, t => {
+  tape(`parse csv: ${msg}`, async t => {
     console.table([ // eslint-disable-line
-      { type: 'boolean', raw: parse(toCSV(bv), opt), typed: parse(toCSV(bv)) },
-      { type: 'integer', raw: parse(toCSV(iv), opt), typed: parse(toCSV(iv)) },
-      { type: 'float',   raw: parse(toCSV(fv), opt), typed: parse(toCSV(fv)) },
-      { type: 'date',    raw: parse(toCSV(dv), opt), typed: parse(toCSV(dv)) },
-      { type: 'string',  raw: parse(toCSV(sv), opt), typed: parse(toCSV(sv)) },
-      { type: 'all',     raw: parse(toCSV(...av), opt), typed: parse(toCSV(...av)) }
+      { type: 'boolean', raw: await parse(toCSV(bv), opt), typed: await parse(toCSV(bv)) },
+      { type: 'integer', raw: await parse(toCSV(iv), opt), typed: await parse(toCSV(iv)) },
+      { type: 'float',   raw: await parse(toCSV(fv), opt), typed: await parse(toCSV(fv)) },
+      { type: 'date',    raw: await parse(toCSV(dv), opt), typed: await parse(toCSV(dv)) },
+      { type: 'string',  raw: await parse(toCSV(sv), opt), typed: await parse(toCSV(sv)) },
+      { type: 'all',     raw: await parse(toCSV(...av), opt), typed: await parse(toCSV(...av)) }
     ]);
     t.end();
   });

@@ -1,10 +1,10 @@
-import error from '../util/error.js';
-import isArray from '../util/is-array.js';
-import isDate from '../util/is-date.js';
-import isFunction from '../util/is-function.js';
-import isObject from '../util/is-object.js';
-import isRegExp from '../util/is-regexp.js';
-import isString from '../util/is-string.js';
+import { error } from '../util/error.js';
+import { isArray } from '../util/is-array.js';
+import { isDate } from '../util/is-date.js';
+import { isFunction } from '../util/is-function.js';
+import { isObject } from '../util/is-object.js';
+import { isRegExp } from '../util/is-regexp.js';
+import { isString } from '../util/is-string.js';
 
 /**
  * @return {import('./types.js').ColumnData}

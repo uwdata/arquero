@@ -1,5 +1,3 @@
-import has from '../../util/has.js';
-
 /**
  * Recodes an input value to an alternative value, based on a provided
  * value map. If a fallback value is specified, it will be returned when
@@ -15,12 +13,12 @@ import has from '../../util/has.js';
  *  value is not found in the value map.
  * @return {T} The recoded value.
  */
-export default function(value, map, fallback) {
+export function recode(value, map, fallback) {
   if (map instanceof Map) {
     if (map.has(value)) return map.get(value);
   } else {
     const key = `${value}`;
-    if (has(map, key)) return map[key];
+    if (Object.hasOwn(map, key)) return map[key];
   }
   return fallback !== undefined ? fallback : value;
 }

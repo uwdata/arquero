@@ -1,11 +1,10 @@
-import aggregateFunctions from './aggregate-functions.js';
-import windowFunctions from './window-functions.js';
-import functions from './functions/index.js';
-import has from '../util/has.js';
+import { aggregateFunctions } from './aggregate-functions.js';
+import { windowFunctions } from './window-functions.js';
+import { functions } from './functions/index.js';
 
-export { default as aggregateFunctions } from './aggregate-functions.js';
-export { default as windowFunctions } from './window-functions.js';
-export { default as functions } from './functions/index.js';
+export { aggregateFunctions } from './aggregate-functions.js';
+export { windowFunctions } from './window-functions.js';
+export { functions } from './functions/index.js';
 
 /**
  * Check if an aggregate function with the given name exists.
@@ -13,7 +12,7 @@ export { default as functions } from './functions/index.js';
  * @return {boolean} True if found, false otherwise.
  */
 export function hasAggregate(name) {
-  return has(aggregateFunctions, name);
+  return Object.hasOwn(aggregateFunctions, name);
 }
 
 /**
@@ -22,7 +21,7 @@ export function hasAggregate(name) {
  * @return {boolean} True if found, false otherwise.
  */
 export function hasWindow(name) {
-  return has(windowFunctions, name);
+  return Object.hasOwn(windowFunctions, name);
 }
 
 /**
@@ -31,7 +30,7 @@ export function hasWindow(name) {
  * @return {boolean} True if found, false otherwise.
  */
  export function hasFunction(name) {
-  return has(functions, name) || name === 'row_object';
+  return Object.hasOwn(functions, name) || name === 'row_object';
 }
 
 /**

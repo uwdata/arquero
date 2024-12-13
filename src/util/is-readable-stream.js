@@ -2,6 +2,6 @@
  * @param {*} value
  * @returns {value is ReadableStream}
  */
-export default function(value) {
+export function isReadableStream(value) {
   return value instanceof ReadableStream;
 }

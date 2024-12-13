@@ -1,4 +1,4 @@
-import toArray from '../../util/to-array.js';
+import { toArray } from '../../util/to-array.js';
 
 /**
  * Create a ReadableStream over provided text data.

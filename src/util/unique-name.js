@@ -1,6 +1,6 @@
-import isMapOrSet from './is-map-or-set.js';
+import { isMapOrSet } from './is-map-or-set.js';
 
-export default function(names, name) {
+export function uniqueName(names, name) {
   names = isMapOrSet(names) ? names : new Set(names);
   let uname = name;
   let index = 0;

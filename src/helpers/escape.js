@@ -1,5 +1,5 @@
-import wrap from './wrap.js';
-import error from '../util/error.js';
+import { wrap } from './wrap.js';
+import { error } from '../util/error.js';
 
 /**
  * Escape a function or value to prevent it from being parsed and recompiled.
@@ -12,7 +12,7 @@ import error from '../util/error.js';
  * @example escape(d => d.a.toFixed(2))
  * @example escape(d => d.a * -d.b)
  */
-export default function(value) {
+export function escape(value) {
   return wrap(value, {
     escape: true,
     toString() { error('Escaped values can not be serialized.'); }

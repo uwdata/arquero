@@ -1,7 +1,7 @@
-import error from '../util/error.js';
-import isValid from '../util/is-valid.js';
-import noop from '../util/no-op.js';
-import NULL from '../util/null.js';
+import { error } from '../util/error.js';
+import { isValid } from '../util/is-valid.js';
+import { noop } from '../util/no-op.js';
+import { NULL } from '../util/null.js';
 
 /**
  * Initialize a window operator.
@@ -11,7 +11,7 @@ import NULL from '../util/null.js';
 
 /**
  * A storage object for the state of the window.
- * @typedef {import('../verbs/window/window-state.js').default} WindowState
+ * @typedef {import('../verbs/window/window-state.js').windowState} WindowState
  */
 
 /**
@@ -94,7 +94,7 @@ const cume_dist = {
 /**
  * Window operator definitions.
  */
-export default {
+export const windowFunctions = {
   /** @type {WindowDef} */
   row_number: {
     create() {

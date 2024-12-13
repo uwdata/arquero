@@ -1,6 +1,6 @@
 import { columnSet } from '../table/ColumnSet.js';
 import { Table } from '../table/Table.js';
-import error from '../util/error.js';
+import { error } from '../util/error.js';
 
 export function assign(table, ...others) {
   others = others.flat();

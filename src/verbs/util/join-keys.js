@@ -1,8 +1,8 @@
-import parseKey from './parse-key.js';
-import error from '../../util/error.js';
-import intersect from '../../util/intersect.js';
-import isArray from '../../util/is-array.js';
-import isString from '../../util/is-string.js';
+import { error } from '../../util/error.js';
+import { intersect } from '../../util/intersect.js';
+import { isArray } from '../../util/is-array.js';
+import { isString } from '../../util/is-string.js';
+import { parseKey } from './parse-key.js';
 
 export function inferKeys(tableL, tableR, on) {
   if (!on) {

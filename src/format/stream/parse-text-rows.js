@@ -1,7 +1,7 @@
-import identity from '../../util/identity.js';
-import isFunction from '../../util/is-function.js';
-import repeat from '../../util/repeat.js';
-import valueParser from '../../util/parse-values.js';
+import { identity } from '../../util/identity.js';
+import { isFunction } from '../../util/is-function.js';
+import { repeat } from '../../util/repeat.js';
+import { parseValues } from '../../util/parse-values.js';
 
 function defaultNames(n, off = 0) {
   return repeat(n - off, i => `col${i + off + 1}`);
@@ -78,6 +78,6 @@ function getParsers(names, values, options) {
   return names.map(
     (name, i) => isFunction(parse[name]) ? parse[name]
       : noParse ? identity
-      : valueParser(values[i], options)
+      : parseValues(values[i], options)
   );
 }

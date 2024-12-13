@@ -1,14 +1,14 @@
-import assign from '../util/assign.js';
-import error from '../util/error.js';
-import escapeRegExp from '../util/escape-regexp.js';
-import isArray from '../util/is-array.js';
-import isFunction from '../util/is-function.js';
-import isNumber from '../util/is-number.js';
-import isObject from '../util/is-object.js';
-import isString from '../util/is-string.js';
-import toString from '../util/to-string.js';
+import { assign } from '../util/assign.js';
+import { error } from '../util/error.js';
+import { escapeRegExp } from '../util/escape-regexp.js';
+import { isArray } from '../util/is-array.js';
+import { isFunction } from '../util/is-function.js';
+import { isNumber } from '../util/is-number.js';
+import { isObject } from '../util/is-object.js';
+import { isString } from '../util/is-string.js';
+import { toString } from '../util/to-string.js';
 
-export default function resolve(table, sel, map = new Map()) {
+export function resolve(table, sel, map = new Map()) {
   sel = isNumber(sel) ? table.columnName(sel) : sel;
 
   if (isString(sel)) {

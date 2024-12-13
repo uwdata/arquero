@@ -1,5 +1,5 @@
 import { BREAK, EOL, NEWLINE, QUOTE, RETURN } from './constants.js';
-import error from '../../util/error.js';
+import { error } from '../../util/error.js';
 
 function unquote(str) {
   return str.slice(1, -1).replace(/""/g, '"');

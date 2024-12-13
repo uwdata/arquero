@@ -1,7 +1,8 @@
 import tape from 'tape';
 import { time } from './time.js';
 import { bools, floats, ints, sample, strings } from './data-gen.js';
-import { fromArrow, table, toArrowIPC } from '../src/index.js';
+import { table, toArrowIPC } from '../src/index.js';
+import { readArrow } from '../src/format/parse-arrow.js';
 import { bool, columnFromArray, dictionary, float64, int32, tableFromColumns, tableToIPC, uint32, utf8 } from '@uwdata/flechette';
 import { tableFromIPC } from 'apache-arrow';
 
@@ -17,8 +18,8 @@ function process(N, nulls, msg) {
       )
   });
   const buf = tableToIPC(aa);
-  const at = fromArrow(tableFromIPC(buf)); // using arrow-js
-  const ft = fromArrow(aa); // using flechette
+  const at = readArrow(tableFromIPC(buf)); // using arrow-js
+  const ft = readArrow(aa); // using flechette
 
   const filterDict = (dt, val) => time(() => {
     dt.filter(`d.k === '${val}'`).numRows();
@@ -28,33 +29,33 @@ function process(N, nulls, msg) {
     dt.filter(`d.v >= ${val}`).numRows();
   });
 
-  tape(`arrow processing: ${msg}`, t => {
+  tape(`arrow processing: ${msg}`, async t => {
     const k = aa.getChild('k').at(50);
     console.table([ // eslint-disable-line
       {
         operation:  'init table',
-        'arrow-js': time(() => fromArrow(tableFromIPC(buf))),
-        flechette:  time(() => fromArrow(buf))
+        'arrow-js': await time(() => readArrow(tableFromIPC(buf))),
+        flechette:  await time(() => readArrow(buf))
       },
       {
         operation:  'count dictionary',
-        'arrow-js': time(() => at.groupby('k').count()),
-        flechette:  time(() => ft.groupby('k').count())
+        'arrow-js': await time(() => at.groupby('k').count()),
+        flechette:  await time(() => ft.groupby('k').count())
       },
       {
         operation:  'filter dictionary',
-        'arrow-js': filterDict(at, k),
-        flechette:  filterDict(ft, k)
+        'arrow-js': await filterDict(at, k),
+        flechette:  await filterDict(ft, k)
       },
       {
         operation:  'filter numbers 0',
-        'arrow-js': filterValue(at, 0),
-        flechette:  filterValue(ft, 0)
+        'arrow-js': await filterValue(at, 0),
+        flechette:  await filterValue(ft, 0)
       },
       {
         operation:  'filter numbers 1',
-        'arrow-js': filterValue(at, 1),
-        flechette:  filterValue(ft, 1)
+        'arrow-js': await filterValue(at, 1),
+        flechette:  await filterValue(ft, 1)
       }
     ]);
     t.end();
@@ -62,12 +63,12 @@ function process(N, nulls, msg) {
 }
 
 function serialize(N, nulls, msg) {
-  tape(`arrow serialization: ${msg}`, t => {
+  tape(`arrow serialization: ${msg}`, async t => {
     console.table([ // eslint-disable-line
-      encode('boolean', bool(), bools(N, nulls)),
-      encode('integer', int32(), ints(N, -10000, 10000, nulls)),
-      encode('float', float64(), floats(N, -10000, 10000, nulls)),
-      encode('dictionary',
+      await encode('boolean', bool(), bools(N, nulls)),
+      await encode('integer', int32(), ints(N, -10000, 10000, nulls)),
+      await encode('float', float64(), floats(N, -10000, 10000, nulls)),
+      await encode('dictionary',
         dictionary(utf8(), uint32()),
         sample(N, strings(100), nulls)
       )
@@ -76,19 +77,19 @@ function serialize(N, nulls, msg) {
   });
 }
 
-function encode(name, type, values) {
+async function encode(name, type, values) {
   const dt = table({ values });
 
   // measure encoding times
-  const qt = time(() => toArrowIPC(dt, { types: { values: type } }));
-  const at = time(
+  const qt = await time(() => toArrowIPC(dt, { types: { values: type } }));
+  const at = await time(
     () => tableToIPC(
       tableFromColumns({
         values: columnFromArray(values, type)
       })
     )
   );
-  const jt = time(() => JSON.stringify(values));
+  const jt = await time(() => JSON.stringify(values));
 
   // measure serialized byte size
   const ab = tableToIPC(tableFromColumns({

@@ -1,12 +1,12 @@
-import error from '../util/error.js';
-import isString from '../util/is-string.js';
 import { ColumnTable } from '../table/ColumnTable.js';
-import { DelimitedTextStream } from './util/delimited-text-stream.js';
-import { lineFilter } from './util/line-filter-stream.js';
-import { parseTextRows } from './util/parse-text-rows.js';
-import { pipeline } from './util/pipeline.js';
-import { textStream } from './util/text-stream.js';
-import { toTextStream } from './util/to-text-stream.js';
+import { error } from '../util/error.js';
+import { isString } from '../util/is-string.js';
+import { DelimitedTextStream } from './stream/delimited-text-stream.js';
+import { lineFilter } from './stream/line-filter-stream.js';
+import { parseTextRows } from './stream/parse-text-rows.js';
+import { pipeline } from './stream/pipeline.js';
+import { textStream } from './stream/text-stream.js';
+import { toTextStream } from './stream/to-text-stream.js';
 
 /**
  * Options for CSV parsing.

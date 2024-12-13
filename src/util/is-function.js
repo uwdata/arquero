@@ -1,6 +1,7 @@
 /**
+ * @param {*} value
  * @returns {value is Function}
  */
-export default function(value) {
+export function isFunction(value) {
   return typeof value === 'function';
 }

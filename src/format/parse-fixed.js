@@ -1,14 +1,14 @@
-import error from '../util/error.js';
-import isReadableStream from '../util/is-readable-stream.js';
-import isString from '../util/is-string.js';
-import { FixedTextStream } from './util/fixed-text-stream.js';
-import { lineFilter } from './util/line-filter-stream.js';
-import { TextLineStream } from './util/text-line-stream.js';
-import { parseTextRows } from './util/parse-text-rows.js';
 import { ColumnTable } from '../table/ColumnTable.js';
-import { pipeline } from './util/pipeline.js';
-import { textStream } from './util/text-stream.js';
-import { toTextStream } from './util/to-text-stream.js';
+import { error } from '../util/error.js';
+import { isReadableStream } from '../util/is-readable-stream.js';
+import { isString } from '../util/is-string.js';
+import { FixedTextStream } from './stream/fixed-text-stream.js';
+import { lineFilter } from './stream/line-filter-stream.js';
+import { TextLineStream } from './stream/text-line-stream.js';
+import { parseTextRows } from './stream/parse-text-rows.js';
+import { pipeline } from './stream/pipeline.js';
+import { textStream } from './stream/text-stream.js';
+import { toTextStream } from './stream/to-text-stream.js';
 
 /**
  * Options for fixed width file parsing.

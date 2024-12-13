@@ -1,5 +1,5 @@
-import isBigInt from './is-bigint.js';
+import { isBigInt } from './is-bigint.js';
 
-export default function(value) {
+export function toNumeric(value) {
   return isBigInt(value) ? value : +value;
 }

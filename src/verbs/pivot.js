@@ -1,5 +1,5 @@
 import { aggregate, aggregateGet, groupOutput } from './reduce/util.js';
-import parse from './util/parse.js';
+import { parseValue } from './util/parse.js';
 import { ungroup } from './ungroup.js';
 import { any } from '../op/op-api.js';
 import { columnSet } from '../table/ColumnSet.js';
@@ -8,8 +8,8 @@ import { columnSet } from '../table/ColumnSet.js';
 export function pivot(table, on, values, options) {
   return _pivot(
     table,
-    parse('fold', table, on),
-    parse('fold', table, values, { preparse, window: false, aggronly: true }),
+    parseValue('fold', table, on),
+    parseValue('fold', table, values, { preparse, window: false, aggronly: true }),
     options
   );
 }

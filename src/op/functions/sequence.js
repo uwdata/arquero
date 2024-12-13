@@ -11,7 +11,7 @@
  * @param {number} [step=1] The step increment between sequence values.
  * @return {number[]} The generated sequence.
  */
-export default function(start, stop, step) {
+export function sequence(start, stop, step) {
   let n = arguments.length;
   start = +start;
   stop = +stop;

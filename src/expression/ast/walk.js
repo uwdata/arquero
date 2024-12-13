@@ -1,4 +1,4 @@
-export default function walk(node, ctx, visitors, parent) {
+export function walk(node, ctx, visitors, parent) {
   const visit = visitors[node.type] || visitors['Default'];
   if (visit && visit(node, ctx, parent) === false) return;
 
