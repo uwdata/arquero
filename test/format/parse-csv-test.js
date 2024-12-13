@@ -123,4 +123,38 @@ describe('parseCSV', () => {
       'csv parsed data with autoType false'
     );
   });
+
+  it('parses streaming data', async () => {
+    /** @type {ReadableStream<string>} */
+    const stream = new ReadableStream({
+        start(controller) {
+          controller.enqueue('skip line 1\n');
+          controller.enqueue('skip line 2\n');
+          controller.enqueue('a,b,c\n');
+          controller.enqueue('foo,"ba');
+          controller.enqueue('r",3.0');
+          controller.enqueue('\nbaz,"bop"');
+          controller.enqueue(',2.0\r');
+          controller.enqueue('\nque,"""rocky"');
+          controller.enqueue('" road",1.0');
+          controller.enqueue('\n');
+          controller.enqueue('# commented line\n');
+          controller.enqueue('who,"goes"');
+          controller.enqueue(',0.5');
+          controller.close();
+        },
+        pull() { },
+        cancel() { }
+      });
+
+    tableEqual(
+      await parseCSV(stream, { skip: 2, comment: '#' }),
+      {
+        a: ['foo', 'baz', 'que', 'who'],
+        b: ['bar', 'bop', '"rocky" road', 'goes'],
+        c: [3.0, 2.0, 1.0, 0.5]
+      },
+      'csv parsed from custom stream'
+    );
+  });
 });

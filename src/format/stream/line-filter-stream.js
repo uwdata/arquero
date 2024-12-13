@@ -39,11 +39,11 @@ export class LineFilterStream extends TransformStream {
         const n = chunk.length;
         const bits = new BitSet(n);
         for (let c = 0; c < chunk.length; ++c, ++i) {
-          if (drop(chunk[c], i)) bits.set(i);
+          if (drop(chunk[c], i)) bits.set(c);
         }
         controller.enqueue(
           bits.count()
-            ? chunk.filter((_, i) => !bits.get(i))
+            ? chunk.filter((_, c) => !bits.get(c))
             : chunk
         );
       }

@@ -18,7 +18,8 @@ function defaultNames(n, off = 0) {
  */
 export async function parseTextRows(stream, options) {
   const iter = stream[Symbol.asyncIterator]();
-  let batch = (await iter.next()).value;
+  let batch;
+  do { batch = (await iter.next()).value; } while (batch.length === 0);
 
   const n = batch[0].length;
   const automax = +options.autoMax || 1000;

@@ -152,7 +152,8 @@ function parseNDJSON(input, {
 
 async function readNDJSON(stream, names) {
   const iter = stream[Symbol.asyncIterator]();
-  const first = (await iter.next()).value;
+  let first;
+  do { first = (await iter.next()).value; } while (first.length === 0);
 
   names ??= Object.keys(firstNonNull(first));
   const cols = names.map(() => []);
