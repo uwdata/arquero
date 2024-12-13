@@ -1,7 +1,11 @@
 {
   "name": "arquero",
   "type": "module",
+<<<<<<< HEAD
   "version": "7.2.1",
+=======
+  "version": "8.0.0-beta.0",
+>>>>>>> f71ef98 (chore: Bump dependecies, bump major (beta) version.)
   "description": "Query processing and transformation of array-backed data tables.",
   "keywords": [
     "data",
@@ -47,7 +51,11 @@
     "eslint": "^9.18.0",
     "mocha": "^11.0.1",
     "rimraf": "^6.0.1",
+<<<<<<< HEAD
     "rollup": "^4.30.1",
+=======
+    "rollup": "^4.28.1",
+>>>>>>> f71ef98 (chore: Bump dependecies, bump major (beta) version.)
     "rollup-plugin-bundle-size": "^1.0.3",
     "tape": "^5.9.0",
     "typescript": "^5.7.3"
