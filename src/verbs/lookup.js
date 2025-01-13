@@ -1,4 +1,4 @@
-import { not } from '../api.js';
+import { not } from '../helpers/selection.js';
 import { columnSet } from '../table/ColumnSet.js';
 import concat from '../util/concat.js';
 import NULL from '../util/null.js';
