@@ -23,7 +23,7 @@ describe('load file url', () => {
   it('loadArrow loads Arrow files from a URL', async () => {
     const url = 'https://vega.github.io/vega-datasets/data/flights-200k.arrow';
     const dt = await loadArrow(url);
-    assert.deepEqual([dt.numRows(), dt.numCols()], [231083, 3], 'load arrow table');
+    assert.deepEqual([dt.numRows(), dt.numCols()], [200000, 3], 'load arrow table');
   });
 
   it('fails on non-existent path', async () => {
