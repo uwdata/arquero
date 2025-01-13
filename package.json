@@ -37,20 +37,20 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "@uwdata/flechette": "^1.1.1",
+    "@uwdata/flechette": "^1.1.2",
     "acorn": "^8.14.0",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-terser": "^0.4.4",
-    "apache-arrow": "18.0.0",
-    "eslint": "^9.14.0",
-    "mocha": "^10.8.2",
+    "apache-arrow": "18.1.0",
+    "eslint": "^9.18.0",
+    "mocha": "^11.0.1",
     "rimraf": "^6.0.1",
-    "rollup": "^4.24.4",
+    "rollup": "^4.30.1",
     "rollup-plugin-bundle-size": "^1.0.3",
     "tape": "^5.9.0",
-    "typescript": "^5.6.3"
+    "typescript": "^5.7.3"
   }
 }
