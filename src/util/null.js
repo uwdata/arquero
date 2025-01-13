@@ -1,4 +1,6 @@
 /**
  * Default NULL (missing) value to use.
  */
-export default undefined;
+const NULL = undefined;
+
+export default NULL;
