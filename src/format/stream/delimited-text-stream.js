@@ -6,19 +6,17 @@ function unquote(str) {
 }
 
 /**
- * @extends {TransformStream<string,string[][]>}
+ * Returns a new delimited text stream transformer.
+ * @param {string} [delimiter=','] The column delimiter string.
+ *  The value should be a single character.
+ * @returns {Transformer<string, string[][]>}
  */
-export class DelimitedTextStream extends TransformStream {
-  constructor(delimiter = ',') {
-    if (delimiter.length !== 1) {
-      error(`Text delimiter should be a single character, found "${delimiter}"`);
-    }
-    const delimCode = delimiter.charCodeAt(0);
-    super(delimitedRowTransformer(delimCode));
+export function delimitedTextTransformer(delimiter = ',') {
+  if (delimiter.length !== 1) {
+    error(`Text delimiter should be a single character, found "${delimiter}"`);
   }
-}
+  const delimCode = delimiter.charCodeAt(0);
 
-function delimitedRowTransformer(delimCode) {
   let I = 0; // current chunk character index
   let N = 0; // length of current text chunk
   let eol = false; // current token followed by EOL?

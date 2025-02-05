@@ -1,6 +1,5 @@
 import tableEqual from '../table-equal.js';
-import { readArrow } from '../../src/format/parse-arrow.js';
-import { from, table, toArrowIPC } from '../../src/index.js';
+import { from, fromArrow, table, toArrowIPC } from '../../src/index.js';
 
 describe('reify', () => {
   it('materializes filtered and ordered tables', () => {
@@ -27,7 +26,7 @@ describe('reify', () => {
       { a: 1.7, b: 'd', c: [4], d: new Date(2003, 3, 1, 4) }
     ]);
 
-    const dt = readArrow(toArrowIPC(data));
+    const dt = fromArrow(toArrowIPC(data));
     const rt = dt.filter(d => d.b !== 'c').reify();
 
     tableEqual(rt,

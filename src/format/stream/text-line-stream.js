@@ -1,15 +1,10 @@
 import { BREAK, NEWLINE, RETURN } from './constants.js';
 
 /**
- * @extends {TransformStream<string,string[]>}
+ * Returns a new text line stream transformer.
+ * @returns {Transformer<string, string[]>}
  */
-export class TextLineStream extends TransformStream {
-  constructor() {
-    super(lineTransformer());
-  }
-}
-
-export function lineTransformer() {
+export function textLineTransformer() {
   let I = 0; // current chunk character index
   let skipNewline = false; // skip newline after carriage return
   let fragment = ''; // remaining fragment from previous chunk

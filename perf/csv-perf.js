@@ -1,7 +1,7 @@
 import tape from 'tape';
 import { time } from './time.js';
 import { bools, dates, floats, ints, sample, strings } from './data-gen.js';
-import { toCSV as _toCSV, parseCSV, table } from '../src/index.js';
+import { toCSV as _toCSV, fromCSV, table } from '../src/index.js';
 
 function toCSV(...values) {
   const cols = values.map((v, i) => [`col${i}`, v]);
@@ -9,7 +9,7 @@ function toCSV(...values) {
 }
 
 function parse(csv, opt) {
-  return time(() => parseCSV(csv, opt));
+  return time(() => fromCSV(csv, opt));
 }
 
 function run(N, nulls, msg) {

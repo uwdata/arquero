@@ -8,10 +8,10 @@ export { walk as walk_ast } from './expression/ast/walk.js';
 
 // public API
 export { seed } from './util/random.js';
-export { loadArrow, parseArrow } from './format/parse-arrow.js';
-export { loadCSV, parseCSV } from './format/parse-csv.js';
-export { loadFixed, parseFixed } from './format/parse-fixed.js';
-export { loadJSON, parseJSON } from './format/parse-json.js';
+export { fromArrow, fromArrowStream, loadArrow } from './format/from-arrow.js';
+export { fromCSV, fromCSVStream, loadCSV } from './format/from-csv.js';
+export { fromFixed, fromFixedStream, loadFixed } from './format/from-fixed.js';
+export { fromJSON, fromJSONStream, loadJSON } from './format/from-json.js';
 export { toArrow } from './format/to-arrow.js';
 export { toArrowIPC } from './format/to-arrow-ipc.js';
 export { toCSV } from './format/to-csv.js';

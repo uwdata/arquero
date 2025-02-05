@@ -9,9 +9,8 @@ title: Arquero API Reference
   * [table](#table), [from](#from)
 * [Table Input](#input)
   * [loadArrow](#loadArrow), [loadCSV](#loadCSV), [loadFixed](#loadFixed), [loadJSON](#loadJSON)
-  * [parseArrow](#parseArrow), [parseCSV](#parseCSV), [parseFixed](#parseFixed), [parseJSON](#parseJSON)
-  * [_Input Methods Removed in v8.0_](#input-removed)
-    * [fromArrow](#fromArrow), [fromCSV](#fromCSV), [fromFixed](#fromFixed), [fromJSON](#fromJSON)
+  * [fromArrow](#fromArrow), [fromCSV](#fromCSV), [fromFixed](#fromFixed), [fromJSON](#fromJSON)
+  * [fromArrowStream](#fromArrowStream), [fromCSVStream](#fromCSVStream), [fromFixedStream](#fromFixedStream), [fromJSONStream](#fromJSONStream)
 * [Expression Helpers](#expression-helpers)
   * [op](#op), [agg](#agg), [escape](#escape)
   * [bin](#bin), [collate](#collate), [desc](#desc), [frac](#frac), [rolling](#rolling), [seed](#seed)
@@ -63,7 +62,7 @@ aq.table(map)
 <hr/><a id="from" href="#from">#</a>
 <em>aq</em>.<b>from</b>(<i>values</i>[, <i>names</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/table/index.js)
 
-Create a new <a href="table">table</a> from an existing object, such as an array of objects or a set of key-value pairs.
+Create a new <a href="table">table</a> from an existing object, such as an array of objects or a set of key-value pairs. For varied JSON formats, see the [`fromJSON`](#fromJSON) method.
 
 * *values*: Data values to populate the table. If array-valued or iterable, imports rows for each non-null value, using the provided column names as keys for each row object. If no *names* are provided, the first non-null object's own keys are used. If an object or a Map, create a two-column table with columns for the input keys and values.
 * *names*: Column names to include. For object or Map inputs, specifies the key and value column names. Otherwise, specifies the keys to look up on each row object.
@@ -95,7 +94,7 @@ aq.from(new Map([ ['d', 4], ['e', 5], ['f', 6] ])
 Methods for loading files and parsing data formats to create new table instances.
 
 <hr/><a id="loadArrow" href="#loadArrow">#</a>
-<em>aq</em>.<b>loadArrow</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/parse-arrow.js)
+<em>aq</em>.<b>loadArrow</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-arrow.js)
 
 Load a file in the [Apache Arrow](https://arrow.apache.org/overview/) IPC binary format from a *url* and return a Promise for a <a href="table">table</a>. Both the [Arrow IPC `stream` and `file` formats](https://arrow.apache.org/docs/format/Columnar.html#ipc-streaming-format) are supported; the format type is determined automatically.
 
@@ -121,13 +120,13 @@ const dt = await aq.loadArrow('data/table.arrow');
 
 
 <hr/><a id="loadCSV" href="#loadCSV">#</a>
-<em>aq</em>.<b>loadCSV</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/parse-csv.js)
+<em>aq</em>.<b>loadCSV</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-csv.js)
 
 Load a comma-separated values (CSV) file from a *url* and return a Promise for a <a href="table">table</a>. Delimiters other than commas, such as tabs or pipes ('\|'), can be specified using the *options* argument. By default, automatic type inference is performed for input values; string values that match the [ISO standard date format](https://en.wikipedia.org/wiki/ISO_8601) are parsed into JavaScript Date objects. To disable this behavior set *options.autoType* to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use *options.parse*.
 
 When invoked in the browser, the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) is used to load the *url*. When invoked in node.js, the *url* argument can also be a local file path. If the input *url* string has a network protocol at the beginning (e.g., `'http://'`, `'https://'`, *etc*.) it is treated as a URL and `fetch` is used. If the `'file://'` protocol is used, the rest of the string should be an absolute file path, from which a local file is loaded. Otherwise the input is treated as a path to a local file and loaded using the node.js `fs` module. In either case, stream processing is used to load the data while minimizing memory usage.
 
-* *url*: The url or local file (node.js only) to load.
+* *url* (`string`): The url or local file (node.js only) to load.
 * *options*: File loading and CSV formatting options.
   * *fetch* ([`RequestInit`](https://developer.mozilla.org/en-US/docs/Web/API/RequestInit)): Options to pass to the HTTP fetch method when loading a URL.
   * *decompress* (`'gzip' | 'deflate' | null`): A decompression format to apply. If unspecified, the decompression type is inferred from the file extension (`.gz` for `'gzip'`, `.zz` for `'deflate'`). If no matching extension is found, no decompression is performed.
@@ -161,13 +160,13 @@ const dt = await aq.loadCSV('data/table.tsv', { delimiter: '\t' })
 
 
 <hr/><a id="loadFixed" href="#loadFixed">#</a>
-<em>aq</em>.<b>loadFixed</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/parse-fixed.js)
+<em>aq</em>.<b>loadFixed</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-fixed.js)
 
 Load a fixed-width file from a *url* and return a Promise for a <a href="table">table</a>. By default, automatic type inference is performed for input values; string values that match the [ISO standard date format](https://en.wikipedia.org/wiki/ISO_8601) are parsed into JavaScript Date objects. To disable this behavior set the *autoType* option to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use the *parse* option.
 
 When invoked in the browser, the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) is used to load the *url*. When invoked in node.js, the *url* argument can also be a local file path. If the input *url* string has a network protocol at the beginning (e.g., `'http://'`, `'https://'`, *etc*.) it is treated as a URL and `fetch` is used. If the `'file://'` protocol is used, the rest of the string should be an absolute file path, from which a local file is loaded. Otherwise the input is treated as a path to a local file and loaded using the node.js `fs` module. In either case, stream processing is used to load the data while minimizing memory usage.
 
-* *url*: The url or local file (node.js only) to load.
+* *url* (`string`): The url or local file (node.js only) to load.
 * *options*: File loading and fixed-width formatting options.
   * *fetch* ([`RequestInit`](https://developer.mozilla.org/en-US/docs/Web/API/RequestInit)): Options to pass to the HTTP fetch method when loading a URL.
   * *decompress* (`'gzip' | 'deflate' | null`): A decompression format to apply. If unspecified, the decompression type is inferred from the file extension (`.gz` for `'gzip'`, `.zz` for `'deflate'`). If no matching extension is found, no decompression is performed.
@@ -185,12 +184,15 @@ When invoked in the browser, the [Fetch API](https://developer.mozilla.org/en-US
 
 ```js
 // load table from a fixed-width file
-const dt = await aq.loadFixed('a1\nb2', { widths: [1, 1], names: ['u', 'v'] });
+const dt = await aq.loadFixed(
+  'data/fixed-width.txt',
+  { widths: [1, 1], names: ['u', 'v'] }
+);
 ```
 
 
 <hr/><a id="loadJSON" href="#loadJSON">#</a>
-<em>aq</em>.<b>loadJSON</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/load-file.js)
+<em>aq</em>.<b>loadJSON</b>(<i>url</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-json.js)
 
 Load a JavaScript Object Notation (JSON) file from a *url* and return a Promise for a <a href="table">table</a>. If the *type* option is unspecified and the loaded JSON is array-valued, an array-of-objects format is assumed. If object-valued, a column-oriented format is assumed. See the [parseJSON](#parseJSON) method for format type examples.
 
@@ -198,7 +200,7 @@ By default, string values that match the [ISO standard date format](https://en.w
 
 When invoked in the browser, the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) is used to load the *url*. When invoked in node.js, the *url* argument can also be a local file path. If the input *url* string has a network protocol at the beginning (e.g., `'http://'`, `'https://'`, *etc*.) it is treated as a URL and `fetch` is used. If the `'file://'` protocol is used, the rest of the string should be an absolute file path, from which a local file is loaded. Otherwise the input is treated as a path to a local file and loaded using the node.js `fs` module. For the `'ndjson'` format *type*, stream processing is used to load the data while minimizing memory usage.
 
-* *url*: The url or local file (node.js only) to load.
+* *url* (`string`): The url or local file (node.js only) to load.
 * *options*: File loading and JSON formatting options.
   * *fetch* ([`RequestInit`](https://developer.mozilla.org/en-US/docs/Web/API/RequestInit)): Options to pass to the HTTP fetch method when loading a URL.
   * *decompress* (`'gzip' | 'deflate' | null`): A decompression format to apply. If unspecified, the decompression type is inferred from the file extension (`.gz` for `'gzip'`, `.zz` for `'deflate'`). If no matching extension is found, no decompression is performed.
@@ -222,16 +224,16 @@ const dt = await aq.loadJSON('data/table.json', { autoType: false })
 ```
 
 
-<hr/><a id="parseArrow" href="#parseArrow">#</a>
-<em>aq</em>.<b>parseArrow</b>(<i>input</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-arrow.js)
+<hr/><a id="fromArrow" href="#fromArrow">#</a>
+<em>aq</em>.<b>fromArrow</b>(<i>input</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-arrow.js)
 
-Returns a Promise to a new <a href="table">table</a> backed by [Apache Arrow](https://arrow.apache.org/) binary data. The *input* can be a ReadableStream of bytes, a byte array in the Arrow IPC format, or an instantiated [Flechette](https://github.com/uwdata/flechette) or [Apache Arrow JS](https://arrow.apache.org/docs/js/) table instance. Binary inputs are decoded using [Flechette](https://github.com/uwdata/flechette).
+Returns a new <a href="table">table</a> backed by [Apache Arrow](https://arrow.apache.org/) binary data. The *input* can be a byte array in the Arrow IPC format, or an instantiated [Flechette](https://github.com/uwdata/flechette) or [Apache Arrow JS](https://arrow.apache.org/docs/js/) table instance. Binary inputs are decoded using [Flechette](https://github.com/uwdata/flechette).
 
 For many data types, Arquero uses binary-encoded Arrow columns as-is with zero data copying. For dictionary columns, Arquero unpacks columns with `null` entries or containing multiple record batches to optimize query performance.
 
 Both the [Arrow IPC `stream` and `file` formats](https://arrow.apache.org/docs/format/Columnar.html#ipc-streaming-format) are supported; the format type is determined automatically. This method performs parsing only. To specify a URL or file to load, use [loadArrow](#loadArrow).
 
-* *input*: A [ReadableStream](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream) of bytes, a byte array (e.g., [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) or [Uint8Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)) in the Arrow IPC format, or a [Flechette](https://github.com/uwdata/flechette) or [Apache Arrow JS](https://arrow.apache.org/docs/js/) table instance.
+* *input*: A byte array (e.g., [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) or [Uint8Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)) in the Arrow IPC format, or a [Flechette](https://github.com/uwdata/flechette) or [Apache Arrow JS](https://arrow.apache.org/docs/js/) table instance.
 * *options*: An Arrow import options object.
   * *columns* (`Select`): An ordered set of columns to import. The input may consist of: column name strings, column integer indices, objects with current column names as keys and new column names as values (for renaming), or a selection helper function such as [all](#all), [not](#not), or [range](#range).
   * *useBigInt* (`boolean`): Boolean flag (default `false`) to extract 64-bit integer types as JavaScript `BigInt` values. For Flechette tables, the default is to coerce 64-bit integers to JavaScript numbers and raise an error if the number is out of range. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
@@ -251,18 +253,18 @@ const arrowBytes = aq.table({
   .toArrowIPC();
 
 // access the Arrow-encoded data as an Arquero table
-const dt = await aq.parseArrow(arrowBytes);
+const dt = aq.fromArrow(arrowBytes);
 ```
 
 
-<hr/><a id="parseCSV" href="#parseCSV">#</a>
-<em>aq</em>.<b>parseCSV</b>(<i>input</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/parse-csv.js)
+<hr/><a id="fromCSV" href="#parseCSV">#</a>
+<em>aq</em>.<b>fromCSV</b>(<i>input</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-csv.js)
 
-Parse a comma-separated values (CSV) *input* and return a Promise to a <a href="table">table</a>. Delimiters other than commas, such as tabs or pipes ('\|'), can be specified using the *delimiter* option. By default, automatic type inference is performed for input values; string values that match the [ISO standard date format](https://en.wikipedia.org/wiki/ISO_8601) are parsed into JavaScript Date objects. To disable this behavior set *autoType* option to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use the *parse* option.
+Parse a comma-separated values (CSV) *input* and return a <a href="table">table</a>. Delimiters other than commas, such as tabs or pipes ('\|'), can be specified using the *delimiter* option. By default, automatic type inference is performed for input values; string values that match the [ISO standard date format](https://en.wikipedia.org/wiki/ISO_8601) are parsed into JavaScript Date objects. To disable this behavior set *autoType* option to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use the *parse* option.
 
 This method performs parsing only. To specify a URL or file to load, use [loadCSV](#loadCSV).
 
-* *input*: A [ReadableStream](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream) of text or a string in a delimited-value format.
+* *input* (`string`): A text string in a delimited-value format.
 * *options*: A CSV format options object.
   * *delimiter* (`string`): A single-character delimiter string between column values (default `','`).
   * *decimal* (`string`): A single-character numeric decimal separator (default `'.'`).
@@ -279,54 +281,45 @@ This method performs parsing only. To specify a URL or file to load, use [loadCS
 ```js
 // create table from an input CSV string
 // akin to table({ a: [1, 3], b: [2, 4] })
-await aq.parseCSV('a,b\n1,2\n3,4')
+aq.fromCSV('a,b\n1,2\n3,4')
 ```
 
 ```js
 // skip commented lines
-await aq.parseCSV('# a comment\na,b\n1,2\n3,4', { comment: '#' })
+aq.fromCSV('# a comment\na,b\n1,2\n3,4', { comment: '#' })
 ```
 
 ```js
 // skip the first line
-await aq.parseCSV('# a comment\na,b\n1,2\n3,4', { skip: 1 })
+aq.fromCSV('# a comment\na,b\n1,2\n3,4', { skip: 1 })
 ```
 
 ```js
 // override autoType with custom parser for column 'a'
 // akin to table({ a: ['00152', '30219'], b: [2, 4] })
-await aq.parseCSV('a,b\n00152,2\n30219,4', { parse: { a: String } })
+aq.fromCSV('a,b\n00152,2\n30219,4', { parse: { a: String } })
 ```
 
 ```js
 // parse semi-colon delimited text with comma as decimal separator
-await aq.parseCSV('a;b\nu;-1,23\nv;3,45e5', { delimiter: ';', decimal: ',' })
+aq.fromCSV('a;b\nu;-1,23\nv;3,45e5', { delimiter: ';', decimal: ',' })
 ```
 
 ```js
 // create table from an input CSV loaded from 'url'
 // for performant stream-based parsing, use the loadCSV method
-await aq.parseCSV(await fetch(url).then(res => res.text()))
-```
-
-```js
-// parse CSV from a compressed input stream
-// (these stream transforms are performed internally by loadCSV)
-const stream = (await fetch(url).then(res => res.body))
-  .pipeThrough(new DecompressionStream('gzip')) // decompress bytes
-  .pipeThrough(new TextDecoderStream()); // map bytes to strings
-await aq.parseCSV(stream);
+aq.fromCSV(await fetch(url).then(res => res.text()))
 ```
 
 
-<hr/><a id="parseFixed" href="#parseFixed">#</a>
-<em>aq</em>.<b>parseFixed</b>(<i>input</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/parse-fixed.js)
+<hr/><a id="fromFixed" href="#fromFixed">#</a>
+<em>aq</em>.<b>fromFixed</b>(<i>input</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-fixed.js)
 
-Parse a fixed-width file *input* and return a Promise to a <a href="table">table</a>. By default, automatic type inference is performed for input values; string values that match the [ISO standard date format](https://en.wikipedia.org/wiki/ISO_8601) are parsed into JavaScript Date objects. To disable this behavior set *options.autoType* to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use *options.parse*.
+Parse a fixed-width file *input* and a <a href="table">table</a>. By default, automatic type inference is performed for input values; string values that match the [ISO standard date format](https://en.wikipedia.org/wiki/ISO_8601) are parsed into JavaScript Date objects. To disable this behavior set *options.autoType* to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use *options.parse*.
 
 This method performs parsing only. To specify a URL or file to load, use [loadFixed](#loadFixed).
 
-* *input*: A [ReadableStream](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream) of text or a string in a fixed-width format.
+* *input* (`string`): A text string in a fixed-width format.
 * *options*: A fixed-width format options object.
   * *positions* (`[number, number][]`): Array of [start, end] indices for fixed-width columns.
   * *widths* (`number[]`): Array of fixed column widths. This option is ignored if the *positions* property is specified.
@@ -343,18 +336,18 @@ This method performs parsing only. To specify a URL or file to load, use [loadFi
 ```js
 // create table from an input fixed-width string
 // akin to table({ u: ['a', 'b'], v: [1, 2] })
-await aq.parseFixed('a1\nb2', { widths: [1, 1], names: ['u', 'v'] })
+aq.fromFixed('a1\nb2', { widths: [1, 1], names: ['u', 'v'] })
 ```
 
 
-<hr/><a id="parseJSON" href="#parseJSON">#</a>
-<em>aq</em>.<b>parseJSON</b>(<i>input</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/parse-json.js)
+<hr/><a id="fromJSON" href="#fromJSON">#</a>
+<em>aq</em>.<b>fromJSON</b>(<i>input</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-json.js)
 
-Parse JavaScript Object Notation (JSON) *input* into and return a Promise to a <a href="table">table</a>. String values in JSON column arrays that match the [ISO standard date format](https://en.wikipedia.org/wiki/ISO_8601) are parsed into JavaScript Date objects. To disable this behavior, set the *autoType* option to `false`. To perform custom parsing of input column values, use the *parse* option. Auto-type Date parsing is not performed for columns with custom parse options.
+Parse JavaScript Object Notation (JSON) *input* into and return a <a href="table">table</a>. String values in JSON column arrays that match the [ISO standard date format](https://en.wikipedia.org/wiki/ISO_8601) are parsed into JavaScript Date objects. To disable this behavior, set the *autoType* option to `false`. To perform custom parsing of input column values, use the *parse* option. Auto-type Date parsing is not performed for columns with custom parse options.
 
 This method performs parsing only. To specify a URL or file to load, use [loadJSON](#loadJSON). Additionally, the [table](#table) reads pre-parsed column-oriented JSON data into an Arquero table without type inference, while the [from](#from) method similarly maps pre-parsed row-oriented JSON data into an Arquero table.
 
-* *input*: A [ReadableStream](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream) of text, a string in a supported JSON format, or pre-parsed JSON data.
+* *input* (`string` | `object[]` | `object`): A string in a supported JSON format or pre-parsed JSON data.
 * *options*: A JSON format options object:
   * *type* (`'columns' | 'rows' | 'ndjson' | null`): The JSON format type. One of `'columns'` (for an object with named column arrays)`, 'rows'` (for an array for row objects), or `'ndjson'` for [newline-delimited JSON](https://github.com/ndjson/ndjson-spec) rows. For `'ndjson'`, each line of text must contain a JSON row object (with no trailing comma) and string properties must not contain any newline characters. If no format type is specified, one of `'rows'` or `'columns'` is inferred from the structure of the parsed JSON.
   * *columns* (`string[]`): An array of column names to include. JSON properties missing from this list are not included in the table.
@@ -398,205 +391,7 @@ This method performs parsing only. To specify a URL or file to load, use [loadJS
 ```js
 // create table from an input JSON string
 // akin to table({ a: [1, 3], b: [2, 4] })
-await aq.parseJSON('{"a":[1,3],"b":[2,4]}')
-```
-
-```js
-// create table from an input JSON string loaded from 'url'
-aq.parseJSON(await fetch(url).then(res => res.text()))
-```
-
-```js
-// create table from an input JSON object loaded from 'url'
-// disable autoType Date parsing
-aq.parseJSON(await fetch(url).then(res => res.json()), { autoType: false })
-```
-
-
-<br/>
-
-
-### <a id="input-removed">Input Methods removed in v8.0</a>
-
-<hr/><a id="fromArrow" href="#fromArrow">#</a>
-<em>aq</em>.<b>fromArrow</b>(<i>arrowTable</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-arrow.js)
-
-_This method was removed in Arquero v8.0 in favor of the async [parseArrow](#parseArrow) method. This documentation applied to Arquero v7 and earlier._
-
-Create a new <a href="table">table</a> backed by [Apache Arrow](https://arrow.apache.org/) binary data. The input *arrowTable* can be a byte array in the Arrow IPC format or an instantiated [Flechette](https://github.com/uwdata/flechette) or [Apache Arrow JS](https://arrow.apache.org/docs/js/) table instance. Byte array inputs are decoded using [Flechette](https://github.com/uwdata/flechette).
-
-For many data types, Arquero uses binary-encoded Arrow columns as-is with zero data copying. For dictionary columns, Arquero unpacks columns with `null` entries or containing multiple record batches to optimize query performance.
-
-This method performs parsing only. To both load and parse an Arrow file, use [loadArrow](#loadArrow).
-
-* *arrowTable*: A byte array (e.g., [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) or [Uint8Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)) in the Arrow IPC format or a [Flechette](https://github.com/uwdata/flechette) or [Apache Arrow JS](https://arrow.apache.org/docs/js/) table instance.
-* *options*: An Arrow import options object:
-  * *columns*: An ordered set of columns to import. The input may consist of: column name strings, column integer indices, objects with current column names as keys and new column names as values (for renaming), or a selection helper function such as [all](#all), [not](#not), or [range](#range).
-  * *useBigInt*: Boolean flag (default `false`) to extract 64-bit integer types as JavaScript `BigInt` values. For Flechette tables, the default is to coerce 64-bit integers to JavaScript numbers and raise an error if the number is out of range. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
-  * *useDate*: Boolean flag (default `true`) to convert Arrow date and timestamp values to JavaScript Date objects. Otherwise, numeric timestamps are used. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
-  * *useDecimalBigInt*: Boolean flag (default `false`) to extract Arrow decimal-type data as BigInt values, where fractional digits are scaled to integers. Otherwise, decimals are (sometimes lossily) converted to floating-point numbers (default). This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
-  * *useMap*: Boolean flag (default `false`) to represent Arrow Map data as JavaScript `Map` values. For Flechette tables, the default is to produce an array of `[key, value]` arrays. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
-  * *useProxy*: Boolean flag (default `false`) to extract Arrow Struct values and table row objects using zero-copy proxy objects that extract data from underlying Arrow batches. The proxy objects can improve performance and reduce memory usage, but do not support property enumeration (`Object.keys`, `Object.values`, `Object.entries`) or spreading (`{ ...object }`). This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
-
-*Examples*
-
-```js
-// encode input array-of-objects data as an Arrow table
-const arrowTable = aq.toArrow([
-  { x: 1, y: 3.4 },
-  { x: 2, y: 1.6 },
-  { x: 3, y: 5.4 },
-  { x: 4, y: 7.1 },
-  { x: 5, y: 2.9 }
-]);
-
-// now access the Arrow-encoded data as an Arquero table
-const dt = aq.fromArrow(arrowTable);
-```
-
-
-<hr/><a id="fromCSV" href="#fromCSV">#</a>
-<em>aq</em>.<b>fromCSV</b>(<i>text</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-csv.js)
-
-_This method was removed in Arquero v8.0 in favor of the async [parseArrow](#parseArrow) method. This documentation applied to Arquero v7 and earlier._
-
-Parse a comma-separated values (CSV) *text* string into a <a href="table">table</a>. Delimiters other than commas, such as tabs or pipes ('\|'), can be specified using the *options* argument. By default, automatic type inference is performed for input values; string values that match the [ISO standard date format](https://en.wikipedia.org/wiki/ISO_8601) are parsed into JavaScript Date objects. To disable this behavior set *options.autoType* to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use *options.parse*.
-
-This method performs parsing only. To both load and parse a CSV file, use [loadCSV](#loadCSV).
-
-* *text*: A string in a delimited-value format.
-* *options*: A CSV format options object:
-  * *delimiter*: A single-character delimiter string between column values (default `','`).
-  * *decimal*: A single-character numeric decimal separator (default `'.'`).
-  * *header*: Boolean flag (default `true`) to specify the presence of a header row. If `true`, indicates the CSV contains a header row with column names. If `false`, indicates the CSV does not contain a header row and the columns are given the names `'col1'`, `'col2'`, etc unless the *names* option is specified.
-  * *names*: An array of column names to use for header-less CSV files. This option is ignored if the *header* option is `true`.
-  * *skip*: The number of lines to skip (default `0`) before reading data.
-  * *comment*: A string used to identify comment lines. Any lines that start with the comment pattern are skipped.
-  * *autoType*: Boolean flag (default `true`) for automatic type inference.
-  * *autoMax*: Maximum number of initial rows (default `1000`) to use for type inference.
-  * *parse*: Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
-
-*Examples*
-
-```js
-// create table from an input CSV string
-// akin to table({ a: [1, 3], b: [2, 4] })
-aq.fromCSV('a,b\n1,2\n3,4')
-```
-
-```js
-// skip commented lines
-aq.fromCSV('# a comment\na,b\n1,2\n3,4', { comment: '#' })
-```
-
-```js
-// skip the first line
-aq.fromCSV('# a comment\na,b\n1,2\n3,4', { skip: 1 })
-```
-
-```js
-// override autoType with custom parser for column 'a'
-// akin to table({ a: ['00152', '30219'], b: [2, 4] })
-aq.fromCSV('a,b\n00152,2\n30219,4', { parse: { a: String } })
-```
-
-```js
-// parse semi-colon delimited text with comma as decimal separator
-aq.fromCSV('a;b\nu;-1,23\nv;3,45e5', { delimiter: ';', decimal: ',' })
-```
-
-```js
-// create table from an input CSV loaded from 'url'
-// alternatively, use the loadCSV method
-aq.fromCSV(await fetch(url).then(res => res.text()))
-```
-
-
-<hr/><a id="fromFixed" href="#fromFixed">#</a>
-<em>aq</em>.<b>fromFixed</b>(<i>text</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-fixed.js)
-
-_This method was removed in Arquero v8.0 in favor of the async [parseArrow](#parseArrow) method. This documentation applied to Arquero v7 and earlier._
-
-Parse a fixed-width file *text* string into a <a href="table">table</a>. By default, automatic type inference is performed for input values; string values that match the [ISO standard date format](https://en.wikipedia.org/wiki/ISO_8601) are parsed into JavaScript Date objects. To disable this behavior set *options.autoType* to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use *options.parse*.
-
-This method performs parsing only. To both load and parse a fixed-width file, use [loadFixed](#loadFixed).
-
-* *text*: A string in a fixed-width format.
-* *options*: A format options object:
-  * *positions*: Array of [start, end] indices for fixed-width columns.
-  * *widths*: Array of fixed column widths. This option is ignored if the *positions* property is specified.
-  * *names*: An array of column names. The array length should match the length of the *positions* or *widths* array. If not specified or shorter than the other array, default column names are generated.
-  * *decimal*: A single-character numeric decimal separator (default `'.'`).
-  * *skip*: The number of lines to skip (default `0`) before reading data.
-  * *comment*: A string used to identify comment lines. Any lines that start with the comment pattern are skipped.
-  * *autoType*: Boolean flag (default `true`) for automatic type inference.
-  * *autoMax*: Maximum number of initial rows (default `1000`) to use for type inference.
-  * *parse*: Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
-
-*Examples*
-
-```js
-// create table from an input fixed-width string
-// akin to table({ u: ['a', 'b'], v: [1, 2] })
-aq.fromFixed('a1\nb2', { widths: [1, 1], names: ['u', 'v'] })
-```
-
-
-<hr/><a id="fromJSON" href="#fromJSON">#</a>
-<em>aq</em>.<b>fromJSON</b>(<i>data</i>) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-json.js)
-
-_This method was removed in Arquero v8.0 in favor of the async [parseArrow](#parseArrow) method. This documentation applied to Arquero v7 and earlier._
-
-Parse JavaScript Object Notation (JSON) *data* into a <a href="table">table</a>. String values in JSON column arrays that match the [ISO standard date format](https://en.wikipedia.org/wiki/ISO_8601) are parsed into JavaScript Date objects. To disable this behavior, set *options.autoType* to `false`. To perform custom parsing of input column values, use *options.parse*. Auto-type Date parsing is not performed for columns with custom parse options.
-
-This method performs parsing only. To both load and parse a JSON file, use [loadJSON](#loadJSON).
-
-The expected JSON data format is an object with column names for keys and column value arrays for values, like so:
-
-```json
-{
-  "colA": ["a", "b", "c"],
-  "colB": [1, 2, 3]
-}
-```
-
-The data payload can also be provided as the *data* property of an enclosing object, with an optional *schema* property containing table metadata such as a *fields* array of ordered column information:
-
-```json
-{
-  "schema": {
-    "fields": [
-      { "name": "colA" },
-      { "name": "colB" }
-    ]
-  },
-  "data": {
-    "colA": ["a", "b", "c"],
-    "colB": [1, 2, 3]
-  }
-}
-```
-
-* *data*: A string in a supported JSON format, or a corresponding Object instance.
-* *options*: A JSON format options object:
-  * *autoType*: Boolean flag (default `true`) for automatic type inference. If `false`, automatic date parsing for input JSON strings is disabled.
-  * *parse*: Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
-
-*Examples*
-
-```js
-// create table from an input JSON string
-// akin to table({ a: [1, 3], b: [2, 4] })
 aq.fromJSON('{"a":[1,3],"b":[2,4]}')
-```
-
-```js
-// create table from an input JSON string
-// akin to table({ a: [1, 3], b: [2, 4] }, ['a', 'b'])
-aq.fromJSON(`{
-  "schema":{"fields":[{"name":"a"},{"name":"b"}]},
-  "data":{"a":[1,3],"b":[2,4]}
-}`)
 ```
 
 ```js
@@ -610,8 +405,142 @@ aq.fromJSON(await fetch(url).then(res => res.text()))
 aq.fromJSON(await fetch(url).then(res => res.json()), { autoType: false })
 ```
 
-<br/>
 
+<hr/><a id="fromArrowStream" href="#fromArrowStream">#</a>
+<em>aq</em>.<b>fromArrowStream</b>(<i>stream</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-arrow.js)
+
+Returns a Promise to a new <a href="table">table</a> backed by [Apache Arrow](https://arrow.apache.org/) binary data. The *stream* must be a ReadableStream of bytes, which is then decoded using [Flechette](https://github.com/uwdata/flechette).
+
+For many data types, Arquero uses binary-encoded Arrow columns as-is with zero data copying. For dictionary columns, Arquero unpacks columns with `null` entries or containing multiple record batches to optimize query performance.
+
+Both the [Arrow IPC `stream` and `file` formats](https://arrow.apache.org/docs/format/Columnar.html#ipc-streaming-format) are supported; the format type is determined automatically. This method performs parsing only. To specify a URL or file to load, use [loadArrow](#loadArrow).
+
+* *stream*: A [ReadableStream](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream) of bytes.
+* *options*: An Arrow import options object.
+  * *columns* (`Select`): An ordered set of columns to import. The input may consist of: column name strings, column integer indices, objects with current column names as keys and new column names as values (for renaming), or a selection helper function such as [all](#all), [not](#not), or [range](#range).
+  * *useBigInt* (`boolean`): Boolean flag (default `false`) to extract 64-bit integer types as JavaScript `BigInt` values. For Flechette tables, the default is to coerce 64-bit integers to JavaScript numbers and raise an error if the number is out of range. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
+  * *useDate* (`boolean`): Boolean flag (default `true`) to convert Arrow date and timestamp values to JavaScript Date objects. Otherwise, numeric timestamps are used. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
+  * *useDecimalBigInt* (`boolean`): Boolean flag (default `false`) to extract Arrow decimal-type data as BigInt values, where fractional digits are scaled to integers. Otherwise, decimals are (sometimes lossily) converted to floating-point numbers (default). This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
+  * *useMap* (`boolean`): Boolean flag (default `false`) to represent Arrow Map data as JavaScript `Map` values. For Flechette tables, the default is to produce an array of `[key, value]` arrays. This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
+  * *useProxy* (`boolean`): Boolean flag (default `false`) to extract Arrow Struct values and table row objects using zero-copy proxy objects that extract data from underlying Arrow batches. The proxy objects can improve performance and reduce memory usage, but do not support property enumeration (`Object.keys`, `Object.values`, `Object.entries`) or spreading (`{ ...object }`). This option is only applied when parsing IPC binary data, otherwise the settings of the provided table instance are used.
+
+*Examples*
+
+```js
+// load table from an Apache Arrow file
+const dt = await aq.fromArrowStream(byteStream);
+```
+
+<hr/><a id="fromCSVStream" href="#fromCSVStream">#</a>
+<em>aq</em>.<b>fromCSVStream</b>(<i>stream</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-csv.js)
+
+Parse a comma-separated values (CSV) *stream* and return a Promise to a <a href="table">table</a>. Delimiters other than commas, such as tabs or pipes ('\|'), can be specified using the *delimiter* option. By default, automatic type inference is performed for input values; string values that match the [ISO standard date format](https://en.wikipedia.org/wiki/ISO_8601) are parsed into JavaScript Date objects. To disable this behavior set *autoType* option to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use the *parse* option.
+
+This method performs parsing only. To specify a URL or file to load, use [loadCSV](#loadCSV).
+
+* *stream*: A [ReadableStream](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream) of text.
+* *options*: A CSV format options object.
+  * *delimiter* (`string`): A single-character delimiter string between column values (default `','`).
+  * *decimal* (`string`): A single-character numeric decimal separator (default `'.'`).
+  * *header* (`boolean`): Boolean flag (default `true`) to specify the presence of a header row. If `true`, indicates the CSV contains a header row with column names. If `false`, indicates the CSV does not contain a header row and the columns are given the names `'col1'`, `'col2'`, etc unless the *names* option is specified.
+  * *names* (`string[]`): An array of column names to use for header-less CSV files. This option is ignored if the *header* option is `true`.
+  * *skip* (`number`): The number of lines to skip (default `0`) before reading data.
+  * *comment* (`string`): A string used to identify comment lines. Any lines that start with the comment pattern are skipped.
+  * *autoType* (`true`): Boolean flag (default `true`) for automatic type inference.
+  * *autoMax* (`number`): Maximum number of initial rows (default `1000`) to use for type inference.
+  * *parse* (`Record<string, function>`): Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
+
+```js
+// parse CSV from a compressed input stream
+// (these stream transforms are performed internally by loadCSV)
+const stream = (await fetch(url).then(res => res.body))
+  .pipeThrough(new DecompressionStream('gzip')) // decompress bytes
+  .pipeThrough(new TextDecoderStream()); // map bytes to strings
+await aq.fromCSVStream(stream);
+```
+
+
+<hr/><a id="fromFixedStream" href="#fromFixedStream">#</a>
+<em>aq</em>.<b>fromFixedStream</b>(<i>stream</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/from-fixed.js)
+
+Parse a fixed-width file *stream* and return a Promise to a <a href="table">table</a>. By default, automatic type inference is performed for input values; string values that match the [ISO standard date format](https://en.wikipedia.org/wiki/ISO_8601) are parsed into JavaScript Date objects. To disable this behavior set *options.autoType* to `false`, which will cause all columns to be loaded as strings. To perform custom parsing of input column values, use *options.parse*.
+
+This method performs parsing only. To specify a URL or file to load, use [loadFixed](#loadFixed).
+
+* *stream*: A [ReadableStream](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream) of text.
+* *options*: A fixed-width format options object.
+  * *positions* (`[number, number][]`): Array of [start, end] indices for fixed-width columns.
+  * *widths* (`number[]`): Array of fixed column widths. This option is ignored if the *positions* property is specified.
+  * *names* (`string[]`): An array of column names. The array length should match the length of the *positions* or *widths* array. If not specified or shorter than the other array, default column names are generated.
+  * *decimal* (`string`): A single-character numeric decimal separator (default `'.'`).
+  * *skip* (`number`): The number of lines to skip (default `0`) before reading data.
+  * *comment* (`string`): A string used to identify comment lines. Any lines that start with the comment pattern are skipped.
+  * *autoType* (`boolean`): Boolean flag (default `true`) for automatic type inference.
+  * *autoMax* (`number`): Maximum number of initial rows (default `1000`) to use for type inference.
+  * *parse* (`Record<string, function>`): Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
+
+```js
+// parse fixed width text from a compressed input stream
+// (these stream transforms are performed internally by loadFixed)
+const stream = (await fetch(url).then(res => res.body))
+  .pipeThrough(new DecompressionStream('gzip')) // decompress bytes
+  .pipeThrough(new TextDecoderStream()); // map bytes to strings
+await aq.fromFixedStream(stream);
+```
+
+<hr/><a id="parseJSONStream" href="#parseJSONStream">#</a>
+<em>aq</em>.<b>parseJSONStream</b>(<i>stream</i>[, <i>options</i>]) · [Source](https://github.com/uwdata/arquero/blob/master/src/format/parse-json.js)
+
+Parse a JavaScript Object Notation (JSON) *stream* and return a Promise to a <a href="table">table</a>. String values in JSON column arrays that match the [ISO standard date format](https://en.wikipedia.org/wiki/ISO_8601) are parsed into JavaScript Date objects. To disable this behavior, set the *autoType* option to `false`. To perform custom parsing of input column values, use the *parse* option. Auto-type Date parsing is not performed for columns with custom parse options.
+
+This method performs parsing only. To specify a URL or file to load, use [loadJSON](#loadJSON). Additionally, the [table](#table) reads pre-parsed column-oriented JSON data into an Arquero table without type inference, while the [from](#from) method similarly maps pre-parsed row-oriented JSON data into an Arquero table.
+
+* *input*: A [ReadableStream](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream) of text.
+* *options*: A JSON format options object:
+  * *type* (`'columns' | 'rows' | 'ndjson' | null`): The JSON format type. One of `'columns'` (for an object with named column arrays)`, 'rows'` (for an array for row objects), or `'ndjson'` for [newline-delimited JSON](https://github.com/ndjson/ndjson-spec) rows. For `'ndjson'`, each line of text must contain a JSON row object (with no trailing comma) and string properties must not contain any newline characters. If no format type is specified, one of `'rows'` or `'columns'` is inferred from the structure of the parsed JSON.
+  * *columns* (`string[]`): An array of column names to include. JSON properties missing from this list are not included in the table.
+  * *skip* (`number`): The number of lines to skip (default `0`) before reading data. Applicable to the `'ndjson'` type only.
+  * *comment* (`string`): A string used to identify comment lines. Any lines that start with the comment pattern are skipped. Applicable to the `ndjson` type only.
+  * *autoType* (`boolean`): Boolean flag (default `true`) for automatic type inference.  If `false`, automatic date parsing for input JSON strings is disabled.
+  * *parse* (`Record<string, function>`): Object of column parsing options. The object keys should be column names. The object values should be parsing functions to invoke to transform values upon input.
+
+*JSON Format Types*
+
+`'columns'`: column-oriented JSON as an object-of-arrays.
+
+```json
+{
+  "colA": ["a", "b", "c"],
+  "colB": [1, 2, 3]
+}
+```
+
+`'rows'`: row-oriented JSON as an array-of-objects.
+
+```json
+[
+  {"colA": "a", "colB": 1},
+  {"colA": "b", "colB": 2},
+  {"colA": "c", "colB": 3}
+]
+```
+
+`'ndjson'`: newline-delimited JSON as individual objects separated by newline.
+
+```json
+{"colA": "a", "colB": 1}
+{"colA": "b", "colB": 2}
+{"colA": "c", "colB": 3}
+```
+
+*Examples*
+
+```js
+// create table from an input text stream in NDJSON format
+aq.fromJSONStream(textStream, { type: 'ndjson' })
+```
+
+<br/>
 
 ## <a id="expression-helpers">Expression Helpers</a>
 

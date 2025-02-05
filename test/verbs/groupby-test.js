@@ -1,6 +1,5 @@
 import assert from 'node:assert';
-import { readArrow } from '../../src/format/parse-arrow.js';
-import { desc, op, table, toArrow } from '../../src/index.js';
+import { desc, fromArrow, op, table, toArrow } from '../../src/index.js';
 
 describe('groupby', () => {
   it('computes groups based on field names', () => {
@@ -145,7 +144,7 @@ describe('groupby', () => {
   });
 
   it('optimizes Arrow dictionary columns', () => {
-    const dt = readArrow(toArrow(
+    const dt = fromArrow(toArrow(
       table({
         d: ['a', 'a', 'b', 'b'],
         v: [1, 2, 3, 4]

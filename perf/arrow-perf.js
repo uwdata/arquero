@@ -2,7 +2,7 @@ import tape from 'tape';
 import { time } from './time.js';
 import { bools, floats, ints, sample, strings } from './data-gen.js';
 import { table, toArrowIPC } from '../src/index.js';
-import { readArrow } from '../src/format/parse-arrow.js';
+import { fromArrow } from '../src/format/from-arrow.js';
 import { bool, columnFromArray, dictionary, float64, int32, tableFromColumns, tableToIPC, uint32, utf8 } from '@uwdata/flechette';
 import { tableFromIPC } from 'apache-arrow';
 
@@ -18,8 +18,8 @@ function process(N, nulls, msg) {
       )
   });
   const buf = tableToIPC(aa);
-  const at = readArrow(tableFromIPC(buf)); // using arrow-js
-  const ft = readArrow(aa); // using flechette
+  const at = fromArrow(tableFromIPC(buf)); // using arrow-js
+  const ft = fromArrow(aa); // using flechette
 
   const filterDict = (dt, val) => time(() => {
     dt.filter(`d.k === '${val}'`).numRows();
@@ -34,8 +34,8 @@ function process(N, nulls, msg) {
     console.table([ // eslint-disable-line
       {
         operation:  'init table',
-        'arrow-js': await time(() => readArrow(tableFromIPC(buf))),
-        flechette:  await time(() => readArrow(buf))
+        'arrow-js': await time(() => fromArrow(tableFromIPC(buf))),
+        flechette:  await time(() => fromArrow(buf))
       },
       {
         operation:  'count dictionary',

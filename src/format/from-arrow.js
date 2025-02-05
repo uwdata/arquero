@@ -3,34 +3,8 @@ import { all, resolve } from '../helpers/selection.js';
 import { sequence } from '../op/functions/sequence.js';
 import { columnSet } from '../table/ColumnSet.js';
 import { ColumnTable } from '../table/ColumnTable.js';
-import { isReadableStream } from '../util/is-readable-stream.js';
 import { byteStream } from './stream/byte-stream.js';
 import { collectBytes } from './stream/collect.js';
-
-/**
- * Load an Arrow file from a URL and return a Promise for an Arquero table.
- * @param {string} path The URL or file path to load.
- * @param {import('./types.js').LoadOptions
- *  & import('./types.js').ArrowOptions} [options] Arrow parse options.
- * @return {Promise<ColumnTable>} A Promise to an Arquero table.
- * @example aq.loadArrow('data/table.arrow')
- */
-export async function loadArrow(path, options) {
- return parseArrow(await byteStream(path, options), options);
-}
-
-/**
- * Parse Arrow data and return a Promise for an Arquero table.
- * @param {ReadableStream<Uint8Array> | import('./types.js').ArrowInput} input
- *  An input byte stream, Apache Arrow data table, or Arrow IPC byte buffer.
- * @param {import('../format/types.js').ArrowOptions} [options]
- *  Options for Arrow import.
- * @return {Promise<ColumnTable>} A Promise to an Arquero table.
- */
-export async function parseArrow(input, options) {
-  if (isReadableStream(input)) input = await collectBytes(input);
-  return readArrow(input, options);
-}
 
 /**
  * Create a new table backed by an Apache Arrow table instance.
@@ -40,7 +14,7 @@ export async function parseArrow(input, options) {
  *  Options for Arrow import.
  * @return {ColumnTable} A new table containing the imported values.
  */
-export function readArrow(input, options) {
+export function fromArrow(input, options) {
   const { columns = all(), ...rest } = options || {};
   const arrow = input instanceof ArrayBuffer || input instanceof Uint8Array
     ? tableFromIPC(input, { useDate: true, ...rest })
@@ -63,6 +37,30 @@ export function readArrow(input, options) {
   });
 
   return new ColumnTable(cols.data, cols.names);
+}
+
+/**
+ * Parse Arrow data and return a Promise for an Arquero table.
+ * @param {ReadableStream<Uint8Array>} stream
+ *  An input byte stream, Apache Arrow data table, or Arrow IPC byte buffer.
+ * @param {import('./types.js').ArrowOptions} [options]
+ *  Options for Arrow import.
+ * @return {Promise<ColumnTable>} A Promise to an Arquero table.
+ */
+export async function fromArrowStream(stream, options) {
+  return fromArrow(await collectBytes(stream), options);
+}
+
+/**
+ * Load an Arrow file from a URL and return a Promise for an Arquero table.
+ * @param {string} path The URL or file path to load.
+ * @param {import('./types.js').LoadOptions
+ *  & import('./types.js').ArrowOptions} [options] Arrow parse options.
+ * @return {Promise<ColumnTable>} A Promise to an Arquero table.
+ * @example aq.loadArrow('data/table.arrow')
+ */
+export async function loadArrow(path, options) {
+  return fromArrowStream(await byteStream(path, options), options);
 }
 
 function dictionary(column) {

@@ -5,11 +5,10 @@ import { isISODateString } from '../util/is-iso-date-string.js';
 import { isString } from '../util/is-string.js';
 import { collectJSON } from './stream/collect.js';
 import { COLUMNS, NDJSON } from './stream/constants.js';
-import { lineFilter } from './stream/line-filter-stream.js';
-import { pipeline } from './stream/pipeline.js';
-import { TextLineStream } from './stream/text-line-stream.js';
+import { lineFilterTransformer } from './stream/line-filter-stream.js';
+import { parseJSONStream, parseJSONSync } from './stream/parse-json-rows.js';
+import { textLineTransformer } from './stream/text-line-stream.js';
 import { textStream } from './stream/text-stream.js';
-import { toTextStream } from './stream/to-text-stream.js';
 
 /**
  * Options for JSON parsing.
@@ -39,6 +38,52 @@ import { toTextStream } from './stream/to-text-stream.js';
  */
 
 /**
+ * Parse JavaScript Object Notation (JSON) data into a table.
+ * By default, automatic type inference is performed
+ * for input values; string values that match the ISO standard
+ * date format are parsed into JavaScript Date objects. To disable this
+ * behavior, set the autoType option to false. To perform custom parsing
+ * of input column values, use the parse option.
+ * @param {string} input The input text or stream.
+ * @param {JSONParseOptions} options The JSON parse options.
+ * @return {ColumnTable} A new table containing the parsed values.
+ */
+export function fromJSON(input, options = {}) {
+  const { columns = undefined, type = undefined } = options;
+  let data;
+  if (type === NDJSON) {
+    data = parseJSONSync(input, columns, transforms(options));
+  } else {
+    const json = isString(input) ? JSON.parse(input) : input;
+    data = (type === COLUMNS || (!type && !isArray(json)))
+      ? parseJSONColumns(json, columns)
+      : parseJSONRows(json, columns);
+  }
+  return postprocessJSON(data, options);
+}
+
+/**
+ * Parse a JavaScript Object Notation (JSON) stream into a table.
+ * By default, automatic type inference is performed
+ * for input values; string values that match the ISO standard
+ * date format are parsed into JavaScript Date objects. To disable this
+ * behavior, set the autoType option to false. To perform custom parsing
+ * of input column values, use the parse option.
+ * @param {ReadableStream<string>} input The input text or stream.
+ * @param {JSONParseOptions} options The JSON parse options.
+ * @return {Promise<ColumnTable>} A Promise to a new table containing the
+ *  parsed values.
+ */
+export async function fromJSONStream(input, options = {}) {
+  return options.type === NDJSON
+    ? postprocessJSON(
+        await parseJSONStream(input, options.columns, transforms(options)),
+        options
+      )
+    : fromJSON(await collectJSON(input), options);
+}
+
+/**
  * Load a JSON file from a URL and return a Promise for an Arquero table.
  * If the loaded JSON is array-valued, an array-of-objects format is assumed
  * and the aq.from method is used to construct the table. Otherwise, a
@@ -55,34 +100,17 @@ export async function loadJSON(path, options) {
     path.slice(-NDJSON.length-1).toLowerCase() === `.${NDJSON}`) {
     options = { ...options, type: NDJSON };
   }
-  return parseJSON(input, options);
+  return fromJSONStream(input, options);
 }
 
-/**
- * Parse JavaScript Object Notation (JSON) data into a table.
- * By default, automatic type inference is performed
- * for input values; string values that match the ISO standard
- * date format are parsed into JavaScript Date objects. To disable this
- * behavior, set the autoType option to false. To perform custom parsing
- * of input column values, use the parse option.
- * @param {ReadableStream<string> | string} input The input text or stream.
- * @param {JSONParseOptions} options The JSON parse options.
- * @return {Promise<ColumnTable>} A Promise to a new table containing the
- *  parsed values.
- */
-export async function parseJSON(input, options = {}) {
-  const { type = undefined, columns = undefined } = options;
-
-  let data;
-  if (type === NDJSON) {
-    data = await parseNDJSON(toTextStream(input), options);
-  } else {
-    const json = await collectJSON(input);
-    data = (type === COLUMNS || (!type && !isArray(json)))
-      ? parseJSONColumns(json, columns)
-      : parseJSONRows(json, columns);
-  }
-  return postprocessJSON(data.columns, data.names, options);
+function transforms({
+  comment = undefined,
+  skip = 0
+} = {}) {
+  return [
+    textLineTransformer(),
+    lineFilterTransformer(skip, comment)
+  ];
 }
 
 /**
@@ -132,69 +160,16 @@ function parseJSONRows(data, names) {
 }
 
 /**
- * @param {ReadableStream<string>} input The input text stream.
- * @param {JSONParseOptions} options The parse options.
- * @return {Promise<{
- *   columns: import('../table/types.js').ColumnData,
- *   names: string[]
- * }>}
- */
-function parseNDJSON(input, {
-  skip = 0,
-  comment = undefined,
-  columns = undefined
-} = {}) {
-  return readNDJSON(
-    pipeline(input, [new TextLineStream(), lineFilter(skip, comment)]),
-    columns
-  );
-}
-
-async function readNDJSON(stream, names) {
-  const iter = stream[Symbol.asyncIterator]();
-  let first;
-  do { first = (await iter.next()).value; } while (first.length === 0);
-
-  names ??= Object.keys(firstNonNull(first));
-  const cols = names.map(() => []);
-  const n = names.length;
-
-  function readBatch(chunk) {
-    for (let c = 0; c < chunk.length; ++c) {
-      if (chunk[c]) {
-        const obj = JSON.parse(chunk[c]);
-        for (let i = 0; i < n; ++i) {
-          cols[i].push(obj[names[i]]);
-        }
-      }
-    }
-  }
-
-  readBatch(first);
-  for await (const chunk of iter) {
-    readBatch(chunk);
-  }
-
-  /** @type {import('../table/types.js').ColumnData} */
-  const columns = {};
-  names.forEach((name, i) => columns[name] = cols[i]);
-  return { columns, names };
-}
-
-function firstNonNull(lines) {
-  const l = lines.find(l => l.length);
-  return JSON.parse(l);
-}
-
-/**
  * Post-process JavaScript Object Notation (JSON) data, performing type
  * inference as needed and returning a table instance.
- * @param {import('../table/types.js').ColumnData} columns The column data.
- * @param {string[]} names The column names.
+ * @param {{
+ *  columns: import('../table/types.js').ColumnData,
+ *  names: string[]
+ * }} data The column data.
  * @param {JSONParseOptions} [options] The JSON parse options.
  * @return {ColumnTable} A new table containing the parsed values.
  */
-function postprocessJSON(columns, names, {
+function postprocessJSON({ columns, names }, {
   autoType = true,
   parse = undefined
 } = {}) {

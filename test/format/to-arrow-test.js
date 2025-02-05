@@ -5,10 +5,9 @@ import {
   tableFromColumns, tableFromIPC, tableToIPC, uint16, uint32, uint64, uint8,
   utf8
 } from '@uwdata/flechette';
-import { readArrow } from '../../src/format/parse-arrow.js';
-import { loadCSV } from '../../src/format/parse-csv.js';
-import { parseJSON } from '../../src/format/parse-json.js';
-import { table, toArrow, toJSON } from '../../src/index.js';
+import {
+  fromArrow, fromJSON, loadCSV, table, toArrow, toJSON
+} from '../../src/index.js';
 
 function date(year, month=0, date=1, hours=0, minutes=0, seconds=0, ms=0) {
   return new Date(year, month, date, hours, minutes, seconds, ms);
@@ -145,7 +144,7 @@ describe('toArrow', () => {
     );
 
     assert.equal(
-      compareTables(readArrow(bt), at), 0,
+      compareTables(fromArrow(bt), at), 0,
       'serialized arquero and arrow tables match'
     );
   });
@@ -168,7 +167,7 @@ describe('toArrow', () => {
     );
 
     assert.equal(
-      compareTables(readArrow(tableFromIPC(buffer)), at), 0,
+      compareTables(fromArrow(tableFromIPC(buffer)), at), 0,
       'serialized arquero and arrow tables match'
     );
   });
@@ -182,7 +181,7 @@ describe('toArrow', () => {
     // create an arrow table with multiple record batches
     // then derive a new table
     const at0 = toArrow(dt0, { maxBatchRows: 4 });
-    const dt = readArrow(at0).derive({ sum: d => d.i + d.f });
+    const dt = fromArrow(at0).derive({ sum: d => d.i + d.f });
     const at = toArrow(dt);
 
     assert.equal(
@@ -199,7 +198,7 @@ describe('toArrow', () => {
     );
 
     assert.equal(
-      compareTables(readArrow(bt), at), 0,
+      compareTables(fromArrow(bt), at), 0,
       'serialized arquero and arrow tables match'
     );
   });
@@ -213,7 +212,7 @@ describe('toArrow', () => {
     // create an arrow table with multiple record batches
     // then derive a new table
     const at0 = toArrow(dt0, { maxBatchRows: 4 });
-    const dt = readArrow(at0)
+    const dt = fromArrow(at0)
       .derive({ sum: d => d.i + d.f })
       .filter(d => d.i % 2 === 0);
     const at = toArrow(dt);
@@ -232,7 +231,7 @@ describe('toArrow', () => {
     );
 
     assert.equal(
-      compareTables(readArrow(bt), at), 0,
+      compareTables(fromArrow(bt), at), 0,
       'serialized arquero and arrow tables match'
     );
   });
@@ -254,10 +253,10 @@ describe('toArrow', () => {
       .derive({ name: d => d.name + '' });
 
     const json = toJSON(dt);
-    const jt = await parseJSON(json);
+    const jt = fromJSON(json);
 
     const bytes = tableToIPC(toArrow(dt));
-    const bt = readArrow(tableFromIPC(bytes));
+    const bt = fromArrow(tableFromIPC(bytes));
 
     assert.deepEqual(
       [toJSON(bt), toJSON(jt)],
