@@ -43,24 +43,12 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-terser": "^0.4.4",
-<<<<<<< HEAD
-    "apache-arrow": "18.1.0",
-    "eslint": "^9.18.0",
-    "mocha": "^11.0.1",
-    "rimraf": "^6.0.1",
-<<<<<<< HEAD
-    "rollup": "^4.30.1",
-=======
-    "rollup": "^4.28.1",
->>>>>>> f71ef98 (chore: Bump dependecies, bump major (beta) version.)
-=======
     "@types/punycode": "^2.1.4",
     "apache-arrow": "19.0.0",
     "eslint": "^9.19.0",
     "mocha": "^11.1.0",
     "rimraf": "^6.0.1",
     "rollup": "^4.34.4",
->>>>>>> 3790916 (chore: Bump version, update dependencies.)
     "rollup-plugin-bundle-size": "^1.0.3",
     "tape": "^5.9.0",
     "typescript": "^5.7.3"
