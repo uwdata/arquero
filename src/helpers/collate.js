@@ -1,5 +1,5 @@
-import isFunction from '../util/is-function.js';
-import wrap from './wrap.js';
+import { isFunction } from '../util/is-function.js';
+import { wrap } from './wrap.js';
 
 /**
  * Annotate a table expression with collation metadata, indicating how
@@ -16,7 +16,7 @@ import wrap from './wrap.js';
  * @return {object} A wrapper object representing the collated value.
  * @example orderby(collate('colA', 'de'))
  */
-export default function(expr, comparator, options) {
+export function collate(expr, comparator, options) {
   return wrap(expr, {
     collate: isFunction(comparator)
       ? comparator

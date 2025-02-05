@@ -2,6 +2,6 @@
  * @param {*} value
  * @return {value is Set}
  */
-export default function(value) {
+export function isSet(value) {
   return value instanceof Set;
 }

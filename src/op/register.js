@@ -1,11 +1,10 @@
-import aggregateFunctions from './aggregate-functions.js';
-import windowFunctions from './window-functions.js';
-import functions from './functions/index.js';
-import ops, { op } from './op-api.js';
+import { aggregateFunctions } from './aggregate-functions.js';
+import { windowFunctions } from './window-functions.js';
+import { functions } from './functions/index.js';
+import { op, opApi } from './op-api.js';
 import { ROW_OBJECT } from '../expression/row-object.js';
-import error from '../util/error.js';
-import has from '../util/has.js';
-import toString from '../util/to-string.js';
+import { error } from '../util/error.js';
+import { toString } from '../util/to-string.js';
 
 const onIllegal = (name, type) =>
   error(`Illegal ${type} name: ${toString(name)}`);
@@ -16,9 +15,9 @@ const onDefined = (name, type) =>
 const onReserve = (name, type) =>
   error(`The ${type} name ${toString(name)} is reserved and can not be overridden.`);
 
-function check(name, options, obj = ops, type = 'function') {
+function check(name, options, obj = opApi, type = 'function') {
   if (!name) onIllegal(name, type);
-  if (!options.override && has(obj, name)) onDefined(name, type);
+  if (!options.override && Object.hasOwn(obj, name)) onDefined(name, type);
 }
 
 function verifyFunction(name, def, object, options) {
@@ -36,7 +35,7 @@ function addOp(name, def, object, options = {}) {
   if (verifyFunction(name, def, object, options)) return;
   const [nf = 0, np = 0] = def.param; // num fields, num params
   object[name] = def;
-  ops[name] = (...params) => op(
+  opApi[name] = (...params) => op(
     name,
     params.slice(0, nf),
     params.slice(nf, nf + np)
@@ -91,7 +90,7 @@ export function addFunction(name, fn, options = {}) {
   }
   if (verifyFunction(name, fn, functions, options)) return;
   functions[name] = fn;
-  ops[name] = fn;
+  opApi[name] = fn;
 }
 
 /**

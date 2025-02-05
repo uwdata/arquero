@@ -1,5 +1,4 @@
 import assert from 'node:assert';
-import { readFileSync } from 'node:fs';
 import {
   Type, bool, columnFromArray, dateDay, dateMillisecond, dictionary,
   fixedSizeList, float32, float64, int16, int32, int64, int8, list, struct,
@@ -7,7 +6,7 @@ import {
   utf8
 } from '@uwdata/flechette';
 import {
-  fromArrow, fromCSV, fromJSON, table, toArrow, toJSON
+  fromArrow, fromJSON, loadCSV, table, toArrow, toJSON
 } from '../../src/index.js';
 
 function date(year, month=0, date=1, hours=0, minutes=0, seconds=0, ms=0) {
@@ -113,7 +112,7 @@ function valueTest(type, values, msg) {
 }
 
 describe('toArrow', () => {
-  it('produces Arrow data for an input table', () => {
+  it('produces Arrow data for an input table', async () => {
     const dt = table({
       i: [1, 2, 3, undefined, 4, 5],
       f: Float32Array.from([1.2, 2.3, 3.0, 3.4, -1.3, 4.5]),
@@ -151,7 +150,7 @@ describe('toArrow', () => {
   });
 
   it('produces Arrow data for an input CSV', async () => {
-    const dt = fromCSV(readFileSync('test/format/data/beers.csv', 'utf8'));
+    const dt = await loadCSV('test/format/data/beers.csv');
     const st = dt.derive({ name: d => d.name + '' });
     const at = toArrow(dt);
 
@@ -249,8 +248,8 @@ describe('toArrow', () => {
     );
   });
 
-  it('result produces serialized arrow data', () => {
-    const dt = fromCSV(readFileSync('test/format/data/beers.csv', 'utf8'))
+  it('result produces serialized arrow data', async () => {
+    const dt = (await loadCSV('test/format/data/beers.csv'))
       .derive({ name: d => d.name + '' });
 
     const json = toJSON(dt);

@@ -2,6 +2,6 @@
  * @param {*} value
  * @return {value is String}
  */
-export default function(value) {
+export function isString(value) {
   return typeof value === 'string';
 }

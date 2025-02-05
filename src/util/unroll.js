@@ -1,4 +1,4 @@
-export default function(args, code, ...lists) {
+export function unroll(args, code, ...lists) {
   const v = ['_', '$'];
   const a = v.slice(0, lists.length);
   a.push('"use strict"; const '

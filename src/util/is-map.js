@@ -2,6 +2,6 @@
  * @param {*} value
  * @return {value is Map}
  */
-export default function(value) {
+export function isMap(value) {
   return value instanceof Map;
 }

@@ -1,5 +1,8 @@
-import fromTextRows from './from-text-rows.js';
-import parseDelimited from './parse/parse-delimited.js';
+import { ColumnTable } from '../table/ColumnTable.js'; // eslint-disable-line no-unused-vars
+import { delimitedTextTransformer } from './stream/delimited-text-stream.js';
+import { lineFilterTransformer } from './stream/line-filter-stream.js';
+import { parseTextRowsStream, parseTextRowsSync } from './stream/parse-text-rows.js';
+import { textStream } from './stream/text-stream.js';
 
 /**
  * Options for CSV parsing.
@@ -18,7 +21,7 @@ import parseDelimited from './parse/parse-delimited.js';
  * @property {boolean} [autoType=true] Flag for automatic type inference.
  * @property {number} [autoMax=1000] Maximum number of initial values to use
  *  for type inference.
- * @property {Object.<string, (value: string) => any>} [parse] Object of
+ * @property {Record<string, (value: string) => any>} [parse] Object of
  *  column parsing options. The object keys should be column names. The object
  *  values should be parsing functions that transform values upon input.
  */
@@ -31,16 +34,50 @@ import parseDelimited from './parse/parse-delimited.js';
  * date format are parsed into JavaScript Date objects. To disable this
  * behavior, set the autoType option to false. To perform custom parsing
  * of input column values, use the parse option.
- * @param {string} text A string in a delimited-value format.
+ * @param {string} input The input text.
  * @param {CSVParseOptions} [options] The formatting options.
- * @return {import('../table/ColumnTable.js').ColumnTable} A new table
- *  containing the parsed values.
+ * @return {ColumnTable} An Arquero table.
  */
-export default function(text, options = {}) {
-  const next = parseDelimited(text, options);
-  return fromTextRows(
-    next,
-    options.header !== false ? next() : options.names,
-    options
-  );
+export function fromCSV(input, options) {
+  return parseTextRowsSync(input, transforms(options), options);
+}
+
+/**
+ * Parse a comma-separated values (CSV) string into a table. Other
+ * delimiters, such as tabs or pipes ('|'), can be specified using
+ * the options argument. By default, automatic type inference is performed
+ * for input values; string values that match the ISO standard
+ * date format are parsed into JavaScript Date objects. To disable this
+ * behavior, set the autoType option to false. To perform custom parsing
+ * of input column values, use the parse option.
+ * @param {ReadableStream<string>} stream The input stream.
+ * @param {CSVParseOptions} [options] The formatting options.
+ * @return {Promise<ColumnTable>} A Promise to an Arquero table.
+ */
+export async function fromCSVStream(stream, options) {
+  return parseTextRowsStream(stream, transforms(options), options);
+}
+
+/**
+ * Load a CSV file from a URL and return a Promise for an Arquero table.
+ * @param {string} path The URL or file path to load.
+ * @param {import('./types.js').LoadOptions & CSVParseOptions} [options]
+ *  CSV parse options.
+ * @return {Promise<ColumnTable>} A Promise to an Arquero table.
+ * @example aq.loadCSV('data/table.csv')
+ * @example aq.loadTSV('data/table.tsv', { delimiter: '\t' })
+ */
+export async function loadCSV(path, options) {
+  return fromCSVStream(await textStream(path, options), options);
+}
+
+function transforms({
+  delimiter = ',',
+  skip = 0,
+  comment = undefined
+} = {}) {
+  return [
+    delimitedTextTransformer(delimiter),
+    lineFilterTransformer(skip, comment, row => row[0])
+  ];
 }

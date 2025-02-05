@@ -1,10 +1,10 @@
 import { _derive } from './derive.js';
 import { _rollup } from './rollup.js';
-import parse from '../expression/parse.js';
-import isNumber from '../util/is-number.js';
-import isString from '../util/is-string.js';
-import sampleIndices from '../util/sample.js';
-import shuffleIndices from '../util/shuffle.js';
+import { parse } from '../expression/parse.js';
+import { isNumber } from '../util/is-number.js';
+import { isString } from '../util/is-string.js';
+import { sample as sampleIndices } from '../util/sample.js';
+import { shuffle as shuffleIndices } from '../util/shuffle.js';
 
 export function sample(table, size, options = {}) {
   return _sample(

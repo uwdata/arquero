@@ -1,9 +1,9 @@
 import assert from 'node:assert';
-import isArray from '../src/util/is-array.js';
-import isDate from '../src/util/is-date.js';
-import isObject from '../src/util/is-object.js';
-import isRegExp from '../src/util/is-regexp.js';
-import isTypedArray from '../src/util/is-typed-array.js';
+import { isArray } from '../src/util/is-array.js';
+import { isDate } from '../src/util/is-date.js';
+import { isObject } from '../src/util/is-object.js';
+import { isRegExp } from '../src/util/is-regexp.js';
+import { isTypedArray } from '../src/util/is-typed-array.js';
 
 export default function(table, data, message) {
   table = table.reify();

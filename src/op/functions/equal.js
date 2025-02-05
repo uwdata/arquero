@@ -1,6 +1,6 @@
-import isDate from '../../util/is-date.js';
-import isRegExp from '../../util/is-regexp.js';
-import isObject from '../../util/is-object.js';
+import { isDate } from '../../util/is-date.js';
+import { isRegExp } from '../../util/is-regexp.js';
+import { isObject } from '../../util/is-object.js';
 
 /**
  * Compare two values for equality, using join semantics in which null
@@ -10,7 +10,7 @@ import isObject from '../../util/is-object.js';
  * @param {*} b The second input.
  * @return {boolean} True if equal, false if not.
  */
-export default function equal(a, b) {
+export function equal(a, b) {
   return (a == null || b == null || a !== a || b !== b) ? false
     : a === b ? true
     : (isDate(a) || isDate(b)) ? +a === +b

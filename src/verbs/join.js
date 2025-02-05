@@ -1,15 +1,15 @@
 import { indexLookup } from './join/lookup.js';
 import { inferKeys, keyPredicate } from './util/join-keys.js';
-import parseValue from './util/parse.js';
-import parse from '../expression/parse.js';
+import { parseValue } from './util/parse.js';
+import { parse } from '../expression/parse.js';
 import { all, not } from '../helpers/selection.js';
 import { columnSet } from '../table/ColumnSet.js';
-import concat from '../util/concat.js';
-import isArray from '../util/is-array.js';
-import isString from '../util/is-string.js';
-import toArray from '../util/to-array.js';
-import toString from '../util/to-string.js';
-import unroll from '../util/unroll.js';
+import { concat } from '../util/concat.js';
+import { isArray } from '../util/is-array.js';
+import { isString } from '../util/is-string.js';
+import { toArray } from '../util/to-array.js';
+import { toString } from '../util/to-string.js';
+import { unroll } from '../util/unroll.js';
 
 const OPT_L = { aggregate: false, window: false };
 const OPT_R = { ...OPT_L, index: 1 };

@@ -1,7 +1,7 @@
 /**
  * Abstract class for custom aggregation operations.
  */
-export default class Reducer {
+export class Reducer {
   constructor(outputs) {
     this._outputs = outputs;
   }

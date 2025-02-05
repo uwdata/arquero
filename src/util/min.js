@@ -1,6 +1,6 @@
-import NULL from './null.js';
+import { NULL } from './null.js';
 
-export default function(values, start = 0, stop = values.length) {
+export function min(values, start = 0, stop = values.length) {
   let min = stop ? values[start++] : NULL;
 
   for (let i = start; i < stop; ++i) {

@@ -1,6 +1,6 @@
 import { _select } from './select.js';
-import resolve from '../helpers/selection.js';
-import error from '../util/error.js';
+import { resolve } from '../helpers/selection.js';
+import { error } from '../util/error.js';
 
 export function relocate(table, columns, {
   before = undefined,

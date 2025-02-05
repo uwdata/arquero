@@ -1,6 +1,6 @@
 import assert from 'node:assert';
-import inferFormat from '../../src/format/infer.js';
-import formatValue from '../../src/format/value.js';
+import { inferFormat } from '../../src/format/util/infer.js';
+import { formatValue } from '../../src/format/util/format-value.js';
 
 function formatsAs(values, strings, options) {
   const { format } = inferFormat(f => values.forEach(f), options);

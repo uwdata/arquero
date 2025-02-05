@@ -12,7 +12,7 @@
  * @return {string} A table expression string for slicing values.
  * @example slice(1, -1)
  */
-export default function(start = 0, end = Infinity) {
+export function slice(start = 0, end = Infinity) {
   return `${prep(start)} < row_number() && row_number() <= ${prep(end)}`;
 }
 

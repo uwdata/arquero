@@ -21,7 +21,7 @@
  * @return {string} A table expression string for binned values.
  * @example bin('colA', { maxbins: 20 })
  */
-export default function(name, options = {}) {
+export function bin(name, options = {}) {
   const field = `d[${JSON.stringify(name)}]`;
   const { maxbins, nice, minstep, step, offset } = options;
   const args = [maxbins, nice, minstep, step];

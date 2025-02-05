@@ -17,13 +17,13 @@ function run(N, nulls, msg) {
     [Symbol.iterator]: () => array[Symbol.iterator]()
   };
 
-  tape(`object serialization: ${msg}`, t => {
+  tape(`object serialization: ${msg}`, async t => {
     console.table([ // eslint-disable-line
       {
-        from_array:    time(() => from(array)),
-        from_iterable: time(() => from(iterable)),
-        to_objects:    time(() => dt.objects()),
-        to_iterable:   time(() => [...dt])
+        from_array:    await time(() => from(array)),
+        from_iterable: await time(() => from(iterable)),
+        to_objects:    await time(() => dt.objects()),
+        to_iterable:   await time(() => [...dt])
       }
     ]);
     t.end();

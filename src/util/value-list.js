@@ -1,9 +1,9 @@
-import ascending from './ascending.js';
-import max from './max.js';
-import min from './min.js';
-import quantile from './quantile.js';
+import { ascending } from './ascending.js';
+import { max } from './max.js';
+import { min } from './min.js';
+import { quantile } from './quantile.js';
 
-export default class ValueList {
+export class ValueList {
   constructor(values) {
     this._values = values || [];
     this._sorted = null;

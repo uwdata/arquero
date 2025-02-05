@@ -1,8 +1,8 @@
-import ascending from './ascending.js';
-import bisector from './bisector.js';
+import { ascending } from './ascending.js';
+import { bisector } from './bisector.js';
 import { random } from './random.js';
 
-export default function(buffer, replace, index, weight) {
+export function sample(buffer, replace, index, weight) {
   return (
     replace
       ? (weight ? sampleRW : sampleRU)

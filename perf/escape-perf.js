@@ -15,10 +15,10 @@ function run(N, nulls, msg) {
   const opt = { s: 'd.a * d.b + off' };
   const esc = { s: aq.escape(d => d.a * d.b + off) };
 
-  tape(`escape: ${msg}`, t => {
+  tape(`escape: ${msg}`, async t => {
     console.table([ // eslint-disable-line
-      { type: 'opt', flat: time(() => dt.derive(opt)) },
-      { type: 'esc', flat: time(() => dt.derive(esc)) }
+      { type: 'opt', flat: await time(() => dt.derive(opt)) },
+      { type: 'esc', flat: await time(() => dt.derive(esc)) }
     ]);
     t.end();
   });

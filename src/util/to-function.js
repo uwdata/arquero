@@ -1,5 +1,5 @@
-import isFunction from './is-function.js';
+import { isFunction } from './is-function.js';
 
-export default function(value) {
+export function toFunction(value) {
   return isFunction(value) ? value : () => value;
 }

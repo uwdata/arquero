@@ -1,7 +1,6 @@
 import assert from 'node:assert';
 import { aggregateFunctions, functions, windowFunctions } from '../../src/op/index.js';
-import op from '../../src/op/op-api.js';
-import has from '../../src/util/has.js';
+import { opApi as op } from '../../src/op/op-api.js';
 
 describe('op', () => {
   it('includes all aggregate functions', () => {
@@ -30,12 +29,12 @@ describe('op', () => {
     const overlap = [];
 
     for (const name in aggregateFunctions) {
-      if (has(functions, name) || has(windowFunctions, name)) {
+      if (Object.hasOwn(functions, name) || Object.hasOwn(windowFunctions, name)) {
         overlap.push(name);
       }
     }
     for (const name in windowFunctions) {
-      if (has(functions, name)) {
+      if (Object.hasOwn(functions, name)) {
         overlap.push(name);
       }
     }

@@ -1,4 +1,4 @@
-export default function(compare) {
+export function bisector(compare) {
   return {
     left(a, x, lo, hi) {
       if (lo == null) lo = 0;

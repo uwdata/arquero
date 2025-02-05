@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import tableEqual from '../table-equal.js';
-import { fromCSV } from '../../src/index.js';
+import { fromCSV, fromCSVStream } from '../../src/index.js';
+import { textStream } from './data/text-stream.js';
 
 function data() {
   return {
@@ -21,97 +22,111 @@ const text = [
 
 const tabText = text.map(t => t.split(',').join('\t'));
 
-describe('fromCSV', () => {
-  it('parses delimited text', () => {
-    const table = fromCSV(text.join('\n'));
-    assert.equal(table.numRows(), 3, 'num rows');
-    assert.equal(table.numCols(), 5, 'num cols');
-    tableEqual(table, data(), 'csv parsed data');
-  });
+csvTests('fromCSV', fromCSV);
+csvTests('fromCSVStream', (csv, opt) => fromCSVStream(textStream(csv), opt));
 
-  it('infers types', () => {
-    function check(msg, values, test) {
-      const d = fromCSV('col\n' + values.join('\n')).array('col');
-      assert.ok(d.every(v => v == null || test(v)), msg);
-    }
-
-    check('boolean', [true, false, '', true], v => typeof v === 'boolean');
-    check('number', [1, Math.PI, '', 'NaN'], v => typeof v === 'number');
-    check('string', ['a', 1, '', 'c'], v => typeof v === 'string');
-    check('date', [
-      new Date().toISOString(), '',
-      new Date(2000, 0, 1).toISOString(),
-      new Date(1979, 3, 14, 3, 45).toISOString()
-    ], v => v instanceof Date);
-    check('date-like strings', ['2022-23', '2023-24'], v => typeof v === 'string');
-  });
-
-  it('parses delimited text with delimiter', () => {
-    const table = fromCSV(tabText.join('\n'), { delimiter: '\t' });
-    assert.equal(table.numRows(), 3, 'num rows');
-    assert.equal(table.numCols(), 5, 'num cols');
-    tableEqual(table, data(), 'csv parsed data with delimiter');
-  });
-
-  it('parses delimited text with header option', () => {
-    const table = fromCSV(text.slice(1).join('\n'), { header: false });
-    const cols = data();
-    const d = {
-      col1: cols.str,
-      col2: cols.int,
-      col3: cols.num,
-      col4: cols.bool,
-      col5: cols.date
-    };
-    tableEqual(table, d, 'csv parsed data with no header');
-  });
-
-  it('parses delimited text with parse option', () => {
-    const table = fromCSV(text.join('\n'), { parse: { str: d => d + d } });
-    const d = { ...data(), str: ['aa', 'bb', 'cc'] };
-    tableEqual(table, d, 'csv parsed data with custom parse');
-  });
-
-  it('parses delimited text with decimal option', () => {
-    tableEqual(
-      fromCSV('a;b\nu;-1,23\nv;4,56e5\nw;', { delimiter: ';', decimal: ',' }),
-      { a: ['u', 'v', 'w'], b: [-1.23, 4.56e5, null] },
-      'csv parsed data with decimal option'
-    );
-  });
-
-  it('parses delimited text with skip options', () => {
-    const text = '# line 1\n# line 2\na,b\n1,2\n3,4';
-    const data = { a: [1, 3], b: [2, 4] };
-
-    tableEqual(fromCSV(text, { skip: 2 }), data,
-      'csv parsed data with skip option'
-    );
-
-    tableEqual(fromCSV(text, { comment: '#' }), data,
-      'csv parsed data with comment option'
-    );
-
-    tableEqual(fromCSV(text, { skip: 1, comment: '#' }), data,
-      'csv parsed data with skip and comment options'
-    );
-  });
-
-  it('applies parsers regardless of autoType flag', () => {
-    const text = 'a,b\r\n00152,01/01/2021\r\n30219,01/01/2021';
-    const table = autoType => fromCSV(text, {
-      autoType,
-      parse: {
-        a: v => v,
-        b: v => v.split('/').reverse().join('-')
-      }
+function csvTests(name, parseCSV) {
+  describe(name, () => {
+    it('parses delimited text', async () => {
+      const table = await parseCSV(text.join('\n'));
+      assert.equal(table.numRows(), 3, 'num rows');
+      assert.equal(table.numCols(), 5, 'num cols');
+      tableEqual(table, data(), 'csv parsed data');
     });
-    const data = {
-      a: ['00152', '30219'],
-      b: ['2021-01-01', '2021-01-01']
-    };
 
-    tableEqual(table(true), data, 'csv parsed data with autoType true');
-    tableEqual(table(false), data, 'csv parsed data with autoType false');
+    it('infers types', async () => {
+      async function check(msg, values, test) {
+        const d = (await parseCSV('col\n' + values.join('\n'))).array('col');
+        assert.ok(d.every(v => v == null || test(v)), msg);
+      }
+
+      await check('boolean', [true, false, '', true], v => typeof v === 'boolean');
+      await check('number', [1, Math.PI, '', 'NaN'], v => typeof v === 'number');
+      await check('string', ['a', 1, '', 'c'], v => typeof v === 'string');
+      await check('date', [
+        new Date().toISOString(), '',
+        new Date(2000, 0, 1).toISOString(),
+        new Date(1979, 3, 14, 3, 45).toISOString()
+      ], v => v instanceof Date);
+      await check('date-like strings', ['2022-23', '2023-24'], v => typeof v === 'string');
+    });
+
+    it('parses delimited text with delimiter', async () => {
+      const table = await parseCSV(tabText.join('\n'), { delimiter: '\t' });
+      assert.equal(table.numRows(), 3, 'num rows');
+      assert.equal(table.numCols(), 5, 'num cols');
+      tableEqual(table, data(), 'csv parsed data with delimiter');
+    });
+
+    it('parses delimited text with header option', async () => {
+      const table = await parseCSV(text.slice(1).join('\n'), { header: false });
+      const cols = data();
+      const d = {
+        col1: cols.str,
+        col2: cols.int,
+        col3: cols.num,
+        col4: cols.bool,
+        col5: cols.date
+      };
+      tableEqual(table, d, 'csv parsed data with no header');
+    });
+
+    it('parses delimited text with parse option', async () => {
+      const table = await parseCSV(text.join('\n'), { parse: { str: d => d + d } });
+      const d = { ...data(), str: ['aa', 'bb', 'cc'] };
+      tableEqual(table, d, 'csv parsed data with custom parse');
+    });
+
+    it('parses delimited text with decimal option', async () => {
+      tableEqual(
+        await parseCSV('a;b\nu;-1,23\nv;4,56e5\nw;', { delimiter: ';', decimal: ',' }),
+        { a: ['u', 'v', 'w'], b: [-1.23, 4.56e5, null] },
+        'csv parsed data with decimal option'
+      );
+    });
+
+    it('parses delimited text with skip options', async () => {
+      const text = '# line 1\n# line 2\na,b\n1,2\n3,4';
+      const data = { a: [1, 3], b: [2, 4] };
+
+      tableEqual(
+        await parseCSV(text, { skip: 2 }), data,
+        'csv parsed data with skip option'
+      );
+
+      tableEqual(
+        await parseCSV(text, { comment: '#' }), data,
+        'csv parsed data with comment option'
+      );
+
+      tableEqual(
+        await parseCSV(text, { skip: 1, comment: '#' }), data,
+        'csv parsed data with skip and comment options'
+      );
+    });
+
+    it('applies parsers regardless of autoType flag', async () => {
+      const text = 'a,b\r\n00152,01/01/2021\r\n30219,01/01/2021';
+      const table = autoType => parseCSV(text, {
+        autoType,
+        parse: {
+          a: v => v,
+          b: v => v.split('/').reverse().join('-')
+        }
+      });
+      const data = {
+        a: ['00152', '30219'],
+        b: ['2021-01-01', '2021-01-01']
+      };
+
+      tableEqual(
+        await table(true), data,
+        'csv parsed data with autoType true'
+      );
+      tableEqual(
+        await table(false), data,
+        'csv parsed data with autoType false'
+      );
+    });
   });
-});
+}

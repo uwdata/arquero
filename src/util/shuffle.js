@@ -1,6 +1,6 @@
 import { random } from './random.js';
 
-export default function(array, lo = 0, hi = array.length) {
+export function shuffle(array, lo = 0, hi = array.length) {
   let n = hi - (lo = +lo);
 
   while (n) {

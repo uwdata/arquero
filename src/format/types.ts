@@ -1,6 +1,77 @@
 import { ExtractionOptions, TableBuilderOptions } from '@uwdata/flechette';
+import type { Table } from '../table/Table.js';
 import type { ColumnType, Select } from '../table/types.js';
-import { ColumnSelectOptions } from './util.js';
+
+/**
+ * Options for loading data from files or URLs.
+ */
+export interface LoadOptions {
+  /**
+   * Options to pass to the HTTP fetch method when loading a URL.
+   */
+  fetch?: RequestInit;
+  /**
+   * Decompression format to apply. If unspecified, the decompression type
+   * is inferred from the file extension (.gz or .zz). If no matching extension
+   * is found, no decompression is performed.
+   */
+  decompress?: 'gzip' | 'deflate' | null;
+}
+
+/**
+ * Column format object.
+ */
+export interface ValueFormatObject {
+  /**
+   * If true, format dates in UTC time.
+   */
+  utc?: boolean;
+  /**
+   * The number of fractional digits to include when formatting numbers.
+   */
+  digits?: number;
+  /**
+   * The maximum string length for formatting nested object or array values.
+   */
+  maxlen?: number;
+}
+
+/**
+ * Callback function to format an individual value.
+ * @param {*} value The value to format.
+ * @return {*} A string-coercible or JSON-compatible formatted value.
+ */
+export type ValueFormatFunction = (value: any) => any;
+
+/**
+ * Value format options.
+ */
+export type ValueFormatOptions = ValueFormatObject | ValueFormatFunction;
+
+/**
+ * Column selection function.
+ */
+export type ColumnSelectFunction = (table: Table) => string[];
+
+/**
+ * Column selection options.
+ */
+export type ColumnSelectOptions = string[] | ColumnSelectFunction;
+
+/**
+ * Column format options. The object keys should be column names.
+ * The object values should be formatting functions or objects.
+ * If specified, these override any automatically inferred options.
+ */
+export type ColumnFormatOptions = Record<string, ValueFormatOptions>;
+
+/**
+ * Column alignment options. The object keys should be column names.
+ * The object values should be aligment strings, one of 'l' (left),
+ * 'c' (center), or 'r' (right).
+ * If specified, these override any automatically inferred options.
+ */
+export type ColumnAlignOptions = Record<string, 'l'|'c'|'r'>;
 
 /** Arrow input data as bytes or loaded table. */
 export type ArrowInput =
@@ -47,7 +118,7 @@ export interface ArrowTable {
   getChildAt(index: number): ArrowColumn<any>;
 }
 
-/** Options for Apache Arrow import. */
+/** Options for Arrow import. */
 export interface ArrowOptions extends ExtractionOptions {
   /**
    * An ordered set of columns to import. The input may consist of column name
@@ -66,7 +137,9 @@ export interface ArrowFormatOptions extends TableBuilderOptions {
    * column name strings. If unspecified all columns are included.
    */
   columns?: ColumnSelectOptions;
-  /** The maximum number of rows to include (default `Infinity`). */
+  /**
+   * The maximum number of rows to include (default `Infinity`).
+   */
   limit?: number;
   /**
    * The row offset (default `0`) indicating how many initial rows to skip.

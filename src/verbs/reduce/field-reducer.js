@@ -1,10 +1,10 @@
-import Reducer from './reducer.js';
 import { getAggregate } from '../../op/index.js';
-import concat from '../../util/concat.js';
-import error from '../../util/error.js';
-import isValid from '../../util/is-valid.js';
-import unroll from '../../util/unroll.js';
-import ValueList from '../../util/value-list.js';
+import { concat } from '../../util/concat.js';
+import { error } from '../../util/error.js';
+import { isValid } from '../../util/is-valid.js';
+import { unroll } from '../../util/unroll.js';
+import { ValueList } from '../../util/value-list.js';
+import { Reducer } from './reducer.js';
 
 const update = (ops, args, fn) => unroll(
   args,
@@ -12,7 +12,7 @@ const update = (ops, args, fn) => unroll(
   ops
 );
 
-export default function(oplist, stream) {
+export function fieldReducer(oplist, stream) {
   const { ops, output } = expand(oplist, stream);
   const fields = oplist[0].fields;
   const n = fields.length;

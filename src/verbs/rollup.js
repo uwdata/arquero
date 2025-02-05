@@ -1,5 +1,5 @@
 import { aggregate, groupOutput } from './reduce/util.js';
-import parse from '../expression/parse.js';
+import { parse } from '../expression/parse.js';
 import { columnSet } from '../table/ColumnSet.js';
 
 export function rollup(table, values) {

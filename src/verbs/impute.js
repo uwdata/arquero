@@ -1,15 +1,15 @@
 import { aggregateGet } from './reduce/util.js';
 import { _rollup } from './rollup.js';
 import { ungroup } from './ungroup.js';
-import parseValues from './util/parse.js';
-import parse from '../expression/parse.js';
+import { parseValue } from './util/parse.js';
+import { parse } from '../expression/parse.js';
 import { array_agg_distinct } from '../op/op-api.js';
 import { columnSet } from '../table/ColumnSet.js';
-import error from '../util/error.js';
-import isValid from '../util/is-valid.js';
-import keyFunction from '../util/key-function.js';
-import toString from '../util/to-string.js';
-import unroll from '../util/unroll.js';
+import { error } from '../util/error.js';
+import { isValid } from '../util/is-valid.js';
+import { keyFunction } from '../util/key-function.js';
+import { toString } from '../util/to-string.js';
+import { unroll } from '../util/unroll.js';
 
 export function impute(table, values, options = {}) {
   values = parse(values, { table });
@@ -20,7 +20,7 @@ export function impute(table, values, options = {}) {
 
   if (options.expand) {
     const opt = { preparse, window: false, aggronly: true };
-    const params = parseValues('impute', table, options.expand, opt);
+    const params = parseValue('impute', table, options.expand, opt);
     const result = _rollup(ungroup(table), params);
     return _impute(
       table, values, params.names,

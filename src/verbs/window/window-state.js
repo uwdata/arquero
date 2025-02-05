@@ -1,11 +1,11 @@
-import ascending from '../../util/ascending.js';
-import bisector from '../../util/bisector.js';
-import concat from '../../util/concat.js';
-import unroll from '../../util/unroll.js';
+import { ascending } from '../../util/ascending.js';
+import { bisector } from '../../util/bisector.js';
+import { concat } from '../../util/concat.js';
+import { unroll } from '../../util/unroll.js';
 
 const bisect = bisector(ascending);
 
-export default function(data, frame, adjust, ops, aggrs) {
+export function windowState(data, frame, adjust, ops, aggrs) {
   let rows, peer, cells, result, key;
   const isPeer = index => peer[index - 1] === peer[index];
   const numOps = ops.length;

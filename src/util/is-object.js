@@ -1,3 +1,3 @@
-export default function(value) {
+export function isObject(value) {
   return value === Object(value);
 }

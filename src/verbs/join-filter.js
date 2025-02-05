@@ -1,9 +1,9 @@
 import { rowLookup } from './join/lookup.js';
 import { inferKeys, keyPredicate } from './util/join-keys.js';
-import parse from '../expression/parse.js';
+import { parse } from '../expression/parse.js';
 import { BitSet } from '../table/BitSet.js';
-import isArray from '../util/is-array.js';
-import toArray from '../util/to-array.js';
+import { isArray } from '../util/is-array.js';
+import { toArray } from '../util/to-array.js';
 
 export function semijoin(tableL, tableR, on) {
   return join_filter(tableL, tableR, on, { anti: false });

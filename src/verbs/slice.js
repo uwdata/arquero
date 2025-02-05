@@ -1,5 +1,5 @@
 import { filter } from './filter.js';
-import _slice from '../helpers/slice.js';
+import { slice as _slice } from '../helpers/slice.js';
 
 export function slice(table, start = 0, end = Infinity) {
   if (table.isGrouped()) {

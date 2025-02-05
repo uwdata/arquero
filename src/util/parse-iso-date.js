@@ -1,5 +1,5 @@
-import isISODateString from './is-iso-date-string.js';
+import { isISODateString } from './is-iso-date-string.js';
 
-export default function(value, parse = Date.parse) {
+export function parseISODate(value, parse = Date.parse) {
   return isISODateString(value) ? parse(value) : value;
 }

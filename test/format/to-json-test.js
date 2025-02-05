@@ -11,11 +11,7 @@ function data() {
   };
 }
 
-function cols() {
-  return Object.keys(data());
-}
-
-const text = '{'
+const colText = '{'
   + '"str":["a","b","c"],'
   + '"int":[1,2,3],'
   + '"num":[12.3,45.6,78.9],'
@@ -23,55 +19,85 @@ const text = '{'
   + '"date":["2010-01-01","2015-04-05","2020-02-29"]'
   + '}';
 
-function schema(names, text) {
-  return '{"schema":{"fields":'
-    + JSON.stringify(names.map(name => ({ name })))
-    + '},"data":' + text + '}';
-}
+const lines = [
+  '{"str":"a","int":1,"num":12.3,"bool":true,"date":"2010-01-01"}',
+  '{"str":"b","int":2,"num":45.6,"bool":null,"date":"2015-04-05"}',
+  '{"str":"c","int":3,"num":78.9,"bool":false,"date":"2020-02-29"}'
+];
+
+const rowText = `[${lines.join(',')}]`;
+const ndText = lines.join('\n');
 
 describe('toJSON', () => {
-  it('formats JSON text with schema', () => {
+  it('formats JSON columns', () => {
     const dt = new ColumnTable(data());
-    assert.equal(toJSON(dt), schema(cols(), text), 'json text');
-    const names = ['str', 'int'];
+    assert.equal(toJSON(dt, { type: 'columns' }), colText, 'json column text');
     assert.equal(
-      toJSON(dt, { limit: 2, columns: names }),
-      schema(names, '{"str":["a","b"],"int":[1,2]}'),
-      'json text with limit'
-    );
-  });
-
-  it('formats JSON text with format option with schema', () => {
-    const dt = new ColumnTable(data());
-    const names = ['str'];
-    assert.equal(
-      toJSON(dt, { limit: 2, columns: names, format: { str: d => d + '!' } }),
-      schema(names, '{"str":["a!","b!"]}'),
-      'json text with custom format'
-    );
-  });
-
-  it('formats JSON text without schema', () => {
-    const dt = new ColumnTable(data());
-    assert.equal(toJSON(dt, { schema: false }), text, 'json text');
-    assert.equal(
-      toJSON(dt, { limit: 2, columns: ['str', 'int'], schema: false }),
+      toJSON(dt, { type: 'columns', limit: 2, columns: ['str', 'int'] }),
       '{"str":["a","b"],"int":[1,2]}',
-      'json text with limit'
+      'json column text with limit'
     );
   });
 
-  it('formats JSON text with format option without schema', () => {
+  it('formats JSON columns with format option', () => {
     const dt = new ColumnTable(data());
     assert.equal(
       toJSON(dt, {
-        schema: false,
+        type: 'columns',
         limit: 2,
         columns: ['str'],
         format: { str: d => d + '!' }
       }),
       '{"str":["a!","b!"]}',
-      'json text with custom format'
+      'json column text with custom format'
+    );
+  });
+
+  it('formats JSON rows', () => {
+    const dt = new ColumnTable(data());
+    assert.equal(toJSON(dt, { type: 'rows' }), rowText, 'json row text');
+    assert.equal(
+      toJSON(dt, { type: 'rows', limit: 2, columns: ['str', 'int'] }),
+      '[{"str":"a","int":1},{"str":"b","int":2}]',
+      'json row text with limit'
+    );
+  });
+
+  it('formats JSON rows with format option', () => {
+    const dt = new ColumnTable(data());
+    assert.equal(
+      toJSON(dt, {
+        type: 'rows',
+        limit: 2,
+        columns: ['str'],
+        format: { str: d => d + '!' }
+      }),
+      '[{"str":"a!"},{"str":"b!"}]',
+      'json row text with custom format'
+    );
+  });
+
+  it('formats newline-delimited JSON rows', () => {
+    const dt = new ColumnTable(data());
+    assert.equal(toJSON(dt, { type: 'ndjson' }), ndText, 'json nd text');
+    assert.equal(
+      toJSON(dt, { type: 'ndjson', limit: 2, columns: ['str', 'int'] }),
+      '{"str":"a","int":1}\n{"str":"b","int":2}',
+      'json nd text with limit'
+    );
+  });
+
+  it('formats newline-delimited JSON rows with format option', () => {
+    const dt = new ColumnTable(data());
+    assert.equal(
+      toJSON(dt, {
+        type: 'ndjson',
+        limit: 2,
+        columns: ['str'],
+        format: { str: d => d + '!' }
+      }),
+      '{"str":"a!"}\n{"str":"b!"}',
+      'json nd text with custom format'
     );
   });
 });

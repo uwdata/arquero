@@ -1,10 +1,7 @@
 import assert from 'node:assert';
 import { tableFromArrays } from 'apache-arrow';
 import tableEqual from '../table-equal.js';
-import fromArrow from '../../src/format/from-arrow.js';
-import toArrow from '../../src/format/to-arrow.js';
-import { not } from '../../src/helpers/selection.js';
-import { table } from '../../src/index-browser.js';
+import { fromArrow, not, table, toArrow } from '../../src/index.js';
 import { Type, utf8 } from '@uwdata/flechette';
 
 function arrowTable(data) {

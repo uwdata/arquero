@@ -1,5 +1,7 @@
-import formatValue from './value.js';
-import { columns, formats, scan } from './util.js';
+import { columns } from './util/columns.js';
+import { formats } from './util/formats.js';
+import { formatValue } from './util/format-value.js';
+import { scan } from './util/scan.js';
 
 /**
  * Options for Markdown formatting.
@@ -7,14 +9,14 @@ import { columns, formats, scan } from './util.js';
  * @property {number} [limit=Infinity] The maximum number of rows to print.
  * @property {number} [offset=0] The row offset indicating how many initial
  *  rows to skip.
- * @property {import('./util.js').ColumnSelectOptions} [columns] Ordered list
+ * @property {import('./types.js').ColumnSelectOptions} [columns] Ordered list
  *  of column names to include. If function-valued, the function should
  *  accept a table as input and return an array of column name strings.
- * @property {import('./util.js').ColumnAlignOptions} [align] Object of column
+ * @property {import('./types.js').ColumnAlignOptions} [align] Object of column
  *  alignment options. The object keys should be column names. The object
  *  values should be aligment strings, one of 'l' (left), 'c' (center), or
  *  'r' (right). If specified, these override automatically inferred options.
- * @property {import('./util.js').ColumnFormatOptions} [format] Object of column
+ * @property {import('./types.js').ColumnFormatOptions} [format] Object of column
  *  format options. The object keys should be column names. The object values
  *  should be formatting functions or specification objects. If specified,
  *  these override automatically inferred options.
@@ -29,7 +31,7 @@ import { columns, formats, scan } from './util.js';
  * @param {MarkdownFormatOptions} options The formatting options.
  * @return {string} A GitHub-Flavored Markdown table string.
  */
-export default function(table, options = {}) {
+export function toMarkdown(table, options = {}) {
   const names = columns(table, options.columns);
   const { align, format } = formats(table, names, options);
 

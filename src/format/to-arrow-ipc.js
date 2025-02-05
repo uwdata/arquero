@@ -1,5 +1,5 @@
 import { tableToIPC } from '@uwdata/flechette';
-import toArrow from './to-arrow.js';
+import { toArrow } from './to-arrow.js';
 
 /**
  * Format a table as binary data in the Apache Arrow IPC format.
@@ -9,7 +9,7 @@ import toArrow from './to-arrow.js';
  *  or `'file'` to specify the IPC format.
  * @return {Uint8Array} A new Uint8Array of Arrow-encoded binary data.
  */
-export default function(data, options = {}) {
+export function toArrowIPC(data, options = {}) {
   const { format = 'stream', ...toArrowOptions } = options;
   return tableToIPC(toArrow(data, toArrowOptions), { format });
 }

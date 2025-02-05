@@ -6,6 +6,6 @@
  * @return {string} A table expression string for computing row counts.
  * @example frac(0.5)
  */
-export default function(fraction) {
+export function frac(fraction) {
   return `() => op.round(${+fraction} * op.count())`;
 }

@@ -1,12 +1,17 @@
-import fromTextRows from './from-text-rows.js';
-import parseLines from './parse/parse-lines.js';
-import error from '../util/error.js';
+import { ColumnTable } from '../table/ColumnTable.js'; // eslint-disable-line no-unused-vars
+import { error } from '../util/error.js';
+import { fixedTextTransformer } from './stream/fixed-text-stream.js';
+import { lineFilterTransformer } from './stream/line-filter-stream.js';
+import { textLineTransformer } from './stream/text-line-stream.js';
+import { parseTextRowsStream, parseTextRowsSync } from './stream/parse-text-rows.js';
+import { textStream } from './stream/text-stream.js';
 
 /**
  * Options for fixed width file parsing.
  * @typedef {object} FixedParseOptions
  * @property {[number, number][]} [positions] Array of start, end indices for
- *  fixed-width columns.
+ *  fixed-width columns. Specifying extact positions supports extraction of
+ *  a selected subset of columns.
  * @property {number[]} [widths] Array of fixed column widths. This option is
  *  ignored if the positions property is specified.
  * @property {string[]} [names] An array of column names. The array length
@@ -19,7 +24,7 @@ import error from '../util/error.js';
  * @property {boolean} [autoType=true] Flag for automatic type inference.
  * @property {number} [autoMax=1000] Maximum number of initial values to use
  *  for type inference.
- * @property {Object.<string, (value: string) => any>} [parse] Object of
+ * @property {Record<string, (value: string) => any>} [parse] Object of
  *  column parsing options. The object keys should be column names. The object
  *  values should be parsing functions that transform values upon input.
  */
@@ -30,30 +35,62 @@ import error from '../util/error.js';
  * ISO standard date format are parsed into JavaScript Date objects. To
  * disable this behavior, set the autoType option to false. To perform custom
  * parsing of input column values, use the parse option.
- * @param {string} text A string in a fixed-width file format.
- * @param {FixedParseOptions} options The formatting options.
- * @return {import('../table/ColumnTable.js').ColumnTable} A new table
- *  containing the parsed values.
+ * @param {string} input The input text.
+ * @param {FixedParseOptions} [options] The formatting options.
+ * @return {ColumnTable} An Arquero table.
  */
-export default function(text, options = {}) {
-  const read = parseLines(text, options);
-  const p = positions(options);
-  return fromTextRows(
-    () => {
-      const line = read();
-      if (line) {
-        return p.map(([i, j]) => line.slice(i, j).trim());
-      }
-    },
-    options.names,
-    options
+export function fromFixed(input, options) {
+  return parseTextRowsSync(
+    input,
+    transforms(options),
+    { ...options, header: false }
   );
 }
 
-function positions({ positions = undefined, widths = undefined }) {
+/**
+ * Parse a fixed-width file (FWF) stream into a table. By default, automatic
+ * type inference is performed for input values; string values that match the
+ * ISO standard date format are parsed into JavaScript Date objects. To
+ * disable this behavior, set the autoType option to false. To perform custom
+ * parsing of input column values, use the parse option.
+ * @param {ReadableStream<string>} stream The input stream.
+ * @param {FixedParseOptions} [options] The formatting options.
+ * @return {Promise<ColumnTable>} A Promise to an Arquero table.
+ */
+export async function fromFixedStream(stream, options) {
+  return parseTextRowsStream(
+    stream,
+    transforms(options),
+    { ...options, header: false }
+  );
+}
+
+/**
+ * Load a fixed width file from a URL and return a Promise for an Arquero table.
+ * @param {string} path The URL or file path to load.
+ * @param {import('./types.js').LoadOptions & FixedParseOptions} [options]
+ * Fixed width parse options.
+ * @return {Promise<ColumnTable>} A Promise to an Arquero table.
+ * @example aq.loadFixedWidth('data/table.txt', { names: ['name', 'city', state'], widths: [10, 20, 2] })
+ */
+export async function loadFixed(path, options) {
+  return fromFixedStream(await textStream(path, options), options);
+}
+
+function transforms({
+  skip = 0,
+  comment = undefined,
+  positions = undefined,
+  widths = undefined
+} = {}) {
   if (!positions && !widths) {
-    error('Fixed width files require a "positions" or "widths" option');
+    error('Fixed width files require a "positions" or "widths" option.');
   }
-  let i = 0;
-  return positions || widths.map(w => [i, i += w]);
+  let p = 0;
+  const breaks = positions || widths.map(w => [p, p += w]);
+  return [
+    textLineTransformer(),
+    lineFilterTransformer(skip, comment, row => row[0]),
+    fixedTextTransformer(breaks)
+  ];
 }

@@ -1,4 +1,4 @@
-import isDate from '../util/is-date.js';
+import { isDate } from '../../util/is-date.js';
 
 function isExactDateUTC(d) {
   return d.getUTCHours() === 0
@@ -7,7 +7,7 @@ function isExactDateUTC(d) {
     && d.getUTCMilliseconds() === 0;
 }
 
-export default function(scan, options = {}) {
+export function inferFormat(scan, options = {}) {
   let count = 0;
   let nulls = 0;
   let dates = 0;

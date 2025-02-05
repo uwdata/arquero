@@ -11,7 +11,7 @@
  * @example table.rename(aq.names('a', 'b', 'c'))
  * @example table.select(aq.names(['a', 'b', 'c']))
  */
-export default function(...names) {
+export function names(...names) {
   names = names.flat();
   return table => {
     const m = new Map();

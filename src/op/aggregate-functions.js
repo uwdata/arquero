@@ -1,9 +1,9 @@
-import bins from '../util/bins.js';
-import distinctMap from '../util/distinct-map.js';
-import isBigInt from '../util/is-bigint.js';
-import noop from '../util/no-op.js';
-import NULL from '../util/null.js';
-import product from '../util/product.js';
+import { bins } from '../util/bins.js';
+import { distinctMap } from '../util/distinct-map.js';
+import { isBigInt } from '../util/is-bigint.js';
+import { noop } from '../util/no-op.js';
+import { NULL } from '../util/null.js';
+import { product } from '../util/product.js';
 
 /**
  * Initialize an aggregate operator.
@@ -80,7 +80,7 @@ function initProduct(s, value) {
 /**
  * Aggregate operator definitions.
  */
-export default {
+export const aggregateFunctions = {
   /** @type {AggregateDef} */
   count: {
     create: () => initOp({

@@ -1,7 +1,7 @@
 import { columnFromArray, columnFromValues, tableFromColumns } from '@uwdata/flechette';
-import { columns as select } from './util.js';
-import isArrayType from '../util/is-array-type.js';
-import isFunction from '../util/is-function.js';
+import { isArrayType } from '../util/is-array-type.js';
+import { isFunction } from '../util/is-function.js';
+import { columns as select } from './util/columns.js';
 
 /**
  * Create an Apache Arrow table for an input table.
@@ -11,7 +11,7 @@ import isFunction from '../util/is-function.js';
  *  Encoding options, including column data types.
  * @return {import('@uwdata/flechette').Table} An Arrow Table instance.
  */
-export default function(table, options = {}) {
+export function toArrow(table, options = {}) {
   const { columns, limit = Infinity, offset = 0, types = {}, ...opt } = options;
   const names = select(table, columns);
   const data = table.data();

@@ -1,4 +1,4 @@
-import walk from './walk.js';
+import { walk } from './walk.js';
 
 function strip(node) {
   delete node.start;
@@ -14,7 +14,7 @@ function stripMember(node) {
   if (!node.table) delete node.table;
 }
 
-export default function(ast) {
+export function clean(ast) {
   walk(ast, null, {
     Column: stripMember,
     Constant: stripMember,

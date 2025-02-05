@@ -1,5 +1,5 @@
 import { _select } from './select.js';
-import resolve from '../helpers/selection.js';
+import { resolve } from '../helpers/selection.js';
 
 export function rename(table, ...columns) {
   const map = new Map();

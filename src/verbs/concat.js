@@ -1,5 +1,5 @@
 import { columnSet } from '../table/ColumnSet.js';
-import NULL from '../util/null.js';
+import { NULL } from '../util/null.js';
 
 export function concat(table, ...others) {
   others = others.flat();

@@ -1,4 +1,4 @@
-import entries from '../util/entries.js';
+import { entries } from '../util/entries.js';
 import { ColumnTable } from './ColumnTable.js';
 import { columnsFrom } from './columns-from.js';
 

@@ -1,6 +1,6 @@
-import functions from './functions/index.js';
-import toArray from '../util/to-array.js';
-import toString from '../util/to-string.js';
+import { functions } from './functions/index.js';
+import { toArray } from '../util/to-array.js';
+import { toString } from '../util/to-string.js';
 
 export class Op {
   constructor(name, fields, params) {
@@ -45,7 +45,7 @@ export const entries_agg = (key, value) => op('entries_agg', [key, value]);
  * All table expression operations including normal functions,
  * aggregate functions, and window functions.
  */
-export default {
+export const opApi = {
   ...functions,
 
   /**

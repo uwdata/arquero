@@ -10,7 +10,7 @@
  * @param {number} [offset=0] Offset in steps by which to adjust
  *  the bin value. An offset of 1 will return the next boundary.
  */
-export default function(value, min, max, step, offset) {
+export function bin(value, min, max, step, offset) {
   return value == null ? null
     : value < min ? -Infinity
     : value > max ? +Infinity

@@ -1,36 +1,15 @@
-import { formatDate, formatUTCDate } from '../util/format-date.js';
-import isDate from '../util/is-date.js';
-import isFunction from '../util/is-function.js';
-import isTypedArray from '../util/is-typed-array.js';
-
-/**
- * Column format object.
- * @typedef {object} ValueFormatObject
- * @property {boolean} [utc=false] If true, format dates in UTC time.
- * @property {number} [digits=0] The number of fractional digits to include
- *  when formatting numbers.
- * @property {number} [maxlen=30] The maximum string length for formatting
- *  nested object or array values.
- */
-
-/**
- * @callback ValueFormatFunction
- * @param {*} value The value to format.
- * @return {*} A string-coercible or JSON-compatible formatted value.
- */
-
-/**
- * Value format options.
- * @typedef {ValueFormatObject|ValueFormatFunction} ValueFormatOptions
- */
+import { formatDate, formatUTCDate } from '../../util/format-date.js';
+import { isDate } from '../../util/is-date.js';
+import { isFunction } from '../../util/is-function.js';
+import { isTypedArray } from '../../util/is-typed-array.js';
 
 /**
  * Format a value as a string.
  * @param {*} v The value to format.
- * @param {ValueFormatOptions} options Formatting options.
+ * @param {import('../types.js').ValueFormatOptions} options Formatting options.
  * @return {string} The formatted string.
  */
-export default function(v, options = {}) {
+export function formatValue(v, options = {}) {
   if (isFunction(options)) {
     // @ts-ignore
     return options(v) + '';

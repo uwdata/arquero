@@ -96,7 +96,7 @@ export const rt = dt
   .union([other, other2])
   .unroll('arrayCol', { limit: 1000 });
 
-export const arrow : import('apache-arrow').Table = dt.toArrow();
+export const arrow : import('@uwdata/flechette').Table = dt.toArrow();
 export const buf : Uint8Array = dt.toArrowIPC();
 export const csv : string = dt.toCSV({ delimiter: '\t' });
 export const json : string = dt.toJSON({ columns: ['x', 'y'] });
