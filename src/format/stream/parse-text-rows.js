@@ -4,6 +4,7 @@ import { repeat } from '../../util/repeat.js';
 import { parseValues } from '../../util/parse-values.js';
 import { pipelineStream, pipelineSync } from './pipeline.js';
 import { ColumnTable } from '../../table/ColumnTable.js';
+import { streamIterator } from './stream-iterator.js';
 
 /**
  * Create a table from column names and value arrays.
@@ -43,7 +44,7 @@ export async function parseTextRowsStream(input, transformers, options = {}) {
 
   // pull batches from stream to meet type inference needs
   const automax = +options.autoMax || 1000;
-  const iter = stream[Symbol.asyncIterator]();
+  const iter = streamIterator(stream);
   const init = [];
   let size = 0;
   while (size < automax) {
