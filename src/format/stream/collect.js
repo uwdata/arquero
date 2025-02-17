@@ -1,5 +1,6 @@
 import { isReadableStream } from '../../util/is-readable-stream.js';
 import { isString } from '../../util/is-string.js';
+import { streamIterator } from './stream-iterator.js';
 
 /**
  * @param {ReadableStream<Uint8Array>} input
@@ -8,7 +9,7 @@ import { isString } from '../../util/is-string.js';
 export async function collectBytes(input) {
   const bytes = [];
   let size = 0;
-  for await (const chunk of input) {
+  for await (const chunk of streamIterator(input)) {
     size += chunk.length;
     bytes.push(chunk);
   }
@@ -41,7 +42,7 @@ export async function collectJSON(input) {
 export async function collectText(input) {
   if (isString(input)) return input;
   let text = '';
-  for await (const chunk of input) {
+  for await (const chunk of streamIterator(input)) {
     text += chunk;
   }
   return text;

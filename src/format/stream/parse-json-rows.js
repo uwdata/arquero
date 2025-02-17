@@ -1,4 +1,5 @@
 import { pipelineStream, pipelineSync } from './pipeline.js';
+import { streamIterator } from './stream-iterator.js';
 
 export function parseJSONSync(input, columns, transformers) {
   /** @type {string[][]} */
@@ -10,7 +11,7 @@ export function parseJSONSync(input, columns, transformers) {
 
 export async function parseJSONStream(input, columns, transformers) {
   const stream = pipelineStream(input, transformers);
-  const iter = stream[Symbol.asyncIterator]();
+  const iter = streamIterator(stream);
   let first;
   do { first = (await iter.next()).value; } while (first.length === 0);
   const { names, values } = parseJSONColumns(first, columns);

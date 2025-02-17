@@ -22,19 +22,6 @@ function shouldDrop(skip, comment, accessor) {
     : null;
 }
 
-// /**
-//  * @template T
-//  * @extends {TransformStream<T[],T[]>}
-//  */
-// export class LineFilterStream extends TransformStream {
-//   /**
-//    * @param {(line: T, index: number) => boolean} drop
-//    */
-//   constructor(drop) {
-//     super(lineFilterTransformer(drop));
-//   }
-// }
-
 /**
  * Returns a new line filter stream transformer.
  * @template T
