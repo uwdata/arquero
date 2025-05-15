@@ -1,7 +1,7 @@
 {
   "name": "arquero",
   "type": "module",
-  "version": "8.0.1",
+  "version": "8.0.2",
   "description": "Query processing and transformation of array-backed data tables.",
   "keywords": [
     "data",
