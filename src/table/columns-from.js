@@ -10,7 +10,10 @@ import { isString } from '../util/is-string.js';
  * @return {import('./types.js').ColumnData}
  */
 export function columnsFrom(values, names) {
-  const raise = type => error(`Illegal argument type: ${type || typeof values}`);
+  const raise = type => {
+    error(`Illegal argument type: ${type || typeof values}`);
+    return /** @type {import('./types.js').ColumnData} */({});
+  };
   // @ts-ignore
   return values instanceof Map ? fromKeyValuePairs(values.entries(), names)
     : isDate(values) ? raise('Date')
@@ -22,6 +25,11 @@ export function columnsFrom(values, names) {
     : raise();
 }
 
+/**
+ * @param {Iterable<[any, any]>} entries
+ * @param {string[]} names
+ * @return {import('./types.js').ColumnData}
+ */
 function fromKeyValuePairs(entries, names = ['key', 'value']) {
   const keys = [];
   const vals = [];
@@ -31,14 +39,21 @@ function fromKeyValuePairs(entries, names = ['key', 'value']) {
     vals.push(val);
   }
 
+  /** @type {import('./types.js').ColumnData} */
   const columns = {};
   if (names[0]) columns[names[0]] = keys;
   if (names[1]) columns[names[1]] = vals;
   return columns;
 }
 
+/**
+ * @param {any[]} values
+ * @param {string[]} names
+ * @return {import('./types.js').ColumnData}
+ */
 function fromArray(values, names) {
   const len = values.length;
+  /** @type {import('./types.js').ColumnData} */
   const columns = {};
   const add = name => columns[name] = Array(len);
 
@@ -59,7 +74,13 @@ function fromArray(values, names) {
   return columns;
 }
 
+/**
+ * @param {Iterable<any>} values
+ * @param {string[]} names
+ * @return {import('./types.js').ColumnData}
+ */
 function fromIterable(values, names) {
+  /** @type {import('./types.js').ColumnData} */
   const columns = {};
   const add = name => columns[name] = [];
 

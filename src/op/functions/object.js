@@ -35,7 +35,7 @@ export function has(object, key) {
  */
 export function keys(object) {
   return isMap(object) ? array(object.keys())
-    : object != null ? Object.keys(object)
+    : object != null ? /** @type {K[]} */(Object.keys(object))
     : [];
 }
 
@@ -68,7 +68,7 @@ export function values(object) {
  */
 export function entries(object) {
   return isMapOrSet(object) ? array(object.entries())
-    : object != null ? Object.entries(object)
+    : object != null ? /** @type {[K, V][]} */(Object.entries(object))
     : [];
 }
 
@@ -82,5 +82,7 @@ export function entries(object) {
  * @return {Record<K, V>} An object of consolidated key-value pairs.
  */
 export function object(entries) {
-  return entries ? Object.fromEntries(entries) : NULL;
+  return entries
+    ? /** @type {Record<K, V>} */(Object.fromEntries(entries))
+    : NULL;
 }
