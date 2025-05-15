@@ -10,8 +10,6 @@ title: Table \| Arquero API Reference
   * [isFiltered](#isFiltered), [isGrouped](#isGrouped), [isOrdered](#isOrdered)
   * [comparator](#comparator), [groups](#groups), [mask](#mask)
   * [params](#params)
-* [Table Transformation](#transformation)
-  * [assign](#assign)
 * [Table Columns](#columns)
   * [column](#column), [columnAt](#columnAt)
   * [columnIndex](#columnIndex), [columnName](#columnName), [columnNames](#columnNames)
