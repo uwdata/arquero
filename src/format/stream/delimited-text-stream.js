@@ -19,10 +19,10 @@ export function delimitedTextTransformer(delimiter = ',') {
 
   let I = 0; // current chunk character index
   let N = 0; // length of current text chunk
+  let qc = 0; // consecutive quote char count
   let eol = false; // current token followed by EOL?
   let skipNewline = false; // skip newline after carriage return?
   let inQuote = false; // chunk boundary within quoted text?
-  let atQuote = false; // chunk boundary right after quote char?
   let chunk = null; // current text chunk
   let fragment = null; // text fragment leftover from prior chunk
   let row = []; // current row of delimited text values
@@ -34,31 +34,35 @@ export function delimitedTextTransformer(delimiter = ',') {
   function token() {
     if (eol) return eol = false, EOL;
     const j = I;
-    let c;
+    const jq = chunk.charCodeAt(j) === QUOTE;
 
     // handle quotes, unescape nested double quotes
-    if (inQuote || chunk.charCodeAt(j) === QUOTE) {
-      let q = atQuote && chunk.charCodeAt(j) !== QUOTE; // indicate completion of quote
-      atQuote = false;
+    if (inQuote || jq) {
+      let q = qc && !jq; // indicate completion of quote
+      if (inQuote && !q) {
+        --I; // back up if cross-chunk quote
+      } else if (jq) {
+        ++qc; // increment consecutive quote chars
+      }
       inQuote = true;
 
-      // within quotes
+      // process characters within quote
       if (!q) {
         while (++I < N) {
           if (chunk.charCodeAt(I) === QUOTE) {
-            if (++I < N) {
-              if (chunk.charCodeAt(I) !== QUOTE) { q = true; break; }
-            } else {
-              // otherwise, break fragment at quote char
-              addFragment(chunk.slice(j, N));
-              atQuote = true;
-              return BREAK;
+            if (++qc === 3) {
+              // consume escaped quote char ("")
+              qc = 1;
+            } else if (++I < N && chunk.charCodeAt(I) !== QUOTE) {
+              qc = 0; // reset quote char count
+              q = true; // reached end of quote
+              break;
             }
           }
         }
-
-        // if end of chunk, break as intra-quote fragment
         if (!q) {
+          // end of chunk and still in quote
+          // break off intra-quote fragment
           addFragment(chunk.slice(j, N));
           return BREAK;
         }
@@ -66,17 +70,18 @@ export function delimitedTextTransformer(delimiter = ',') {
 
       // extract and unescape quoted text
       const quoted = unquote((fragment ?? '') + chunk.slice(j, I));
+      qc = 0;
       inQuote = false;
       fragment = null;
 
-      // if quote stops at end of chunk, treat as normal fragment
+      // if a quote stops at end of chunk, treat as normal fragment
       if (I >= N) {
         fragment = quoted;
         return BREAK;
       }
 
       // check for end of line
-      c = chunk.charCodeAt(I++);
+      const c = chunk.charCodeAt(I++);
       if (c === NEWLINE) eol = true;
       else if (c === RETURN) {
         eol = true;
@@ -89,7 +94,7 @@ export function delimitedTextTransformer(delimiter = ',') {
     // find next delimiter or newline
     let i;
     while (I < N) {
-      c = chunk.charCodeAt(i = I++);
+      const c = chunk.charCodeAt(i = I++);
       if (c === NEWLINE) eol = true;
       else if (c === RETURN) {
         eol = true;
@@ -125,7 +130,10 @@ export function delimitedTextTransformer(delimiter = ',') {
           controller.enqueue(batch);
           return;
         }
-        else (row.push((fragment ?? '') + t), fragment = null);
+        else {
+          row.push((fragment ?? '') + t);
+          fragment = null;
+        }
       }
 
       while (true) {
