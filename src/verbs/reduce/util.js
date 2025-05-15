@@ -67,13 +67,13 @@ export function reduceFlat(table, reducer) {
   // compute aggregate values
   // inline the following for performance:
   // table.scan((row, data) => reducer.add(cell, row, data));
-  const n = table.totalRows();
   const data = table.data();
   const bits = table.mask();
 
   if (table.isOrdered()) {
     const idx = table.indices();
-    for (let i = 0; i < n; ++i) {
+    const m = idx.length;
+    for (let i = 0; i < m; ++i) {
       reducer.add(cell, idx[i], data);
     }
   } else if (bits) {
@@ -81,6 +81,7 @@ export function reduceFlat(table, reducer) {
       reducer.add(cell, i, data);
     }
   } else {
+    const n = table.totalRows();
     for (let i = 0; i < n; ++i) {
       reducer.add(cell, i, data);
     }

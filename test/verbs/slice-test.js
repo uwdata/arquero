@@ -82,4 +82,29 @@ describe('slice', () => {
       'sliced data, extreme negative start and end'
     );
   });
+
+  it('slices a grouped, ordered, and filtered table', () => {
+    const dt = table({ a: [1, 1], b: [2, 3], c: [3, 4] })
+      .groupby('a')
+      .orderby('b')
+      .filter(d => d.c === 3);
+
+    tableEqual(
+      dt.slice(),
+      { a: [1], b: [2], c: [3] },
+      'sliced data, all'
+    );
+
+    tableEqual(
+      dt.slice(0, 1),
+      { a: [1], b: [2], c: [3] },
+      'sliced data, start and end'
+    );
+
+    tableEqual(
+      dt.slice(-1),
+      { a: [1], b: [2], c: [3] },
+      'sliced data, negative start'
+    );
+  });
 });
