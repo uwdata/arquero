@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import tableEqual from '../table-equal.js';
-import { fromCSV, fromCSVStream } from '../../src/index.js';
+import { fromCSV, fromCSVStream, table } from '../../src/index.js';
 import { textStream } from './data/text-stream.js';
 
 function data() {
@@ -22,8 +22,14 @@ const text = [
 
 const tabText = text.map(t => t.split(',').join('\t'));
 
+// test csv parsing from string
 csvTests('fromCSV', fromCSV);
-csvTests('fromCSVStream', (csv, opt) => fromCSVStream(textStream(csv), opt));
+
+// test csv parsing from stream with 65,536 char chunks
+csvTests(
+  'fromCSVStream',
+  (csv, opt) => fromCSVStream(textStream(csv, 65_536), opt)
+);
 
 function csvTests(name, parseCSV) {
   describe(name, () => {
@@ -127,6 +133,23 @@ function csvTests(name, parseCSV) {
         await table(false), data,
         'csv parsed data with autoType false'
       );
+    });
+
+    it('handles escaped quotes', async () => {
+      // build test CSV full of escaped quotes
+      const numRows = 10_000;
+      const numCols = 20;
+      const col = Array.from({ length: numRows }, () => '"');
+      const data = {};
+      for (let i = 0; i < numCols; ++i) {
+        data[`a${i+1}`] = col;
+      }
+      const csv = table(data).toCSV();
+
+      // test csv parsing
+      const csvLoad = await parseCSV(csv);
+      assert.strictEqual(csvLoad.numRows(), numRows);
+      assert.strictEqual(csvLoad.numCols(), numCols);
     });
   });
 }
