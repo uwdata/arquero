@@ -40,6 +40,26 @@ describe('rollup', () => {
     }, 'rollup data');
   });
 
+  it('produces filtered grouped aggregates', () => {
+    const data = {
+      k: ['a', 'a', 'b', 'b'],
+      a: [1, 3, 5, 7],
+      b: [2, 4, 6, 8]
+    };
+
+    const rt = table(data)
+      .groupby({ key: d => d.k })
+      .filter(d => d.a === 1)
+      .rollup({ cnt: op.count() });
+
+    assert.equal(rt.numRows(), 1, 'num rows');
+    assert.equal(rt.numCols(), 2, 'num cols');
+    tableEqual(rt, {
+      key: ['a'],
+      cnt: [1]
+    }, 'rollup data');
+  });
+
   it('handles empty tables', () => {
     [[], [null, null], [undefined, undefined], [NaN, NaN]].forEach(v => {
       const rt = table({ v }).rollup({
