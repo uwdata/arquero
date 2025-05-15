@@ -22,6 +22,7 @@ export async function byteStream(path, {
   }
   const s = await p;
   return /** @type {ReadableStream<Uint8Array>} */(decompress
+    // @ts-ignore (void vs. undefined) difference in node stream lib
     ? s.pipeThrough(new DecompressionStream(decompress))
     : s);
 }
