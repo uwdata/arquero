@@ -53,9 +53,10 @@ export function delimitedTextTransformer(delimiter = ',') {
             if (++qc === 3) {
               // consume escaped quote char ("")
               qc = 1;
-            } else if (++I < N && chunk.charCodeAt(I) !== QUOTE) {
+            } else if ((I + 1) < N && chunk.charCodeAt(I + 1) !== QUOTE) {
               qc = 0; // reset quote char count
               q = true; // reached end of quote
+              ++I;
               break;
             }
           }
@@ -148,7 +149,9 @@ export function delimitedTextTransformer(delimiter = ',') {
 
     flush(controller) {
       if (row.length || fragment) {
-        if (fragment != null) row.push(fragment);
+        if (fragment != null) {
+          row.push(qc === 2 ? unquote(fragment) : fragment);
+        }
         controller.enqueue([row]);
       }
     }
