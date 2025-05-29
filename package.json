@@ -1,7 +1,7 @@
 {
   "name": "arquero",
   "type": "module",
-  "version": "8.0.2",
+  "version": "8.0.3",
   "description": "Query processing and transformation of array-backed data tables.",
   "keywords": [
     "data",
@@ -45,10 +45,10 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@types/punycode": "^2.1.4",
     "apache-arrow": "20.0.0",
-    "eslint": "^9.26.0",
-    "mocha": "^11.2.2",
+    "eslint": "^9.27.0",
+    "mocha": "^11.5.0",
     "rimraf": "^6.0.1",
-    "rollup": "^4.40.2",
+    "rollup": "^4.41.1",
     "rollup-plugin-bundle-size": "^1.0.3",
     "tape": "^5.9.0",
     "typescript": "^5.8.3"
