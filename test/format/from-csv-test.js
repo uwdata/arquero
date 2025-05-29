@@ -152,17 +152,13 @@ function csvTests(name, parseCSV) {
       assert.strictEqual(csvLoad.numCols(), numCols);
 
       // test embedded map
-      const csvMap = 'id,map\n'
-        + '1,"{""0""=>""https://web.site"", ""1""=>""https://other.site.com/""}"\n'
-        + '2,"{""0""=>""https://web.site"", ""1""=>""https://other.site.com/""}"';
       const map = '{"0"=>"https://web.site", "1"=>"https://other.site.com/"}';
-      const csvMapLoad = await parseCSV(csvMap);
-      assert.strictEqual(csvMapLoad.numRows(), 2);
-      assert.strictEqual(csvMapLoad.numCols(), 2);
-      assert.strictEqual(csvMapLoad.column('id').at(0), 1);
-      assert.strictEqual(csvMapLoad.column('map').at(0), map);
-      assert.strictEqual(csvMapLoad.column('id').at(1), 2);
-      assert.strictEqual(csvMapLoad.column('map').at(1), map);
+      const mapData = { id: [1, 2], map: [map, map] };
+      tableEqual(
+        await parseCSV(table(mapData).toCSV()),
+        mapData,
+        'csv parsed map data'
+      );
     });
   });
 }
