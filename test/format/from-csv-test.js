@@ -150,6 +150,15 @@ function csvTests(name, parseCSV) {
       const csvLoad = await parseCSV(csv);
       assert.strictEqual(csvLoad.numRows(), numRows);
       assert.strictEqual(csvLoad.numCols(), numCols);
+
+      // test embedded map
+      const map = '{"0"=>"https://web.site", "1"=>"https://other.site.com/"}';
+      const mapData = { id: [1, 2], map: [map, map] };
+      tableEqual(
+        await parseCSV(table(mapData).toCSV()),
+        mapData,
+        'csv parsed map data'
+      );
     });
   });
 }
