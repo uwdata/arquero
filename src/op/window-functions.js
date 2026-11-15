@@ -76,7 +76,7 @@ const cume_dist = {
   create() {
     let cume;
     return {
-      init: () => cume = 0,
+      init: () => cume = -1,
       value: w => {
         const { index, peer, size } = w;
         let i = index;
