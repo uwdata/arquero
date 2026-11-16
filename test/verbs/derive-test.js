@@ -145,6 +145,24 @@ describe('derive', () => {
     }, 'mad');
   });
 
+  it('supports cumulative distribution with ties', () => {
+    const dt = table({
+        k: ['a', 'a', 'a', 'b', 'b', 'b', 'b'],
+        x: [1, 1, 2, 3, 3, 3, 4]
+      })
+      .groupby('k')
+      .orderby('x')
+      .derive({
+        cume: () => op.cume_dist(),
+        tile: () => op.ntile(4)
+      });
+
+    tableEqual(dt.select('cume', 'tile'), {
+      cume: [2/3, 2/3, 1, 0.75, 0.75, 0.75, 1],
+      tile: [3, 3, 4, 3, 3, 3, 4]
+    }, 'derive cume_dist and ntile, ties in first rows');
+  });
+
   it('supports parameters', () => {
     const output = {
       n: [1, 2, 3, 4],
