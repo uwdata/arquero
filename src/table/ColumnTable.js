@@ -453,7 +453,7 @@ export class ColumnTable extends Table {
    *  Lookup keys (column name strings or table expressions) for this table
    *  and the secondary table, respectively. If unspecified, the values of
    *  all columns with matching names are compared.
-   * @param {...import('./types.js').ExprList} [values]
+   * @param {...import('./types.js').ExprList} values
    *  The column values to add from the secondary table. Can be column name
    *  strings or objects with column names as keys and table expressions as
    *  values. If unspecified, includes all columns from the secondary table
