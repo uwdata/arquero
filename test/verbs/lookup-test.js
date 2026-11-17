@@ -3,6 +3,18 @@ import tableEqual from '../table-equal.js';
 import { op, table } from '../../src/index.js';
 
 describe('lookup', () => {
+  it('matches composite string keys with quotes and separators', () => {
+    const data = {
+      region: ['east"|"enterprise', 'east'],
+      tier: ['renewal', 'enterprise"|"renewal']
+    };
+    const left = table(data);
+    const right = table({ ...data, manager: ['Ana', 'Bo'] });
+    const dt = left.lookup(right, [['region', 'tier'], ['region', 'tier']], 'manager');
+
+    assert.deepEqual(dt.array('manager'), ['Ana', 'Bo']);
+  });
+
   it('retrieves values from lookup table with string values', () => {
     const right = table({
       key: [1, 2, 3],

@@ -3,6 +3,18 @@ import tableEqual from '../table-equal.js';
 import { table } from '../../src/index.js';
 
 describe('dedupe', () => {
+  it('keeps distinct composite string keys with quotes and separators', () => {
+    const data = {
+      region: ['east"|"enterprise', 'east', 'east"|"enterprise'],
+      tier: ['renewal', 'enterprise"|"renewal', 'renewal']
+    };
+
+    tableEqual(table(data).dedupe('region', 'tier'), {
+      region: data.region.slice(0, 2),
+      tier: data.tier.slice(0, 2)
+    });
+  });
+
   it('de-duplicates table', () => {
     const dt = table({ a: [1, 2, 1, 2, 1], b: [3, 4, 3, 4, 5] })
       .dedupe();
