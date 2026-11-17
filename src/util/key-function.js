@@ -5,7 +5,7 @@ import { isTypedArray } from './is-typed-array.js';
 
 export function key(value) {
   const type = typeof value;
-  return type === 'string' ? `"${value}"`
+  return type === 'string' ? stringKey(value)
     : type !== 'object' || !value ? value
     : isDate(value) ? +value
     : isArray(value) || isTypedArray(value) ? `[${value.map(key)}]`
@@ -13,12 +13,16 @@ export function key(value) {
     : objectKey(value);
 }
 
+function stringKey(value) {
+  return /["\\]/.test(value) ? JSON.stringify(value) : `"${value}"`;
+}
+
 function objectKey(value) {
   let s = '{';
   let i = -1;
   for (const k in value) {
     if (++i > 0) s += ',';
-    s += `"${k}":${key(value[k])}`;
+    s += `${stringKey(k)}:${key(value[k])}`;
   }
   s += '}';
   return s;

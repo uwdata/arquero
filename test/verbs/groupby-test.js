@@ -2,6 +2,16 @@ import assert from 'node:assert';
 import { desc, fromArrow, op, table, toArrow } from '../../src/index.js';
 
 describe('groupby', () => {
+  it('keeps composite string keys with quotes and separators distinct', () => {
+    const dt = table({
+      region: ['east"|"enterprise', 'east'],
+      tier: ['renewal', 'enterprise"|"renewal'],
+      revenue: [120, 75]
+    }).groupby('region', 'tier').rollup({ revenue: op.sum('revenue') });
+
+    assert.deepEqual(dt.array('revenue'), [120, 75]);
+  });
+
   it('computes groups based on field names', () => {
     const data = {
       k: 'aabb'.split(''),

@@ -63,6 +63,21 @@ describe('cross', () => {
 });
 
 describe('join', () => {
+  it('matches composite string keys with quotes and separators', () => {
+    const data = {
+      region: ['east"|"enterprise', 'east'],
+      tier: ['renewal', 'enterprise"|"renewal']
+    };
+    const left = table({ ...data, revenue: [120, 75] });
+    const right = table({ ...data, manager: ['Ana', 'Bo'] });
+    const dt = left.join(right, [['region', 'tier'], ['region', 'tier']]);
+
+    assert.deepEqual(dt.objects(), [
+      { region: data.region[0], tier: data.tier[0], revenue: 120, manager: 'Ana' },
+      { region: data.region[1], tier: data.tier[1], revenue: 75, manager: 'Bo' }
+    ]);
+  });
+
   it('performs natural join', () => {
     const tl = table({ k: [1, 2, 3], a: [3, 4, 1]});
     const t1 = table({ k: [1, 2, 4], b: [5, 6, 2]});
