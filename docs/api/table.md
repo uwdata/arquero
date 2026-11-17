@@ -495,6 +495,7 @@ Format this table as an HTML table string.
     * *digits*: Number of fractional digits to include for numbers.
   * *maxdigits*: The maximum number of fractional digits to include when inferring a number format (default `6`). This option is passed to the format inference method and is ignored when explicit format options are specified.
   * *null*: Optional format function for `null` and `undefined` values. If specified, this function be invoked with the `null` or `undefined` value as the sole input argument. The return value is then used as the HTML output for the input value.
+  * *className*: Class name to include in HTML output. The object keys should be HTML table tag names: 'table', 'thead', 'tbody', 'tr', 'th', or 'td'. The object values should be strings of valid class name directives (such as "class-A class-B") or functions that take a column name and row as inputs and return a class names string.
   * *style*: CSS styles to include in HTML output. The object keys can be HTML table tag names: `'table'`, `'thead'`, `'tbody'`, `'tr'`, `'th'`, or `'td'`. The object values should be strings of valid CSS style directives (such as `"font-weight: bold;"`) or functions that take a column name and row as input and return a CSS string.
 
 *Examples*

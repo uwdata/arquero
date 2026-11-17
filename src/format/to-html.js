@@ -13,11 +13,24 @@ import { scan } from './util/scan.js';
  */
 
 /**
+ * Class name function.
+ * @callback ClassNameFunction
+ * @param {string} name The column name.
+ * @param {number} row The table row index.
+ * @return {string} Class Names string.
+ */
+
+/**
  * CSS style function.
  * @callback StyleFunction
  * @param {string} name The column name.
  * @param {number} row The table row index.
  * @return {string} A CSS style string.
+ */
+
+/**
+ * Class Name options.
+ * @typedef {Object.<string, string | ClassNameFunction>} ClassNameOptions
  */
 
 /**
@@ -45,6 +58,11 @@ import { scan } from './util/scan.js';
  *  If specified, this function will be invoked with the null or undefined
  *  value as the sole input, and the return value will be used as the HTML
  *  output for the value.
+ * @property {ClassNameOptions} [className] Class name to include in HTML output.
+ *  The object keys should be HTML table tag names: 'table', 'thead',
+ *  'tbody', 'tr', 'th', or 'td'. The object values should be strings of
+ *  valid class name directives (such as "class-A class-B") or functions
+ *  that take a column name and row as inputs and return a class names string.
  * @property {StyleOptions} [style] CSS styles to include in HTML output.
  *  The object keys should be HTML table tag names: 'table', 'thead',
  *  'tbody', 'tr', 'th', or 'td'. The object values should be strings of
@@ -64,6 +82,7 @@ import { scan } from './util/scan.js';
 export function toHTML(table, options = {}) {
   const names = columns(table, options.columns);
   const { align, format } = formats(table, names, options);
+  const className = classNames(options);
   const style = styles(options);
   const nullish = options.null;
 
@@ -80,10 +99,11 @@ export function toHTML(table, options = {}) {
   let idx = -1;
 
   const tag = (tag, name, shouldAlign) => {
+    const cls = className[tag] ? (className[tag](name, idx, r) || '') : '';
     const a = shouldAlign ? alignValue(align[name]) : '';
     const s = style[tag] ? (style[tag](name, idx, r) || '') : '';
     const css = (a ? (`text-align: ${a};` + (s ? ' ' : '')) : '') + s;
-    return `<${tag}${css ? ` style="${css}"` : ''}>`;
+    return `<${tag}${cls ? ` class="${cls}"` : ''}${css ? ` style="${css}"` : ''}>`;
   };
 
   let text = tag('table')
@@ -110,6 +130,13 @@ export function toHTML(table, options = {}) {
   });
 
   return text + '</tbody></table>';
+}
+
+function classNames(options) {
+  return mapObject(
+    options.className,
+    value => isFunction(value) ? value : () => value
+  );
 }
 
 function styles(options) {

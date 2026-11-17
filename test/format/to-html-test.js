@@ -64,6 +64,43 @@ describe('toHTML', () => {
       'html text with custom format'
     );
   });
+  
+  it('formats html table text with className option', () => {
+    const la = 'text-align: left;';
+    const ra = 'text-align: right;';
+    const l = `style="${la}"`;
+    const r = `style="${ra}"`;
+    const html = (u, v) => [
+      '<table class="table"><thead>',
+      '<tr class="row(-1)">',
+      `<th style="${la}">u</th><th style="${ra}">v</th></tr>`,
+      '</thead><tbody>',
+      `<tr class="row(0)"><td class="cell(u,0)" ${u}>a</td><td class="cell(v,0)" ${v}>1</td></tr>`,
+      `<tr class="row(1)"><td class="cell(u,1)" ${u}>a</td><td class="cell(v,1)" ${v}>2</td></tr>`,
+      `<tr class="row(2)"><td class="cell(u,2)" ${u}>b</td><td class="cell(v,2)" ${v}>3</td></tr>`,
+      `<tr class="row(3)"><td class="cell(u,3)" ${u}>a</td><td class="cell(v,3)" ${v}>4</td></tr>`,
+      `<tr class="row(4)"><td class="cell(u,4)" ${u}>b</td><td class="cell(v,4)" ${v}>5</td></tr>`,
+      '</tbody></table>'
+    ];
+
+    const dt = new ColumnTable({
+        u: ['a', 'a', 'a', 'b', 'b'],
+        v: [2, 1, 4, 5, 3]
+      })
+      .orderby('v');
+
+    assert.equal(
+      toHTML(dt, {
+        className: {
+          table: 'table',
+          tr: (col, idx) => `row(${idx})`,
+          td: (col, idx) => `cell(${col},${idx})`,
+        }
+      }),
+      html(l, r).join(''),
+      'html text with custom class'
+    );
+  });
 
   it('formats html table text with style option', () => {
     const la = 'text-align: left;';
