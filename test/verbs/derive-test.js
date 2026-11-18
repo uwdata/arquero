@@ -231,6 +231,14 @@ describe('derive', () => {
     );
   });
 
+  it('supports numeric separators in expressions', () => {
+    const data = { value: [1000, 2000, 2001] };
+    tableEqual(
+      table(data).derive({ large: d => d.value > 2_000 }),
+      { ...data, large: [false, false, true] }
+    );
+  });
+
   it('supports bigint values', () => {
     const data = {
       v: [1n, 2n, 3n, 4n, 5n]

@@ -26,7 +26,7 @@ import { isArray } from '../util/is-array.js';
 import { isNumber } from '../util/is-number.js';
 import { toString } from '../util/to-string.js';
 
-const PARSER_OPT = { ecmaVersion: 11 };
+const PARSER_OPT = { ecmaVersion: 2021 };
 const DEFAULT_PARAM_ID = '$';
 const DEFAULT_TUPLE_ID = 'd';
 const DEFAULT_TUPLE_ID1 = 'd1';
