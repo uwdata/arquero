@@ -2,6 +2,15 @@ import assert from 'node:assert';
 import { desc, fromArrow, op, table, toArrow } from '../../src/index.js';
 
 describe('groupby', () => {
+  it('reports the full name of a missing column', () => {
+    const data = table({ animal: ['cat'], numberOfLegs: [4] });
+    for (const name of ['number_of_legs', 'n']) {
+      assert.throws(() => data.groupby(name), {
+        message: `Invalid column reference: "${name}"`
+      });
+    }
+  });
+
   it('computes groups based on field names', () => {
     const data = {
       k: 'aabb'.split(''),
