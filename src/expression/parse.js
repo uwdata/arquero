@@ -55,11 +55,12 @@ export function parse(input, opt = {}) {
       }
     },
     error(node, msg, note = '') {
-      // both expresions and fields are parsed
-      // with added code prefixes of length 6!
-      const i = node.start - 6;
-      const j = node.end - 6;
-      const snippet = String(ctx.spec).slice(i, j);
+      const spec = String(ctx.spec);
+      // Field references are parsed as synthetic functions. The original
+      // spec is the column name, so the synthesized offsets do not apply.
+      const snippet = ctx.spec.field
+        ? spec
+        : spec.slice(node.start - 6, node.end - 6);
       error(`${msg}: "${snippet}"${note}`);
     }
   };
